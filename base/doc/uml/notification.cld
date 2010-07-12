@@ -250,7 +250,7 @@
           <fromMultiplicity></fromMultiplicity>
           <toMultiplicity></toMultiplicity>
           <source class="net.java.amateras.uml.classdiagram.model.ClassModel">
-            <isAbstract>false</isAbstract>
+            <isAbstract>true</isAbstract>
             <propertyDescriptors>
               <org.eclipse.ui.views.properties.TextPropertyDescriptor>
                 <id class="string">_stereo_type</id>
@@ -305,7 +305,7 @@
                 <fromMultiplicity></fromMultiplicity>
                 <toMultiplicity></toMultiplicity>
                 <source class="net.java.amateras.uml.classdiagram.model.ClassModel">
-                  <isAbstract>false</isAbstract>
+                  <isAbstract>true</isAbstract>
                   <propertyDescriptors>
                     <org.eclipse.ui.views.properties.TextPropertyDescriptor>
                       <id class="string">_stereo_type</id>
@@ -344,7 +344,7 @@
                     </net.java.amateras.uml.properties.BooleanPropertyDescriptor>
                   </propertyDescriptors>
                   <stereoType></stereoType>
-                  <name>AppSession</name>
+                  <name>AppSession&lt;T extends App&gt;</name>
                   <constraint>
                     <x>378</x>
                     <y>198</y>
