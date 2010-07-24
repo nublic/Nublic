@@ -1,0 +1,7 @@
+This folder contains libraries that are used among most of the different subprojects in Scamall.
+You must think carefully about including a library used in your project in its own 'lib/' folder or in this folder.
+
+Current contents:
+- Vaadin
+- Apache Commons Lang
+- Apache Commons Configuration
