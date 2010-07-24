@@ -12,6 +12,7 @@ public interface AppInfo {
 
 	/**
 	 * Gets the human-readable app name.
+	 * 
 	 * @return The human-readable app name.
 	 */
 	String getName();
