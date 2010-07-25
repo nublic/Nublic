@@ -3,5 +3,6 @@ You must think carefully about including a library used in your project in its o
 
 Current contents:
 - Vaadin
-- Apache Commons Lang
 - Apache Commons Configuration
+- Apache Commons IO
+- Apache Commons Lang
