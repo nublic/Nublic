@@ -16,7 +16,7 @@ import com.scamall.notification.Notification;
  */
 public abstract class App {
 
-	static final String APP_SESSION_PREFIX = "--scamall-app-";
+	static final String APP_SESSION_PREFIX = "--scamall-app-session-";
 
 	/**
 	 * Gets the app's internal ID.
