@@ -17,7 +17,7 @@ public class ExampleAppInfo implements AppInfo {
 	 */
 	@Override
 	public String getName() {
-		return "Example";
+		return "Greetings";
 	}
 
 }

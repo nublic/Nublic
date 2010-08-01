@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.scamall.manager;
+package com.scamall.loader;
 
 import java.rmi.Remote;
 
@@ -11,7 +11,7 @@ import java.rmi.Remote;
  * 
  * @author Alejandro Serrano
  */
-public interface ManagerRefresh extends Remote {
+public interface LoaderRefresh extends Remote {
 
 	/**
 	 * Reloads app configuration, loading and unloading the apps that may have
