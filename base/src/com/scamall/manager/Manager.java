@@ -5,12 +5,14 @@ package com.scamall.manager;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
@@ -153,15 +155,15 @@ public class Manager implements ManagerRefresh {
 		ArrayList<String> added = new ArrayList<String>();
 		ArrayList<String> updated = new ArrayList<String>();
 		ArrayList<String> removed = new ArrayList<String>();
-		
+
 		File app_descriptor_dir = new File(APP_DESCRIPTORS_PATH);
 		FilenameFilter filter = new WildcardFileFilter("*."
 				+ APP_DESCRIPTOR_EXTENSION);
-		
+
 		// Find new and updated files
 		for (File descr : app_descriptor_dir.listFiles(filter)) {
 			String id = FilenameUtils.getBaseName(descr.getName());
-			
+
 			// Check whether the file is new or updated
 			if (dates.containsKey(id)) {
 				long prev_date = dates.get(id);
@@ -171,32 +173,62 @@ public class Manager implements ManagerRefresh {
 				added.add(id);
 			}
 		}
-		
+
 		// Get the files that were removed
 		for (String id : dates.keySet()) {
 			if (!added.contains(id) && !updated.contains(id))
 				removed.add(id);
 		}
-		
+
 		// Make changes to lists
 		for (String id : removed) {
 			this.removeApp(id);
 		}
 		for (String id : updated) {
 			this.removeApp(id);
-			this.addApp(id);
+			try {
+				this.addApp(id);
+			} catch (Exception e) {
+				// Do nothing
+			}
 		}
 		for (String id : added) {
-			this.addApp(id);
+			try {
+				this.addApp(id);
+			} catch (Exception e) {
+				// Do nothing
+			}
 		}
 
 		createPolicyFile();
 	}
-	
-	private void addApp(String id) {
-		
+
+	private void addApp(String id) throws ManagerException {
+		String filename = FilenameUtils.concat(APP_DESCRIPTORS_PATH, id + "."
+				+ APP_DESCRIPTOR_EXTENSION);
+		File config_file = new File(filename);
+
+		try {
+
+			XMLConfiguration config = new XMLConfiguration(config_file);
+			File jarfile = new File(config.getString("jarfile"));
+			String klass_name = config.getString("class");
+
+			@SuppressWarnings("deprecation")
+			URLClassLoader loader = new URLClassLoader(
+					new URL[] { jarfile.toURL() });
+			@SuppressWarnings("unchecked")
+			Class<? extends App> klass = (Class<? extends App>) loader
+					.loadClass(klass_name);
+
+			dates.put(id, config_file.lastModified());
+			classes.put(id, klass);
+			singletons.put(id, null);
+		} catch (Exception e) {
+			throw new ManagerException(e);
+		}
 	}
-	
+
 	private void removeApp(String id) {
 		dates.remove(id);
 		classes.remove(id);
