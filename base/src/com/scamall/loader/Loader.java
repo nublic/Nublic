@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.scamall.manager;
+package com.scamall.loader;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -24,7 +24,7 @@ import com.scamall.base.App;
  * 
  * @author Alejandro Serrano
  */
-public class Manager implements ManagerRefresh {
+public class Loader implements LoaderRefresh {
 
 	/**
 	 * The path where app information will be found.
@@ -73,10 +73,10 @@ public class Manager implements ManagerRefresh {
 	 */
 	private HashMap<String, App> singletons;
 
-	public Manager() {
-		// Check manager permission
+	public Loader() {
+		// Check loader permission
 		// TODO: Now it is disabled to help debugging
-		// ManagerPermission permission = new ManagerPermission("all");
+		// ManagerPermission permission = new LoaderPermission("all");
 		// AccessController.checkPermission(permission);
 
 		// Initialize relations
@@ -154,7 +154,7 @@ public class Manager implements ManagerRefresh {
 	}
 
 	/**
-	 * @see com.scamall.manager.ManagerRefresh#refresh()
+	 * @see com.scamall.loader.LoaderRefresh#refresh()
 	 */
 	@Override
 	public synchronized void refresh() {
@@ -209,7 +209,7 @@ public class Manager implements ManagerRefresh {
 		createPolicyFile();
 	}
 
-	private void addApp(String id) throws ManagerException {
+	private void addApp(String id) throws LoaderException {
 		String filename = FilenameUtils.concat(APP_DESCRIPTORS_PATH, id + "."
 				+ APP_DESCRIPTOR_EXTENSION);
 		File config_file = new File(filename);
@@ -231,7 +231,7 @@ public class Manager implements ManagerRefresh {
 			classes.put(id, klass);
 			singletons.put(id, null);
 		} catch (Exception e) {
-			throw new ManagerException(e);
+			throw new LoaderException(e);
 		}
 	}
 
@@ -252,7 +252,7 @@ public class Manager implements ManagerRefresh {
 	 *            Commmand line arguments
 	 */
 	public static void main(String[] args) {
-		Manager m = new Manager();
+		Loader m = new Loader();
 		System.out.println("Loaded apps:");
 		for (String id : m.getAppIds()) {
 			System.out.print("* ");
