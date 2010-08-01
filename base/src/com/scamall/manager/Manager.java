@@ -103,14 +103,26 @@ public class Manager implements ManagerRefresh {
 	 * @param id
 	 *            The app ID.
 	 * @return The app singleton.
+	 * @throws IllegalAccessException
+	 *             See java.lang.Class#newInstance()
+	 * @throws InstantiationException
+	 *             See java.lang.Class#newInstance()
 	 * @throws IllegalArgumentException
 	 *             When no app has the specified ID.
 	 */
-	public App getAppById(String id) {
+	public App getAppById(String id) throws InstantiationException,
+			IllegalAccessException {
 		if (!this.singletons.containsKey(id))
 			throw new IllegalArgumentException("No app with that ID");
 
-		return this.singletons.get(id);
+		App app = this.singletons.get(id);
+		if (app == null) {
+			// Create a new instance if none was created before
+			Class<? extends App> klass = this.classes.get(id);
+			app = klass.newInstance();
+			this.singletons.put(id, app);
+		}
+		return app;
 	}
 
 	/**
@@ -134,13 +146,7 @@ public class Manager implements ManagerRefresh {
 		for (String id : this.classes.keySet()) {
 			Class<? extends App> klass = this.classes.get(id);
 			if (theClass.equals(klass)) {
-				A app = (A) this.singletons.get(id);
-				if (app == null) {
-					// Create a new instance if none was created before
-					app = theClass.newInstance();
-					this.singletons.put(id, app);
-				}
-				return app;
+				return (A) this.getAppById(id);
 			}
 		}
 
@@ -237,5 +243,27 @@ public class Manager implements ManagerRefresh {
 
 	private void createPolicyFile() {
 
+	}
+
+	/**
+	 * Example application loading apps and showing which ones has found.
+	 * 
+	 * @param args
+	 *            Commmand line arguments
+	 */
+	public static void main(String[] args) {
+		Manager m = new Manager();
+		System.out.println("Loaded apps:");
+		for (String id : m.getAppIds()) {
+			System.out.print("* ");
+			System.out.print(id);
+			System.out.print(".. ");
+			try {
+				m.getAppById(id);
+				System.out.println("instantiated");
+			} catch (Exception e) {
+				System.out.println("error");
+			}
+		}
 	}
 }
