@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<tns:app xmlns:tns="http://scamall.com/app" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://scamall.com/app ../../base/doc/xml/app.xsd ">
-  <tns:jarfile>tns:jarfile</tns:jarfile>
-  <tns:class>com.scamall.app.example.ExampleApp</tns:class>
-</tns:app>

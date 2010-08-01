@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://scamall.com/app" xmlns:tns="http://scamall.com/app" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://scamall.com/app" xmlns:scamall="http://scamall.com/app" elementFormDefault="qualified">
 
     <complexType name="app">
         <annotation>
@@ -17,7 +17,7 @@
     	</sequence>
     </complexType>
 
-    <element name="app" type="tns:app">
+    <element name="app" type="scamall:app">
     	<annotation>
     		<documentation>Root element for describing an Scamall app.</documentation>
     	</annotation></element>
