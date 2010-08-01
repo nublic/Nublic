@@ -39,7 +39,7 @@ public abstract class App {
 	 *            User for which the app is creating a session.
 	 * @return The new session.
 	 */
-	abstract AppSession<? extends App> newSession(String user);
+	protected abstract AppSession<? extends App> newSession(String user);
 
 	/**
 	 * Gets the app session associated to a HTTP request. Creates a new session
