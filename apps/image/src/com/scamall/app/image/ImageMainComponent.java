@@ -56,7 +56,7 @@ public class ImageMainComponent extends CustomComponent {
 	 */
 	public ImageMainComponent() {
 		buildMainLayout();
-		setCompositionRoot(mainLayout);
+		setCompositionRoot(horizontalLayout);
 
 		// TODO add user code here
 	}
@@ -120,6 +120,7 @@ public class ImageMainComponent extends CustomComponent {
 		image.setHeight("-1px");
 		image.setCaption("Prueba");
 		image.setSource(new ExternalResource("http://tecmoviles.com/wp-content/uploads/pinky-cerebro-google-en-thumb.jpg"));
+		navigationImageLayout.addComponent(image);
 		
 		// NameDate
 		Label NameDate = new Label();

@@ -15,7 +15,7 @@ public class ImageApp extends App {
 	 */
 	@Override
 	public String getId() {
-		return "example";
+		return "image";
 	}
 
 	/**
