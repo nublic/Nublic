@@ -41,6 +41,7 @@ public class ExampleMainComponent extends CustomComponent {
 				;
 			}
 		});
+		layout.addComponent(greetButton);
 
 		this.setCompositionRoot(layout);
 	}
