@@ -6,7 +6,7 @@ package com.scamall.app.image;
 import com.scamall.base.AppInfo;
 
 /**
- * @author yo
+ * @author Elena Vielva
  *
  */
 public class ImageAppInfo implements AppInfo {

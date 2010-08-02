@@ -7,7 +7,7 @@ import com.vaadin.ui.Component;
 import com.scamall.base.VaadinAppSession;
 
 /**
- * @author yo
+ * @author Elena Vielva
  *
  */
 public class ImageAppSession extends VaadinAppSession<ImageApp> {

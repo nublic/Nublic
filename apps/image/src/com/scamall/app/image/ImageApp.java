@@ -2,6 +2,12 @@ package com.scamall.app.image;
 import com.scamall.base.App;
 import com.scamall.base.AppInfo;
 
+
+/**
+ * 
+ * @author Elena Vielva
+ *
+ */
 public class ImageApp extends App {
 
 	/**

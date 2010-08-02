@@ -13,7 +13,7 @@ import com.vaadin.ui.VerticalLayout;
 
 /**
  * 
- * @author yo
+ * @author Elena Vielva
  *
  */
 public class ImageMainComponent extends CustomComponent {
