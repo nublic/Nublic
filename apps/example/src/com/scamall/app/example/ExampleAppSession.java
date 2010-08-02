@@ -16,6 +16,11 @@ public class ExampleAppSession extends VaadinAppSession<ExampleApp> {
 	ExampleApp app;
 	String user;
 
+	/** 
+	 * 
+	 * @param app The instance of the running ExampleApp of this session
+	 * @param user The id of the user
+	 */
 	public ExampleAppSession(ExampleApp app, String user) {
 		this.app = app;
 		this.user = user;
