@@ -5,6 +5,7 @@ package com.scamall.loader;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -72,12 +73,23 @@ public class Loader implements LoaderRefresh {
 	 * Saves each app singleton, with its ID.
 	 */
 	private HashMap<String, App> singletons;
+	
+	/**
+	 * Parent class loader, if any
+	 */
+	private ClassLoader loader;
 
 	public Loader() {
+		this(null);
+	}
+	
+	public Loader(ClassLoader parent) {
 		// Check loader permission
 		// TODO: Now it is disabled to help debugging
 		// ManagerPermission permission = new LoaderPermission("all");
 		// AccessController.checkPermission(permission);
+		
+		this.loader = parent;
 
 		// Initialize relations
 		dates = new HashMap<String, Long>();
@@ -217,12 +229,10 @@ public class Loader implements LoaderRefresh {
 		try {
 
 			XMLConfiguration config = new XMLConfiguration(config_file);
-			File jarfile = new File(config.getString("jarfile"));
+			String jarfile = config.getString("jarfile");
 			String klass_name = config.getString("class");
 
-			@SuppressWarnings("deprecation")
-			URLClassLoader loader = new URLClassLoader(
-					new URL[] { jarfile.toURL() });
+			URLClassLoader loader = this.getClassLoader(jarfile);
 			@SuppressWarnings("unchecked")
 			Class<? extends App> klass = (Class<? extends App>) loader
 					.loadClass(klass_name);
@@ -239,6 +249,16 @@ public class Loader implements LoaderRefresh {
 		dates.remove(id);
 		classes.remove(id);
 		singletons.remove(id);
+	}
+	
+	private URLClassLoader getClassLoader(String filename) throws MalformedURLException {
+		File jarfile = new File(filename);
+		@SuppressWarnings("deprecation")
+		URL[] files = new URL[] { jarfile.toURL() };
+		if (this.loader == null)
+			return new URLClassLoader(files);
+		else
+			return new URLClassLoader(files, this.loader);
 	}
 
 	private void createPolicyFile() {
