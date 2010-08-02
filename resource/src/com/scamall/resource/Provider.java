@@ -11,7 +11,13 @@ package com.scamall.resource;
  */
 public abstract class Provider {
 
-	protected static String id;
+	/**
+	 * Gets the Providers's internal ID.
+	 * 
+	 * @return The ID.
+	 */
+	public abstract String getId();
+
 	
 	/** Request a resource.
 	 * 
