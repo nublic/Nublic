@@ -1,15 +1,10 @@
 package com.scamall.ui.flowplayer.client.ui;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.HTML;
 import com.vaadin.terminal.gwt.client.ApplicationConnection;
 import com.vaadin.terminal.gwt.client.Paintable;
 import com.vaadin.terminal.gwt.client.UIDL;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Client side widget which communicates with the server. Messages from the
@@ -57,7 +52,7 @@ public class VFlowplayer extends HTML implements Paintable {
 		/* @endsection */
 
 		if (!loaded) {
-			setHTML("<a id=\"" + playerId + "\" href=\"http://vod01.netdna.com/vod/demo.flowplayer/flowplayer-700.flv\" style=\"display:block;width:425px;height:300px;\"></a>");
+			setHTML("<a id=\"" + playerId + "\" href=\"http://home.gwu.edu/~perillan/content/users/yvovides/perillan/machado_verdes_mono.mp3\" style=\"display:block;width:425px;height:300px;\"></a>");
 			String pathToSwf = GWT.getModuleBaseURL() + "flowplayer-3.2.2.swf";
 			publishPlayer(this, playerId, pathToSwf);
 			loaded = true;
