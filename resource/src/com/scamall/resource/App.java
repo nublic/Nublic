@@ -1,23 +1,34 @@
 package com.scamall.resource;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table (name="app")
 public class App {
 
-	private String appID;
+	@Column(name="app_id")
+	private String appId;
 	
+	@Id
+	@GeneratedValue
 	private int id;
 
 	/**
-	 * @return the appID
+	 * @return the appId
 	 */
-	public String getAppID() {
-		return appID;
+	public String getAppId() {
+		return appId;
 	}
 
 	/**
-	 * @param appID the appID to set
+	 * @param appId the appId to set
 	 */
-	public void setAppID(String appID) {
-		this.appID = appID;
+	public void setAppId(String appId) {
+		this.appId = appId;
 	}
 
 	/**
