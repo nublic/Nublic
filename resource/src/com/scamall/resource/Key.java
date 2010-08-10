@@ -2,10 +2,13 @@ package com.scamall.resource;
 
 import java.util.HashSet;
 
+
 public class Key {
 
-	private long keyId;
+	private long id;
 
+	private String keyId;
+	
 	private long typeId;
 
 	private long appId;
@@ -15,7 +18,7 @@ public class Key {
 	/**
 	 * @return the keyId
 	 */
-	public long getKeyId() {
+	public String getKeyId() {
 		return keyId;
 	}
 
@@ -23,7 +26,7 @@ public class Key {
 	 * @param keyId
 	 *            the keyId to set
 	 */
-	public void setKeyId(long keyId) {
+	public void setKeyId(String keyId) {
 		this.keyId = keyId;
 	}
 
@@ -65,10 +68,17 @@ public class Key {
 	}
 
 	/**
-	 * @param values the values to set
+	 * @param id the id to set
 	 */
-	public void setValues(HashSet<Value> values) {
-		this.values = values;
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
 	}
 
 }

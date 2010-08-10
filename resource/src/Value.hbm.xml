@@ -11,5 +11,5 @@
   	<property name="key_id"></property>
   	<property name="subkey"></property>
   	<property name="value"></property>
-  	<many-to-one name="key" class="Key" column="key_id"></many-to-one></class>
+  	<many-to-one name="key" class="Key" column="id"></many-to-one></class>
 </hibernate-mapping>

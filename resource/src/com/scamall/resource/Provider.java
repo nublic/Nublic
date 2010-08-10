@@ -11,6 +11,9 @@ package com.scamall.resource;
  */
 public abstract class Provider {
 
+	public Provider() {
+	}
+	
 	/**
 	 * Gets the Providers's internal ID.
 	 * 
@@ -29,11 +32,12 @@ public abstract class Provider {
 
 	/** Gets the value from a given resource by the Provider.
 	 * 
+	 * @param app The app id
 	 * @param key The key that refers to the resource.
 	 * @param subkey A subkey for an specific data of the resource.
 	 * @return The subkey data of the key resource.
 	 */
-	abstract public String value(String key, String subkey);
+	abstract public String value(String app, String key, String subkey);
 	
 	/** Releases a resource. After a release the resource must not be used again.
 	 * 
