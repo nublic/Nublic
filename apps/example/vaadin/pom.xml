@@ -10,7 +10,7 @@
   <artifactId>app.example.vaadin</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Vaadin Web Application</name>
+  <name>Scamall Example App - Vaadin Part</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,7 +28,6 @@
       </plugin>
 
       <!-- Compile custom GWT components or widget dependencies with the GWT compiler -->
-      <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
@@ -65,7 +64,6 @@
           </execution>
         </executions>
       </plugin>
-      -->
 
       <!-- A simple Jetty test server at http://localhost:8080/vaadin can be launched with the Maven goal jetty:run 
         and stopped with jetty:stop -->
@@ -145,9 +143,16 @@
     </dependency>
     -->
     <dependency>
-    	<groupId>org.apache.commons</groupId>
-    	<artifactId>commons-io</artifactId>
-    	<version>1.3.2</version>
+    	<groupId>com.google.gwt</groupId>
+    	<artifactId>gwt-user</artifactId>
+    	<version>2.0.3</version>
+    	<type>jar</type>
+    	<scope>provided</scope>
+    </dependency>
+    <dependency>
+    	<groupId>com.scamall</groupId>
+    	<artifactId>app.widget.flowplayer</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>

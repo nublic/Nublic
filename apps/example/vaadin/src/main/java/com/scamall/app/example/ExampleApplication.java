@@ -15,28 +15,48 @@
  */
 package com.scamall.app.example;
 
-import org.apache.commons.io.FilenameUtils;
-
+import com.scamall.app.widget.flowplayer.Flowplayer;
 import com.vaadin.Application;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
 /**
  * The Application's "main" class
  */
 @SuppressWarnings("serial")
-public class ExampleApplication extends Application
-{
-    private Window window;
+public class ExampleApplication extends Application {
+	Window window;
+	VerticalLayout layout;
+	TextField nameText;
+	Button greetButton;
 
-    @Override
-    public void init()
-    {
-        window = new Window("My Vaadin Application");
-        setMainWindow(window);
-        window.addComponent(new Button("Click Me"));
-        
-        FilenameUtils.equals("a", "b");
-    }
-    
+	@Override
+	public void init() {
+		window = new Window("My Vaadin Application");
+		setMainWindow(window);
+
+		layout = new VerticalLayout();
+
+		nameText = new TextField("Write your name here:");
+		layout.addComponent(nameText);
+
+		greetButton = new Button("Greet!", new Button.ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				layout.getWindow().showNotification(
+						"Hello, " + nameText.getValue() + "!",
+						Window.Notification.TYPE_WARNING_MESSAGE);
+				;
+			}
+		});
+		layout.addComponent(greetButton);
+
+		Flowplayer player = new Flowplayer();
+		layout.addComponent(player);
+
+		window.addComponent(layout);
+	}
+
 }
