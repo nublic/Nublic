@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.scamall.base.App;
 import com.scamall.base.AppSession;
 import com.scamall.base.VaadinAppSession;
-import com.scamall.loader.Loader;
 import com.vaadin.Application;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
@@ -24,8 +23,6 @@ public class ManagerApplication extends Application implements
 	 */
 	private static final long serialVersionUID = 2122121368177733417L;
 
-	Loader loader;
-
 	Window mainWindow;
 	VerticalLayout layout;
 	Label app_name;
@@ -36,9 +33,6 @@ public class ManagerApplication extends Application implements
 
 	@Override
 	public void init() {
-		// Load available apps
-		loader = new Loader(this.getClass().getClassLoader());
-
 		// Create the UI
 		mainWindow = new Window("Scamall App Manager");
 		layout = new VerticalLayout();
@@ -57,13 +51,12 @@ public class ManagerApplication extends Application implements
 		layout.addComponent(topBar);
 
 		// Create the app list
-		app_list = new AppList(loader);
+		app_list = new AppList(Singleton.getLoader());
 
 		// Start URI fragment utility
 		UriFragmentUtility uri_utility = new UriFragmentUtility();
-		uri_utility.addListener(
-				UriFragmentUtility.FragmentChangedEvent.class, this,
-				"fragmentChanged");
+		uri_utility.addListener(UriFragmentUtility.FragmentChangedEvent.class,
+				this, "fragmentChanged");
 
 		mainWindow.addComponent(uri_utility);
 		setMainWindow(mainWindow);
@@ -78,17 +71,18 @@ public class ManagerApplication extends Application implements
 		} else {
 			// Load an app
 			try {
-				App app = loader.getAppById(fragment);
-				AppSession<? extends App> session = app.getSession(this.getLastRequest());
+				App app = Singleton.getLoader().getAppById(fragment);
+				AppSession<? extends App> session = app.getSession(this
+						.getLastRequest());
 				if (session instanceof VaadinAppSession) {
-					VaadinAppSession<? extends App> vas = (VaadinAppSession<? extends App>)session;
+					VaadinAppSession<? extends App> vas = (VaadinAppSession<? extends App>) session;
 					app_name.setValue("<h1>" + app.getInfo().getName());
 					setMainComponent(vas.getMainComponent());
 				} else {
 					app_name.setValue("<h1>This app is not visual</h1>");
 					setMainComponent(new Label(""));
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				app_name.setValue("<h1>Error loading app</h1>");
 				setMainComponent(new Label(""));
 			}

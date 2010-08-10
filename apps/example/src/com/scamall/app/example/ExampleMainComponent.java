@@ -3,6 +3,7 @@
  */
 package com.scamall.app.example;
 
+import com.scamall.ui.flowplayer.Flowplayer;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.TextField;
@@ -42,6 +43,9 @@ public class ExampleMainComponent extends CustomComponent {
 			}
 		});
 		layout.addComponent(greetButton);
+		
+		Flowplayer player = new Flowplayer();
+		layout.addComponent(player);
 
 		this.setCompositionRoot(layout);
 	}

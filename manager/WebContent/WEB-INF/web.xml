@@ -9,7 +9,8 @@
   </context-param>
   <servlet>
   	<servlet-name>Scamall App Manager</servlet-name>
-  	<servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
+  	<!-- <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class> -->
+  	<servlet-class>com.scamall.manager.servlet.ScamallServlet</servlet-class>
   	<init-param>
   		<description>
   		Vaadin application class to start</description>

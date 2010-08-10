@@ -45,6 +45,8 @@ class AppList extends CustomComponent {
 				layout.addComponent(link);
 			} catch (Exception e) {
 				// Do nothing
+				System.err.println(e.getMessage());
+				e.printStackTrace(System.err);
 			}
 		}
 		

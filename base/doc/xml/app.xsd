@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://scamall.com/app" xmlns:scamall="http://scamall.com/app" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://scamall.com/app"
+	xmlns:scamall="http://scamall.com/app" elementFormDefault="qualified">
 
-    <complexType name="app">
-        <annotation>
-        	<documentation>Type for describing an Scamall app.</documentation>
-        </annotation>
-        <sequence>
-    		<element name="jarfile" type="string" maxOccurs="1" minOccurs="1">
-    			<annotation>
-    				<documentation>Absolute path to the .jar file containing the app implementation.</documentation>
-    			</annotation></element>
-    		<element name="class" type="string" maxOccurs="1" minOccurs="1">
-    			<annotation>
-    				<documentation>Class name (including package specification) that implements the App Java class in this app.</documentation>
-    			</annotation></element>
-    	</sequence>
-    </complexType>
+	<complexType name="app">
+		<annotation>
+			<documentation>
+				Type for describing an Scamall app.
+    		</documentation>
+		</annotation>
+		<sequence>
+			<element name="jarfile" type="string" maxOccurs="1"
+				minOccurs="1">
+				<annotation>
+					<documentation>
+						Absolute path to the .jar file containing the
+						app implementation.
+    				</documentation>
+				</annotation>
+			</element>
+			<element name="class" type="string" maxOccurs="1" minOccurs="1">
+				<annotation>
+					<documentation>
+						Class name (including package specification)
+						that implements the App Java class in this app.
+    				</documentation>
+				</annotation>
+			</element>
+		</sequence>
 
-    <element name="app" type="scamall:app">
-    	<annotation>
-    		<documentation>Root element for describing an Scamall app.</documentation>
-    	</annotation></element>
+	</complexType>
+
+	<element name="app" type="scamall:app">
+		<annotation>
+			<documentation>Root element for describing an Scamall app.
+			</documentation>
+		</annotation>
+	</element>
 </schema>

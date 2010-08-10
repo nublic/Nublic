@@ -28,9 +28,14 @@ import com.scamall.base.App;
 public class Loader implements LoaderRefresh {
 
 	/**
-	 * The path where app information will be found.
+	 * The path where libraries will be found. *Do not* end it with "/".
 	 */
-	static final String APP_DESCRIPTORS_PATH = ".";
+	static final String APP_LIBRARY_PATH = "./libs";
+
+	/**
+	 * The path where app information will be found. *Do not* end it with "/".
+	 */
+	static final String APP_DESCRIPTORS_PATH = "./apps";
 
 	/**
 	 * Extension of app description, that is, the file that tells where the app
@@ -73,23 +78,26 @@ public class Loader implements LoaderRefresh {
 	 * Saves each app singleton, with its ID.
 	 */
 	private HashMap<String, App> singletons;
-	
+
 	/**
-	 * Parent class loader, if any
+	 * Loader that will be in charge of loading libraries.
 	 */
-	private ClassLoader loader;
+	private WebContentAwareClassLoader lib_loader;
 
 	public Loader() {
 		this(null);
 	}
-	
+
 	public Loader(ClassLoader parent) {
 		// Check loader permission
 		// TODO: Now it is disabled to help debugging
 		// ManagerPermission permission = new LoaderPermission("all");
 		// AccessController.checkPermission(permission);
-		
-		this.loader = parent;
+
+		this.lib_loader = new WebContentAwareClassLoader();
+		if (parent != null) {
+			this.lib_loader.addLoader(new CustomDefinedClassLoader(parent));
+		}
 
 		// Initialize relations
 		dates = new HashMap<String, Long>();
@@ -98,6 +106,16 @@ public class Loader implements LoaderRefresh {
 
 		// Initial loading
 		this.refresh();
+	}
+
+	/**
+	 * Gets the actual class loader used in libraries, so external sources may
+	 * find resources in those .jars.
+	 * 
+	 * @return The library class loader.
+	 */
+	public ClassLoader getLibraryClassLoader() {
+		return this.lib_loader;
 	}
 
 	/**
@@ -170,6 +188,23 @@ public class Loader implements LoaderRefresh {
 	 */
 	@Override
 	public synchronized void refresh() {
+		refreshLibraries();
+		refreshAppJars();
+		createPolicyFile();
+	}
+
+	/**
+	 * Reloads all libraries in the app library path.
+	 */
+	private void refreshLibraries() {
+		lib_loader.add(APP_LIBRARY_PATH + "/");
+	}
+
+	/**
+	 * Rescans the app descriptor folder, loading and unloading the apps as
+	 * needed.
+	 */
+	private void refreshAppJars() {
 		ArrayList<String> added = new ArrayList<String>();
 		ArrayList<String> updated = new ArrayList<String>();
 		ArrayList<String> removed = new ArrayList<String>();
@@ -217,10 +252,17 @@ public class Loader implements LoaderRefresh {
 				// Do nothing
 			}
 		}
-
-		createPolicyFile();
 	}
 
+	/**
+	 * Loads an app into memory.
+	 * 
+	 * @param id
+	 *            The id of the app to load.
+	 * @throws LoaderException
+	 *             An error ocurred during the class loading, or the path to the
+	 *             .jar file was incorrect.
+	 */
 	private void addApp(String id) throws LoaderException {
 		String filename = FilenameUtils.concat(APP_DESCRIPTORS_PATH, id + "."
 				+ APP_DESCRIPTOR_EXTENSION);
@@ -232,7 +274,9 @@ public class Loader implements LoaderRefresh {
 			String jarfile = config.getString("jarfile");
 			String klass_name = config.getString("class");
 
-			URLClassLoader loader = this.getClassLoader(jarfile);
+			String jarfile_path = FilenameUtils.concat(APP_DESCRIPTORS_PATH,
+					jarfile);
+			URLClassLoader loader = this.getClassLoader(jarfile_path);
 			@SuppressWarnings("unchecked")
 			Class<? extends App> klass = (Class<? extends App>) loader
 					.loadClass(klass_name);
@@ -245,20 +289,33 @@ public class Loader implements LoaderRefresh {
 		}
 	}
 
+	/**
+	 * Unload an app from memory.
+	 * 
+	 * @param id
+	 *            The id of the app to unload.
+	 */
 	private void removeApp(String id) {
 		dates.remove(id);
 		classes.remove(id);
 		singletons.remove(id);
 	}
-	
-	private URLClassLoader getClassLoader(String filename) throws MalformedURLException {
+
+	/**
+	 * Creates the neccessary class loader to get an app running into memory.
+	 * 
+	 * @param filename
+	 *            Absolute path of the .jar to load.
+	 * @return A new class loader.
+	 * @throws MalformedURLException
+	 *             The path to the .jar is incorrect.
+	 */
+	private URLClassLoader getClassLoader(String filename)
+			throws MalformedURLException {
 		File jarfile = new File(filename);
 		@SuppressWarnings("deprecation")
 		URL[] files = new URL[] { jarfile.toURL() };
-		if (this.loader == null)
-			return new URLClassLoader(files);
-		else
-			return new URLClassLoader(files, this.loader);
+		return new URLClassLoader(files, this.lib_loader);
 	}
 
 	private void createPolicyFile() {

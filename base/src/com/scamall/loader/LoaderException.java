@@ -4,7 +4,7 @@
 package com.scamall.loader;
 
 /**
- * Represents an error during a loader operation
+ * Represents an error during a loader operation.
  * 
  * @author Alejandro Serrano
  */

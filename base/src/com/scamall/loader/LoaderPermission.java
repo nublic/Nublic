@@ -6,13 +6,15 @@ package com.scamall.loader;
 import com.scamall.Permission;
 
 /**
- * @author Alejandro Serrano
+ * Represents the special permission needed in a block of Java code in order to
+ * use the app loader.
  * 
+ * @author Alejandro Serrano
  */
 public class LoaderPermission extends Permission {
 
 	/**
-	 * The serial ID neccessary for serialization.
+	 * 
 	 */
 	private static final long serialVersionUID = 7227799810832750534L;
 
