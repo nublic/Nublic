@@ -1,7 +1,7 @@
 '''
 Created on 10/08/2010
 
-@author: david
+@author: David Navarro Estruch
 '''
 
 from optparse import OptionParser

@@ -1,7 +1,7 @@
 '''
 Created on 10/08/2010
 
-@author: david
+@author: David Navarro Estruch
 '''
 
 class Provider(object):
@@ -30,7 +30,7 @@ class Provider(object):
         raise NotImplementedError()
     
     
-    def release(self, app, key, *args):
+    def release(self, app, key):
         '''
         Must perform a release over the given app, key.
         Optionally can have a number of ordered args.
@@ -44,7 +44,7 @@ class Provider(object):
         raise NotImplementedError()
 
         
-    def value(self, app, key, subkey = None, *args):
+    def value(self, app, key, subkey = None):
         '''
         Returns the value of the given pair key/subkey.
         

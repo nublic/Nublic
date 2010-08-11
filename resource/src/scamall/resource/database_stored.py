@@ -32,7 +32,7 @@ class DatabaseStored(Provider):
         @raise TypeProviderError
         @raise IntegrityError and other SQLAlchemyErrors
         '''
-        return self._get_value(app, key, subkey).value
+        return self.get_value(app, key, subkey).value
         
     def save_value(self, app_id, key, subkey, value):
         '''
@@ -74,7 +74,7 @@ class DatabaseStored(Provider):
         key_db.delete()
         session.commit()
 
-    def _get_value(self, app, key, subkey):
+    def get_value(self, app, key, subkey):
         '''
         Gets a model.Value object from the database.
         
@@ -83,11 +83,21 @@ class DatabaseStored(Provider):
         @param subkey: string Subkey id
         @return: model.Value
         '''
-        q = Value.query.filter_by(Value.key.has(name=key))
+        q = Value.query.filter(Value.key.has(name=key))
         q = q.filter_by(subkey=subkey)
-        q = q.filter_by(Value.key.app.has(name=app))
+        q = q.filter(Value.key.has(app_name=app))
         value = q.first()
         return value
+
+    def _get_key(self, app, key):
+        '''
+        Gets a model.Key object from the database.
+        
+        @param app: string App id
+        @param key: string Key name
+        @return: model.Key
+        '''
+        return Key.get_by(app_name = app, key_name = key)
 
 
 class TypeProviderError(Exception):
