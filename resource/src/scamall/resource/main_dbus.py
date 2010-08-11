@@ -3,8 +3,9 @@ Created on 10/08/2010
 
 @author: David Navarro Estruch
 '''
+import dbus
 
-class dbus(object):
+class dbus(dbus.service.Object):
     '''
     TODO
     '''
@@ -14,4 +15,6 @@ class dbus(object):
         '''
         Constructor
         '''
-        
+      
+      
+class DBusValue(dbus.service.Object):  
