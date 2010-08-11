@@ -68,7 +68,7 @@ class MysqlDB(DatabaseStored):
             DatabaseStored.value(self, app, key, subkey)
 
     def __is_key(self, app, key):
-        if self._get_key(app, key) == None:
+        if self.get_key(app, key) == None:
             return False
 
     def __create_random_data(self, app, key):

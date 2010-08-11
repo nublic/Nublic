@@ -89,7 +89,7 @@ class DatabaseStored(Provider):
         value = q.first()
         return value
 
-    def _get_key(self, app, key):
+    def get_key(self, app, key):
         '''
         Gets a model.Key object from the database.
         
