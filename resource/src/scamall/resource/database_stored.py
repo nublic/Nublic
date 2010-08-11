@@ -1,0 +1,100 @@
+'''
+Created on 10/08/2010
+
+@author: David Navarro Estruch
+'''
+from .provider import Provider
+from model import App, Key, Value
+from elixir import setup_all, session
+
+class DatabaseStored(Provider):
+    '''
+    Provides a class for Providers who wants to save their values in a database.
+    A new Provider must inherit this class and provide a request custom method.
+    '''
+    
+    def __init__(self, type):
+        '''
+        Constructor
+        
+        @see:  scamall.resource.Provider.__init__
+        '''
+        Provider.__init__(self, type)
+        setup_all()
+
+    def value(self, app, key, subkey = None):
+        '''
+        Provides the values stored in the database.
+        If you want to perform something else just override
+        this function.
+        
+        @see: scamall.resource.provider.Provider
+        @raise TypeProviderError
+        @raise IntegrityError and other SQLAlchemyErrors
+        '''
+        return self._get_value(app, key, subkey).value
+        
+    def save_value(self, app_id, key, subkey, value):
+        '''
+        Saves a value in the database.
+        Creates the needed references of key and app if needed.
+        
+        @param app_id: string The identification of the requesting app
+        @param key: string The key that will identify all given values
+        @param subkey: string The subkey that identifies this specific value
+        @param value: string Value to store
+        
+        @raise TypeProviderError: Notifies that the given key matches with another ResourceType
+        '''
+        app = App.get_by(name=app_id)
+        if app == None:
+            app = App(name=app_id)
+        key_db = Key.get_by(name=key,app_name=app_id)
+        if key_db == None:
+            key_db = Key(name=key,app=app, type_name=self.type)
+        if key_db.type_name != self.type:
+            raise TypeProviderError(self.type, key_db.type_name)
+            
+        value_db = Value()
+        value_db.key = key_db
+        value_db.subkey = subkey
+        value_db.value = value
+        session.commit()
+        
+    def remove_key(self, app_id, key):
+        '''
+        Removes a key and all their values stored in the database.
+        
+        @param app_id: string The identification of the requesting app_id
+        @param key: string The key that is going to be erased
+        '''
+        key_db = Key.get_by(name = key, app_name = app_id)
+        for value in key_db.values:
+            value.delete()
+        key_db.delete()
+        session.commit()
+
+    def _get_value(self, app, key, subkey):
+        '''
+        Gets a model.Value object from the database.
+        
+        @param app: string App id
+        @param key: string Key name
+        @param subkey: string Subkey id
+        @return: model.Value
+        '''
+        q = Value.query.filter_by(Value.key.has(name=key))
+        q = q.filter_by(subkey=subkey)
+        q = q.filter_by(Value.key.app.has(name=app))
+        value = q.first()
+        return value
+
+
+class TypeProviderError(Exception):
+    def __init__(self, type, storedType):
+        self.type = type
+        self.storedType = storedType
+        
+    def __repr__(self):
+        return "Type provided " + self.type + \
+               "but in the database is stored " + self.storedType
