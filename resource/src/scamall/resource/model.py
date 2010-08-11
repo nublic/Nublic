@@ -30,14 +30,22 @@ class Key(Entity):
     values = OneToMany('Value')
     using_options(tablename='key')
 
-    
+
 class Value(Entity):
     '''
     Represents a value from a subkey in an App
     '''
     id = Field(Integer, primary_key=True)
-    subkey = Field(String(256), primary_key=True)
+    subkey = Field(String(256))
     value = Field(UnicodeText)
     key = ManyToOne('Key')
     using_options(tablename='value')
 
+    def get_value(self):
+        return "" + self.value
+    def set_value(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return "key: " + self.key.name + "subkey: " + self.subkey \
+                + "value: " + self.value

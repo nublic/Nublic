@@ -15,6 +15,7 @@ class dbus(dbus.service.Object):
         '''
         Constructor
         '''
-      
+        pass
       
 class DBusValue(dbus.service.Object):  
+    pass

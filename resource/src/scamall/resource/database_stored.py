@@ -3,9 +3,10 @@ Created on 10/08/2010
 
 @author: David Navarro Estruch
 '''
+from elixir import setup_all, session
+
 from .provider import Provider
 from model import App, Key, Value
-from elixir import setup_all, session
 
 class DatabaseStored(Provider):
     '''
@@ -32,7 +33,11 @@ class DatabaseStored(Provider):
         @raise TypeProviderError
         @raise IntegrityError and other SQLAlchemyErrors
         '''
-        return self.get_value(app, key, subkey).value
+        value = self.get_value(app, key, subkey)
+        if value == None:
+            raise NotExistingSubkeyError(subkey)
+        else:
+            return value.value
         
     def save_value(self, app_id, key, subkey, value):
         '''
@@ -83,8 +88,7 @@ class DatabaseStored(Provider):
         @param subkey: string Subkey id
         @return: model.Value
         '''
-        q = Value.query.filter(Value.key.has(name=key))
-        q = q.filter_by(subkey=subkey)
+        q = Value.query.filter_by(subkey=subkey, key_name=key)
         q = q.filter(Value.key.has(app_name=app))
         value = q.first()
         return value
@@ -97,7 +101,7 @@ class DatabaseStored(Provider):
         @param key: string Key name
         @return: model.Key
         '''
-        return Key.get_by(app_name = app, key_name = key)
+        return Key.get_by(app_name = app, name = key)
 
 
 class TypeProviderError(Exception):
@@ -108,3 +112,15 @@ class TypeProviderError(Exception):
     def __repr__(self):
         return "Type provided " + self.type + \
                "but in the database is stored " + self.storedType
+
+class ExistingKeyError(Exception):
+    def __init__(self, key):
+        self.key = key
+        
+class NotExistingKeyError(Exception):
+    def __init__(self, key):
+        self.key = key
+        
+class NotExistingSubkeyError(Exception):
+    def __init__(self, subkey):
+        self.subkey = subkey

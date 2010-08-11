@@ -3,11 +3,14 @@ Created on 11/08/2010
 
 @author: David Navarro Estruch
 '''
-from .database_stored import DatabaseStored
-from .model import metadata
+import string
 from sqlalchemy.sql.expression import text
 from random import Random
-import string
+
+from .database_stored import DatabaseStored
+from .model import metadata
+from scamall.resource.database_stored import ExistingKeyError,\
+    NotExistingKeyError
 
 class MysqlDB(DatabaseStored):
     '''
@@ -65,7 +68,7 @@ class MysqlDB(DatabaseStored):
             database = self.value(app, key, "database")
             return self.__generate_connection_uri(user, password, database)
         else:
-            DatabaseStored.value(self, app, key, subkey)
+            return DatabaseStored.value(self, app, key, subkey)
 
     def __is_key(self, app, key):
         if self.get_key(app, key) == None:
@@ -90,13 +93,12 @@ class MysqlDB(DatabaseStored):
         Returns a conection uri with database 
         '''
         if database == None:
-            return self.__protocol + "://" + user + ":" + password \
+            return self.__connection_protocol + "://" + user + ":" + password \
                     + "@localhost:" + self.__port
-        else
-            return self.__protocol + "://" + user + ":" + password \
+        else:
+            return self.__connection_protocol + "://" + user + ":" + password \
                     + "@localhost:" + self.__port + "/" + database
         
-
     def __create_mysql_resource(self, app, key):
         bind = metadata.bind
         # Creates a connection with permission to create users and databases
@@ -129,12 +131,3 @@ class MysqlDB(DatabaseStored):
         # Restores the old database
         metadata.bind = bind
 
-        
-    
-class ExistingKeyError(Exception):
-    def __init__(self, key):
-        self.key = key
-        
-class NotExistingKeyError(Exception):
-    def __init__(self, key):
-        self.key = key

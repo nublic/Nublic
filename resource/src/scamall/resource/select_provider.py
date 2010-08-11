@@ -3,8 +3,8 @@ Created on 11/08/2010
 
 @author: David Navarro Estruch
 '''
-from scamall.resource.database_stored import DatabaseStored
-from scamall.resource.mysql_db import MysqlDB
+from .database_stored import DatabaseStored
+from .mysql_db import MysqlDB
 
 class SelectProvider(object):
     '''
@@ -28,7 +28,7 @@ class SelectProvider(object):
         '''
         Gets the Provider id from an app key
         '''
-        db = DatabaseStored(app, key)
+        db = DatabaseStored(app)
         key_stored = db.get_key(app,key)
         return key_stored.type_name
 
