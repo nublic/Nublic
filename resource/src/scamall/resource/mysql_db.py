@@ -49,8 +49,8 @@ class MysqlDB(DatabaseStored):
     def release(self, app, key):
         if not self.__is_key(app, key):
             raise NotExistingKeyError(key) 
-        user_name = self.get_value(app, key, 'user')
-        database_name = self.get_value(app, key, 'database')
+        user_name = self.value(app, key, 'user')
+        database_name = self.value(app, key, 'database')
         self.remove_key(app, key)
         self.__delete_mysql_resource(database_name, user_name)
         
@@ -64,15 +64,14 @@ class MysqlDB(DatabaseStored):
             return self.__port
         elif subkey == "uri":
             user = self.value(app,key, "user")
-            password = self.value(app, key, "password")
+            password = self.value(app, key, "pass")
             database = self.value(app, key, "database")
             return self.__generate_connection_uri(user, password, database)
         else:
             return DatabaseStored.value(self, app, key, subkey)
 
     def __is_key(self, app, key):
-        if self.get_key(app, key) == None:
-            return False
+        return not (self.get_key(app, key) == None)
 
     def __create_random_data(self, app, key):
         '''
@@ -118,16 +117,16 @@ class MysqlDB(DatabaseStored):
         metadata.bind = bind
         return database_name, user_name, password
 
-    def __delete_mysql_resource(self, database, user):
+    def __delete_mysql_resource(self, database_name, user_name):
         bind = metadata.bind
         # Creates a connection with permission to create users and databases
-        metadata.bind = 'mysql://' + self.__root_user +':'+ self.__root_password +'@localhost:3306'
+        metadata.bind = self.__generate_connection_uri(self.__root_user, self.__root_password)
         # Generate data and queries
         sql_delete_database = "DROP DATABASE `:database`;"
         sql_delete_user = "DROP USER :user@localhost"
         # Perform the queries
-        text(sql_delete_database, metadata.bind).execute(database = database)
-        text(sql_delete_user, metadata.bind).execute(user = user)
-        # Restores the old database
+        text(sql_delete_database, metadata.bind).execute(database = database_name)
+        text(sql_delete_user, metadata.bind).execute(user = user_name)
+        # Restores the old database_name
         metadata.bind = bind
 
