@@ -30,6 +30,8 @@ class SelectProvider(object):
         '''
         db = DatabaseStored(app)
         key_stored = db.get_key(app,key)
+        if key_stored == None:
+            raise NotExistingProviderError()
         return key_stored.type_name
 
     def generate_provider(self, type_name):
@@ -40,3 +42,6 @@ class SelectProvider(object):
             return MysqlDB()
         else:
             return None
+        
+class NotExistingProviderError(Exception):
+    pass

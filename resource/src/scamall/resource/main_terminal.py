@@ -25,7 +25,7 @@ def main():
         parser.error("Invalid order")
 
     if args[0] == 'request':
-        if len(args) < 4:
+        if len(args) != 4:
             parser.error("Invalid number of parameters")
         app = args[1]
         key = args[2]
@@ -35,7 +35,7 @@ def main():
             parser.error("Invalid resource")
         provider.request(app, key)        
     elif args[0] == 'release':
-        if len(args) < 3:
+        if len(args) != 3:
             parser.error("Invalid number of parameters")
         app = args[1]
         key = args[2]
@@ -44,7 +44,7 @@ def main():
             parser.error("Invalid resource")
         provider.release(app, key)
     elif args[0] == 'value':
-        if len(args) < 3:
+        if len(args) != 3:
             parser.error("Invalid number of parameters")
         app = args[1]
         key_subkey = args[2]

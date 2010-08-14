@@ -29,8 +29,10 @@ class Key(Entity):
     app = ManyToOne('App')
     values = OneToMany('Value')
     using_options(tablename='key')
-
-
+    
+    def __repr__(self):
+        return "Key <"+self.name+"> of type <"+self.type_name+\
+                 "> of app <"+self.app.name+">\n"
 class Value(Entity):
     '''
     Represents a value from a subkey in an App
@@ -49,3 +51,6 @@ class Value(Entity):
     def __repr__(self):
         return "key: " + self.key.name + "subkey: " + self.subkey \
                 + "value: " + self.value
+
+def key_get_all():
+    return Key.query.all()

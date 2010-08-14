@@ -70,6 +70,9 @@ class MysqlDB(DatabaseStored):
         else:
             return DatabaseStored.value(self, app, key, subkey)
 
+    def available_values(self, app, key):
+        return ['database','pass','port','uri','user']
+
     def __is_key(self, app, key):
         return not (self.get_key(app, key) == None)
 

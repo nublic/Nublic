@@ -56,7 +56,18 @@ class Provider(object):
         @raise NotExistingKeyError: Contains the key or subkey that does not exist.
         '''
         raise NotImplementedError()
-    
+
+    def available_values(self, app, key):
+        '''
+        Returns a list of the available subkeys.
+
+        @param app: string The AppId
+        @param key: string The key used to Request
+        
+        @return: List of string with the available subkeys
+        '''
+        raise NotImplementedError()
+            
 class ReapeatedKeyError(Exception):
     def __init__(self, key):
         self.key = key
