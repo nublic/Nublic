@@ -395,6 +395,8 @@
     <!-- since fields of this type are by default not stored or indexed,
          any data added to them will be ignored outright.  --> 
     <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" /> 
+    
+    <fieldType name="uuid" class="solr.UUIDField" indexed="true" />
 
  </types>
 
@@ -426,7 +428,7 @@
        when adding a document.
    -->
 
-   <field name="id" type="string" indexed="true" stored="true" required="true" />
+   <field name="id" type="uuid" indexed="true" stored="true" default="NEW" />
    <field name="type" type="string" indexed="true" stored="true" required="true" />
    
    <!-- Files --> 
@@ -439,11 +441,11 @@
    <field name="updatedAt" type="date" indexed="true" stored="true" />
    <field name="tags" type="string" indexed="true" stored="true" multiValued="true" />
    
-   <field name="title" type="string" indexed="true" stored="true" />
+   <field name="title" type="textgen" indexed="true" stored="true" />
    
    <!-- Music --> 
-   <field name="artist" type="string" indexed="true" stored="true" multiValued="true" />
-   <filed name="album" type="string" indexed="true" stored="true" />
+   <field name="artist" type="text" indexed="true" stored="true" multiValued="true" />
+   <field name="album" type="text" indexed="true" stored="true" />
    <field name="year" type="string" indexed="true" stored="true" />
    <field name="genre" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="trackNumber" type="int" indexed="true" stored="true" />
@@ -454,13 +456,10 @@
    <field name="date" type="date" indexed="true" stored="true" />
    
    <!-- Videos -->
-   <field name="director" type="string" indexed="true" stored="true" multiValued="true" />
+   <field name="director" type="text" indexed="true" stored="true" multiValued="true" />
    
    <!-- Documents -->
 
-   
-   
-   
    
    
 <!-- Quitado del Original
@@ -500,17 +499,17 @@
 
    <!-- catchall field, containing all other searchable text fields (implemented
         via copyField further on in this schema  -->
-   <field name="text" type="text" indexed="true" stored="false" multiValued="true"/>
+<!--   <field name="text" type="text" indexed="true" stored="false" multiValued="true"/> -->
 
    <!-- catchall text field that indexes tokens both normally and in reverse for efficient
         leading wildcard queries. -->
-   <field name="text_rev" type="text_rev" indexed="true" stored="false" multiValued="true"/>
+<!--   <field name="text_rev" type="text_rev" indexed="true" stored="false" multiValued="true"/> -->
 
    <!-- non-tokenized version of manufacturer to make it easier to sort or group
         results by manufacturer.  copied from "manu" via copyField -->
-   <field name="manu_exact" type="string" indexed="true" stored="false"/>
+<!--   <field name="manu_exact" type="string" indexed="true" stored="false"/> -->
 
-   <field name="payloads" type="payloads" indexed="true" stored="true"/>
+<!--   <field name="payloads" type="payloads" indexed="true" stored="true"/> -->
 
    <!-- Uncommenting the following will create a "timestamp" field using
         a default value of "NOW" to indicate when each document was indexed.
@@ -564,7 +563,7 @@
  <uniqueKey>id</uniqueKey>
 
  <!-- field for the QueryParser to use when an explicit fieldname is absent -->
- <defaultSearchField>text</defaultSearchField>
+ <defaultSearchField>title</defaultSearchField>
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="OR"/>
