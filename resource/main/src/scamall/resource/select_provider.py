@@ -41,7 +41,14 @@ class SelectProvider(object):
         if type_name == 'mysql-db':
             return MysqlDB()
         else:
-            return None
+            return None        
+
+def get_all_providers():
+    '''
+    Gets a dictionary with all apps containing a list of all keys.
+    
+    '''
+    pass
         
 class NotExistingProviderError(Exception):
     pass

@@ -2,6 +2,8 @@
 '''
 Created on 10/08/2010
 
+It works for usage during the install of applications.
+
 @author: David Navarro Estruch
 '''
 
@@ -14,7 +16,7 @@ def main():
             "\t%prog request app_id key_name resource [[-o optional_arg]]\n" + \
             "\t%prog release app_id key_name [[-o optional_arg]]\n" + \
             "\t%prog value   app_id key_name/subkey \n" + \
-            "\n\n" + \
+            "\n" + \
             "Optional args:\n" + \
             "\t-o --optional_arg: Provides a optional_arg"
     parser = OptionParser(usage)

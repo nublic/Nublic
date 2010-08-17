@@ -1,27 +1,19 @@
+#!/usr/bin/python
+
 '''
 Created on 10/08/2010
 
 @author: David Navarro Estruch
 '''
 import dbus
+import dbus.service
+import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 from scamall.resource.select_provider import SelectProvider
 
-class dbusMain(dbus.service.Object):
-    '''
-    TODO
-    '''
-
-
-    def __init__(self, params):
-        '''
-        Constructor
-        '''
-        pass
-      
 class DBusValue(dbus.service.Object):
     bus_path = 'com.scamall.resource'
-    _base_object_path = 'com/scamall/resource'
+    _base_object_path = '/com/scamall/resource'
     
     def __init__(self, app_name, key):
         self.app = app_name
@@ -39,4 +31,10 @@ class DBusValue(dbus.service.Object):
 
 if __name__ == '__main__':
     DBusGMainLoop(set_as_default=True)
-
+    
+    provider = SelectProvider()
+    
+    dbus = DBusValue("app","key")
+    
+    loop = gobject.MainLoop()
+    loop.run()

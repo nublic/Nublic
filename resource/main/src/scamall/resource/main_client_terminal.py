@@ -1,0 +1,49 @@
+#!/usr/bin/python
+'''
+Created on 10/08/2010
+
+It works for usage during the install of applications.
+
+@author: David Navarro Estruch
+'''
+
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+#logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG) # TODO DEACTIVATE
+logging.getLogger('sqlalchemy.engine').setLevel(logging.CRITICAL) # TODO ACTIVATE
+
+
+from optparse import OptionParser
+
+import dbus
+
+
+def main():
+    usage = "usage: \n" + \
+            "\t%prog value   app_id key_name/subkey \n"
+    parser = OptionParser(usage)
+    parser.add_option("-o", "--optional-args", action="append", type="string", dest="optional")
+    (_, args) = parser.parse_args()
+    
+    if len(args) != 3:
+        parser.error("Invalid number of parameters")
+
+    if args[0] == 'value':
+        app = args[1]
+        key_subkey = args[2]
+        key, separator, subkey = key_subkey.partition("/")
+        
+        bus = dbus.SystemBus()
+        valueService = bus.get_object('com.scamall.resource', '/com/scamall/resource/'+app+'/'+ key)
+        value = valueService.get_dbus_method("value", 'com.scamall.resource')
+        
+        if separator != "/": # Doesn't have a subkey value
+            print value('None')
+        else:
+            print value(subkey)
+    else:
+        parser.error("Invalid order")
+
+if __name__ == '__main__':
+    main()
