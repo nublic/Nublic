@@ -17,7 +17,7 @@
         <init-param>
             <description>Application widgetset</description>
             <param-name>widgetset</param-name>
-            <param-value>com.scamall.app.widget.flowplayer.gwt.FlowplayerWidgetSet</param-value>
+            <param-value>com.scamall.app.widget.FlowplayerWidgetSet</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

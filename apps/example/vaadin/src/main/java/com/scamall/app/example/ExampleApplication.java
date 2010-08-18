@@ -15,6 +15,8 @@
  */
 package com.scamall.app.example;
 
+import com.scamall.app.widget.flowplayer.Clip;
+import com.scamall.app.widget.flowplayer.ClipScaling;
 import com.scamall.app.widget.flowplayer.Flowplayer;
 import com.vaadin.Application;
 import com.vaadin.ui.Button;
@@ -48,15 +50,33 @@ public class ExampleApplication extends Application {
 				layout.getWindow().showNotification(
 						"Hello, " + nameText.getValue() + "!",
 						Window.Notification.TYPE_WARNING_MESSAGE);
-				;
+				event.getButton().setCaption((String)nameText.getValue());
 			}
 		});
 		layout.addComponent(greetButton);
 
 		Flowplayer player = new Flowplayer();
+		player.setHeight("300px");
+		player.setWidth("500px");
+
+		for (String clip_url : getSeveredFifthAlbum()) {
+			Clip clip = new Clip(clip_url, ClipScaling.FIT_PRESERVING_ASPECT_RATIO);
+			player.getPlaylist().add(clip);
+		}
+		player.setCurrentClip(player.getPlaylist().get(0));
+
 		layout.addComponent(player);
 
 		window.addComponent(layout);
+	}
+	
+	public String[] getSeveredFifthAlbum() {
+		return new String[] {
+				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-beatingheart.mp3",
+				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-takethetest.mp3",
+				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-dollarplague.mp3",
+				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-thelake.mp3"
+		};
 	}
 
 }

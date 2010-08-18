@@ -42,6 +42,7 @@
               <noServer>true</noServer>
               <port>8080</port>
               <soyc>false</soyc>
+              <style>PRETTY</style>
             </configuration>
             <goals>
               <goal>resources</goal>

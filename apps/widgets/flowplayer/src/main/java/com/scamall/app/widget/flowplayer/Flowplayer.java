@@ -2,7 +2,7 @@ package com.scamall.app.widget.flowplayer;
 
 import java.util.Map;
 
-import com.scamall.app.widget.flowplayer.gwt.client.VFlowplayer;
+import com.scamall.app.widget.flowplayer.client.VFlowplayer;
 
 import com.vaadin.terminal.PaintException;
 import com.vaadin.terminal.PaintTarget;
@@ -22,10 +22,15 @@ public class Flowplayer extends AbstractComponent {
 
 	private Playlist playlist;
 	private PlayerState state;
-	private long current_clip_id;
-	private long volume;
-	private boolean repeat;
-	private boolean random;
+	private int current_clip_id;
+	private int volume;
+	private boolean muted;
+
+	/**
+	 * For styling the control bar
+	 */
+	private String controls_css_class;
+	private double controls_height;
 
 	/**
 	 * @return the state
@@ -45,7 +50,7 @@ public class Flowplayer extends AbstractComponent {
 	/**
 	 * @return the volume
 	 */
-	public long getVolume() {
+	public int getVolume() {
 		return volume;
 	}
 
@@ -53,38 +58,23 @@ public class Flowplayer extends AbstractComponent {
 	 * @param volume
 	 *            the volume to set
 	 */
-	public void setVolume(long volume) {
+	public void setVolume(int volume) {
 		this.volume = volume;
 	}
 
 	/**
-	 * @return the repeat
+	 * @return the muted
 	 */
-	public boolean isRepeat() {
-		return repeat;
+	public boolean isMuted() {
+		return muted;
 	}
 
 	/**
-	 * @param repeat
-	 *            the repeat to set
+	 * @param muted
+	 *            the muted to set
 	 */
-	public void setRepeat(boolean repeat) {
-		this.repeat = repeat;
-	}
-
-	/**
-	 * @return the random
-	 */
-	public boolean isRandom() {
-		return random;
-	}
-
-	/**
-	 * @param random
-	 *            the random to set
-	 */
-	public void setRandom(boolean random) {
-		this.random = random;
+	public void setMuted(boolean muted) {
+		this.muted = muted;
 	}
 
 	/**
@@ -100,8 +90,8 @@ public class Flowplayer extends AbstractComponent {
 	public Clip getCurrentClip() {
 		if (current_clip_id == -1)
 			return null;
-		
-		return playlist.get(current_clip_id);
+
+		return playlist.getClip(current_clip_id);
 	}
 
 	/**
@@ -113,19 +103,73 @@ public class Flowplayer extends AbstractComponent {
 		this.current_clip_id = clip.getId();
 	}
 
+	/**
+	 * @return the controls CSS class
+	 */
+	public String getControlsCSSClass() {
+		return controls_css_class;
+	}
+
+	/**
+	 * @param controls_css_class
+	 *            the controls CSS class to set
+	 */
+	public void setControlsCSSClass(String controls_css_class) {
+		this.controls_css_class = controls_css_class;
+	}
+
+	/**
+	 * @return the controls height
+	 */
+	public double getControlsHeight() {
+		return controls_height;
+	}
+
+	/**
+	 * @param controls_height
+	 *            the controls height to set
+	 */
+	public void setControlsHeight(double controls_height) {
+		this.controls_height = controls_height;
+	}
+
+	public Flowplayer() {
+		this.playlist = new Playlist(this);
+		this.state = PlayerState.PLAYING;
+		this.current_clip_id = -1;
+		this.volume = 20;
+		this.controls_css_class = "hulu";
+		this.controls_height = 40;
+	}
+
 	@Override
 	public void paintContent(PaintTarget target) throws PaintException {
 		super.paintContent(target);
 
-		/*
-		 * // Paint any component specific content by setting attributes //
-		 * These attributes can be read in updateFromUIDL in the widget.
-		 * target.addAttribute("clicks", clicks); target.addAttribute("message",
-		 * message);
-		 * 
-		 * // We could also set variables in which values can be returned // but
-		 * declaring variables here is not required
-		 */
+		// Set dimensions
+		target.addAttribute("player_width", this.getWidth());
+		target.addAttribute("player_height", this.getHeight());
+		target.addAttribute("controls_css_class", this.controls_css_class);
+		target.addAttribute("controls_height", this.controls_height);
+
+		// Set global player attributes
+		target.addAttribute("state", this.state.serializeToUidl());
+		target.addAttribute("current_clip_id", this.current_clip_id);
+		target.addAttribute("volume", this.volume);
+		target.addAttribute("muted", this.muted);
+
+		// Set clip attributes
+		Clip clip = this.getCurrentClip();
+		if (clip == null) {
+			for (String attribute : Clip.getUidlSerializableAttributes()) {
+				target.addAttribute("current_clip_" + attribute, "");
+			}
+		} else {
+			for (String attribute : Clip.getUidlSerializableAttributes()) {
+				target.addAttribute("current_clip_" + attribute,
+						clip.getUidlSerializedAttribute(attribute));
+			}
+		}
 	}
 
 	/**
@@ -136,19 +180,22 @@ public class Flowplayer extends AbstractComponent {
 	@Override
 	public void changeVariables(Object source, Map<String, Object> variables) {
 		super.changeVariables(source, variables);
-
-		// Variables set by the widget are returned in the "variables" map.
-
-		/*
-		 * if (variables.containsKey("click")) {
-		 * 
-		 * // When the user has clicked the component we increase the // click
-		 * count, update the message and request a repaint so // the changes are
-		 * sent back to the client. clicks++; message += "<br/>" +
-		 * variables.get("click");
-		 * 
-		 * requestRepaint(); }
-		 */
+		
+		if (variables.containsKey("finished")) {
+			
+		}
+		if (variables.containsKey("next")) {
+			int clip_id = (Integer)variables.get("next");
+			Clip the_clip = this.playlist.getClip(clip_id);
+			this.setCurrentClip(this.playlist.getNextClip(the_clip));
+			requestRepaint();
+		}
+		if (variables.containsKey("previous")) {
+			int clip_id = (Integer)variables.get("previous");
+			Clip the_clip = this.playlist.getClip(clip_id);
+			this.setCurrentClip(this.playlist.getPreviousClip(the_clip));
+			requestRepaint();
+		}
 	}
 
 }

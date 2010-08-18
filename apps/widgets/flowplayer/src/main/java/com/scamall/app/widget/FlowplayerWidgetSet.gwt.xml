@@ -3,10 +3,23 @@
 	    This file is automatically updated based on new dependencies by the
 	    goal "vaadin:update-widgetset".
 	-->
+	
+	<source path="flowplayer">
+		<exclude name="BasePlaylist.java" />
+		<exclude name="Flowplayer.java" />
+		<exclude name="FlowplayerTestApplication.java" />
+		<exclude name="Playlist.java" />
+	</source>
 
 	<!-- Inherit DefaultWidgetSet -->
-	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
-		
+	<inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />	
+	
+	<!-- Widgetset default theme -->
+	<!-- This is relative to widgetset_directory/public -->	
+	<script src="flowplayer-3.2.2.min.js"></script>
+	<script src="flowplayer.controls-3.0.2.js"></script>
+	
+	<stylesheet src="controls.css"></stylesheet>
 
     <!--
      Uncomment the following to compile the widgetset for one browser only.
@@ -23,6 +36,4 @@
     -->
   	<set-property name="user.agent" value="gecko1_8,safari"/>
     
-
-    <inherits name="com.scamall.app.widget.FlowplayerWidgetSet" />
 </module>
