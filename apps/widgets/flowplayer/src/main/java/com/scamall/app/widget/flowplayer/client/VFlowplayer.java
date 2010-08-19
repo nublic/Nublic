@@ -55,7 +55,7 @@ public class VFlowplayer extends HTML implements Paintable {
 		this.current_clip_scaling = null;
 	}
 
-	public void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+	public synchronized void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
 
 		/* @section Generated code needed for handling the widget */
 		// This call should be made first.
@@ -144,15 +144,15 @@ public class VFlowplayer extends HTML implements Paintable {
 		
 		if (new_current_clip_id != this.current_clip_id) {
 			if (new_current_clip_id == -1) {
-				this.setNativeNoPlaylist();
 				this.current_clip_id = -1;
 				this.current_clip_url = null;
 				this.current_clip_scaling = null;
+				this.setNativeNoPlaylist();
 			} else {
-				this.setNativeCurrentClip(new_current_clip_url, new_current_clip_scaling.serializeToUidl(), new_current_clip_id);
 				this.current_clip_id = new_current_clip_id;
 				this.current_clip_url = new_current_clip_url;
 				this.current_clip_scaling = new_current_clip_scaling;
+				this.setNativeCurrentClip(new_current_clip_url, new_current_clip_scaling.serializeToUidl(), new_current_clip_id);
 				
 				if (new_state == PlayerState.PLAYING) {
 					this.play();
@@ -202,15 +202,15 @@ public class VFlowplayer extends HTML implements Paintable {
 		while($wnd.flowplayer == undefined) ;
 		
 		outside_world = this;
-		$wnd.flowplayer(playerId, basePath + "flowplayer-3.2.2.swf",
+		$wnd.flowplayer(playerId, basePath + "flowplayer-3.2.3.swf",
 			{
 				"clip": {
 					"autoPlay": false,
-					"autoBuffering": true
+					"autoBuffering": false
 				},
 				"plugins": {
 					"audio": {
-						"url": basePath + "flowplayer.audio-3.2.0.swf"
+						"url": basePath + "flowplayer.audio-3.2.1.swf"
 					},
 					"controls": null
 				}
@@ -218,17 +218,20 @@ public class VFlowplayer extends HTML implements Paintable {
 			.controls(playerId + "_controls", {"duration":0})
 			.onLoad(function() {
 				player = $wnd.flowplayer(playerId);
-				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player = player;
-				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::refreshFromUIDL(Lcom/vaadin/terminal/gwt/client/UIDL;)(first_uidl);
-				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::loaded = true;
+				player.pause();
 				
 				player.onBegin(function(clip) {
 					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::clipStarted(I)(clip.clip_id);
 				});
 				player.onFinish(function(clip) {
+					player.stop();
 					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::clipFinished(I)(clip.clip_id);
 					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::requestNext(I)(clip.clip_id);
 				});
+				
+				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player = player;
+				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::loaded = true;
+				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::refreshFromUIDL(Lcom/vaadin/terminal/gwt/client/UIDL;)(first_uidl);
 				
 				return true;
 			});
@@ -250,10 +253,10 @@ public class VFlowplayer extends HTML implements Paintable {
 	/*-{
 		player = this.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player;
 	  	
-	    clip = {"url": url, "scaling": scaling, "autoBuffering": true, "clip_id": clipId};
+	    clip = {"url": url, "scaling": scaling, "clip_id": clipId};
 	    player.setClip(clip);
 	    player.pause();
-	    player.startBuffering();
+	    // player.startBuffering();
 	}-*/;
 
 	native double getNativeVolume()
@@ -292,12 +295,16 @@ public class VFlowplayer extends HTML implements Paintable {
 		
 		var clip_timer = null;
         clip_timer = setInterval(function() {
-            var c = p.getStatus();
-            if ((c.bufferEnd - c.bufferStart) > 1.0) {
-                p.play();
+            var c = player.getStatus();
+            if (c === undefined || c === null || c.bufferStart === undefined || c.bufferStart === null)
+            	return;
+            if ((c.bufferEnd - c.bufferStart) > 0.5) {
+                player.play();
                 clearInterval(clip_timer);
             }
-        }, 50);
+        }, 500);
+        
+        player.startBuffering();
 	}-*/;
 
 	native void pause()
