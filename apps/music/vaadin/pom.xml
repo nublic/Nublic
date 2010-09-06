@@ -10,7 +10,7 @@
   <artifactId>app.music.vaadin</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>Vaadin Web Application</name>
+  <name>Scamall Music App - Vaadin Part</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
