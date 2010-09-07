@@ -2,13 +2,14 @@ Source: scamall-notification
 Section: web
 Priority: extra
 Maintainer: David Navarro Estruch <david@ardinformatica.com>
-Build-Depends: cdbs, debhelper (>= 7)
+Build-Depends: cdbs, debhelper (>= 7), python (>= 2.6), python-support (>= 0.5.3)
 Standards-Version: 3.8.1
+XS-Python-Version: >= 2.6
 Homepage: http://scamall.ardinformatica.com
 
 Package: scamall-notification
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}, python (>= 2.6), python-central, python-dbus, python-elixir, python-sqlalchemy
+Depends: mysql-server, dbus, python (>= 2.6), python-central, python-dbus, python-elixir, python-sqlalchemy
 Description: The Scamall Notification system.
  A system providing an easy way to send notifications
- via console and dbus. It is intended to work with Scamall.
+ via console and D-bus. It is intended to work with Scamall.
