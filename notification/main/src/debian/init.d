@@ -41,11 +41,14 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 DAEMON=/usr/sbin/scamall-notification-daemon # Introduce the server's location here
-NAME=#PACKAGE              # Introduce the short server's name here
-DESC=#PACKAGE              # Introduce a short description here
+NAME="scamall-notification-daemon"                # Introduce the short server's name here
+DESC="System that manages notification via D-Bus" # Introduce a short description here
 LOGDIR=/var/log/scamall-notification  # Log directory to use
 
 PIDFILE=/var/run/$NAME.pid
+
+# MIO
+export PIDFILE
 
 test -x $DAEMON || exit 0
 
@@ -108,9 +111,6 @@ running_pid() {
     name=$2
     [ -z "$pid" ] && return 1
     [ ! -d /proc/$pid ] &&  return 1
-    cmd=`cat /proc/$pid/cmdline | tr "\000" "\n"|head -n 1 |cut -d : -f 1`
-    # Is this the expected server
-    [ "$cmd" != "$name" ] &&  return 1
     return 0
 }
 
@@ -128,13 +128,16 @@ running() {
 start_server() {
 # Start the process using the wrapper
         if [ -z "$DAEMONUSER" ] ; then
-            start_daemon -p $PIDFILE $DAEMON $DAEMON_OPTS
+#            start-stop-daemon --start --quiet --pidfile $PIDFILE \
+#                         --exec $DAEMON -- start $DAEMON_OPTS
+             $DAEMON start
             errcode=$?
         else
 # if we are using a daemonuser then change the user id
-            start-stop-daemon --start --quiet --pidfile $PIDFILE \
-                        --chuid $DAEMONUSER \
-                        --exec $DAEMON -- $DAEMON_OPTS
+#            start-stop-daemon --start --quiet --pidfile $PIDFILE \
+#                        --chuid $DAEMONUSER \
+#                        --exec $DAEMON -- start $DAEMON_OPTS
+              $DAEMON start
             errcode=$?
         fi
         return $errcode
@@ -143,13 +146,16 @@ start_server() {
 stop_server() {
 # Stop the process using the wrapper
         if [ -z "$DAEMONUSER" ] ; then
-            killproc -p $PIDFILE $DAEMON
+#            start-stop-daemon --stop --quiet --pidfile $PIDFILE \
+#                        --exec $DAEMON -- stop
+             $DAEMON stop
             errcode=$?
         else
 # if we are using a daemonuser then look for process that match
             start-stop-daemon --stop --quiet --pidfile $PIDFILE \
                         --user $DAEMONUSER \
-                        --exec $DAEMON
+                        --exec $DAEMON -- stop
+             $DAEMON stop
             errcode=$?
         fi
 
@@ -255,7 +261,6 @@ case "$1" in
         else
             log_progress_msg "apparently not running"
             log_end_msg 1
-            exit 1
         fi
         ;;
   # Use this if the daemon cannot reload

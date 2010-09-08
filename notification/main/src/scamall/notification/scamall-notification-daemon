@@ -5,12 +5,16 @@ Created on 10/08/2010
 
 @author: David Navarro Estruch
 '''
+import os
+import sys
 import dbus
 import dbus.service
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
-from scamall.notification.model import *
 from elixir import session, setup_all
+
+from scamall.notification.model import *
+from scamall.notification.daemon import Daemon
 
 class DBusNotification(dbus.service.Object):
     bus_path = 'com.scamall.notification'
@@ -72,10 +76,34 @@ class DBusNotification(dbus.service.Object):
         session.commit()
         return 0
 
-if __name__ == '__main__':
+def main():
     DBusGMainLoop(set_as_default=True)
 
     notificator = DBusNotification()
-    
     loop = gobject.MainLoop()
     loop.run()
+
+class NotificationDaemon(Daemon):
+
+    def run(self):
+        main()
+
+
+if __name__ == '__main__':
+    daemon = NotificationDaemon(os.environ['PIDFILE'])
+    if len(sys.argv) == 2:
+        if 'start' == sys.argv[1]:
+            daemon.start()
+        elif 'stop' == sys.argv[1]:
+            daemon.stop()
+        elif 'restart' == sys.argv[1]:
+            daemon.restart()
+        elif 'run' == sys.argv[1]:
+            daemon.run()
+        else:
+            print "Unknown command"
+            sys.exit(2)
+    else:
+        print "Not command"
+        sys.exit(2)
+    sys.exit(0)
