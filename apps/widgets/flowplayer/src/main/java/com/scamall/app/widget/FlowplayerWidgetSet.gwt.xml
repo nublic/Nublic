@@ -5,10 +5,10 @@
 	-->
 	
 	<source path="flowplayer">
-		<exclude name="BasePlaylist.java" />
+		<exclude name="Clip.java" />
+		<exclude name="ClipContainer.java" />
 		<exclude name="Flowplayer.java" />
 		<exclude name="FlowplayerTestApplication.java" />
-		<exclude name="Playlist.java" />
 	</source>
 
 	<!-- Inherit DefaultWidgetSet -->
@@ -16,7 +16,7 @@
 	
 	<!-- Widgetset default theme -->
 	<!-- This is relative to widgetset_directory/public -->	
-	<script src="flowplayer-3.2.3.min.js"></script>
+	<script src="flowplayer-3.2.4.min.js"></script>
 	<script src="flowplayer.controls-3.0.2.js"></script>
 	
 	<stylesheet src="controls.css"></stylesheet>

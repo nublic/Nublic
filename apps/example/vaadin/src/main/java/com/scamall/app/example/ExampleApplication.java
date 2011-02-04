@@ -54,16 +54,16 @@ public class ExampleApplication extends Application {
 			}
 		});
 		layout.addComponent(greetButton);
-
+		
 		Flowplayer player = new Flowplayer();
 		player.setHeight("300px");
 		player.setWidth("500px");
-
+		
 		for (String clip_url : getSeveredFifthAlbum()) {
 			Clip clip = new Clip(clip_url, ClipScaling.FIT_PRESERVING_ASPECT_RATIO);
-			player.getPlaylist().add(clip);
+			player.getPlaylist().addItem(clip);
 		}
-		player.setCurrentClip(player.getPlaylist().get(0));
+		player.setCurrentClip(player.getPlaylist().firstItemId());
 
 		layout.addComponent(player);
 

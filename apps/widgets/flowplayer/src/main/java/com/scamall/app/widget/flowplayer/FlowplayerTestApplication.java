@@ -12,10 +12,10 @@ public class FlowplayerTestApplication extends Application {
 	public void init() {
 		Window mainWindow = new Window("flowplayer Example App");
 
-		Flowplayer player = new Flowplayer();
+		/* Flowplayer player = new Flowplayer();
 		player.setHeight("300px");
 		player.setWidth("425px");
-		mainWindow.addComponent(player);
+		mainWindow.addComponent(player); */
 
 		setMainWindow(mainWindow);
 	}

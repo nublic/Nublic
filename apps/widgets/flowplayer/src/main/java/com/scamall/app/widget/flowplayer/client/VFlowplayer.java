@@ -41,7 +41,6 @@ public class VFlowplayer extends HTML implements Paintable {
 	private JavaScriptObject player;
 	private PlayerState state;
 
-	private int current_clip_id;
 	private String current_clip_url;
 	private ClipScaling current_clip_scaling;
 
@@ -50,12 +49,12 @@ public class VFlowplayer extends HTML implements Paintable {
 		setStyleName(CLASSNAME);
 
 		this.state = PlayerState.STOPPED;
-		this.current_clip_id = -1;
 		this.current_clip_url = null;
 		this.current_clip_scaling = null;
 	}
 
-	public synchronized void updateFromUIDL(UIDL uidl, ApplicationConnection client) {
+	public synchronized void updateFromUIDL(UIDL uidl,
+			ApplicationConnection client) {
 
 		/* @section Generated code needed for handling the widget */
 		// This call should be made first.
@@ -133,56 +132,54 @@ public class VFlowplayer extends HTML implements Paintable {
 		boolean muted = uidl.getBooleanAttribute("muted");
 		this.setNativeVolume(volume, muted);
 
-		PlayerState new_state = PlayerState.deserializeFromUidl(uidl
+		PlayerState new_state = PlayerState.valueOf(uidl
 				.getStringAttribute("state"));
-		int new_current_clip_id = uidl.getIntAttribute("current_clip_id");
 		String new_current_clip_url = uidl
 				.getStringAttribute("current_clip_url");
-		ClipScaling new_current_clip_scaling = ClipScaling
-				.deserializeFromUidl(uidl
-						.getStringAttribute("current_clip_scaling"));
-		
-		if (new_current_clip_id != this.current_clip_id) {
-			if (new_current_clip_id == -1) {
-				this.current_clip_id = -1;
+		ClipScaling new_current_clip_scaling = ClipScaling.valueOf(uidl
+				.getStringAttribute("current_clip_scaling"));
+
+		if ((!new_current_clip_url.equals(this.current_clip_url))
+				|| (!new_current_clip_scaling.equals(this.current_clip_scaling))) {
+			if (new_current_clip_url == null || new_current_clip_url == "") {
 				this.current_clip_url = null;
 				this.current_clip_scaling = null;
 				this.setNativeNoPlaylist();
 			} else {
-				this.current_clip_id = new_current_clip_id;
 				this.current_clip_url = new_current_clip_url;
 				this.current_clip_scaling = new_current_clip_scaling;
-				this.setNativeCurrentClip(new_current_clip_url, new_current_clip_scaling.serializeToUidl(), new_current_clip_id);
-				
+				this.setNativeCurrentClip(new_current_clip_url,
+						new_current_clip_scaling.getFlowplayerName());
+
 				if (new_state == PlayerState.PLAYING) {
 					this.play();
 				}
 			}
 		} else {
-			
+
 		}
 	}
-	
-	void clipStarted(int clipId) {
-		client.updateVariable(paintableId, "start", clipId, true);
+
+	void clipStarted() {
+		client.updateVariable(paintableId, "start", "", true);
 	}
-	
-	void clipFinished(int clipId) {
-		client.updateVariable(paintableId, "finished", clipId, true);
+
+	void clipFinished() {
+		client.updateVariable(paintableId, "finished", "", true);
 	}
-	
+
 	void stateChanged(String state) {
 		client.updateVariable(paintableId, "state", state, true);
 	}
-	
-	void requestPrevious(int clipId) {
-		client.updateVariable(paintableId, "previous", clipId, true);
+
+	void requestPrevious() {
+		client.updateVariable(paintableId, "previous", "", true);
 	}
-	
-	void requestNext(int clipId) {
-		client.updateVariable(paintableId, "next", clipId, true);
+
+	void requestNext() {
+		client.updateVariable(paintableId, "next", "", true);
 	}
-	
+
 	void volumeChanged(int volume, boolean muted) {
 		HashMap<String, Object> values = new HashMap<String, Object>();
 		values.put("volume", volume);
@@ -202,11 +199,11 @@ public class VFlowplayer extends HTML implements Paintable {
 		while($wnd.flowplayer == undefined) ;
 		
 		outside_world = this;
-		$wnd.flowplayer(playerId, basePath + "flowplayer-3.2.3.swf",
+		var player = $wnd.flowplayer(playerId, basePath + "flowplayer-3.2.5.swf",
 			{
 				"clip": {
 					"autoPlay": false,
-					"autoBuffering": false
+					"autoBuffering": true
 				},
 				"plugins": {
 					"audio": {
@@ -217,16 +214,17 @@ public class VFlowplayer extends HTML implements Paintable {
 			})
 			.controls(playerId + "_controls", {"duration":0})
 			.onLoad(function() {
+				alert("LOADED!");
 				player = $wnd.flowplayer(playerId);
 				player.pause();
 				
 				player.onBegin(function(clip) {
-					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::clipStarted(I)(clip.clip_id);
+					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::clipStarted()();
 				});
 				player.onFinish(function(clip) {
 					player.stop();
-					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::clipFinished(I)(clip.clip_id);
-					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::requestNext(I)(clip.clip_id);
+					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::clipFinished()();
+					outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::requestNext()();
 				});
 				
 				outside_world.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player = player;
@@ -235,12 +233,9 @@ public class VFlowplayer extends HTML implements Paintable {
 				
 				return true;
 			});
-	}-*/;
-
-	native Long getNativeCurrentClipId()
-	/*-{
-		player = this.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player;
-		return player.getClip().clip_id;
+		
+		// Load the player into memory
+		player.load();
 	}-*/;
 
 	native void setNativeNoPlaylist()
@@ -249,11 +244,11 @@ public class VFlowplayer extends HTML implements Paintable {
 	    player.setPlaylist([]);
 	}-*/;
 
-	native void setNativeCurrentClip(String url, String scaling, int clipId)
+	native void setNativeCurrentClip(String url, String scaling)
 	/*-{
 		player = this.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player;
 	  	
-	    clip = {"url": url, "scaling": scaling, "clip_id": clipId};
+	    clip = {"url": url, "scaling": scaling};
 	    player.setClip(clip);
 	    player.pause();
 	    // player.startBuffering();
@@ -294,17 +289,17 @@ public class VFlowplayer extends HTML implements Paintable {
 		player = this.@com.scamall.app.widget.flowplayer.client.VFlowplayer::player;
 		
 		var clip_timer = null;
-        clip_timer = setInterval(function() {
-            var c = player.getStatus();
-            if (c === undefined || c === null || c.bufferStart === undefined || c.bufferStart === null)
-            	return;
-            if ((c.bufferEnd - c.bufferStart) > 0.5) {
-                player.play();
-                clearInterval(clip_timer);
-            }
-        }, 500);
-        
-        player.startBuffering();
+	    clip_timer = setInterval(function() {
+	        var c = player.getStatus();
+	        if (c === undefined || c === null || c.bufferStart === undefined || c.bufferStart === null)
+	        	return;
+	        if ((c.bufferEnd - c.bufferStart) > 0.5) {
+	            player.play();
+	            clearInterval(clip_timer);
+	        }
+	    }, 500);
+	    
+	    player.startBuffering();
 	}-*/;
 
 	native void pause()

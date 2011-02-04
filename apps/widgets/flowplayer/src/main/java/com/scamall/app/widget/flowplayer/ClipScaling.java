@@ -35,21 +35,7 @@ public enum ClipScaling {
 	/**
 	 * @return The name of the scaling in Flowplayer.
 	 */
-	public String serializeToUidl() {
+	public String getFlowplayerName() {
 		return this.flowplayer_name;
-	}
-	
-	/**
-	 * Creates a new ClipScaling object based on its Flowplayer name.
-	 * @param flowplayer_name
-	 * @return The new scaling value.
-	 * @throws IllegalArgumentException If the name is not valid.
-	 */
-	public static ClipScaling deserializeFromUidl(String flowplayer_name) {
-		for (ClipScaling sc : ClipScaling.values()) {
-			if (sc.serializeToUidl().equals(flowplayer_name))
-				return sc;
-		}
-		throw new IllegalArgumentException();
 	}
 }
