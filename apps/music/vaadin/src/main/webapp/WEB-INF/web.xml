@@ -12,7 +12,7 @@
         <init-param>
             <description>Vaadin application class to start</description>
             <param-name>application</param-name>
-            <param-value>org.vaadin.app.music.MusicApplication</param-value>
+            <param-value>com.scamall.app.mp3scanner.MyVaadinApplication</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

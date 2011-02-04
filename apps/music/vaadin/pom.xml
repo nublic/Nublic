@@ -102,6 +102,11 @@
       <snapshots>
       </snapshots>
     </repository>
+    <repository>
+    	<id>jaudiotagger</id>
+    	<name>Jaudiotagger</name>
+    	<url>http://download.java.net/maven/2/</url>
+    </repository>
   </repositories>
 
   <!--
@@ -135,6 +140,37 @@
       <artifactId>vaadin</artifactId>
       <version>6.4.0</version>
     </dependency>
+    <dependency>
+      <artifactId>solr-solrj</artifactId>
+      <groupId>org.apache.solr</groupId>
+      <version>1.4.0</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.5.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <version>1.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.javamusictag</groupId>
+      <artifactId>jid3lib</artifactId>
+      <version>0.5.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta-regexp</groupId>
+      <artifactId>jakarta-regexp</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+
     <!-- This is also used by gwt-maven-plugin to deduce GWT version number. -->
     <!--
     <dependency>
@@ -144,6 +180,26 @@
       <scope>provided</scope>
     </dependency>
     -->
+    <dependency>
+    	<groupId>org.cmc.music</groupId>
+    	<artifactId>myid3</artifactId>
+    	<version>0.83</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.blinkenlights.jid3</groupId>
+    	<artifactId>JID3</artifactId>
+    	<version>0.46</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.jaudiotagger</groupId>
+    	<artifactId>jaudiotagger</artifactId>
+    	<version>2.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.roarsoftware</groupId>
+    	<artifactId>lastfm</artifactId>
+    	<version>7.3</version>
+    </dependency>
   </dependencies>
 
 </project>

@@ -22,28 +22,25 @@ def main():
     (options, args) = parser.parse_args()
     
     setup_all()
-    app = options.app
-    user = options.user
-    level = options.level
-    text = options.text
+
     opt_actions = options.action
-    stocks = options.stock
-    
     actions = []
     for opt in opt_actions:
         a = Action()
         a.label, a.link, a.description = opt
         actions.append(a)
+
+    stocks = options.stock
       
     newNotif = Notification()
-    newNotif.app = app
-    newNotif.user = user
-    newNotif.level = level
-    newNotif.description = text
+    newNotif.app = options.app
+    newNotif.user = options.user
+    newNotif.level = options.level
+    newNotif.text = options.text
     newNotif.actions = actions
     session.commit()
 
-    Notification.query.all()
+    # Notification.query.all()
    
 if __name__ == '__main__':
     main()
