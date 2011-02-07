@@ -24,5 +24,5 @@
   	<set-property name="user.agent" value="gecko1_8,safari"/>
     
 
-    <inherits name="com.scamall.app.widget.FlowplayerWidgetSet" />
+    <inherits name="com.scamall.app.widget.MediaplayerWidgetSet" />
 </module>

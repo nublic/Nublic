@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.scamall.app.widget.flowplayer;
+package com.scamall.app.widget.mediaplayer;
 
 import java.io.Serializable;
 
@@ -19,11 +19,15 @@ public class Clip implements Serializable {
 	private static final long serialVersionUID = 6840417551899445042L;
 
 	private String url;
-	private ClipScaling scaling;
+	private String poster_url;
 
-	public Clip(String url, ClipScaling scaling) {
+	public Clip(String url) {
+		this(url, null);
+	}
+	
+	public Clip(String url, String poster_url) {
 		this.url = url;
-		this.scaling = scaling;
+		this.poster_url = null;
 	}
 
 	/**
@@ -34,13 +38,13 @@ public class Clip implements Serializable {
 	public String getUrl() {
 		return this.url;
 	}
-
+	
 	/**
-	 * Gets the clip scaling
+	 * Gets the poster URL for this clip
 	 * 
-	 * @return The clip scaling
+	 * @return The poster URL
 	 */
-	public ClipScaling getScaling() {
-		return this.scaling;
+	public String getPosterUrl() {
+		return this.poster_url;
 	}
 }

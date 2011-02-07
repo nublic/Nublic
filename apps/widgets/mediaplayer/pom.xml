@@ -3,10 +3,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.scamall</groupId>
-  <artifactId>app.widget.flowplayer</artifactId>
+  <artifactId>app.widget.mediaplayer</artifactId>
   <packaging>jar</packaging>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Flowplayer Widget for Vaadin</name>
+  <version>0.0.2-SNAPSHOT</version>
+  <name>Media player Widget for Vaadin, based on Projekktor</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -49,7 +49,7 @@
               -->
 
               <!-- Comma-separated list of widgetsets in the package -->
-              <Vaadin-Widgetsets>com.scamall.app.widget.FlowplayerWidgetSet</Vaadin-Widgetsets>
+              <Vaadin-Widgetsets>com.scamall.app.widget.MediaplayerWidgetSet</Vaadin-Widgetsets>
             </manifestEntries>
           </archive>
         </configuration>

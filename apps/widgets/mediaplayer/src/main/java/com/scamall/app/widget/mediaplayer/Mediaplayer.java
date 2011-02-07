@@ -1,4 +1,4 @@
-package com.scamall.app.widget.flowplayer;
+package com.scamall.app.widget.mediaplayer;
 
 import java.util.Map;
 
@@ -6,7 +6,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math.random.RandomData;
 import org.apache.commons.math.random.RandomDataImpl;
 
-import com.scamall.app.widget.flowplayer.client.VFlowplayer;
+import com.scamall.app.widget.mediaplayer.client.VMediaplayer;
 import com.vaadin.data.Container;
 import com.vaadin.data.Container.ItemSetChangeEvent;
 import com.vaadin.data.Item;
@@ -18,8 +18,8 @@ import com.vaadin.ui.ClientWidget;
 /**
  * Server side component for the VFlowplayer widget.
  */
-@ClientWidget(VFlowplayer.class)
-public class Flowplayer extends AbstractComponent implements
+@ClientWidget(VMediaplayer.class)
+public class Mediaplayer extends AbstractComponent implements
 		Container.ItemSetChangeListener {
 
 	/**
@@ -39,24 +39,15 @@ public class Flowplayer extends AbstractComponent implements
 
 	private PlayerState state;
 	private int volume;
-	private boolean muted;
 
-	/**
-	 * For styling the control bar
-	 */
-	private String controls_css_class;
-	private double controls_height;
-
-	public Flowplayer() {
+	public Mediaplayer() {
 		this(new ClipContainer());
 	}
 
-	public Flowplayer(Container.Indexed playlist) {
+	public Mediaplayer(Container.Indexed playlist) {
 		// State initialization
 		this.state = PlayerState.PLAYING;
 		this.volume = 20;
-		this.controls_css_class = "hulu";
-		this.controls_height = 40;
 		// Playlist initialization
 		this.playlist = playlist;
 		this.current_clip_idx = -1;
@@ -178,13 +169,10 @@ public class Flowplayer extends AbstractComponent implements
 		// Set dimensions
 		target.addAttribute("player_width", this.getWidth());
 		target.addAttribute("player_height", this.getHeight());
-		target.addAttribute("controls_css_class", this.controls_css_class);
-		target.addAttribute("controls_height", this.controls_height);
 
 		// Set global player attributes
 		target.addAttribute("state", this.state.toString());
 		target.addAttribute("volume", this.volume);
-		target.addAttribute("muted", this.muted);
 
 		// Set clip attributes
 		Object clip_id = this.getCurrentClipId();
@@ -192,8 +180,11 @@ public class Flowplayer extends AbstractComponent implements
 		target.addAttribute("current_clip_id", clip_id.toString());
 		target.addAttribute("current_clip_url",
 				(String) clip.getItemProperty("url").getValue());
-		target.addAttribute("current_clip_scaling", ((ClipScaling) clip
-				.getItemProperty("scaling").getValue()).toString());
+		// Poster handling
+		String poster = (String) clip.getItemProperty("posterUrl").getValue();
+		boolean has_poster = poster != null;
+		target.addAttribute("current_has_poster", has_poster);
+		target.addAttribute("current_poster_url", has_poster ? poster : "");
 	}
 
 	/**
@@ -250,22 +241,6 @@ public class Flowplayer extends AbstractComponent implements
 	 */
 	public void setVolume(int volume) {
 		this.volume = volume;
-		requestRepaint();
-	}
-
-	/**
-	 * @return the muted
-	 */
-	public boolean isMuted() {
-		return muted;
-	}
-
-	/**
-	 * @param muted
-	 *            the muted to set
-	 */
-	public void setMuted(boolean muted) {
-		this.muted = muted;
 		requestRepaint();
 	}
 
@@ -333,35 +308,4 @@ public class Flowplayer extends AbstractComponent implements
 		this.current_clip_idx = this.playlist.indexOfId(id);
 		requestRepaint();
 	}
-
-	/**
-	 * @return the controls CSS class
-	 */
-	public String getControlsCSSClass() {
-		return controls_css_class;
-	}
-
-	/**
-	 * @param controls_css_class
-	 *            the controls CSS class to set
-	 */
-	public void setControlsCSSClass(String controls_css_class) {
-		this.controls_css_class = controls_css_class;
-	}
-
-	/**
-	 * @return the controls height
-	 */
-	public double getControlsHeight() {
-		return controls_height;
-	}
-
-	/**
-	 * @param controls_height
-	 *            the controls height to set
-	 */
-	public void setControlsHeight(double controls_height) {
-		this.controls_height = controls_height;
-	}
-
 }

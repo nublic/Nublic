@@ -12,12 +12,12 @@
         <init-param>
             <description>Vaadin application class to start</description>
             <param-name>application</param-name>
-            <param-value>com.scamall.app.widget.flowplayer.FlowplayerTestApplication</param-value>
+            <param-value>com.scamall.app.widget.mediaplayer.MediaplayerTestApplication</param-value>
         </init-param>
         <init-param>
             <description>Application widgetset</description>
             <param-name>widgetset</param-name>
-            <param-value>com.scamall.app.widget.FlowplayerWidgetSet</param-value>
+            <param-value>com.scamall.app.widget.MediaplayerWidgetSet</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

@@ -1,4 +1,4 @@
-package com.scamall.app.widget.flowplayer;
+package com.scamall.app.widget.mediaplayer;
 
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
@@ -7,7 +7,7 @@ import com.vaadin.ui.Window;
  * The Application's "main" class
  */
 @SuppressWarnings("serial")
-public class FlowplayerTestApplication extends Application {
+public class MediaplayerTestApplication extends Application {
 	@Override
 	public void init() {
 		Window mainWindow = new Window("flowplayer Example App");

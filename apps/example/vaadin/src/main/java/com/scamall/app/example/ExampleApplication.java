@@ -15,9 +15,8 @@
  */
 package com.scamall.app.example;
 
-import com.scamall.app.widget.flowplayer.Clip;
-import com.scamall.app.widget.flowplayer.ClipScaling;
-import com.scamall.app.widget.flowplayer.Flowplayer;
+import com.scamall.app.widget.mediaplayer.Clip;
+import com.scamall.app.widget.mediaplayer.Mediaplayer;
 import com.vaadin.Application;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -55,12 +54,12 @@ public class ExampleApplication extends Application {
 		});
 		layout.addComponent(greetButton);
 		
-		Flowplayer player = new Flowplayer();
-		player.setHeight("300px");
-		player.setWidth("500px");
+		Mediaplayer player = new Mediaplayer();
+		player.setHeight("300");
+		player.setWidth("500");
 		
 		for (String clip_url : getSeveredFifthAlbum()) {
-			Clip clip = new Clip(clip_url, ClipScaling.FIT_PRESERVING_ASPECT_RATIO);
+			Clip clip = new Clip(clip_url);
 			player.getPlaylist().addItem(clip);
 		}
 		player.setCurrentClip(player.getPlaylist().firstItemId());

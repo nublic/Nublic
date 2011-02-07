@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.scamall.app.widget.flowplayer;
+package com.scamall.app.widget.mediaplayer;
 
 import java.util.Collection;
 

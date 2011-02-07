@@ -151,8 +151,8 @@
     </dependency>
     <dependency>
     	<groupId>com.scamall</groupId>
-    	<artifactId>app.widget.flowplayer</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
+    	<artifactId>app.widget.mediaplayer</artifactId>
+    	<version>0.0.2-SNAPSHOT</version>
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>

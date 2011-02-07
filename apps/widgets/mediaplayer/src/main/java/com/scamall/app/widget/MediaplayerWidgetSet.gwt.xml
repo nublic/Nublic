@@ -4,11 +4,11 @@
 	    goal "vaadin:update-widgetset".
 	-->
 	
-	<source path="flowplayer">
+	<source path="mediaplayer">
 		<exclude name="Clip.java" />
 		<exclude name="ClipContainer.java" />
-		<exclude name="Flowplayer.java" />
-		<exclude name="FlowplayerTestApplication.java" />
+		<exclude name="Mediaplayer.java" />
+		<exclude name="MediaplayerTestApplication.java" />
 	</source>
 
 	<!-- Inherit DefaultWidgetSet -->
@@ -16,10 +16,9 @@
 	
 	<!-- Widgetset default theme -->
 	<!-- This is relative to widgetset_directory/public -->	
-	<script src="flowplayer-3.2.4.min.js"></script>
-	<script src="flowplayer.controls-3.0.2.js"></script>
-	
-	<stylesheet src="controls.css"></stylesheet>
+	<script src="jquery.min.js"></script>
+	<script src="projekktor.min.js"></script>
+	<stylesheet src="theme/style.css"></stylesheet>
 
     <!--
      Uncomment the following to compile the widgetset for one browser only.
