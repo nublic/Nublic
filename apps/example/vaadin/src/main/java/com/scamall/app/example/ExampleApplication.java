@@ -55,8 +55,8 @@ public class ExampleApplication extends Application {
 		layout.addComponent(greetButton);
 		
 		Mediaplayer player = new Mediaplayer();
-		player.setHeight("300");
-		player.setWidth("500");
+		player.setHeight("300px");
+		player.setWidth("500px");
 		
 		for (String clip_url : getSeveredFifthAlbum()) {
 			Clip clip = new Clip(clip_url);
@@ -71,6 +71,7 @@ public class ExampleApplication extends Application {
 	
 	public String[] getSeveredFifthAlbum() {
 		return new String[] {
+				"http://www.projekktor.com/intro.mp4",
 				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-beatingheart.mp3",
 				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-takethetest.mp3",
 				"http://audio.lugradio.org/severedfifth/deniedbyreign/mp3/severedfifth-deniedbyreign-dollarplague.mp3",

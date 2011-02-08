@@ -20,7 +20,8 @@ public class VMediaplayer extends HTML implements Paintable {
 	/* ========================== */
 
 	/** Set the CSS class name to allow styling. */
-	public static final String CLASSNAME = "v-mediaplayer";
+	/** "projekktor" is needed to be themeable */
+	public static final String CLASSNAME = "v-mediaplayer projekktor";
 
 	/** The client side widget identifier */
 	protected String paintableId;
@@ -44,7 +45,7 @@ public class VMediaplayer extends HTML implements Paintable {
 
 	public VMediaplayer() {
 		super();
-		setStyleName(CLASSNAME);
+		// setStyleName(CLASSNAME);
 
 		this.state = PlayerState.IDLE;
 		this.current_clip_url = null;
@@ -85,8 +86,8 @@ public class VMediaplayer extends HTML implements Paintable {
 
 	private String generateHTML(UIDL uidl) {
 		// Get needed information
-		float width = uidl.getFloatAttribute("player_width");
-		float height = uidl.getFloatAttribute("player_height");
+		// float width = uidl.getFloatAttribute("player_width");
+		// float height = uidl.getFloatAttribute("player_height");
 
 		StringBuffer html = new StringBuffer();
 		html.append("<video ");
@@ -94,10 +95,17 @@ public class VMediaplayer extends HTML implements Paintable {
 		html.append(this.playerId);
 		html.append("\"");
 		html.append(" height=\"");
-		html.append(height);
+		// html.append(height);
+		html.append(uidl.getStringAttribute("height"));
 		html.append("\"");
 		html.append(" width=\"");
-		html.append(width);
+		// html.append(width);
+		html.append(uidl.getStringAttribute("width"));
+		html.append("\"");
+		html.append(" class=\"");
+		html.append(this.getStyleName());
+		html.append(" ");
+		html.append(CLASSNAME);
 		html.append("\"");
 		html.append(" controls >");
 		html.append("</video>");
