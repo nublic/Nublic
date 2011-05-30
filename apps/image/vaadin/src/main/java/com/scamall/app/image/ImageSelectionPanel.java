@@ -1,10 +1,8 @@
 package com.scamall.app.image;
 
-import java.util.ArrayList;
-
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 
 /**
@@ -13,7 +11,7 @@ import com.vaadin.ui.HorizontalLayout;
  *
  */
 public class ImageSelectionPanel extends HorizontalLayout {
-	ArrayList<Image> images;
+	BeanItemContainer<Image> images;
 	int current;
 	
 	/**
@@ -21,14 +19,14 @@ public class ImageSelectionPanel extends HorizontalLayout {
 	 * @param images All the images that will be shown
 	 * @param currentImage The current image
 	 */
-	public ImageSelectionPanel(ArrayList<Image> images, int currentImage){
+	public ImageSelectionPanel(BeanItemContainer<Image> images, int currentImage){
 		this.images= images;
 		this.current = currentImage;
 		
 		// This implementation does not work properly, it is just a test
 		ImageUI [] thumbnails = new ImageUI[images.size()];
 		for (int i=current;i<2;i++){
-			thumbnails[i] = new ImageUI(images.get(i), new LayoutClickListener() {
+			thumbnails[i] = new ImageUI(images.getItem(images.getIdByIndex(i)), new LayoutClickListener() {
 				public void layoutClick(LayoutClickEvent event) {					
 				}
 			});

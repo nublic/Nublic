@@ -1,9 +1,11 @@
 package com.scamall.app.image;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
 
+import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.BeanContainer;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.ui.Embedded;
@@ -16,14 +18,14 @@ import com.vaadin.ui.VerticalLayout;
  *
  */
 public class ImageView extends HorizontalLayout {
-	private Image image;
+	private BeanItem<Image> image;
 	private int currentImageNumb;
 	private ImageActionPanel actionPanel;
 	private ImageUI mainImage;
 	private ImageSelectionPanel selectionPanel;
 	//imageNavigation includes the image and the navigation
 	private VerticalLayout imageNavigation = new VerticalLayout();
-	private ArrayList<Image> images;
+	private BeanItemContainer<Image> images;
 	
 	/**
 	 * It creates the imageView with a list of images, and which in this list you want
@@ -31,10 +33,10 @@ public class ImageView extends HorizontalLayout {
 	 * @param images The list of images
 	 * @param currentImage In which image you start
 	 */
-	public ImageView(ArrayList<Image> images, int currentImage){
+	public ImageView(BeanItemContainer<Image> images, int currentImage){
 		currentImageNumb = currentImage;
 		this.images = images;
-		image = images.get(currentImageNumb);
+		image = images.getItem(images.getIdByIndex(currentImageNumb));
 
 		// Left part
 		this.addComponent(imageNavigation);
@@ -45,6 +47,7 @@ public class ImageView extends HorizontalLayout {
 				i.refresh(i.getNumberCurrentImage()+1);
 			}
 		});
+		
 		imageNavigation.addComponent(mainImage);
 		
         selectionPanel = new ImageSelectionPanel(images, currentImage);
@@ -52,10 +55,9 @@ public class ImageView extends HorizontalLayout {
 		imageNavigation.setWidth("600pt");
 		
 		// Right panel
-		actionPanel = new ImageActionPanel();
+		actionPanel = new ImageActionPanel(this);
 		actionPanel.setWidth("30%");
 		this.addComponent(actionPanel);
-		actionPanel.setImage(image);
 		
 		//TODO: Fix the size of every part
 	}
@@ -66,15 +68,15 @@ public class ImageView extends HorizontalLayout {
 	 */
 	public void refresh(int newImage){
 		currentImageNumb = newImage;
-		image = images.get(newImage);
+		image = images.getItem(images.getIdByIndex(newImage));
 		
-		mainImage.refresh(image, new LayoutClickListener() {
+		mainImage.refresh(image.getBean(), new LayoutClickListener() {
 			public void layoutClick(LayoutClickEvent event) {
 				ImageView i = ((ImageView)event.getComponent().getParent());
 				i.refresh(i.getNumberCurrentImage()+1);		
 			}
 		});
-		actionPanel.setImage(image);
+		actionPanel.setImage(image.getBean());
 		
 		//TODO: Make sure that everything refreshes properly
 	}

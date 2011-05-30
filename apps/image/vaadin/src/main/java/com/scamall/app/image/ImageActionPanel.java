@@ -7,7 +7,14 @@ import com.vaadin.ui.VerticalLayout;
 
 public class ImageActionPanel extends VerticalLayout {
 	ArrayList<ImageActionUI> components = new ArrayList<ImageActionUI>();
-	
+	 
+	/** Action Panel for the ImageView layout
+	 * 
+	 * @param currentState
+	 */
+	public ImageActionPanel(ImageView currentState) {
+		// TODO Must replace ImageView with the actual State of the application
+	}
 	/**
 	 * It adds a component to the panel. The component must be a 
 	 * {@link ImageActionUI}, so it is able to get the current image.

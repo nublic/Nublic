@@ -16,10 +16,8 @@
 package com.scamall.app.image;
 
 import java.io.File;
-import java.util.ArrayList;
-
 import com.vaadin.Application;
-import com.vaadin.ui.Button;
+import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Window;
 
 /**
@@ -27,20 +25,26 @@ import com.vaadin.ui.Window;
  */
 @SuppressWarnings("serial")
 public class ImageApplication extends Application {
-	private Window window;
 
 	@Override
 	public void init() {
 		Window mainWindow = new Window("Nublic_images Application");
 		setMainWindow(mainWindow);
-		ArrayList<Image> images = new ArrayList<Image>();
 		File imagesFileParent = new File("/var/nublic/Imágenes/Fondos");
-		File[] imagesFiles = imagesFileParent.listFiles();
-		for (int i = 0; i < imagesFiles.length; i++) {
-			images.add(new Image(imagesFiles[i]));
-		}
+		
+		BeanItemContainer<Image> images = this.getImagesFromDirectory(imagesFileParent);
 
 		mainWindow.addComponent(new ImageView(images, 0));
+	}
+	
+	private BeanItemContainer<Image> getImagesFromDirectory(File imagesFileParent) {
+		BeanItemContainer<Image> images = new BeanItemContainer<Image>(Image.class); 
+		File[] imagesFiles = imagesFileParent.listFiles();
+		for (int i = 0; i < imagesFiles.length; i++) {
+			Image im = new Image(imagesFiles[i]);
+			images.addItem(im); // @TODO image id must be gotten from our node database
+		}
+		return images;
 	}
 
 }

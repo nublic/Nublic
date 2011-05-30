@@ -3,6 +3,7 @@ package com.scamall.app.image;
 import java.io.File;
 import java.io.FileReader;
 
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.terminal.FileResource;
 import com.vaadin.ui.CssLayout;
@@ -23,8 +24,8 @@ public class ImageUI extends CssLayout {
 	 * @param image
 	 * @param layoutClickListener
 	 */
-	public ImageUI (Image image, LayoutClickListener layoutClickListener){
-		img = image;
+	public ImageUI (BeanItem<Image> image, LayoutClickListener layoutClickListener){
+		img = image.getBean();
 		listener = layoutClickListener;
 		//Note: The rest of the code is in attach()
 	}
