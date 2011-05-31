@@ -1,14 +1,10 @@
 package com.scamall.app.image;
 
 
-import java.util.ArrayList;
-
 import com.vaadin.data.util.BeanItem;
-import com.vaadin.data.util.BeanContainer;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
-import com.vaadin.ui.Embedded;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
 
@@ -17,7 +13,15 @@ import com.vaadin.ui.VerticalLayout;
  * @author Cesar Navarro Estruch
  *
  */
-public class ImageView extends HorizontalLayout {
+public class SingleImageView extends HorizontalLayout {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2959876785796452524L;
+
+	//private SingleImageWindowState state;
+	
 	private BeanItem<Image> image;
 	private int currentImageNumb;
 	private ImageActionPanel actionPanel;
@@ -33,7 +37,7 @@ public class ImageView extends HorizontalLayout {
 	 * @param images The list of images
 	 * @param currentImage In which image you start
 	 */
-	public ImageView(BeanItemContainer<Image> images, int currentImage){
+	public SingleImageView(BeanItemContainer<Image> images, int currentImage){
 		currentImageNumb = currentImage;
 		this.images = images;
 		image = images.getItem(images.getIdByIndex(currentImageNumb));
@@ -42,8 +46,13 @@ public class ImageView extends HorizontalLayout {
 		this.addComponent(imageNavigation);
 		
 		mainImage = new ImageUI(image, new LayoutClickListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 9074849005391863211L;
+
 			public void layoutClick(LayoutClickEvent event) {
-				ImageView i = ((ImageView)event.getComponent().getParent().getParent().getParent());
+				SingleImageView i = ((SingleImageView)event.getComponent().getParent().getParent().getParent());
 				i.refresh(i.getNumberCurrentImage()+1);
 			}
 		});
@@ -71,8 +80,13 @@ public class ImageView extends HorizontalLayout {
 		image = images.getItem(images.getIdByIndex(newImage));
 		
 		mainImage.refresh(image.getBean(), new LayoutClickListener() {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = -8522649092211142180L;
+
 			public void layoutClick(LayoutClickEvent event) {
-				ImageView i = ((ImageView)event.getComponent().getParent());
+				SingleImageView i = ((SingleImageView)event.getComponent().getParent());
 				i.refresh(i.getNumberCurrentImage()+1);		
 			}
 		});

@@ -24,7 +24,7 @@ import com.vaadin.ui.Window;
  * The Application's "main" class
  */
 @SuppressWarnings("serial")
-public class ImageApplication extends Application {
+public class ImageApplication extends NublicApplication {
 
 	@Override
 	public void init() {
@@ -34,7 +34,7 @@ public class ImageApplication extends Application {
 		
 		BeanItemContainer<Image> images = this.getImagesFromDirectory(imagesFileParent);
 
-		mainWindow.addComponent(new ImageView(images, 0));
+		mainWindow.addComponent(new SingleImageView(images, 0));
 	}
 	
 	private BeanItemContainer<Image> getImagesFromDirectory(File imagesFileParent) {
