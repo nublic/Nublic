@@ -5,6 +5,7 @@ package com.scamall.app.image;
 
 import java.io.File;
 
+import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 
 /** Stores the state of a Image Window.
@@ -20,7 +21,7 @@ public class SingleImageWindowState implements WindowState {
 	 */
 	private String listId;
 	
-	/**
+	/** Container used to list all the images. 
 	 * 
 	 */
 	private BeanItemContainer<Image> listImages;
@@ -28,11 +29,15 @@ public class SingleImageWindowState implements WindowState {
 	private int currentPosition;
 	
 	public String getURL() {
-		return "view" + "/" + listId + "/" + currentPosition;
+		return "view" + "" + listId + "/" + currentPosition;
 	}
 
 	public Image getCurrentImage() {
 		return listImages.getIdByIndex(currentPosition);
+	}
+	
+	public BeanItem<Image> getCurrentBeanImage() {
+		return listImages.getItem(listImages.getIdByIndex(currentPosition));
 	}
 	
 	public BeanItemContainer<Image> getListImages() {
@@ -46,6 +51,10 @@ public class SingleImageWindowState implements WindowState {
 	public void setListId(String listId) {
 		this.listId = listId;
 		this.listImages = getImagesFromDirectory(new File(listId));
+	}
+	
+	public int getCurrentPosition() {
+		return currentPosition;
 	}
 	
 	/** Loads the images from a Folder
@@ -64,6 +73,5 @@ public class SingleImageWindowState implements WindowState {
 		}
 		return images;
 	}
-
 	
 }

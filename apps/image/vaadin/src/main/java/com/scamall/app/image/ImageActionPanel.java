@@ -1,8 +1,6 @@
 package com.scamall.app.image;
 
 import java.util.ArrayList;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 public class ImageActionPanel extends VerticalLayout {

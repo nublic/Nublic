@@ -1,22 +1,9 @@
 /*
- * Copyright 2009 IT Mill Ltd.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
+ * 
  */
 package com.scamall.app.image;
 
 import java.io.File;
-import com.vaadin.Application;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Window;
 
@@ -30,11 +17,14 @@ public class ImageApplication extends NublicApplication {
 	public void init() {
 		Window mainWindow = new Window("Nublic_images Application");
 		setMainWindow(mainWindow);
-		File imagesFileParent = new File("/var/nublic/Imágenes/Fondos");
+//		File imagesFileParent = new File("/var/nublic/Imágenes/Fondos");
 		
-		BeanItemContainer<Image> images = this.getImagesFromDirectory(imagesFileParent);
+		SingleImageWindowState state = new SingleImageWindowState();
+		state.setListId("/var/nublic/Imágenes/Fondos");
+		state.setCurrentPosition(0);
+//		BeanItemContainer<Image> images = this.getImagesFromDirectory(imagesFileParent);
 
-		mainWindow.addComponent(new SingleImageView(images, 0));
+		mainWindow.addComponent(new SingleImageView(state));
 	}
 	
 	private BeanItemContainer<Image> getImagesFromDirectory(File imagesFileParent) {

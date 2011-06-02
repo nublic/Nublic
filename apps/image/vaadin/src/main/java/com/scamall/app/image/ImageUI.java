@@ -1,8 +1,5 @@
 package com.scamall.app.image;
 
-import java.io.File;
-import java.io.FileReader;
-
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.terminal.FileResource;
@@ -30,8 +27,8 @@ public class ImageUI extends CssLayout {
 		//Note: The rest of the code is in attach()
 	}
 	
-	// This code is here because it couldn't be in the constructor, because I 
-	 //needed getApplication, and it is available after doing attach()
+	// This code is here because it couldn't be in the constructor. It is 
+	 //needed a getApplication, and it is available after doing attach()
 	@Override
 	public void attach(){
 		super.attach();
