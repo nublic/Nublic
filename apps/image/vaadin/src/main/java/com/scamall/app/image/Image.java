@@ -16,6 +16,9 @@ import org.im4java.core.IMOperation;
  * 
  */
 public class Image implements Serializable {
+	
+	private static final long serialVersionUID = 8150103966202496373L;
+	
 	private File resource;
 	// Add the rest of fields here in the future
 	private File resourceThumbnail;

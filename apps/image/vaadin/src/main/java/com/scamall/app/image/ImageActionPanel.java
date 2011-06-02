@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import com.vaadin.ui.VerticalLayout;
 
 public class ImageActionPanel extends VerticalLayout {
+	
+	private static final long serialVersionUID = -8994613686772179409L;
+	
 	ArrayList<ImageActionUI> components = new ArrayList<ImageActionUI>();
 	 
 	/** Action Panel for the ImageView layout

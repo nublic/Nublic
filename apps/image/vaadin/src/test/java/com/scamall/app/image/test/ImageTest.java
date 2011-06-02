@@ -72,11 +72,11 @@ public class ImageTest {
 	}
 
 	/**
-	 * Test method for {@link com.scamall.app.image.Image#resizeImage()}.
+	 * Test method for {@link com.scamall.app.image.Image#getResourceNormalSize()}.
 	 * 
 	 */
 	@Test
-	public final void testResizeImage() throws IOException {
+	public final void testResizeImageNormal() throws IOException {
 		Image image = new Image(new File(pathToTestFolder
 				+ "/schrodinger_gato_vivo.jpg"));
 		File normal = image.getResourceNormalSize();
@@ -87,17 +87,24 @@ public class ImageTest {
 		assertEquals("Expected same path", pathToTestFolder
 				+ "/.cache/800x500/schrodinger_gato_vivo.jpg", normal.getPath());
 		// TODO It has not been tested that the image is the correct size.
-
+	}
+	
+	/**
+	 * Test method for {@link com.scamall.app.image.Image#getResourceThumbnail()}.
+	 * 
+	 */
+	@Test
+	public final void testGetResourceThumbnail() throws IOException {
+		Image image = new Image(new File(pathToTestFolder
+				+ "/schrodinger_gato_vivo.jpg"));
 		File thumbnail = image.getResourceThumbnail();
 		assertTrue("Check .cache directory exists", new File(pathToTestFolder
 				+ "/.cache").exists());
 		assertTrue("Check .cache/size directory exists", new File(
-				pathToTestFolder + "/.cache/800x500").exists());
+				pathToTestFolder + "/.cache/120x80").exists());
 		assertEquals("Expected same path", pathToTestFolder
-				+ "/.cache/800x500/schrodinger_gato_vivo.jpg", thumbnail.getPath());
+				+ "/.cache/120x80/schrodinger_gato_vivo.jpg", thumbnail.getPath());
 		// TODO It has not been tested that the image is the correct size.
-		
-		
 	}
 
 }

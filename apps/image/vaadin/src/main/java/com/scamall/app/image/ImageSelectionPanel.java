@@ -11,6 +11,9 @@ import com.vaadin.ui.HorizontalLayout;
  *
  */
 public class ImageSelectionPanel extends HorizontalLayout {
+
+	private static final long serialVersionUID = 390950800251846419L;
+	
 	BeanItemContainer<Image> images;
 	int current;
 	
@@ -27,6 +30,8 @@ public class ImageSelectionPanel extends HorizontalLayout {
 		ImageUI [] thumbnails = new ImageUI[images.size()];
 		for (int i=current;i<2;i++){
 			thumbnails[i] = new ImageUI(images.getItem(images.getIdByIndex(i)), new LayoutClickListener() {
+				private static final long serialVersionUID = 1L;
+				
 				public void layoutClick(LayoutClickEvent event) {					
 				}
 			});

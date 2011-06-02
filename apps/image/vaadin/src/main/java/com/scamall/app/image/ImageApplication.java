@@ -3,8 +3,6 @@
  */
 package com.scamall.app.image;
 
-import java.io.File;
-import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.ui.Window;
 
 /**
@@ -25,16 +23,6 @@ public class ImageApplication extends NublicApplication {
 //		BeanItemContainer<Image> images = this.getImagesFromDirectory(imagesFileParent);
 
 		mainWindow.addComponent(new SingleImageView(state));
-	}
-	
-	private BeanItemContainer<Image> getImagesFromDirectory(File imagesFileParent) {
-		BeanItemContainer<Image> images = new BeanItemContainer<Image>(Image.class); 
-		File[] imagesFiles = imagesFileParent.listFiles();
-		for (int i = 0; i < imagesFiles.length; i++) {
-			Image im = new Image(imagesFiles[i]);
-			images.addItem(im); // @TODO image id must be gotten from our node database
-		}
-		return images;
 	}
 
 }

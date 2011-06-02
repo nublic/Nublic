@@ -6,7 +6,6 @@ package com.scamall.app.image.test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.net.URL;
 
 import org.junit.After;
 import org.junit.AfterClass;

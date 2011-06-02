@@ -12,6 +12,9 @@ import com.vaadin.ui.Embedded;
  *
  */
 public class ImageUI extends CssLayout {
+
+	private static final long serialVersionUID = 5038287151309275552L;
+	
 	private Embedded image;
 	private LayoutClickListener listener;
 	private Image img;
