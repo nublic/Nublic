@@ -26,7 +26,13 @@ public class SingleImageWindowState implements WindowState {
 	 */
 	private BeanItemContainer<Image> listImages;
 	
-	private int currentPosition;
+	private int currentPosition = 0;
+	
+	private SingleImageView view;
+	
+	public void setView(SingleImageView view) {
+		this.view = view;
+	}
 	
 	public String getURL() {
 		return "view" + "" + listId + "/" + currentPosition;
@@ -61,17 +67,29 @@ public class SingleImageWindowState implements WindowState {
 	 * It does not have control of only load images yet.
 	 * 
 	 * @param imagesFileParent
-	 * @return
+	 * @return Images
 	 */
 	private BeanItemContainer<Image> getImagesFromDirectory(File imagesFileParent) {
 		BeanItemContainer<Image> images = new BeanItemContainer<Image>(Image.class); 
-		File[] imagesFiles = imagesFileParent.listFiles();
-		for (int i = 0; i < imagesFiles.length; i++) {
+		for (File imageFile : imagesFileParent.listFiles()){
 			// TODO Check if the mimetype of the file is a valid image
-			Image im = new Image(imagesFiles[i]);
-			images.addItem(im); 
+			Image im = new Image(imageFile);
+			images.addItem(im);
 		}
 		return images;
 	}
+
+	public void nextImage() {
+		setCurrentPosition(getCurrentPosition()+1);
+		refreshWindow();
+	}
 	
+	public void goToIndex(int index) {
+		setCurrentPosition(index);
+		refreshWindow();
+	}
+	
+	public void refreshWindow() {
+		view.refresh();
+	}
 }

@@ -13,7 +13,7 @@ public class ImageActionPanel extends VerticalLayout {
 	 * 
 	 * @param currentState
 	 */
-	public ImageActionPanel(SingleImageView currentState) {
+	public ImageActionPanel(SingleImageWindowState currentState) {
 		// TODO Must replace ImageView with the actual State of the application
 	}
 	/**

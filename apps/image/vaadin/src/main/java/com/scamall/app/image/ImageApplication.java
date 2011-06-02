@@ -3,7 +3,6 @@
  */
 package com.scamall.app.image;
 
-import com.vaadin.ui.Window;
 
 /**
  * The Application's "main" class
@@ -13,7 +12,7 @@ public class ImageApplication extends NublicApplication {
 
 	@Override
 	public void init() {
-		Window mainWindow = new Window("Nublic_images Application");
+		ImageWindow mainWindow = new ImageWindow("Nublic_images Application");
 		setMainWindow(mainWindow);
 //		File imagesFileParent = new File("/var/nublic/Imágenes/Fondos");
 		
@@ -22,7 +21,8 @@ public class ImageApplication extends NublicApplication {
 		state.setCurrentPosition(0);
 //		BeanItemContainer<Image> images = this.getImagesFromDirectory(imagesFileParent);
 
-		mainWindow.addComponent(new SingleImageView(state));
+		mainWindow.setView(new SingleImageView(state));
+		mainWindow.addComponent(mainWindow.getView());
 	}
 
 }
