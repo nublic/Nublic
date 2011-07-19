@@ -9,8 +9,8 @@
   </parent>
   <groupId>com.scamall</groupId>
   <artifactId>resource.main</artifactId>
+  <name>main</name>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>main Multi Project</name>
   <url>http://maven.apache.org</url>
 </project>

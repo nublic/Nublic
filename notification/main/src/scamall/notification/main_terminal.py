@@ -8,6 +8,7 @@ Created on 15/08/2010
 from elixir import *
 from optparse import OptionParser
 from scamall.notification.model import Notification, Action, StockAction
+from scamall.notification.notification import new_message 
 
 def main():
     usage = "sends a message to the Scamall notification system"
@@ -32,15 +33,7 @@ def main():
 
     stocks = options.stock
       
-    newNotif = Notification()
-    newNotif.app = options.app
-    newNotif.user = options.user
-    newNotif.level = options.level
-    newNotif.text = options.text
-    newNotif.actions = actions
-    session.commit()
-
-    # Notification.query.all()
+    new_message(options.app, options.user, options.level, options.text, actions);
    
 if __name__ == '__main__':
     main()
