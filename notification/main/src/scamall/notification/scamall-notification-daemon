@@ -1,109 +1,41 @@
 #!/usr/bin/python
 
-'''
-Created on 10/08/2010
+# Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
+# Second version from: https://gist.github.com/339430
+# @author: David Navarro Estruch
+# @copyright: Nublic
 
-@author: David Navarro Estruch
-'''
 import os
-import sys
-import dbus
-import dbus.service
-import gobject
-from dbus.mainloop.glib import DBusGMainLoop
-from elixir import session, setup_all
+import logging
 
-from scamall.notification.model import *
-from scamall.notification.daemon import Daemon
+# Requires the lastest version (1.6 or beyond) of python_daemon.
+# This version should be installed via easy_install in Ubuntu 11.04
+# It is important not to install the daemon package because the 'daemon' domain
+# conflict with python_daemon.
+from daemon.runner import DaemonRunner
 
-class DBusNotification(dbus.service.Object):
-    bus_path = 'com.scamall.notification'
-    object_path = '/com/scamall/notification'
-    
+from dbus_handler import (
+    initial_program_setup,
+    do_main_program,
+    program_cleanup,
+    reload_program_config,
+    )
+
+class NotificationDaemon(object):
     def __init__(self):
-        setup_all()
-        # Init DBus object
-        bus_name = dbus.service.BusName('com.scamall.notification', bus = dbus.SystemBus())
-        dbus.service.Object.__init__(self, bus_name, self.object_path)
-
-    @dbus.service.method('com.scamall.notification')
-    def send(self, app, text, level, user = None, actions = [], stocks = []):
-        '''
-        Send a notification to de system
-        
-        @param app: App_id
-        @param text: Text (required)
-        @param user: User id
-        @param level: One of the possible levels. They are:
-                    NOTIFICATION_LEVEL_LOG = 'LOG'
-                    NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
-                    NOTIFICATION_LEVEL_DEFAULT_PERFORMED = 'DEFAULT_PERFORMER'
-                    NOTIFICATION_LEVEL_BLOCKER = 'BLOCKER'
-        @param actions: List of actions. Each action is a tuple (label, url)
-        @param stocks: List of stock actions. Each stock action is a tuple (stock_id, url)
-        @return: 0 if OK, -1 otherwise
-        '''
-        notification = Notification()
-        notification.app = app
-        notification.text = text
-
-        print "<"+ app + "> <" + text + "> <" +  level + "> <" + user + ">"           
-        if user == "None":
-            notification.user = None
-        else:
-            notification.user = user
-            
-        if level == NOTIFICATION_LEVEL_LOG:
-            notification.level = NOTIFICATION_LEVEL_LOG
-        elif level == NOTIFICATION_LEVEL_NOTICE:
-            notification.level = NOTIFICATION_LEVEL_NOTICE
-        elif level == NOTIFICATION_LEVEL_DEFAULT_PERFORMED:
-            notification.level = NOTIFICATION_LEVEL_DEFAULT_PERFORMED
-        elif level == NOTIFICATION_LEVEL_BLOCKER:
-            notification.level = NOTIFICATION_LEVEL_BLOCKER
-        else:
-            return 1
-
-        for i in actions:
-            a = Action()
-            a.label = i[0]
-            a.link = i[1]
-        for i in stocks:
-            s = Action()
-            s.stock_action = StockAction().get_by(name=i[0])
-            s.link = i[1]
-        
-        session.commit()
-        return 0
-
-def main():
-    DBusGMainLoop(set_as_default=True)
-
-    notificator = DBusNotification()
-    loop = gobject.MainLoop()
-    loop.run()
-
-class NotificationDaemon(Daemon):
+       self.root = os.path.abspath(os.path.dirname(__file__))
+       self.run_dir = os.path.join(self.root, "run")
+       self.stdin_path = '/dev/null'
+       self.stdout_path = '/var/log/scamall_notification_out.log' #os.path.join(self.run_dir, 'stdout.txt
+       self.stderr_path = '/var/log/scamall_notification_err.log' #os.path.join(self.run_dir, 'stderr.txt')
+       self.pidfile_path = '/var/run/scamall_notification.pid' #os.path.join(self.run_dir,'test.pid')
+       self.pidfile_timeout = 1
 
     def run(self):
-        main()
-
+        initial_program_setup()
+        do_main_program()
 
 if __name__ == '__main__':
-    daemon = NotificationDaemon(os.environ['PIDFILE'])
-    if len(sys.argv) == 2:
-        if 'start' == sys.argv[1]:
-            daemon.start()
-        elif 'stop' == sys.argv[1]:
-            daemon.stop()
-        elif 'restart' == sys.argv[1]:
-            daemon.restart()
-        elif 'run' == sys.argv[1]:
-            daemon.run()
-        else:
-            print "Unknown command"
-            sys.exit(2)
-    else:
-        print "Not command"
-        sys.exit(2)
-    sys.exit(0)
+    daemon_runner = DaemonRunner(NotificationDaemon())
+    daemon_runner.parse_args()
+    daemon_runner.do_action()

@@ -32,7 +32,7 @@ class testNotification(unittest.TestCase):
         pass
 
     def testNewMessage(self):
-        new_message("app", "user1", "level","CriticalMessage", [])
+        new_message("app", "user1", "level","CriticalMessage")
         notice = Notification.get_by(app="app") 
         self.assertEqual(notice.app, "app", "Value retrieved should be the stored")
         self.assertEqual(notice.user, "user1", "Value retrieved should be the stored")
