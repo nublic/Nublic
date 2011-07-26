@@ -12,30 +12,39 @@ import logging
 # This version should be installed via easy_install in Ubuntu 11.04
 # It is important not to install the daemon package because the 'daemon' domain
 # conflict with python_daemon.
-from daemon.runner import DaemonRunner
-
+#from daemon.runner import DaemonRunner
+#
 from dbus_handler import (
     initial_program_setup,
     do_main_program,
     program_cleanup,
     reload_program_config,
     )
-
-class NotificationDaemon(object):
-    def __init__(self):
-       self.root = os.path.abspath(os.path.dirname(__file__))
-       self.run_dir = os.path.join(self.root, "run")
-       self.stdin_path = '/dev/null'
-       self.stdout_path = '/var/log/scamall_notification_out.log' #os.path.join(self.run_dir, 'stdout.txt
-       self.stderr_path = '/var/log/scamall_notification_err.log' #os.path.join(self.run_dir, 'stderr.txt')
-       self.pidfile_path = '/var/run/scamall_notification.pid' #os.path.join(self.run_dir,'test.pid')
-       self.pidfile_timeout = 1
-
-    def run(self):
-        initial_program_setup()
-        do_main_program()
+#
+#class NotificationDaemon(object):
+#    def __init__(self):
+#       self.root = os.path.abspath(os.path.dirname(__file__))
+#       self.run_dir = '/var/log' #os.path.join(self.root, "run")
+#       self.stdin_path = '/dev/null'
+#       self.stdout_path = '/var/log/scamall_notification_out.log' #os.path.join(self.run_dir, 'stdout.txt
+#       self.stderr_path = '/var/log/scamall_notification_err.log' #os.path.join(self.run_dir, 'stderr.txt')
+#       self.pidfile_path = '/var/run/scamall_notification.pid' #os.path.join(self.run_dir,'test.pid')
+#       self.pidfile_timeout = 1
+#
+#    def run(self):
+#        try:
+#            initial_program_setup()
+#            do_main_program()
+#        except BaseException as e:
+#            print e
+#
+#if __name__ == '__main__':
+#    daemon_runner = DaemonRunner(NotificationDaemon())
+#    daemon_runner.parse_args()
+#    daemon_runner.do_action()
 
 if __name__ == '__main__':
-    daemon_runner = DaemonRunner(NotificationDaemon())
-    daemon_runner.parse_args()
-    daemon_runner.do_action()
+    initial_program_setup()
+    do_main_program()
+    program_cleanup()
+
