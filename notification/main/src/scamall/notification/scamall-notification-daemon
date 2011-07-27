@@ -1,47 +1,22 @@
 #!/usr/bin/python
 
+# Runs in the foreground. It is suited for use with the Upstart manager
+
 # Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
 # Second version from: https://gist.github.com/339430
+#
 # @author: David Navarro Estruch
 # @copyright: Nublic
 
 import os
 import logging
 
-# Requires the lastest version (1.6 or beyond) of python_daemon.
-# This version should be installed via easy_install in Ubuntu 11.04
-# It is important not to install the daemon package because the 'daemon' domain
-# conflict with python_daemon.
-#from daemon.runner import DaemonRunner
-#
 from dbus_handler import (
     initial_program_setup,
     do_main_program,
     program_cleanup,
     reload_program_config,
     )
-#
-#class NotificationDaemon(object):
-#    def __init__(self):
-#       self.root = os.path.abspath(os.path.dirname(__file__))
-#       self.run_dir = '/var/log' #os.path.join(self.root, "run")
-#       self.stdin_path = '/dev/null'
-#       self.stdout_path = '/var/log/scamall_notification_out.log' #os.path.join(self.run_dir, 'stdout.txt
-#       self.stderr_path = '/var/log/scamall_notification_err.log' #os.path.join(self.run_dir, 'stderr.txt')
-#       self.pidfile_path = '/var/run/scamall_notification.pid' #os.path.join(self.run_dir,'test.pid')
-#       self.pidfile_timeout = 1
-#
-#    def run(self):
-#        try:
-#            initial_program_setup()
-#            do_main_program()
-#        except BaseException as e:
-#            print e
-#
-#if __name__ == '__main__':
-#    daemon_runner = DaemonRunner(NotificationDaemon())
-#    daemon_runner.parse_args()
-#    daemon_runner.do_action()
 
 if __name__ == '__main__':
     initial_program_setup()
