@@ -2,7 +2,7 @@
 '''
 Created on 10/08/2010
 
-It works for usage during the install of applications.
+It sends a notification via the Scamall Notification System
 
 @author: David Navarro Estruch
 '''
@@ -13,10 +13,9 @@ logging.basicConfig(stream=sys.stderr)
 #logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG) # TODO DEACTIVATE
 logging.getLogger('sqlalchemy.engine').setLevel(logging.CRITICAL) # TODO ACTIVATE
 
-
 from optparse import OptionParser
 
-import dbus
+from dbus_client import Notification
 
 
 def main():
@@ -29,30 +28,29 @@ def main():
     (options, args) = parser.parse_args()
     
     if len(args) != 3:
-        parser.error("Invalid number of parameters")
+        parser.error('Invalid number of parameters. For example scamall-notify appCommandLine" Some thing happened" notice')
     else:
-        app = args[0]
-        text = args[1]
-        level = args[2]
+        notification = Notification()
+        notification.app = args[0]
+        notification.text = args[1]
+        notification.level = args[2]
         if options.user != None:
-            user = options.user
+            notification.user = options.user
         else:
-            user = ""
+            notification.user = ""
         
-        actions = []
+        notification.actions = []
         if options.action:
             for a in options.action:
-                actions.append(a[0], a[1])
-            
+                notification.actions.append(a[0], a[1])
+        
+        # @todo: Stocks are not fully implemented yet
         stocks = []
         if options.stock:
             for s in options.stock:
                 stocks.append(s[0], s[1]) 
 
-        bus = dbus.SystemBus()
-        notification = bus.get_object('com.scamall.notification', '/com/scamall/notification')
-        sendResult = notification.get_dbus_method("send", 'com.scamall.notification')
-        return sendResult(app, text, level, user, dbus.Array(actions, dbus.Signature('a(ss)')), dbus.Array(stocks, dbus.Signature('a(ss)')))
-
+        return notification.send()
+        
 if __name__ == '__main__':
     main()
