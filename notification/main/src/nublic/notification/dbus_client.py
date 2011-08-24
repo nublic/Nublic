@@ -19,7 +19,7 @@ class Notification(object):
     
     def send(self):
         bus = dbus.SystemBus()
-        valueService = bus.get_object('com.scamall.notification', '/com/scamall/notification/Messages')
+        valueService = bus.get_object('com.nublic.notification', '/com/nublic/notification/Messages')
         message_sender = valueService.get_dbus_method('new_message')
         return message_sender(self.app, self.user, self.level,  self.text)
         # To send actions and stockActions we will use dbus.Array(self.actions, dbus.Signature('a(ss)'))

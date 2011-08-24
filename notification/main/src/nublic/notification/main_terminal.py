@@ -7,11 +7,11 @@ Created on 15/08/2010
 '''
 from elixir import *
 from optparse import OptionParser
-from scamall.notification.model import Notification, Action, StockAction
-from scamall.notification.notification import new_message 
+from nublic.notification.model import Notification, Action, StockAction
+from nublic.notification.notification import new_message 
 
 def main():
-    usage = "sends a message to the Scamall notification system"
+    usage = "sends a message to the Nublic notification system"
     parser = OptionParser(usage)
 
     parser.add_option("-a", "--app", action="store", type="string")

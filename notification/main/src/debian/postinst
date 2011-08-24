@@ -17,7 +17,7 @@ set -e
 # for details, see http://www.debian.org/doc/debian-policy/ or
 # the debian-policy package
 
-update-python-modules scamall-notification.public
+update-python-modules nublic-notification.public
 
 case "$1" in
     configure)

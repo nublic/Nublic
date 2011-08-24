@@ -1,1 +1,0 @@
-''' Notification package for Scamall'''

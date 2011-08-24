@@ -1,4 +1,0 @@
-scamall/notification/scamall-notify /usr/bin
-scamall/notification/scamall-notification-daemon /usr/sbin
-com.scamall.notification.conf /etc/dbus-1/system.d
-scamall-notification.conf /etc/init

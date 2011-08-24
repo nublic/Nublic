@@ -9,7 +9,7 @@ from sqlalchemy.types import Integer, UnicodeText, String, Boolean, Unicode, Tex
 from elixir.relationships import ManyToOne, OneToMany, OneToOne
 from elixir.options import using_options
 
-metadata.bind = 'mysql://scamall_notif:ScamUp@localhost:3306/scamall_notification'
+metadata.bind = 'mysql://nublic_notif:ScamUp@localhost:3306/nublic_notification'
 metadata.bind.echo = True
 
 NOTIFICATION_LEVEL_LOG = 'LOG'
@@ -59,9 +59,9 @@ class StockAction(Entity):
     '''
     Represents a Stock Action in the database.
     
-    A default action with some modifications provided by Scamall.
+    A default action with some modifications provided by Nublic.
     
-    @see scamall.notification.model.Action 
+    @see nublic.notification.model.Action 
     '''
     name = Field(String(128), primary_key=True)
     label = Field(Unicode(30))

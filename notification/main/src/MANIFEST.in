@@ -1,5 +1,5 @@
 setup.py
-scamall/__init__.py
-scamall/notification/__init__.py
-scamall/notification/main_terminal.py
-scamall/notification/model.py
+nublic/__init__.py
+nublic/notification/__init__.py
+nublic/notification/main_terminal.py
+nublic/notification/model.py

@@ -2,7 +2,7 @@
 '''
 Created on 10/08/2010
 
-It sends a notification via the Scamall Notification System
+It sends a notification via the Nublic Notification System
 
 @author: David Navarro Estruch
 '''
@@ -19,7 +19,7 @@ from dbus_client import Notification
 
 
 def main():
-    usage = "sends a message to the Scamall notification system"
+    usage = "sends a message to the Nublic notification system"
     parser = OptionParser(usage)
 
     parser.add_option("-u", "--user", action="store", type="string")
@@ -28,7 +28,7 @@ def main():
     (options, args) = parser.parse_args()
     
     if len(args) != 3:
-        parser.error('Invalid number of parameters. For example scamall-notify appCommandLine" Some thing happened" notice')
+        parser.error('Invalid number of parameters. For example nublic-notify appCommandLine" Some thing happened" notice')
     else:
         notification = Notification()
         notification.app = args[0]

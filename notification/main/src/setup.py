@@ -2,14 +2,14 @@
 
 from distutils.core import setup
 
-setup(name='scamall-notification',
+setup(name='nublic-notification',
       version='0.1',
-      description='The Scamall Notification System',
+      description='The Nublic Notification System',
       author='David Navarro Estruch',
-      author_email='david@ardinformatica.com',
-      url='http://scamall.ardinformatica.com',
-      packages=['scamall','scamall.notification'],
+      author_email='davisein@gmail.com',
+      url='http://nublic.com',
+      packages=['nublic','nublic.notification'],
       license='ALL_RIGHTS_RESERVED',
-      long_description='The Scamall Notification System',
+      long_description='The Nublic Notification System',
       platforms=['all']
      )

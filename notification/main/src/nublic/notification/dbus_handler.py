@@ -34,15 +34,15 @@ def reload_program_config():
     pass
 
 class DBusValue(dbus.service.Object):
-    bus_path = 'com.scamall.notification'
-    _base_object_path = '/com/scamall/notification'
+    bus_path = 'com.nublic.notification'
+    _base_object_path = '/com/nublic/notification'
     
     def __init__(self, loop = None):
         # Init DBus object
-        self.object_path = "/com/scamall/notification/Messages"
-        bus_name = dbus.service.BusName('com.scamall.notification', bus = dbus.SystemBus(mainloop = loop))
+        self.object_path = "/com/nublic/notification/Messages"
+        bus_name = dbus.service.BusName('com.nublic.notification', bus = dbus.SystemBus(mainloop = loop))
         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-    @dbus.service.method('com.scamall.notification')
+    @dbus.service.method('com.nublic.notification')
     def new_message(self, app, user, level, text):
         return str(notification.new_message(app, user, level, text))
