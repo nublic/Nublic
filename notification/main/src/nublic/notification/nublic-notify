@@ -15,7 +15,7 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.CRITICAL) # TODO ACTIVAT
 
 from optparse import OptionParser
 
-from dbus_client import Notification
+from nublic.notification.dbus_client import Notification
 
 
 def main():

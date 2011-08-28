@@ -16,7 +16,7 @@ from elixir import *
 
 
 def initial_program_setup():
-    setup_all(create_tables = False)
+    setup_all(create_tables = True)
 
 def do_main_program():
     dbus_loop = DBusGMainLoop(set_as_default=True)
