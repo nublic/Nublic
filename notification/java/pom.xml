@@ -5,8 +5,8 @@
     <groupId>com.nublic</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.nublic.notification</groupId>
-  <artifactId>java</artifactId>
+  <groupId>com.nublic</groupId>
+  <artifactId>notification.java</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Java Bindings for Notification</name>
   <description>Java Bindings Nublic Notification System</description>
