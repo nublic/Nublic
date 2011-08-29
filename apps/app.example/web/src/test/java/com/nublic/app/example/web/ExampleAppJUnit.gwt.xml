@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='com.nublic.app.example.web.ExampleApp'/>
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/exampleapp/greet" class="com.nublic.app.example.web.server.GreetingServiceImpl" />
+
+</module>
