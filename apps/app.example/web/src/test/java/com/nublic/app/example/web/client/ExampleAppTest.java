@@ -7,11 +7,15 @@ import com.google.gwt.junit.client.GWTTestCase;
  */
 public class ExampleAppTest extends GWTTestCase {
 
-  /**
-   * Must refer to a valid module that sources this class.
-   */
-  public String getModuleName() {
-    return "com.nublic.app.example.web.ExampleAppJUnit";
-  }
+	/**
+	 * Must refer to a valid module that sources this class.
+	 */
+	public String getModuleName() {
+		return "com.nublic.app.example.web.ExampleAppJUnit";
+	}
+
+	public void testNothing() throws Exception {
+		// Do nothing
+	}
 
 }
