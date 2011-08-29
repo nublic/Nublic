@@ -43,6 +43,6 @@ class DBusValue(dbus.service.Object):
         bus_name = dbus.service.BusName('com.nublic.notification', bus = dbus.SystemBus(mainloop = loop))
         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-    @dbus.service.method('com.nublic.notification')
+    @dbus.service.method('com.nublic.notification', in_signature = 'ssss', out_signature='s')
     def new_message(self, app, user, level, text):
         return str(notification.new_message(app, user, level, text))
