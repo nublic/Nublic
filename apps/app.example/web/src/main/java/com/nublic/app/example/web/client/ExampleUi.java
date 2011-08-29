@@ -1,6 +1,7 @@
 package com.nublic.app.example.web.client;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -47,7 +48,7 @@ public class ExampleUi extends Composite {
 			handleUserRequest(name);
 		}
 	}
-	
+
 	void updateGreetingLabel(String newLabel) {
 		greetLabel.setText(newLabel);
 	}
@@ -57,16 +58,19 @@ public class ExampleUi extends Composite {
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
-			@SuppressWarnings("unused") // It is not unused, we maintain callbacks
+			// Read http://stackoverflow.com/questions/5518485/getting-and-using-remote-json-data
+			@SuppressWarnings("unused")
+			// It is not unused, we maintain callbacks
 			Request request = builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
 					// Display error
 				}
 
 				public void onResponseReceived(Request request, Response response) {
-					if (200 == response.getStatusCode()) {
+					if (Response.SC_OK == response.getStatusCode()) {
 						// Update elements
-						Greeting g = Greeting.parseJson(response.getText());
+						String text = response.getText();
+						Greeting g = JsonUtils.safeEval(text);
 						updateGreetingLabel(g.getGreeting());
 					} else {
 						// Display error

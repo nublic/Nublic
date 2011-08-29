@@ -12,9 +12,4 @@ public class Greeting extends JavaScriptObject {
 	public final native String getGreeting() /*-{
 		return this.greeting;
 	}-*/;
-
-	// Parse JSON string as a Greeting
-	public final static native Greeting parseJson(String json) /*-{
-		return eval(json);
-	}-*/;
 }
