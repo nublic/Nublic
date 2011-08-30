@@ -17,6 +17,32 @@ class Provider(object):
         '''
         self.type = type
 
+    def install(self, app, key, *args):
+        '''
+        Must perform a install over the given app, key.
+        Optionally can have a number of ordered args.
+        
+        @param app: string The AppId
+        @param key: string The wanted key to identify in the future this resource
+        @param args: list Optional args
+        
+        Raises RepeatedKeyError
+        '''
+        raise NotImplementedError()
+    
+    def uninstall(self):
+        '''
+        Must perform a uninstall over the given app, key.
+        Optionally can have a number of ordered args.
+        
+        @param app: string The AppId
+        @param key: string The wanted key to uninstall
+        @param args: list Optional args
+        
+        @raise NotExistingKeyError
+        '''
+        raise NotImplementedError()
+
     def request(self, app, key, *args):
         '''
         Must perform a request over the given app, key.
@@ -37,7 +63,7 @@ class Provider(object):
         Optionally can have a number of ordered args.
         
         @param app: string The AppId
-        @param key: string The wanted key to identify in the future this request
+        @param key: string The wanted key to release
         @param args: list Optional args
         
         @raise NotExistingKeyError

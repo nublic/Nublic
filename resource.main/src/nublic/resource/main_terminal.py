@@ -28,7 +28,27 @@ def main():
     if len(args) == 0:
         parser.error("Invalid order")
 
-    if args[0] == 'request':
+    if args[0] == 'install':
+        if len(args) != 4:
+            parser.error("Invalid number of parameters")
+        app = args[1]
+        key = args[2]
+        resource_id = args[3]
+        provider = SelectProvider().generate_provider(resource_id)
+        if provider == None:
+            parser.error("Invalid resource")
+        provider.install(app, key)        
+    elif args[0] == 'uninstall':
+        if len(args) != 4:
+            parser.error("Invalid number of parameters")
+        app = args[1]
+        key = args[2]
+        resource_id = args[3]
+        provider = SelectProvider().generate_provider(resource_id)
+        if provider == None:
+            parser.error("Invalid resource")
+        provider.uninstall(app, key)
+    elif args[0] == 'request':
         if len(args) != 4:
             parser.error("Invalid number of parameters")
         app = args[1]
