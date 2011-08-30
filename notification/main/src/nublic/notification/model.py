@@ -2,6 +2,7 @@
 Created on 14/08/2010
 
 @author: Cesar Navarro Estruch, David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 from elixir import Entity, metadata, setup_all
 from elixir.fields import Field

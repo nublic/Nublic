@@ -6,7 +6,7 @@
 # Second version from: https://gist.github.com/339430
 #
 # @author: David Navarro Estruch
-# @copyright: Nublic
+# @copyright: 2011 Nublic
 
 import os
 import logging

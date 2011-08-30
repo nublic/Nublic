@@ -1,8 +1,7 @@
 #!/usr/bin/python
-
 '''
 Created on 15/08/2010
-
+@copyright: 2011 Nublic
 @author: David Navarro Estruch
 '''
 from elixir import *

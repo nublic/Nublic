@@ -1,5 +1,6 @@
+// Copyright (c) 2011, Nublic
 /**
- * 
+ * @author David Navarro Estruch 
  */
 package com.nublic.notification.java;
 

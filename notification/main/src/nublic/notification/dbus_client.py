@@ -5,6 +5,7 @@ Created on 10/08/2010
 Library for using Notifications on Python Applications
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 
 import dbus

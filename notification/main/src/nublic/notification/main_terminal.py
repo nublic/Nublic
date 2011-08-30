@@ -3,7 +3,8 @@
 '''
 Created on 15/08/2010
 
-@author: Cesar Navarro Estruch
+@author: Cesar Navarro Estruch, David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 from elixir import *
 from optparse import OptionParser

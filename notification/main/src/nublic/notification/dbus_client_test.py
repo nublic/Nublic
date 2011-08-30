@@ -1,5 +1,6 @@
-
 #!/usr/bin/python
+
+# @copyright: 2011 Nublic
 
 import dbus
  

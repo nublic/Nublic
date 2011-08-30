@@ -4,6 +4,7 @@
 Created on 18/07/2011
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 import gtk
 import dbus

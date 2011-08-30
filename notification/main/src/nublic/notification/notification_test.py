@@ -4,6 +4,7 @@
 Created on 15/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 
 import unittest
