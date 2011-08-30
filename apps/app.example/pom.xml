@@ -5,7 +5,7 @@
   <artifactId>app.example</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>app.example</name>
+  <name>Example app</name>
   <modules>
   	<module>server</module>
   	<module>web</module>
