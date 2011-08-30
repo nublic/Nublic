@@ -9,7 +9,7 @@
 
   
   <build>
-    <finalName>scalatra-maven-prototype</finalName>
+    <!-- <finalName>scalatra-maven-prototype</finalName> -->
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
     <plugins>
@@ -138,4 +138,5 @@
   	<groupId>com.nublic</groupId>
   	<version>0.0.1-SNAPSHOT</version>
   </parent>
+  <name>Example app server</name>
 </project>

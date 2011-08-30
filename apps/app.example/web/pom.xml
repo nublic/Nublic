@@ -6,7 +6,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>app.example.web</artifactId>
   <packaging>war</packaging>
-  <name>com.nublic.app.example.web.ExampleApp</name>
+  <name>Example app GWT client</name>
   
   <properties>
     <!-- Convenience property to set the GWT version -->
