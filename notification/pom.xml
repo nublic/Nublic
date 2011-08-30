@@ -9,6 +9,5 @@
   <url>http://maven.apache.org</url>
   <modules>
     <module>main</module>
-    <module>java</module>
   </modules>
 </project>

@@ -4,12 +4,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>resource</artifactId>
-    <groupId>com.scamall</groupId>
+    <groupId>com.nublic</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <groupId>com.scamall</groupId>
+  <groupId>com.nublic</groupId>
   <artifactId>resource.main</artifactId>
-  <name>main</name>
+  <name>Resource Service</name>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <url>http://maven.apache.org</url>

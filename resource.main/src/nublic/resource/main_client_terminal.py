@@ -5,6 +5,7 @@ Created on 10/08/2010
 It works for usage during the install of applications.
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 
 import sys
@@ -35,8 +36,8 @@ def main():
         key, separator, subkey = key_subkey.partition("/")
         
         bus = dbus.SystemBus()
-        valueService = bus.get_object('com.scamall.resource', '/com/scamall/resource/'+app+'/'+ key)
-        value = valueService.get_dbus_method("value", 'com.scamall.resource')
+        valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/'+app+'/'+ key)
+        value = valueService.get_dbus_method("value", 'com.nublic.resource')
         
         if separator != "/": # Doesn't have a subkey value
             print value('None')

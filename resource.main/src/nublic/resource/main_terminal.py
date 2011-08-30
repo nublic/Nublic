@@ -5,11 +5,13 @@ Created on 10/08/2010
 It works for usage during the install of applications.
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
+
 '''
 
 from optparse import OptionParser
 
-from scamall.resource.select_provider import SelectProvider
+from nublic.resource.select_provider import SelectProvider
 
 def main():
     usage = "usage: \n" + \

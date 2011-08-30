@@ -2,6 +2,7 @@
 Created on 10/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 from elixir import setup_all, session
 
@@ -18,7 +19,7 @@ class DatabaseStored(Provider):
         '''
         Constructor
         
-        @see:  scamall.resource.Provider.__init__
+        @see:  nublic.resource.Provider.__init__
         '''
         Provider.__init__(self, type)
         setup_all()
@@ -29,7 +30,7 @@ class DatabaseStored(Provider):
         If you want to perform something else just override
         this function.
         
-        @see: scamall.resource.provider.Provider
+        @see: nublic.resource.provider.Provider
         @raise TypeProviderError
         @raise IntegrityError and other SQLAlchemyErrors
         '''

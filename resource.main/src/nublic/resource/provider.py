@@ -2,6 +2,7 @@
 Created on 10/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 
 class Provider(object):

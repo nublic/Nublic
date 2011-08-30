@@ -2,6 +2,7 @@
 Created on 11/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 import string
 from sqlalchemy.sql.expression import text
@@ -9,7 +10,7 @@ from random import Random
 
 from .database_stored import DatabaseStored
 from .model import metadata
-from scamall.resource.database_stored import ExistingKeyError,\
+from nublic.resource.database_stored import ExistingKeyError,\
     NotExistingKeyError
 
 class MysqlDB(DatabaseStored):

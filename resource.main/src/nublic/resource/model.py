@@ -2,6 +2,8 @@
 Created on 10/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
+
 '''
 
 from elixir import UnicodeText, String, Integer, metadata
@@ -9,7 +11,7 @@ from elixir import Entity, Field, using_options
 from elixir import ManyToOne
 from elixir.relationships import OneToMany
 
-metadata.bind = 'mysql://scamall_resource:ScamUp@localhost:3306/scamall_resource'
+metadata.bind = 'mysql://nublic_resource:ScamUp@localhost:3306/nublic_resource'
 metadata.bind.echo = True
 
 class App(Entity):

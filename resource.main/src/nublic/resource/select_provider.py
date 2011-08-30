@@ -2,6 +2,7 @@
 Created on 11/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
 '''
 from .database_stored import DatabaseStored
 from .mysql_db import MysqlDB

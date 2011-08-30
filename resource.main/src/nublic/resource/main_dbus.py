@@ -4,16 +4,18 @@
 Created on 10/08/2010
 
 @author: David Navarro Estruch
+@copyright: 2011 Nublic
+
 '''
 import dbus
 import dbus.service
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
-from scamall.resource.select_provider import SelectProvider
+from nublic.resource.select_provider import SelectProvider
 
 class DBusValue(dbus.service.Object):
-    bus_path = 'com.scamall.resource'
-    _base_object_path = '/com/scamall/resource'
+    bus_path = 'com.nublic.resource'
+    _base_object_path = '/com/nublic/resource'
     
     def __init__(self, app_name, key):
         self.app = app_name
@@ -22,10 +24,10 @@ class DBusValue(dbus.service.Object):
         self.provider = provider
         self.object_path = self._base_object_path + '/' + app_name + '/' + key 
         # Init DBus object
-        bus_name = dbus.service.BusName('com.scamall.resource', bus = dbus.SystemBus())
+        bus_name = dbus.service.BusName(bus_path, bus = dbus.SystemBus())
         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-    @dbus.service.method('com.scamall.resource')
+    @dbus.service.method('com.nublic.resource')
     def value(self, subkey):
         return self.provider.value(self.app, self.key, subkey)
 
