@@ -3,6 +3,7 @@ package com.nublic.app.example.web.client;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,6 +28,8 @@ public class ExampleUi extends Composite {
 	TextBox nameText;
 	@UiField
 	Label greetLabel;
+	
+	private static final String ERROR_MSG = "There was an error contacting the server.";
 
 	// In a real server
 	// private static final String SERVER_URL = GWT.getModuleBaseURL() +
@@ -45,8 +48,14 @@ public class ExampleUi extends Composite {
 	void onGreetButtonClick(ClickEvent event) {
 		String name = nameText.getText();
 		if (name.length() > 0) {
+			History.newItem(name, false);
 			handleUserRequest(name);
 		}
+	}
+	
+	public void showName(String name) {
+		nameText.setText(name);
+		handleUserRequest(name);
 	}
 
 	void updateGreetingLabel(String newLabel) {
@@ -63,7 +72,7 @@ public class ExampleUi extends Composite {
 			// It is not unused, we maintain callbacks
 			Request request = builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
-					// Display error
+					new ErrorPopup(ERROR_MSG).show();
 				}
 
 				public void onResponseReceived(Request request, Response response) {
@@ -73,12 +82,12 @@ public class ExampleUi extends Composite {
 						Greeting g = JsonUtils.safeEval(text);
 						updateGreetingLabel(g.getGreeting());
 					} else {
-						// Display error
+						new ErrorPopup(ERROR_MSG).show();
 					}
 				}
 			});
 		} catch (RequestException e) {
-			// Display error
+			new ErrorPopup(ERROR_MSG).show();
 		}
 	}
 }
