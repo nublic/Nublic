@@ -8,5 +8,6 @@
   <name>Browser app</name>
   <modules>
   	<module>server</module>
+  	<module>web</module>
   </modules>
 </project>
