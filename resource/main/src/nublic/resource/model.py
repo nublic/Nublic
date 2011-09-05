@@ -11,7 +11,7 @@ from elixir import Entity, Field, using_options
 from elixir import ManyToOne
 from elixir.relationships import OneToMany
 
-metadata.bind = 'mysql://nublic_resource:ScamUp@localhost:3306/nublic_resource'
+metadata.bind = 'postgresql://nublic_resource:ScamUp@localhost/nublic_resource'
 metadata.bind.echo = True
 
 class App(Entity):

@@ -6,7 +6,6 @@ It works for usage during the install of applications.
 
 @author: David Navarro Estruch
 @copyright: 2011 Nublic
-
 '''
 
 from optparse import OptionParser

@@ -8,7 +8,7 @@
 sudo -u postgres psql <<EOF
 CREATE USER nublic_resource WITH 
       SUPERUSER
-      PASSWORD 'password';
+      PASSWORD 'ScamUp';
 CREATE DATABASE nublic_resource WITH OWNER nublic_resource
     ENCODING 'UTF8';
 EOF

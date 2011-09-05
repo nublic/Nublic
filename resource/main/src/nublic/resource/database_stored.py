@@ -22,7 +22,7 @@ class DatabaseStored(Provider):
         @see:  nublic.resource.Provider.__init__
         '''
         Provider.__init__(self, type)
-        setup_all()
+        setup_all(create_tables=True)
 
     def value(self, app, key, subkey = None):
         '''

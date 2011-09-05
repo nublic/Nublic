@@ -1,1 +1,8 @@
-nublic-notification_0.01_all.deb nublic-notification_0.01_amd64.build nublic-notification_0.01_amd64.changes nublic-notification_0.01.dsc nublic-notification_0.01.tar.gz
+nublic-notification_0.01_all.deb
+nublic-notification_0.01_amd64.build
+nublic-notification_0.01_amd64.changes
+nublic-notification_0.01.dsc
+nublic-notification_0.01.tar.gz
+.project
+.pydevproject
+.settings
