@@ -108,10 +108,12 @@ class PostgresqlDB(DatabaseStored):
         metadata.bind = self.__generate_connection_uri(self.__root_user, self.__root_password)
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data(app, key)
-        sql_create_database = "CREATE DATABASE `:database`;"
-        sql_create_user = "CREATE USER :user@localhost IDENTIFIED BY :password"
-        sql_revoke_permissions = "REVOKE ALL ON *.* FROM :user@localhost"
-        sql_grant_permissions = "GRANT ALL ON `:database`.* TO :user@localhost"
+        
+        sql_create_database = "CREATE DATABASE `:database`;" # @TODO: Check if it is correct 
+        sql_create_user = "CREATE USER george WITH PASSWORD ':password';"
+        
+        # sql_revoke_permissions = "REVOKE ALL PRIVILEGES ON * FROM :user;"
+        sql_grant_permissions = "GRAN ALL PRIVILEGES ON DATABASE :database TO :user;"
         # Perform the queries
         text(sql_create_database, metadata.bind).execute(database = database_name)
         text(sql_create_user, metadata.bind).execute(user = user_name, password = password)
@@ -127,7 +129,7 @@ class PostgresqlDB(DatabaseStored):
         metadata.bind = self.__generate_connection_uri(self.__root_user, self.__root_password)
         # Generate data and queries
         sql_delete_database = "DROP DATABASE `:database`;"
-        sql_delete_user = "DROP USER :user@localhost"
+        sql_delete_user = "DROP USER :user"
         # Perform the queries
         text(sql_delete_database, metadata.bind).execute(database = database_name)
         text(sql_delete_user, metadata.bind).execute(user = user_name)
