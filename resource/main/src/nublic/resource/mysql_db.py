@@ -25,7 +25,7 @@ class MysqlDB(DatabaseStored):
         * port: Returns the connection port
         * uri: Returns the connection uri
     '''
-    
+
     __lenght_of_database_sufix = 16
     __lenght_of_user_name = 14 # Max of 16 in database
     __lenght_of_password = 32
@@ -39,15 +39,16 @@ class MysqlDB(DatabaseStored):
         DatabaseStored.__init__(self, "mysql-db")
         # @todo: Needs to read the root password and root user from somewhere
 
-    def request(self, app, key):
+    def install(self, app, key):
         if self.__is_key(app, key):
             raise ExistingKeyError(key)
-        database_name, user_name, password = self.__create_mysql_resource(app, key)
+        database_name, user_name, password = \
+                    self.__create_mysql_resource(app, key)
         self.save_value(app, key, 'user', user_name)
         self.save_value(app, key, 'pass', password)
         self.save_value(app, key, 'database', database_name)
                     
-    def release(self, app, key):
+    def uninstall(self, app, key):
         if not self.__is_key(app, key):
             raise NotExistingKeyError(key) 
         user_name = self.value(app, key, 'user')
@@ -64,7 +65,7 @@ class MysqlDB(DatabaseStored):
         if subkey == "port":
             return self.__port
         elif subkey == "uri":
-            user = self.value(app,key, "user")
+            user = self.value(app, key, "user")
             password = self.value(app, key, "pass")
             database = self.value(app, key, "database")
             return self.__generate_connection_uri(user, password, database)
@@ -72,7 +73,7 @@ class MysqlDB(DatabaseStored):
             return DatabaseStored.value(self, app, key, subkey)
 
     def available_values(self, app, key):
-        return ['database','pass','port','uri','user']
+        return ['database', 'pass', 'port', 'uri', 'user']
 
     def __is_key(self, app, key):
         return not (self.get_key(app, key) == None)

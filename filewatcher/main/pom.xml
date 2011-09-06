@@ -3,13 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>resource</artifactId>
+    <artifactId>filewatcher</artifactId>
     <groupId>com.nublic</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>resource.main</artifactId>
-  <name>Resource Service</name>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>filewatcher.main</artifactId>
+  <name>File Watcher service via D-Bus</name>
   <packaging>pom</packaging>
   <url>http://maven.apache.org</url>
 </project>

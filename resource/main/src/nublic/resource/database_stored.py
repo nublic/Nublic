@@ -15,16 +15,16 @@ class DatabaseStored(Provider):
     A new Provider must inherit this class and provide a request custom method.
     '''
     
-    def __init__(self, type):
+    def __init__(self, resource_type):
         '''
         Constructor
         
         @see:  nublic.resource.Provider.__init__
         '''
-        Provider.__init__(self, type)
+        Provider.__init__(self, resource_type)
         setup_all(create_tables=True)
 
-    def value(self, app, key, subkey = None):
+    def value(self, app, key, subkey):
         '''
         Provides the values stored in the database.
         If you want to perform something else just override
@@ -57,9 +57,9 @@ class DatabaseStored(Provider):
             app = App(name=app_id)
         key_db = Key.get_by(name=key,app_name=app_id)
         if key_db == None:
-            key_db = Key(name=key,app=app, type_name=self.type)
-        if key_db.type_name != self.type:
-            raise TypeProviderError(self.type, key_db.type_name)
+            key_db = Key(name=key,app=app, type_name=self.providerType)
+        if key_db.type_name != self.providerType:
+            raise TypeProviderError(self.providerType, key_db.type_name)
             
         value_db = Value()
         value_db.key = key_db
@@ -106,22 +106,26 @@ class DatabaseStored(Provider):
 
 
 class TypeProviderError(Exception):
-    def __init__(self, type, storedType):
-        self.type = type
-        self.storedType = storedType
+    def __init__(self, provided_type, stored_type):
+        self.type = provided_type
+        self.stored_type = stored_type
+        Exception.__init__()
         
     def __repr__(self):
         return "Type provided " + self.type + \
-               "but in the database is stored " + self.storedType
+               "but in the database is stored " + self.stored_type
 
 class ExistingKeyError(Exception):
     def __init__(self, key):
         self.key = key
+        Exception.__init__()
         
 class NotExistingKeyError(Exception):
     def __init__(self, key):
         self.key = key
+        Exception.__init__()
         
 class NotExistingSubkeyError(Exception):
     def __init__(self, subkey):
         self.subkey = subkey
+        Exception.__init__()

@@ -8,8 +8,7 @@ Created on 15/08/2010
 '''
 
 import unittest
-from notification import *
-from model import Notification, Action, StockAction
+from notification import Notification, new_message
 
 from elixir import *
 
@@ -35,10 +34,14 @@ class testNotification(unittest.TestCase):
     def testNewMessage(self):
         new_message("app", "user1", "level","CriticalMessage")
         notice = Notification.get_by(app="app") 
-        self.assertEqual(notice.app, "app", "Value retrieved should be the stored")
-        self.assertEqual(notice.user, "user1", "Value retrieved should be the stored")
-        self.assertEqual(notice.level, "level", "Value retrieved should be the stored")
-        self.assertEqual(notice.text, "CriticalMessage", "Value retrieved should be the stored")        
+        self.assertEqual(notice.app, "app", 
+                         "Value retrieved should be the stored")
+        self.assertEqual(notice.user, "user1", 
+                         "Value retrieved should be the stored")
+        self.assertEqual(notice.level, "level", 
+                         "Value retrieved should be the stored")
+        self.assertEqual(notice.text, "CriticalMessage", 
+                         "Value retrieved should be the stored")        
         #self.assertEqual(self.blogger.get_title(), title)
 
 

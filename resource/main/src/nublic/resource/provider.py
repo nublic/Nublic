@@ -10,12 +10,11 @@ class Provider(object):
     classdocs
     '''
 
-
-    def __init__(self, type):
+    def __init__(self, providerType):
         '''
         Constructor
         '''
-        self.type = type
+        self.providerType = providerType
 
     def install(self, app, key, *args):
         '''
@@ -30,7 +29,7 @@ class Provider(object):
         '''
         raise NotImplementedError()
     
-    def uninstall(self):
+    def uninstall(self, app, key):
         '''
         Must perform a uninstall over the given app, key.
         Optionally can have a number of ordered args.
@@ -56,7 +55,6 @@ class Provider(object):
         '''
         raise NotImplementedError()
     
-    
     def release(self, app, key):
         '''
         Must perform a release over the given app, key.
@@ -69,9 +67,8 @@ class Provider(object):
         @raise NotExistingKeyError
         '''
         raise NotImplementedError()
-
         
-    def value(self, app, key, subkey = None):
+    def value(self, app, key, subkey):
         '''
         Returns the value of the given pair key/subkey.
         
@@ -98,6 +95,7 @@ class Provider(object):
 class ReapeatedKeyError(Exception):
     def __init__(self, key):
         self.key = key
+        
 class NotExistingKeyError(Exception):
     def __init__(self, key):
         self.key = key
