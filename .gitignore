@@ -1,0 +1,10 @@
+.project
+.pydevproject
+.classpath
+.settings
+.gwt
+.scala_dependencies
+.externalToolBuilders
+*~
+*.pyc
+target
