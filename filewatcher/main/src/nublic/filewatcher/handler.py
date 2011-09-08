@@ -6,10 +6,14 @@ Created on 06/09/2011
 '''
 import pyinotify
 
+"""
+Listens the inotify events
+"""
 class EventHandler(pyinotify.ProcessEvent):
-    '''
-    Listens the inotify events
-    '''
+    
+    def __init__(self, signaler):
+        pyinotify.ProcessEvent.__init__(self)
+        self.signaler = signaler
     
     def mask(self):
         return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_MODIFY \
@@ -17,27 +21,23 @@ class EventHandler(pyinotify.ProcessEvent):
              | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW
     
     def process_IN_CREATE(self, event):
-        self.handle_process(event, "create")
+        self.handle_process("create", event)
     
     def process_IN_DELETE(self, event):
-        self.handle_process(event, "delete")
+        self.handle_process("delete", event)
     
     def process_IN_ATTRIB(self, event):
-        self.handle_process(event, "attrib")
-    
-    def process_IN_MOVED_TO(self, event):
-        print(event.pathname)
-        print(event.src_pathname)
-        print(str(event.dir))
-        print("move")
+        self.handle_process("attrib", event)
     
     def process_IN_MODIFY(self, event):
-        self.handle_process(event, "modify")
+        self.handle_process("modify", event)
+
+    def process_IN_MOVED_TO(self, event):
+        # Special case, we have an extra parameter
+        self.send_signal("move", event.pathname, event.src_pathname, event.dir)
     
-    '''
-    @param event pyinotify.Event
-    '''
-    def handle_process(self, event, ty):
-        print(event.pathname)
-        print(str(event.dir))
-        print(ty)
+    def handle_process(self, ty, event):
+        self.send_signal(ty, event.pathname, '', event.dir)
+    
+    def send_signal(self, ty, pathname, src_pathname, is_dir):
+        self.signaler.file_changed(ty, pathname, src_pathname, is_dir)

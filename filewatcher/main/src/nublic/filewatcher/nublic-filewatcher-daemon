@@ -1,0 +1,19 @@
+#!/usr/bin/python
+
+# Runs in the foreground. It is suited for use with the Upstart manager
+
+# Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
+# Second version from: https://gist.github.com/339430
+#
+# @author: Alejandro Serrano Mena
+# @copyright: 2011 Nublic
+
+from dbus import *
+import gobject
+
+from nublic.filewatcher.watcher import (
+    start_watching
+    )
+
+if __name__ == '__main__':
+    start_watching('/home/serras/nublic/data')
