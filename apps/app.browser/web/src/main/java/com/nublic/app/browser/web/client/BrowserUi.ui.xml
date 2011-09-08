@@ -1,17 +1,21 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p1="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style>
-		.important {
-			font-weight: bold;
-		}
 	</ui:style>
 	<g:LayoutPanel>
 	   <g:layer top='0' height='50px'>
 	       <g:Label>Ejemplo</g:Label>
 	   </g:layer>
-	   <g:layer>
-	       <g:Label>Cosa</g:Label>
+	   <g:layer top="50px" bottom="0px">
+	   	<g:SplitLayoutPanel>
+	   		<g:west size="100.0">
+	   			<p1:CellTree ui:field="folderTree"/>
+	   		</g:west>
+	   		<g:center size="100.0">
+	   			<g:FlowPanel ui:field="contentPlace"/>
+	   		</g:center>
+	   	</g:SplitLayoutPanel>
 	   </g:layer>
 	</g:LayoutPanel>
 </ui:UiBinder> 
