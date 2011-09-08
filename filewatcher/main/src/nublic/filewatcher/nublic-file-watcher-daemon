@@ -8,12 +8,13 @@
 # @author: Alejandro Serrano Mena
 # @copyright: 2011 Nublic
 
-from dbus import *
-import gobject
+from dbus.mainloop.glib import DBusGMainLoop
 
-from nublic.filewatcher.watcher import (
+from watcher import (
+# from nublic.filewatcher.watcher import (
     start_watching
     )
 
 if __name__ == '__main__':
-    start_watching('/home/serras/nublic/data')
+    dbus_loop = DBusGMainLoop(set_as_default=True)
+    start_watching('/home/serras/nublic/data', dbus_loop)
