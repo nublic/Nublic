@@ -1,0 +1,3 @@
+nublic/notification/nublic-file-watcher-daemon /usr/sbin
+com.nublic.filewatcher.conf /etc/dbus-1/system.d
+nublic-file-watcher.conf /etc/init
