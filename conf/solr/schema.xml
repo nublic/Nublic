@@ -394,7 +394,7 @@
 
     <!-- since fields of this type are by default not stored or indexed,
          any data added to them will be ignored outright.  --> 
-    <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" /> 
+    <fieldtype name="ignored" stored="false" indexed="false" multiValued="true" class="solr.StrField" />
     
     <fieldType name="uuid" class="solr.UUIDField" indexed="true" />
 
@@ -427,7 +427,7 @@
      default: a value that should be used if no value is specified
        when adding a document.
    -->
-
+   
    <field name="id" type="uuid" indexed="true" stored="true" default="NEW" />
    <field name="type" type="string" indexed="true" stored="true" required="true" />
    
@@ -460,9 +460,7 @@
    
    <!-- Documents -->
 
-   
-   
-<!-- Quitado del Original
+<!-- REMOVED FROM ORIGINAL
    <field name="id" type="string" indexed="true" stored="true" required="true" /> 
    <field name="sku" type="textTight" indexed="true" stored="true" omitNorms="true"/>
    <field name="name" type="textgen" indexed="true" stored="true"/>
@@ -483,8 +481,7 @@
      Some fields are multiValued only because Tika currently may return
      multiple values for them.
    -->
-   
-<!-- Quitado del Original
+<!-- REMOVED FROM ORIGINAL
    <field name="title" type="text" indexed="true" stored="true" multiValued="true"/>
    <field name="subject" type="text" indexed="true" stored="true"/>
    <field name="description" type="text" indexed="true" stored="true"/>
@@ -499,17 +496,21 @@
 
    <!-- catchall field, containing all other searchable text fields (implemented
         via copyField further on in this schema  -->
-<!--   <field name="text" type="text" indexed="true" stored="false" multiValued="true"/> -->
+   <field name="text" type="text" indexed="true" stored="false" multiValued="true"/>
 
    <!-- catchall text field that indexes tokens both normally and in reverse for efficient
         leading wildcard queries. -->
-<!--   <field name="text_rev" type="text_rev" indexed="true" stored="false" multiValued="true"/> -->
+<!-- REMOVED FROM ORIGINAL
+   <field name="text_rev" type="text_rev" indexed="true" stored="false" multiValued="true"/>
+-->
 
    <!-- non-tokenized version of manufacturer to make it easier to sort or group
         results by manufacturer.  copied from "manu" via copyField -->
-<!--   <field name="manu_exact" type="string" indexed="true" stored="false"/> -->
+<!-- REMOVED FROM ORIGINAL
+   <field name="manu_exact" type="string" indexed="true" stored="false"/>
 
-<!--   <field name="payloads" type="payloads" indexed="true" stored="true"/> -->
+   <field name="payloads" type="payloads" indexed="true" stored="true"/>
+-->
 
    <!-- Uncommenting the following will create a "timestamp" field using
         a default value of "NOW" to indicate when each document was indexed.
@@ -563,7 +564,7 @@
  <uniqueKey>id</uniqueKey>
 
  <!-- field for the QueryParser to use when an explicit fieldname is absent -->
- <defaultSearchField>title</defaultSearchField>
+ <defaultSearchField>text</defaultSearchField>
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="OR"/>
@@ -571,8 +572,7 @@
   <!-- copyField commands copy one field to another at the time a document
         is added to the index.  It's used either to index the same field differently,
         or to add multiple fields to the same field for easier/faster searching.  -->
-
-<!-- Quitado del Original
+<!-- REMOVED FROM ORIGINAL
    <copyField source="cat" dest="text"/>
    <copyField source="name" dest="text"/>
    <copyField source="manu" dest="text"/>
