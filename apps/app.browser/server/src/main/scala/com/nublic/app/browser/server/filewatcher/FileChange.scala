@@ -12,11 +12,12 @@ case class AttribsChanged(filename: String, isdir: Boolean) extends FileChange(f
 case class Moved(from: String, to: String, isdir: Boolean) extends FileChange(to, isdir)
 
 object FileChange {
-  def parse(ty: String, pathname: String, src_pathname : String, is_dir: Boolean) = ty match {
+  def parse(ty: String, pathname: String, src_pathname : String, is_dir: Boolean): FileChange = ty match {
     case "create" => Created(pathname, is_dir)
     case "delete" => Deleted(pathname, is_dir)
     case "modify" => Modified(pathname, is_dir)
     case "attrib" => AttribsChanged(pathname, is_dir)
     case "move"   => Moved(src_pathname, pathname, is_dir)
+    case _        => throw new IllegalArgumentException()
   }
 }
