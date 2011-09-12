@@ -1,0 +1,5 @@
+In this file we include the libraries needed for our packages.
+This info is temporary, when proper Debian packages are created, it will go into them.
+
+* Most of the apps => libdbus-java (D-Bus bindings for Java and Scala)
+* File Watcher => python-magic (for guessing MIME types) and python-sunburnt (for Solr, in the libs-as-debs folder)
