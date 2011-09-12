@@ -30,10 +30,9 @@ class PostgresqlDB(DatabaseStored):
     __lenght_of_user_name = 14 # Max of 16 in database
     __lenght_of_password = 32
     __random_characters = string.letters + string.digits + ""
-    __root_password = 'Solutions'
-    __root_user = 'root'
-    __port = '3306'
-    __connection_protocol = "postgre"
+    __root_password = 'ScamUp'
+    __root_user = 'nublic_resource'
+    __connection_protocol = "postgresql"
 
     def __init__(self):
         DatabaseStored.__init__(self, "postgresql-db")
@@ -68,9 +67,7 @@ class PostgresqlDB(DatabaseStored):
         
         Some values are shared to every postgresql-db resource.
         '''
-        if subkey == "port":
-            return self.__port
-        elif subkey == "uri":
+        if subkey == "uri":
             user = self.value(app, key, "user")
             password = self.value(app, key, "pass")
             database = self.value(app, key, "database")
@@ -90,10 +87,12 @@ class PostgresqlDB(DatabaseStored):
         with randomized data
         '''
         rand_gen = Random()
-        database_name = "".join(rand_gen.sample(self.__random_characters,
-                                        self.__lenght_of_database_sufix))
-        user_name = "".join(rand_gen.sample(self.__random_characters,
-                                    self.__lenght_of_user_name))
+        database_name = "".join(rand_gen.sample(string.letters, 1) + 
+                                rand_gen.sample(self.__random_characters,
+                                        self.__lenght_of_database_sufix - 1))
+        user_name = "".join(rand_gen.sample(string.letters, 1) +
+                            rand_gen.sample(self.__random_characters,
+                                    self.__lenght_of_user_name - 1))
         password = "".join(rand_gen.sample(self.__random_characters,
                                   self.__lenght_of_password))
         return database_name, user_name, password
@@ -104,34 +103,44 @@ class PostgresqlDB(DatabaseStored):
         '''
         if database == None:
             return self.__connection_protocol + "://" + user + ":" + password \
-                    + "@localhost:" + self.__port
+                    + "@localhost"
         else:
             return self.__connection_protocol + "://" + user + ":" + password \
-                    + "@localhost:" + self.__port + "/" + database
+                    + "@localhost" + "/" + database
         
     def __create_postgre_resource(self, app, key):
         bind = metadata.bind
         # Creates a connection with permission to create users and databases
         metadata.bind = self.__generate_connection_uri(
                                     self.__root_user, self.__root_password)
+        # Create database cannot be executed as a transaction block so we 
+        # should change the isolation level to create a database
+        metadata.bind.engine.connect().\
+            connection.connection.set_isolation_level(0)
+        
+        
+
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data()
         
-        sql_create_database =  \
-                "CREATE DATABASE `:database`;" # @TODO: Check if it is correct 
+        # It is needed to concatenate this way to avoid the usual but 
+        # incompatible way to escape strings while executing some admin-level 
+        # sql commands
         sql_create_user = \
-                "CREATE USER george WITH PASSWORD ':password';"
+                "CREATE USER " + user_name + \
+                " WITH PASSWORD '" + password + "';"
         
-        # sql_revoke_permissions = "REVOKE ALL PRIVILEGES ON * FROM :user;"
-        sql_grant_permissions = \
-                "GRAN ALL PRIVILEGES ON DATABASE :database TO :user;"
+        sql_create_database =  \
+                "CREATE DATABASE " + database_name + \
+                " WITH OWNER " + user_name + \
+                " ENCODING 'UTF8';" # @TODO: Check if it is correct 
+
         # Perform the queries
-        text(sql_create_database, metadata.bind).execute(database=database_name)
         text(sql_create_user, metadata.bind).execute(
                                     user=user_name, password=password)
+        
+        text(sql_create_database, metadata.bind).execute(database=database_name)
         #text(sql_revoke_permissions, metadata.bind).execute(user = user_name)
-        text(sql_grant_permissions, metadata.bind).execute(
-                                    database=database_name, user=user_name)
         # Restores the old database
         metadata.bind = bind
         return database_name, user_name, password
@@ -141,9 +150,12 @@ class PostgresqlDB(DatabaseStored):
         # Creates a connection with permission to create users and databases
         metadata.bind = self.__generate_connection_uri(
                                         self.__root_user, self.__root_password)
+        metadata.bind.engine.connect().\
+            connection.connection.set_isolation_level(0)
+        
         # Generate data and queries
-        sql_delete_database = "DROP DATABASE `:database`;"
-        sql_delete_user = "DROP USER :user"
+        sql_delete_database = "DROP DATABASE " + database_name + ";"
+        sql_delete_user = "DROP USER " + user_name + ";"
         # Perform the queries
         text(sql_delete_database, metadata.bind).execute(database=database_name)
         text(sql_delete_user, metadata.bind).execute(user=user_name)

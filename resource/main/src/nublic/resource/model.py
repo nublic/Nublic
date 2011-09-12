@@ -10,6 +10,7 @@ from elixir import UnicodeText, String, Integer, metadata
 from elixir import Entity, Field, using_options
 from elixir import ManyToOne
 from elixir.relationships import OneToMany
+from sqlalchemy.types import Unicode
 
 metadata.bind = 'postgresql://nublic_resource:ScamUp@localhost/nublic_resource'
 metadata.bind.echo = True
@@ -26,8 +27,8 @@ class Key(Entity):
     '''
     Represents a Key from an App 
     '''
-    name = Field(String(256), primary_key=True)
-    type_name = Field(String(256), primary_key=True)
+    name = Field(Unicode(256), primary_key=True)
+    type_name = Field(Unicode(256), primary_key=True)
     app = ManyToOne('App')
     values = OneToMany('Value')
     using_options(tablename='key')
@@ -40,7 +41,7 @@ class Value(Entity):
     Represents a value from a subkey in an App
     '''
     id = Field(Integer, primary_key=True)
-    subkey = Field(String(256))
+    subkey = Field(Unicode(256))
     value = Field(UnicodeText)
     key = ManyToOne('Key')
     using_options(tablename='value')
