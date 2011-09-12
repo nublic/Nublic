@@ -1,0 +1,7 @@
+Sunburnt - Pyhton to Solr library
+=================================
+
+0. You need "python-setuptools" and "python-stdeb"
+1. wget http://pypi.python.org/packages/source/s/sunburnt/sunburnt-0.5.tar.gz
+2. py2dsc sunburnt-0.5.tar.gz
+3. Build the Debian package that will appear in deb_dist
