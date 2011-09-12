@@ -9,6 +9,7 @@
 # @author: Alejandro Serrano Mena
 # @copyright: 2011 Nublic
 
+import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
 # from watcher import (
@@ -18,4 +19,6 @@ from nublic.filewatcher.watcher import (
 
 if __name__ == '__main__':
     dbus_loop = DBusGMainLoop(set_as_default=True)
-    start_watching('/home/serras/nublic/data', dbus_loop)
+    start_watching('/home/serras/nublic/data')
+    loop = gobject.MainLoop()
+    loop.run()

@@ -12,10 +12,10 @@ import dbus.service
 Sends signals via D-Bus
 """
 class DbusSignaler(dbus.service.Object):
-    def __init__(self, app_name, loop):
-        dbus.service.Object.__init__(self, dbus.SystemBus(mainloop=loop), '/com/nublic/fielwatcher/' + app_name)
+    def __init__(self, app_name):
+        bus_name = dbus.service.BusName('com.nublic.filewatcher', bus=dbus.SystemBus())
+        dbus.service.Object.__init__(self, bus_name, '/com/nublic/filewatcher/' + app_name)
 
-    @dbus.service.signal(dbus_interface='com.nublic.filewatcher',
-                         signature='sssb')
+    @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssb')
     def file_changed(self, ty, pathname, src_pathname, isdir):
         print "%s %s" % (ty, pathname)
