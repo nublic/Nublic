@@ -4,7 +4,9 @@ Created on 06/09/2011
 @author: Alejandro Serrano Mena
 @copyright: 2011 Nublic
 '''
+
 import pyinotify
+import solr
 
 """
 Listens the inotify events
@@ -22,6 +24,9 @@ class EventHandler(pyinotify.ProcessEvent):
     
     def process_IN_CREATE(self, event):
         self.handle_process("create", event)
+        # Create Solr element
+        file_info = solr.FileInfo(event.pathname, event.dir)
+        file_info.save()
     
     def process_IN_DELETE(self, event):
         self.handle_process("delete", event)
