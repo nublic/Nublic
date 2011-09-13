@@ -4,12 +4,12 @@ import org.scalatra._
 import org.scalatra.liftjson.JsonSupport
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
-import com.nublic.app.browser.server.filewatcher.FileWatcherActor
+import com.nublic.app.browser.server.filewatcher.FileActor
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
-  val watcher = new FileWatcherActor()
+  val watcher = new FileActor()
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)

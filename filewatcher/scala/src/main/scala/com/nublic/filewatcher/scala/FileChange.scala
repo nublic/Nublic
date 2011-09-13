@@ -1,4 +1,4 @@
-package com.nublic.app.browser.server.filewatcher
+package com.nublic.filewatcher.scala
 
 abstract class FileChange(filename: String, isdir: Boolean, ty: String) {
   def getFileName: String = filename

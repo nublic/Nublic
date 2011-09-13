@@ -1,4 +1,4 @@
-package com.nublic.app.browser.server.filewatcher;
+package com.nublic.filewatcher.scala;
 
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;

@@ -1,4 +1,4 @@
-package com.nublic.app.browser.server.filewatcher
+package com.nublic.filewatcher.scala
 
 import scala.actors.Actor
 import scala.actors.Actor._
@@ -8,12 +8,14 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 
-class FileWatcherActor extends Actor {
+abstract class FileWatcherActor extends Actor {
+  val app_name: String
+  val processors: Map[String, Processor]
+  
   val bus_name = "com.nublic.filewatcher"
-  val object_path = "/com/nublic/filewatcher/Browser"
-  val derby_db = "jdbc:derby:/var/nublic/cache/Browser.filewatcher;create=true"
+  val object_path = "/com/nublic/filewatcher/" + app_name
+  val derby_db = "jdbc:derby:/var/nublic/cache/" + app_name + ".filewatcher;create=true"
   var derby_connection: Connection = null
-  val processors = Map("thumbnail" -> new ThumbnailProcessor(this)) 
 
   def act() = {
     // Create D-Bus connection

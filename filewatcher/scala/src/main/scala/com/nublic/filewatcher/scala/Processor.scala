@@ -1,4 +1,4 @@
-package com.nublic.app.browser.server.filewatcher
+package com.nublic.filewatcher.scala
 
 import scala.actors.Actor
 import scala.actors.Actor._

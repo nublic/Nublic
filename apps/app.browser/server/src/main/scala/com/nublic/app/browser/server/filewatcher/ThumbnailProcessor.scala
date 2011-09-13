@@ -1,5 +1,7 @@
 package com.nublic.app.browser.server.filewatcher
 
+import com.nublic.filewatcher.scala._
+
 class ThumbnailProcessor(watcher: FileWatcherActor) extends Processor("thumbnail", watcher) {
 
   def process(c: FileChange) = c match {
