@@ -68,8 +68,10 @@ class EventHandler(pyinotify.ProcessEvent):
         # Check if it is in Solr
         if not solr.has_doc(pathname):
             file_info = solr.new_doc(pathname, is_dir)
+            file_info.save()
+            self.signaler.file_changed("create", pathname, '', is_dir)
         else:
             file_info = solr.retrieve_doc(pathname)
-        file_info.save()
-        # Send repeat message via D-Bus
-        self.signaler.file_changed("repeat", pathname, '', is_dir)
+            file_info.save()
+            # Send repeat message via D-Bus
+            self.signaler.file_changed("repeat", pathname, '', is_dir)

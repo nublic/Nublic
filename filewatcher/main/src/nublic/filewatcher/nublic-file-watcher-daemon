@@ -13,14 +13,14 @@ import argparse
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
-from watcher import (
-# from nublic.filewatcher.watcher import (
+# from watcher import (
+from nublic.filewatcher.watcher import (
     start_watching,
     scan_folder
     )
 
-from solr import (
-# from nublic.filewatcher.solr import (
+# from solr import (
+from nublic.filewatcher.solr import (
     delete_all_documents
     )
 
