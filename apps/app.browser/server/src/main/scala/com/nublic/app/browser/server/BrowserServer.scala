@@ -1,7 +1,7 @@
 package com.nublic.app.browser.server
 
 import org.scalatra._
-import org.scalatra.liftjson._
+import org.scalatra.liftjson.JsonSupport
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
 import com.nublic.app.browser.server.filewatcher.FileWatcherActor
