@@ -30,32 +30,46 @@ Magic.load()
 
 Interface = SolrInterface(url=SOLR_URL, http_connection=http_connection)
 
+def has_doc(pathname):
+    results = Interface.query(path=unicode(pathname, 'utf-8')).execute()
+    return len(results) > 0
+
+def retrieve_doc(pathname):
+    results = Interface.query(path=unicode(pathname, 'utf-8')).execute()
+    return FileInfo(results[0])
+
+def new_doc(pathname, isdir):
+    document = { 'isFile': True
+               , 'isDir': isdir
+               , 'path': unicode(pathname, 'utf-8')
+               , 'filename': unicode(os.path.basename(pathname), 'utf-8')
+               , 'createdAt': datetime.datetime.now()
+               }
+    return FileInfo(document)
+
+def delete_all_documents():
+    Interface.delete_all()
+    Interface.commit()
+
 class FileInfo:
-    def __init__(self, pathname, isdir, doc_id=None):
-        self.pathname = pathname
-        self.isdir = isdir
-        self.id = doc_id
+    def __init__(self, props):
+        self.props = props
     
     def compute_mime_type(self):
-        return Magic.file(self.pathname)
+        return Magic.file(self.props['path'].encode('utf-8'))
     
     def set_new_pathname(self, new_pathname):
-        self.pathname = new_pathname
+        self.props['path'] = new_pathname
+        self.props['filename'] = unicode(os.path.basename(new_pathname), 'utf-8')
     
     def save(self):
-        now = datetime.datetime.now() # So we have equal createdAt and updatedAt
-        document = { 'isFile': True
-                   , 'isDir': self.isdir
-                   , 'path': unicode(self.pathname, 'utf-8')
-                   , 'filename': unicode(os.path.basename(self.pathname), 'utf-8')
-                   , 'mime': self.compute_mime_type()
-                   , 'updatedAt': now
-                   }
-        
-        if self.id == None: # New document
-            document['createdAt'] = now
-        else:
-            document['id'] = self.id
+        self.props['updatedAt'] = datetime.datetime.now()
+        self.props['mime'] = self.compute_mime_type()
         # Save in Solr
-        Interface.add(document)
+        Interface.add(self.props)
         Interface.commit()
+    
+    def delete(self):
+        if 'id' in self.props: # Don't delete a not saved document
+            Interface.delete(self.props['id'])
+            Interface.commit()

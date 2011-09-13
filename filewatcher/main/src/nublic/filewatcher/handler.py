@@ -23,21 +23,38 @@ class EventHandler(pyinotify.ProcessEvent):
              | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW
     
     def process_IN_CREATE(self, event):
-        self.handle_process("create", event)
         # Create Solr element
-        file_info = solr.FileInfo(event.pathname, event.dir)
+        file_info = solr.new_doc(event.pathname, event.dir)
         file_info.save()
+        # Notify via D-Bus
+        self.handle_process("create", event)
     
     def process_IN_DELETE(self, event):
+        # Delete in Solr
+        file_info = solr.retrieve_doc(event.pathname)
+        file_info.delete()
+        # Notify via D-Bus
         self.handle_process("delete", event)
     
     def process_IN_ATTRIB(self, event):
+        # No changes in Solr
+        # Notify via D-Bus
         self.handle_process("attrib", event)
     
     def process_IN_MODIFY(self, event):
+        # Change in Solr
+        file_info = solr.retrieve_doc(event.pathname)
+        # This recomputes the MIME type
+        file_info.save()
+        # Notify via D-Bus
         self.handle_process("modify", event)
 
     def process_IN_MOVED_TO(self, event):
+        # Change in Solr
+        file_info = solr.retrieve_doc(event.src_pathname)
+        file_info.set_new_pathname(event.pathname)
+        file_info.save()
+        # Notify via D-Bus
         # Special case, we have an extra parameter
         self.send_signal("move", event.pathname, event.src_pathname, event.dir)
     
@@ -46,3 +63,13 @@ class EventHandler(pyinotify.ProcessEvent):
     
     def send_signal(self, ty, pathname, src_pathname, is_dir):
         self.signaler.file_changed(ty, pathname, src_pathname, is_dir)
+    
+    def send_repeated_creation(self, pathname, is_dir):
+        # Check if it is in Solr
+        if not solr.has_doc(pathname):
+            file_info = solr.new_doc(pathname, is_dir)
+        else:
+            file_info = solr.retrieve_doc(pathname)
+        file_info.save()
+        # Send repeat message via D-Bus
+        self.signaler.file_changed("repeat", pathname, '', is_dir)
