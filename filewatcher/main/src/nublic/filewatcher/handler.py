@@ -18,7 +18,7 @@ class EventHandler(pyinotify.ProcessEvent):
         self.signaler = signaler
     
     def mask(self):
-        return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_MODIFY \
+        return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE \
              | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM  \
              | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW
     
@@ -41,7 +41,7 @@ class EventHandler(pyinotify.ProcessEvent):
         # Notify via D-Bus
         self.handle_process("attrib", event)
     
-    def process_IN_MODIFY(self, event):
+    def process_IN_CLOSE_WRITE(self, event):
         # Change in Solr
         file_info = solr.retrieve_doc(event.pathname)
         # This recomputes the MIME type
