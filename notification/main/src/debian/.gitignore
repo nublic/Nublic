@@ -2,3 +2,4 @@ compat files
 nublic-notification.debhelper.log
 nublic-notification.substvars
 python-module-stampdir
+nublic-notification

@@ -118,14 +118,11 @@ class TypeProviderError(Exception):
 class ExistingKeyError(Exception):
     def __init__(self, key):
         self.key = key
-        Exception.__init__()
-        
+                
 class NotExistingKeyError(Exception):
     def __init__(self, key):
         self.key = key
-        Exception.__init__()
         
 class NotExistingSubkeyError(Exception):
     def __init__(self, subkey):
         self.subkey = subkey
-        Exception.__init__()
