@@ -6,4 +6,8 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>filewatcher</name>
+  <modules>
+    <module>main</module>
+  	<module>scala</module>
+  </modules>
 </project>
