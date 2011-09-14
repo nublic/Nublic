@@ -22,19 +22,22 @@ abstract class FileWatcherActor extends Actor {
   val bus_name = "com.nublic.filewatcher"
   val object_path = "/com/nublic/filewatcher/" + app_name
   val derby_db = "jdbc:derby:/var/nublic/cache/" + app_name + ".filewatcher;create=true"
+  var processor_numbers: Map[String, Integer]
+  var all_processors_number: Integer
 
   def act() = {
-    // Create D-Bus connection
-    val conn = DBusConnection.getConnection(DBusConnection.SYSTEM);
-    val watcher = conn.getRemoteObject(bus_name, object_path)
-    conn.addSigHandler(classOf[FileWatcher.file_changed], watcher, new DBusHandler(this))
     // Start processors
+    computeProcessorNumbers()
     for(processor <- processors.values) {
       processor.start()
     }
     // Manage initial steps in Derby database
     loadSqueryl()
     executeNotFinishedActions()
+    // Create D-Bus connection
+    val conn = DBusConnection.getConnection(DBusConnection.SYSTEM);
+    val watcher = conn.getRemoteObject(bus_name, object_path)
+    conn.addSigHandler(classOf[FileWatcher.file_changed], watcher, new DBusHandler(this))
     // Start actor loop
     loop {
       react {
@@ -83,18 +86,6 @@ abstract class FileWatcherActor extends Actor {
     }
   }
   
-  def hasProcessorFinished(dbChange: FileChangeInDatabase, processor_name: String): Boolean = {
-    return false
-  }
-  
-  def hasAllProcessorsFinished(dbChange: FileChangeInDatabase): Boolean = {
-    return false
-  }
-  
-  def setProcessorFinished(dbChange: FileChangeInDatabase, processor_name: String) = {
-    
-  }
-  
   def executeNotFinishedActions() = {
     // Check every row
     for(dbChange <- FileWatcherDatabase.files) {
@@ -103,6 +94,35 @@ abstract class FileWatcherActor extends Actor {
           processor ! ForwardFileChange(dbChange.id, dbChange.toFileChange)
         }
       }
+    }
+  }
+  
+  def computeProcessorNumbers() = {
+    // Create new map
+    processor_numbers = Map()
+    // Generate numbers
+    var i = 1
+    all_processors_number = 0
+    for(processor_name <- processors.keys) {
+      processor_numbers += processor_name -> i
+      all_processors_number += i
+      i *= 2
+    }
+  }
+  
+  def hasProcessorFinished(dbChange: FileChangeInDatabase, processor_name: String): Boolean = {
+    processor_numbers.get(processor_name) match {
+      case None         => false
+      case Some(number) => (dbChange.processed & number) > 0
+    }
+  }
+  
+  def hasAllProcessorsFinished(dbChange: FileChangeInDatabase): Boolean = dbChange.processed == all_processors_number
+  
+  def setProcessorFinished(dbChange: FileChangeInDatabase, processor_name: String) = {
+     processor_numbers.get(processor_name) match {
+      case None         => ()
+      case Some(number) => dbChange.processed |= number
     }
   }
 
