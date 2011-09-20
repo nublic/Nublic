@@ -7,10 +7,11 @@ Created on 06/09/2011
 '''
 
 import gobject
+import os
 import pyinotify
-from dbus_signals import *
-from handler import *
-from manager import *
+from dbus_signals import DbusSignaler
+from handler import EventHandler
+from manager import WatchManager2
 
 def start_watching(folder):
     wm = WatchManager2()
@@ -20,7 +21,7 @@ def start_watching(folder):
     gobject.timeout_add(500, quick_check, notifier)
     # Exclude files beginning with . or ending in ~
     e_filter = pyinotify.ExcludeFilter(['((/[^/]+)*/\\..*)|((/[^/]+)*/.+~)'])
-    wdd = wm.add_watch(folder, handler.mask(), rec=True, auto_add=True, exclude_filter=e_filter)
+    _ = wm.add_watch(folder, handler.mask(), rec=True, auto_add=True, exclude_filter=e_filter)
     print "Starting to watch..."
 
 def quick_check(notifier):
@@ -53,6 +54,6 @@ def walk_folder(top):
                 index = index - 1
             index = index + 1
         yield (root, True)
-        for file in files:
-            yield (os.path.join(root, file), False)
+        for fl in files:
+            yield (os.path.join(root, fl), False)
     

@@ -8,19 +8,17 @@ Created on 06/09/2011
 import pyinotify
 import solr
 
-"""
-Listens the inotify events
-"""
+
 class EventHandler(pyinotify.ProcessEvent):
-    
+    '''
+    Listens the inotify events
+    '''
     def __init__(self, signaler):
         pyinotify.ProcessEvent.__init__(self)
         self.signaler = signaler
     
     def mask(self):
-        return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE \
-             | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM  \
-             | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW
+        return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW #IGNORE:E1101
     
     def process_IN_CREATE(self, event):
         # Create Solr element
