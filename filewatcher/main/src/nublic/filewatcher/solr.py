@@ -30,19 +30,32 @@ Magic.load()
 
 Interface = SolrInterface(url=SOLR_URL, http_connection=http_connection)
 
+def to_utf8(string):
+    return unicode(string, 'utf-8')
+
+def from_utf8(string):
+    return string.encode('utf-8')
+
 def has_doc(pathname):
-    results = Interface.query(path=unicode(pathname, 'utf-8')).execute()
+    results = Interface.query(path=to_utf8(pathname)).field_limit("path").execute()
     return len(results) > 0
 
 def retrieve_doc(pathname):
-    results = Interface.query(path=unicode(pathname, 'utf-8')).execute()
+    results = Interface.query(path=to_utf8(pathname)).execute()
     return FileInfo(results[0])
+
+def retrieve_docs_in_dir(path):
+    results = Interface.query(path=to_utf8(path + '/')).execute()
+    for result in results:
+        if result['path'].startswith(path + '/'):
+            # So the folder name does not appear in the middle
+            yield FileInfo(result)
 
 def new_doc(pathname, isdir):
     document = { 'isFile': True
                , 'isDir': isdir
-               , 'path': unicode(pathname, 'utf-8')
-               , 'filename': unicode(os.path.basename(pathname), 'utf-8')
+               , 'path': to_utf8(pathname)
+               , 'filename': to_utf8(os.path.basename(pathname))
                , 'createdAt': datetime.datetime.now()
                }
     return FileInfo(document)
@@ -56,11 +69,14 @@ class FileInfo:
         self.props = props
     
     def compute_mime_type(self):
-        return Magic.file(self.props['path'].encode('utf-8'))
+        return Magic.file(from_utf8(self.props['path']))
     
     def set_new_pathname(self, new_pathname):
         self.props['path'] = new_pathname
-        self.props['filename'] = unicode(os.path.basename(new_pathname), 'utf-8')
+        self.props['filename'] = to_utf8(os.path.basename(new_pathname))
+    
+    def get_pathname(self):
+        return self.props['path']
     
     def save(self):
         self.props['updatedAt'] = datetime.datetime.now()

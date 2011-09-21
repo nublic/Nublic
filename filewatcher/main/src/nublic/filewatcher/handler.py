@@ -48,6 +48,15 @@ class EventHandler(pyinotify.ProcessEvent):
         self.handle_process("modify", event)
 
     def process_IN_MOVED_TO(self, event):
+        # If is is a directory, change children
+        if event.dir:
+            dir_name = event.src_pathname
+            new_dir_name = event.pathname
+            for file_info in solr.retrieve_docs_in_dir(dir_name):
+                file_path = file_info.get_pathname()
+                new_file_path = file_path.replace(dir_name, new_dir_name, 1)
+                file_info.set_new_pathname(new_file_path)
+                file_info.save()
         # Change in Solr
         file_info = solr.retrieve_doc(event.src_pathname)
         file_info.set_new_pathname(event.pathname)
