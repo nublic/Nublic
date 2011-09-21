@@ -45,9 +45,9 @@ def retrieve_doc(pathname):
     return FileInfo(results[0])
 
 def retrieve_docs_in_dir(path):
-    results = Interface.query(path=to_utf8(path + '/')).execute()
+    results = Interface.query(path=to_utf8(path + '/*')).execute()
     for result in results:
-        if result['path'].startswith(path + '/'):
+        if from_utf8(result['path']).startswith(path + '/'):
             # So the folder name does not appear in the middle
             yield FileInfo(result)
 
@@ -72,11 +72,14 @@ class FileInfo:
         return Magic.file(from_utf8(self.props['path']))
     
     def set_new_pathname(self, new_pathname):
-        self.props['path'] = new_pathname
+        self.props['path'] = to_utf8(new_pathname)
         self.props['filename'] = to_utf8(os.path.basename(new_pathname))
     
     def get_pathname(self):
-        return self.props['path']
+        return from_utf8(self.props['path'])
+    
+    def is_directory(self):
+        return self.props['isDir']
     
     def save(self):
         self.props['updatedAt'] = datetime.datetime.now()

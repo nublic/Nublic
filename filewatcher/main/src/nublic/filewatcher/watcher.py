@@ -16,7 +16,7 @@ from manager import WatchManager2
 def start_watching(folder):
     wm = WatchManager2()
     signaler = DbusSignaler('Browser')
-    handler = EventHandler(signaler)
+    handler = EventHandler(signaler, wm)
     notifier = pyinotify.Notifier(wm, handler, timeout=10)
     gobject.timeout_add(500, quick_check, notifier)
     # Exclude files beginning with . or ending in ~
