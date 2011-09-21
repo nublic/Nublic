@@ -8,7 +8,6 @@ Created on 06/09/2011
 import pyinotify
 import solr
 
-
 class EventHandler(pyinotify.ProcessEvent):
     '''
     Listens the inotify events

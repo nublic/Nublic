@@ -5,8 +5,8 @@ Created on 08/09/2011
 @copyright: 2011 Nublic
 '''
 
-import dbus
-
+# import dbus
+import dbus.service
 
 class DbusSignaler(dbus.service.Object):
     '''
