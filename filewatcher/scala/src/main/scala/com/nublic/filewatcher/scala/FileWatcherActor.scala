@@ -22,8 +22,8 @@ abstract class FileWatcherActor extends Actor {
   val bus_name = "com.nublic.filewatcher"
   val object_path = "/com/nublic/filewatcher/" + app_name
   val derby_db = "jdbc:derby:/var/nublic/cache/" + app_name + ".filewatcher;create=true"
-  var processor_numbers: Map[String, Integer]
-  var all_processors_number: Integer
+  var processor_numbers = Map[String, Integer]()
+  var all_processors_number: Integer = -1
 
   def act() = {
     // Start processors
