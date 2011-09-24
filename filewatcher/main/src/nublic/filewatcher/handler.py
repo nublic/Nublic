@@ -80,9 +80,14 @@ class EventHandler(pyinotify.ProcessEvent):
             # Change the path for inotify events
             self.change_watched_path(event.src_pathname, event.pathname)
         # Change in Solr
-        file_info = solr.retrieve_doc(event.src_pathname)
-        file_info.set_new_pathname(event.pathname)
-        file_info.save()
+        if solr.has_doc(event.src_pathname):
+            file_info = solr.retrieve_doc(event.src_pathname)
+            file_info.set_new_pathname(event.pathname)
+            file_info.save()
+        else:
+            # Create a new file
+            file_info = solr.new_doc(event.pathname, event.dir)
+            file_info.save()
         # Notify via D-Bus
         # Special case, we have an extra parameter
         self.send_signal("move", event.pathname, event.src_pathname, event.dir)

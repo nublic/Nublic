@@ -42,7 +42,10 @@ def has_doc(pathname):
 
 def retrieve_doc(pathname):
     results = Interface.query(path=to_utf8(pathname)).execute()
-    return FileInfo(results[0])
+    if len(results) > 0:
+        return FileInfo(results[0])
+    else:
+        return None
 
 def retrieve_docs_in_dir(path):
     results = Interface.query(path=to_utf8(path + '/*')).execute()
