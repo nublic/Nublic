@@ -7,21 +7,19 @@ import org.freedesktop.dbus.DBusSigHandler
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
-
 import org.squeryl.adapters.DerbyAdapter
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Session
 import org.squeryl.SessionFactory
-
 import FileWatcherDatabase._
 
-abstract class FileWatcherActor extends Actor {
-  val app_name: String
+abstract class FileWatcherActor(val app_name: String) extends Actor {
   val processors: Map[String, Processor]
   
   val bus_name = "com.nublic.filewatcher"
   val object_path = "/com/nublic/filewatcher/" + app_name
-  val derby_db = "jdbc:derby:/var/nublic/cache/" + app_name + ".filewatcher;create=true"
+  val derby_db_file = "/var/nublic/cache/" + app_name + ".filewatcher"
+  val derby_db = "jdbc:derby:" + derby_db_file + ";create=true"
   var processor_numbers = Map[String, Integer]()
   var all_processors_number: Integer = -1
 
@@ -47,7 +45,9 @@ abstract class FileWatcherActor extends Actor {
             case Moved(from, to, isdir) => new FileChangeInDatabase(c.getType, to, from, isdir)
             case _: FileChange => new FileChangeInDatabase(c.getType, c.getFileName, c.isDirectory)
           }
-          FileWatcherDatabase.files.insert(dbChange)
+          transaction {
+            FileWatcherDatabase.files.insert(dbChange)
+          }
           // Send to processors
           val objectId = dbChange.id
           for(processor <- processors.values) {
@@ -56,15 +56,17 @@ abstract class FileWatcherActor extends Actor {
         }
         case BackFileChange(name, id, _) => {
           // Get the database object
-          FileWatcherDatabase.files.lookup(id) match {
-            case None => { /* This should not happen */ }
-            case Some(dbChange) => {
-              // Set the processor
-              setProcessorFinished(dbChange, name)
-              FileWatcherDatabase.files.update(dbChange)
-              // Delete is everything finished
-              if (hasAllProcessorsFinished(dbChange)) {
-                FileWatcherDatabase.files.delete(id)
+          transaction {
+            FileWatcherDatabase.files.lookup(id) match {
+              case None => { /* This should not happen */ }
+              case Some(dbChange) => {
+                // Set the processor
+                setProcessorFinished(dbChange, name)
+                FileWatcherDatabase.files.update(dbChange)
+                // Delete is everything finished
+                if (hasAllProcessorsFinished(dbChange)) {
+                  FileWatcherDatabase.files.delete(id)
+                }
               }
             }
           }
@@ -82,16 +84,22 @@ abstract class FileWatcherActor extends Actor {
     )
     // Create tables if they do not exist
     transaction {
-      FileWatcherDatabase.create
+      try {
+        FileWatcherDatabase.create
+      } catch {
+        case _ => { /* Table is already created */ }
+      }
     }
   }
   
   def executeNotFinishedActions() = {
     // Check every row
-    for(dbChange <- FileWatcherDatabase.files) {
-      for((field, processor) <- processors) {
-        if(!hasProcessorFinished(dbChange, field)) {
-          processor ! ForwardFileChange(dbChange.id, dbChange.toFileChange)
+    transaction {
+      for(dbChange <- FileWatcherDatabase.files) {
+        for((field, processor) <- processors) {
+          if(!hasProcessorFinished(dbChange, field)) {
+            processor ! ForwardFileChange(dbChange.id, dbChange.toFileChange)
+          }
         }
       }
     }

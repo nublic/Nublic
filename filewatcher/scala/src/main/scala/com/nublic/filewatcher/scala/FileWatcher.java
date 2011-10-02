@@ -13,12 +13,12 @@ public interface FileWatcher extends DBusInterface {
 		String src_pathname;
 		boolean dir;
 
-		public file_changed(String path, String ty, String pathname, String src_pathname, boolean is_dir) throws DBusException {
-			super(path, ty, pathname, src_pathname, is_dir);
+		public file_changed(String path, String ty, String pathname, String src_pathname, boolean isdir) throws DBusException {
+			super(path, ty, pathname, src_pathname, isdir);
 			this.ty = ty;
 			this.pathname = pathname;
 			this.src_pathname = src_pathname;
-			this.dir = is_dir;
+			this.dir = isdir;
 		}
 
 		public String getType() {
