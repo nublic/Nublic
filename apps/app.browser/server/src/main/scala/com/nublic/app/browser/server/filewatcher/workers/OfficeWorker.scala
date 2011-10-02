@@ -7,8 +7,9 @@ import java.io.FileOutputStream
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.exec.DefaultExecutor
 import org.apache.commons.exec.PumpStreamHandler
+import org.apache.commons.io.FilenameUtils
 
-class OfficeWorker extends DocumentWorker {
+object OfficeWorker extends DocumentWorker {
 
   def supportedMimeTypes: List[String] = List(
       /* Obtained looking at:
@@ -97,6 +98,24 @@ class OfficeWorker extends DocumentWorker {
     executor.setStreamHandler(streamHandler)
     // Execute
     executor.execute(cmd)
+    // Flush and close the file
+    pdfStream.flush()
+    pdfStream.close()
   }
-
+  
+  val ZIP_MIME_TYPE = "application/zip"
+  def is_zip(mime: String) = mime == ZIP_MIME_TYPE
+  
+  val DOCX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+  val XLSX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  val PPTX_MIME_TYPE = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+  def office_zip_mime_type(filename: String): Option[String] = {
+    val extension = FilenameUtils.getExtension(filename).toLowerCase()
+    extension match {
+      case "docx" => Some(DOCX_MIME_TYPE)
+      case "xlsx" => Some(XLSX_MIME_TYPE)
+      case "pptx" => Some(PPTX_MIME_TYPE)
+      case _      => None
+    }
+  }
 }

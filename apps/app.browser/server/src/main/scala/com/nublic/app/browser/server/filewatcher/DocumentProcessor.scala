@@ -5,13 +5,17 @@ import java.io.File
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import com.nublic.app.browser.server.filewatcher.workers.OfficeWorker
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer
+import org.apache.solr.client.solrj.SolrQuery
 
 class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher) {
 
   val ROOT_FOLDER = "/var/nublic/cache/browser"
+  val SOLR_SERVER_URL = "http://localhost:8080/solr"
+  val solrServer = new CommonsHttpSolrServer(SOLR_SERVER_URL);
   
   // List here all available workers in the system
-  val workers = List(new OfficeWorker())
+  val workers = List(OfficeWorker)
   // A map of all workers with their mime types
   var workers_map: Map[String, DocumentWorker] = Map()
   for(worker <- workers) {
@@ -36,10 +40,25 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
       cache_folder.mkdirs()
     }
     // Read MIME type from Solr database
-    
-    // Special case for OOXML formats (MIME type is always "application/zip")
-    
-    // Send to worker
+    get_mime_type_from_solr(filename) match {
+      case None       => { /* Do nothing */ }
+      case Some(mime) => {
+        // Special case for OOXML formats (they are really zips)
+        val real_mime = if (OfficeWorker.is_zip(mime)) {
+            OfficeWorker.office_zip_mime_type(filename) match {
+              case None              => mime
+              case Some(office_mime) => office_mime
+            }
+          } else {
+            mime
+          }
+        // Send to worker
+        workers_map.get(real_mime) match {
+          case None         => { /* Do nothing */ }
+          case Some(worker) => worker.process(filename, cache_folder)
+        }
+      }
+    }
   }
   
   def process_moved_file(from: String, to: String): Unit = {
@@ -72,5 +91,20 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
   
   def get_folder_name(filepath: String): String = DigestUtils.shaHex(filepath)
   def get_folder_for(filepath: String): File = new File(ROOT_FOLDER, get_folder_name(filepath))
+  
+  def get_mime_type_from_solr(filepath: String): Option[String] = {
+    var query = new SolrQuery()
+    query.set("path", filepath)
+    query.setFields("mime")
+    query.setRows(1)
+    val response = solrServer.query(query)
+    val docs = response.getResults()
+    if (docs.isEmpty()) {
+      None
+    } else {
+      val doc = docs.get(0)
+      Some(doc.get("mime").asInstanceOf[String])
+    }
+  }
   
 }
