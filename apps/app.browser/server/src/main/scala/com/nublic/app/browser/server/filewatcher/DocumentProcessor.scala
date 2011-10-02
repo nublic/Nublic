@@ -4,10 +4,21 @@ import com.nublic.filewatcher.scala._
 import java.io.File
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
+import com.nublic.app.browser.server.filewatcher.workers.OfficeWorker
 
-class ThumbnailProcessor(watcher: FileWatcherActor) extends Processor("thumbnail", watcher) {
+class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher) {
 
   val ROOT_FOLDER = "/var/nublic/cache/browser"
+  
+  // List here all available workers in the system
+  val workers = List(new OfficeWorker())
+  // A map of all workers with their mime types
+  var workers_map: Map[String, DocumentWorker] = Map()
+  for(worker <- workers) {
+    for(mimeType <- worker.supportedMimeTypes) {
+      workers_map += (mimeType -> worker)
+    }
+  }
   
   def process(c: FileChange) = c match {
     // case Created(filename, false)  => process_updated_file(filename)
@@ -24,6 +35,11 @@ class ThumbnailProcessor(watcher: FileWatcherActor) extends Processor("thumbnail
     if (!cache_folder.exists()) {
       cache_folder.mkdirs()
     }
+    // Read MIME type from Solr database
+    
+    // Special case for OOXML formats (MIME type is always "application/zip")
+    
+    // Send to worker
   }
   
   def process_moved_file(from: String, to: String): Unit = {

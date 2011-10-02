@@ -4,5 +4,5 @@ import com.nublic.filewatcher.scala.FileWatcherActor
 
 class FileActor extends FileWatcherActor {
   val app_name = "Browser"
-  val processors = Map("thumbnail" -> new ThumbnailProcessor(this)) 
+  val processors = Map("document" -> new DocumentProcessor(this)) 
 }
