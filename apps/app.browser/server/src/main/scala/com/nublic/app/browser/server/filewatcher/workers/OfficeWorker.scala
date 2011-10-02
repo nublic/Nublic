@@ -2,12 +2,14 @@ package com.nublic.app.browser.server.filewatcher.workers
 
 import com.nublic.app.browser.server.filewatcher.DocumentWorker
 import scala.collection.immutable.List
+import scala.actors.Actor._
 import java.io.File
 import java.io.FileOutputStream
 import org.apache.commons.exec.CommandLine
 import org.apache.commons.exec.DefaultExecutor
 import org.apache.commons.exec.PumpStreamHandler
 import org.apache.commons.io.FilenameUtils
+import java.io.BufferedInputStream
 
 object OfficeWorker extends DocumentWorker {
 
@@ -18,6 +20,7 @@ object OfficeWorker extends DocumentWorker {
        */
       
       // MICROSOFT OFFICE
+      "application/vnd.ms-office",
       // Word .doc
       "application/msword", "application/doc",
       "application/vnd.msword", "application/vnd.ms-word", 
@@ -85,22 +88,25 @@ object OfficeWorker extends DocumentWorker {
 
   def process(file: String, folder: File): Unit = {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
-    val cmd = new CommandLine("unoconv")
-    cmd.addArgument("--stdout")
-    cmd.addArgument("-f")
-    cmd.addArgument("pdf")
-    cmd.addArgument(file)
+    val cmd = new ProcessBuilder("unoconv", "--stdout", "-f", "pdf", file)
+    val process = cmd.start()
+    actor {
+      val pdfFile = new File(folder, "doc.pdf")
+      val pdfStream = new FileOutputStream(pdfFile)
+      // Read file
+      val buffer = new Array[Byte](1024)
+      val buffered_in_stream = new BufferedInputStream(process.getInputStream())
+      var bytes_read = buffered_in_stream.read(buffer, 0, buffer.length)
+      while(bytes_read != -1) {
+        pdfStream.write(buffer, 0, bytes_read)
+        bytes_read = buffered_in_stream.read(buffer, 0, buffer.length)
+      }
+      // Close stream
+      pdfStream.flush()
+      pdfStream.close()
+    }.start
     // Create the "pipe" to get the file
-    val pdfFile = new File(folder, "doc.pdf")
-    val pdfStream = new FileOutputStream(pdfFile)
-    val streamHandler = new PumpStreamHandler(pdfStream, System.err)
-    val executor = new DefaultExecutor()
-    executor.setStreamHandler(streamHandler)
-    // Execute
-    executor.execute(cmd)
-    // Flush and close the file
-    pdfStream.flush()
-    pdfStream.close()
+    process.waitFor()
   }
   
   val ZIP_MIME_TYPE = "application/zip"

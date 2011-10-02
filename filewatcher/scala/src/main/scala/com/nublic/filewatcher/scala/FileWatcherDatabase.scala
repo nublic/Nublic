@@ -5,15 +5,15 @@ import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Schema
 
 class FileChangeInDatabase(val id: Long, val ty: String, val pathname: String,
-    val src_pathname: String, val isdir: Boolean, var processed: Integer)
+    val src_pathname: String, val isdir: Short, var processed: Integer)
     extends KeyedEntity[Long] {
-  def this() = this(0, "", "", "", false, 0)
+  def this() = this(0, "", "", "", 0, 0)
   def this(ty: String, pathname: String, isdir: Boolean) = 
-    this(0, ty, pathname, "", isdir, 0)
+    this(0, ty, pathname, "", if (isdir) { 1 } else { 0 }, 0)
   def this(ty: String, pathname: String, src_pathname: String, isdir: Boolean) = 
-    this(0, ty, pathname, src_pathname, isdir, 0)
+    this(0, ty, pathname, src_pathname, if (isdir) { 1 } else { 0 }, 0)
   
-  def toFileChange = FileChange.parse(ty, pathname, src_pathname, isdir)
+  def toFileChange = FileChange.parse(ty, pathname, src_pathname, isdir != 0)
 }
 
 object FileWatcherDatabase extends Schema {

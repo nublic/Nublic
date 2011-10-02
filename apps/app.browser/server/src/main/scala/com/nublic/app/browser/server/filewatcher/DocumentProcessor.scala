@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils
 import com.nublic.app.browser.server.filewatcher.workers.OfficeWorker
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer
 import org.apache.solr.client.solrj.SolrQuery
+import org.apache.solr.client.solrj.SolrRequest
 
 class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher) {
 
@@ -93,8 +94,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
   def get_folder_for(filepath: String): File = new File(ROOT_FOLDER, get_folder_name(filepath))
   
   def get_mime_type_from_solr(filepath: String): Option[String] = {
-    var query = new SolrQuery()
-    query.set("path", filepath)
+    var query = new SolrQuery("path:\"" + filepath + "\"")
     query.setFields("mime")
     query.setRows(1)
     val response = solrServer.query(query)
