@@ -2,6 +2,11 @@ package com.nublic.app.browser.server.filewatcher.workers
 
 import com.nublic.app.browser.server.filewatcher.DocumentWorker
 import scala.collection.immutable.List
+import java.io.File
+import java.io.FileOutputStream
+import org.apache.commons.exec.CommandLine
+import org.apache.commons.exec.DefaultExecutor
+import org.apache.commons.exec.PumpStreamHandler
 
 class OfficeWorker extends DocumentWorker {
 
@@ -77,8 +82,21 @@ class OfficeWorker extends DocumentWorker {
       "application/rtf", "application/x-rtf", "text/rtf", "text/richtext"
       )
 
-  def process(file: String, folder: String): Unit = {
-    
+  def process(file: String, folder: File): Unit = {
+    // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
+    val cmd = new CommandLine("unoconv")
+    cmd.addArgument("--stdout")
+    cmd.addArgument("-f")
+    cmd.addArgument("pdf")
+    cmd.addArgument(file)
+    // Create the "pipe" to get the file
+    val pdfFile = new File(folder, "doc.pdf")
+    val pdfStream = new FileOutputStream(pdfFile)
+    val streamHandler = new PumpStreamHandler(pdfStream, System.err)
+    val executor = new DefaultExecutor()
+    executor.setStreamHandler(streamHandler)
+    // Execute
+    executor.execute(cmd)
   }
 
 }
