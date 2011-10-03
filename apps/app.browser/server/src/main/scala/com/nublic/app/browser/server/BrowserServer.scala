@@ -12,6 +12,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
+  val THE_REST = "splat"
   
   val watcher = new FileActor()
   watcher.start()
@@ -20,7 +21,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   get("/folders/:depth/*") {
     val depth = Integer.valueOf(params("depth"))
-    val path = URIUtil.decode(params("splat"))
+    val path = URIUtil.decode(params(THE_REST))
     if (path.contains("..") || depth <= 0) {
       // We don't want paths going upwards
       // or depths of less than 1
@@ -37,7 +38,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/files/*") {
-    val path = URIUtil.decode(params("splat"))
+    val path = URIUtil.decode(params(THE_REST))
     if (path.contains("..")) {
       // We don't want paths going upwards
       JNull
@@ -48,6 +49,26 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
         JNull
       } else {
         write(get_files(folder))
+      }
+    }
+  }
+  
+  get("/raw/*") {
+    val path = URIUtil.decode(params(THE_REST))
+    if (path.contains("..")) {
+      // We don't want paths going upwards
+      halt(403)
+    } else {
+      val nublic_path = NUBLIC_DATA_ROOT + path
+      val file = new File(nublic_path)
+      if (!file.exists()) {
+        halt(403)
+      } else {
+        Solr.getMimeType(nublic_path) match {
+          case None       => { }
+          case Some(mime) => response.setContentType(mime)
+        }
+        file
       }
     }
   }
