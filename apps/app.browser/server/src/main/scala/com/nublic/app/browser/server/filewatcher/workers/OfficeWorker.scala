@@ -3,13 +3,10 @@ package com.nublic.app.browser.server.filewatcher.workers
 import com.nublic.app.browser.server.filewatcher.DocumentWorker
 import scala.collection.immutable.List
 import scala.actors.Actor._
+import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
-import org.apache.commons.exec.CommandLine
-import org.apache.commons.exec.DefaultExecutor
-import org.apache.commons.exec.PumpStreamHandler
 import org.apache.commons.io.FilenameUtils
-import java.io.BufferedInputStream
 
 object OfficeWorker extends DocumentWorker {
 
