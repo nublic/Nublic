@@ -13,7 +13,9 @@
 	   			<p1:CellTree ui:field="folderTree"/>
 	   		</g:west>
 	   		<g:center size="100.0">
-	   			<g:FlowPanel ui:field="contentPlace"/>
+	   			<g:FlowPanel ui:field="contentPlace">
+	   				<g:Button text="Request for a folder" ui:field="buttonFolderRequest">buttonFolderRequest</g:Button>
+	   			</g:FlowPanel>
 	   		</g:center>
 	   	</g:SplitLayoutPanel>
 	   </g:layer>

@@ -13,8 +13,13 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.NoSelectionModel;
 import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class BrowserUi extends Composite {
+	
+	BrowserApp app;
 
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	
@@ -32,12 +37,18 @@ public class BrowserUi extends Composite {
 			}
 		}, null);
 	@UiField FlowPanel contentPlace;
+	@UiField Button buttonFolderRequest;
 
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> {
 	}
 
-	public BrowserUi() {
+	public BrowserUi(BrowserApp app) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.app = app;
 	}
 
+	@UiHandler("buttonFolderRequest")
+	void onButtonFolderRequestClick(ClickEvent event) {
+		app.updateFolders(app.getFolderTree(), 4);
+	}
 }
