@@ -1,5 +1,8 @@
 package com.nublic.app.browser.web.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
@@ -67,17 +70,17 @@ public class BrowserModel {
 		
 		if (folderList.length() != 0) {
 			// if the folder has child
-			JsArray<Node> childList = (JsArray<Node>) JavaScriptObject.createArray();
+			List<Node> childrenList = new ArrayList<Node>();
 			for (int j = 0; j < folderList.length(); j++) {
 				Folder f = folderList.get(j);
-				Node son = new Node(n, f, null);
-				childList.set(j, son);
+				Node child = new Node(n, f, null);
+				childrenList.add(child);
 				// Recursive call to update child
-				updateTreeNoSync(son, f.getSubfolders());
+				updateTreeNoSync(child, f.getSubfolders());
 			}
-			n.setChild(childList);
+			n.setChildren(childrenList);
 		} else {
-			n.setChild(null);
+			n.setChildren(null);
 		}
 
 	}

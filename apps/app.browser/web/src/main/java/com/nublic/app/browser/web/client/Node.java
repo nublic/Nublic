@@ -1,24 +1,26 @@
 package com.nublic.app.browser.web.client;
 
+import java.util.List;
+
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
-public class Node extends JavaScriptObject {
+public class Node {
 	NodeContent content;
-	Node father;
-	JsArray <Node> child;
+	Node parent;
+	List<Node> children;
 	
 	// Constructors
 	Node() {
-		father = null;
+		parent = null;
 		content = null;
-		child = null;
+		children = null;
 	}
 	
-	Node(Node father, NodeContent content, JsArray<Node> child) {
-		this.father = father;
+	Node(Node parent, NodeContent content, List<Node> children) {
+		this.parent = parent;
 		this.content = content;
-		this.child = child;
+		this.children = children;
 	}
 	
 	// Getters and Setters
@@ -30,37 +32,37 @@ public class Node extends JavaScriptObject {
 		this.content = content;
 	}
 	
-	public Node getFather() {
-		return father;
+	public Node getParent() {
+		return parent;
 	}
 	
-	public void setFather(Node father) {
-		this.father = father;
+	public void setParent(Node parent) {
+		this.parent = parent;
 	}
 	
-	public JsArray<Node> getChild() {
-		return child;
+	public List<Node> getChildren() {
+		return children;
 	}
 	
-	public void setChild(JsArray<Node> child) {
-		this.child = child;
+	public void setChildren(List<Node> children) {
+		this.children = children;
 	}
 
 	// Calculates and returns the path to this node
 	public String getPath() {
-		if (father == null) {
+		if (parent == null) {
 			return "/";
 		} else {
-			return father.getPath(content.getName());
+			return parent.getPath(content.getName());
 		}
 	}
 	
 	// Calculates and returns the path to this node
 	public String getPath(String accumulated) {
-		if (father == null) {
+		if (parent == null) {
 			return "/" + accumulated;
 		} else {
-			return father.getPath(content.getName() + "/" + accumulated);
+			return parent.getPath(content.getName() + "/" + accumulated);
 		}
 	}
 }
