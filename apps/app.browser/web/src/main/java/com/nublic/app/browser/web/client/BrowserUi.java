@@ -19,7 +19,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 
 public class BrowserUi extends Composite {
 	
-	BrowserApp app;
+	BrowserModel model;
 
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	
@@ -42,13 +42,13 @@ public class BrowserUi extends Composite {
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> {
 	}
 
-	public BrowserUi(BrowserApp app) {
+	public BrowserUi(BrowserModel model) {
 		initWidget(uiBinder.createAndBindUi(this));
-		this.app = app;
+		this.model = model;
 	}
 
 	@UiHandler("buttonFolderRequest")
 	void onButtonFolderRequestClick(ClickEvent event) {
-		app.updateFolders(app.getFolderTree(), 4);
+		model.updateFolders(model.getFolderTree(), 4);
 	}
 }
