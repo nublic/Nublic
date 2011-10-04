@@ -28,7 +28,7 @@ public class BrowserModel {
 	public void updateFolders(final Node n, int depth) {
 		
 		String pathEncoded = URL.encodePathSegment(n.getPath());
-		String url = URL.encode(GWT.getModuleBaseURL() + "server/folders/" + depth + "/" + pathEncoded);
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + pathEncoded);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
