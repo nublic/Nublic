@@ -21,7 +21,7 @@ public class BrowserModel {
 	BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new Node();
-	    updateFolders(folderTree, Constants.DEFAULT_DEPTH);
+	    // updateFolders(folderTree, Constants.DEFAULT_DEPTH);
 	}
 	
 
