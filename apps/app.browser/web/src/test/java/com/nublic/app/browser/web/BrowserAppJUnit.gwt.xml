@@ -5,7 +5,4 @@
   <!-- To prevent "required inherited module" error               -->
   <inherits name="com.google.gwt.junit.JUnit"/>
 
-  <!-- Specify the path to any remote services.                   -->
-  <servlet path="/browserapp/greet" class="com.nublic.app.browser.web.server.GreetingServiceImpl" />
-
 </module>
