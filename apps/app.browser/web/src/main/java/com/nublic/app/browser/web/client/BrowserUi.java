@@ -45,6 +45,7 @@ public class BrowserUi extends Composite {
 	public BrowserUi(BrowserModel model) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.model = model;
+		this.model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 	}
 
 	@UiHandler("buttonFolderRequest")

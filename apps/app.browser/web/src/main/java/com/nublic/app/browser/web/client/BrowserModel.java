@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Request;
@@ -21,7 +20,6 @@ public class BrowserModel {
 	BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new Node();
-	    // updateFolders(folderTree, Constants.DEFAULT_DEPTH);
 	}
 	
 
