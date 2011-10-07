@@ -76,7 +76,7 @@ public class BrowserModel {
 	public void updateTreeNoSync(Node n, JsArray<Folder> folderList) {
 		
 		if (folderList.length() != 0) {
-			// if the folder has child
+			// if the folder has children
 			List<Node> childrenList = new ArrayList<Node>();
 			for (int j = 0; j < folderList.length(); j++) {
 				Folder f = folderList.get(j);
@@ -89,7 +89,6 @@ public class BrowserModel {
 		} else {
 			n.setChildren(null);
 		}
-
 	}
 	
 	public void setTreeListener() {

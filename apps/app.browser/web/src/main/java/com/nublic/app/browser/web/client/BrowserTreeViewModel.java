@@ -1,16 +1,9 @@
 package com.nublic.app.browser.web.client;
 
-import java.util.List;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.view.client.AbstractDataProvider;
-import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.NoSelectionModel;
-import com.google.gwt.view.client.SelectionModel.AbstractSelectionModel;
 import com.google.gwt.view.client.TreeViewModel;
 
 public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHandler {
@@ -76,8 +69,13 @@ public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHa
 		} else if (value instanceof Node) {
 			// LEVEL 1.
 			// We want the children of the given folder. Return the children folders.
-			ListDataProvider<Node> dataProvider =
-					new ListDataProvider<Node>(((Node) value).getChildren());
+			Node n = (Node) value;
+			ListDataProvider<Node> dataProvider;
+			if (n.getChildren() != null) {
+				dataProvider = new ListDataProvider<Node>(n.getChildren());
+			} else {
+				dataProvider = new ListDataProvider<Node>();
+			}
 			
 			Cell<Node> cell = new NodeCell();
 
@@ -96,7 +94,7 @@ public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHa
 //			} else {
 //				return false;
 //			}
-			return !(((Node) value).getChildren() == null);
+			return (((Node) value).getChildren() == null);
 		} else {
 			return false;
 		}
