@@ -109,6 +109,11 @@ object OfficeWorker extends DocumentWorker {
     process.waitFor()
   }
   
+  def getMimeTypeForView(viewName: String) = viewName match {
+    case "pdf" => "application/pdf"
+    case _     => null
+  }
+  
   val PDF_FILENAME = "doc.pdf"
   
   def hasView(viewName: String, file: String): Boolean = {

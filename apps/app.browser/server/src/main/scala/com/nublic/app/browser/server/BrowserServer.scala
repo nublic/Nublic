@@ -1,12 +1,13 @@
 package com.nublic.app.browser.server
 
+import java.io.File
 import org.scalatra._
 import org.scalatra.liftjson.JsonSupport
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
-import com.nublic.app.browser.server.filewatcher.FileActor
 import org.apache.commons.httpclient.util.URIUtil
-import java.io.File
+import com.nublic.app.browser.server.filewatcher.FileActor
+import com.nublic.app.browser.server.filewatcher.workers.Workers
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -69,6 +70,35 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           case Some(mime) => response.setContentType(mime)
         }
         file
+      }
+    }
+  }
+  
+  get("/view/:type/*") {
+    val path = URIUtil.decode(params(THE_REST))
+    if (path.contains("..")) {
+      // We don't want paths going upwards
+      halt(403)
+    } else {
+      val nublic_path = NUBLIC_DATA_ROOT + path
+      val file = new File(nublic_path)
+      if (!file.exists() || file.isDirectory()) {
+        halt(403)
+      } else {
+        val viewName = params("type")
+        var found: Option[Tuple2[File, String]] = None
+        for (worker <- Workers.byViewName.getOrElse(viewName, Nil)) {
+          if (worker.hasView(viewName, nublic_path)) {
+            found = Some((worker.getView(viewName, nublic_path), worker.getMimeTypeForView(viewName)))
+          }
+        }
+        found match {
+          case None    => halt(404)
+          case Some((file, mime)) => {
+            response.setContentType(mime)
+            file
+          }
+        }
       }
     }
   }
