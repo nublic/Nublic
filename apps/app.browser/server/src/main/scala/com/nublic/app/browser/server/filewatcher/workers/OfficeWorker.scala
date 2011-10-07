@@ -86,7 +86,7 @@ object OfficeWorker extends DocumentWorker {
       "application/rtf", "application/x-rtf", "text/rtf", "text/richtext"
       )
 
-  def supportedViews = List("pdf")
+  def supportedViews: List[String] = List("pdf")
       
   def process(file: String, folder: File): Unit = {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
@@ -120,7 +120,7 @@ object OfficeWorker extends DocumentWorker {
     magick.run(op)
   }
   
-  def getMimeTypeForView(viewName: String) = viewName match {
+  def getMimeTypeForView(viewName: String): String = viewName match {
     case "pdf" => "application/pdf"
     case _     => null
   }

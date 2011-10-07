@@ -5,7 +5,7 @@ import scala.collection.mutable.LinkedList
 
 object Workers {
   // List here all available workers in the system
-  val workers = List(OfficeWorker)
+  val workers = List(OfficeWorker, PdfWorker)
   
   // Internal maps
   private var _byMimeType: scala.collection.mutable.Map[String, DocumentWorker] = scala.collection.mutable.Map()  
