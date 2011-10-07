@@ -61,7 +61,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     } else {
       val nublic_path = NUBLIC_DATA_ROOT + path
       val file = new File(nublic_path)
-      if (!file.exists()) {
+      if (!file.exists() || file.isDirectory()) {
         halt(403)
       } else {
         Solr.getMimeType(nublic_path) match {
@@ -97,7 +97,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	  if (!is_hidden(file.getName())) {
 	    Solr.getMimeType(file.getPath()) match {
 	      case None       => { /* This should not happen */ }
-	      case Some(mime) => files ::= BrowserFile(file.getName(), mime)
+	      case Some(mime) => files ::= BrowserFile(file.getName(), mime, null)
 	    }
 	  }
 	}
