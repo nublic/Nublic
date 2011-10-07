@@ -16,10 +16,16 @@ import com.google.gwt.http.client.URL;
 public class BrowserModel {
 	
 	Node folderTree;
+	ArrayList<BrowserModelUpdateHandler> updateHandlers;
 	
 	BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new Node();
+	    updateHandlers = new ArrayList<BrowserModelUpdateHandler>();
+	}
+	
+	public void addUpdateHandler(BrowserModelUpdateHandler handler) {
+		updateHandlers.add(handler);
 	}
 	
 
@@ -49,6 +55,9 @@ public class BrowserModel {
 							// TODO: something on error (This folder is no longer available)
 						}
 						updateTree(n, folderList);
+						for (BrowserModelUpdateHandler handler : updateHandlers) {
+							handler.onUpdate(BrowserModel.this);
+						}
 					} else {
 						// Do something on error
 					}
@@ -81,6 +90,10 @@ public class BrowserModel {
 			n.setChildren(null);
 		}
 
+	}
+	
+	public void setTreeListener() {
+		
 	}
 	
 	public Node getFolderTree() {

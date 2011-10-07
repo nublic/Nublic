@@ -48,7 +48,7 @@ public class Node {
 	// Calculates and returns the path to this node
 	public String getPath() {
 		if (parent == null) {
-			return "/";
+			return "";
 		} else {
 			return parent.getPath(content.getName());
 		}
@@ -57,7 +57,7 @@ public class Node {
 	// Calculates and returns the path to this node
 	public String getPath(String accumulated) {
 		if (parent == null) {
-			return "/" + accumulated;
+			return accumulated;
 		} else {
 			return parent.getPath(content.getName() + "/" + accumulated);
 		}
