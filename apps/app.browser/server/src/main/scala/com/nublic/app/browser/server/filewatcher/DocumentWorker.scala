@@ -6,6 +6,6 @@ abstract class DocumentWorker {
   def supportedMimeTypes: List[String]
   def supportedViews: List[String]
   def process(file: String, folder: File): Unit
-  def hasView(file: String): Boolean
-  def getView(file: String): File
+  def hasView(viewName: String, file: String): Boolean
+  def getView(viewName: String, file: String): File
 }

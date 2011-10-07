@@ -7,6 +7,7 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import org.apache.commons.io.FilenameUtils
+import com.nublic.app.browser.server.filewatcher.FileFolder
 
 object OfficeWorker extends DocumentWorker {
 
@@ -108,9 +109,29 @@ object OfficeWorker extends DocumentWorker {
     process.waitFor()
   }
   
-  def hasView(file: String): Boolean = true
+  val PDF_FILENAME = "doc.pdf"
   
-  def getView(file: String): File = null
+  def hasView(viewName: String, file: String): Boolean = {
+    val folder = FileFolder.getFolder(file)
+    viewName match {
+      case "pdf" => {
+        val pdf_file = new File(folder, PDF_FILENAME)
+        pdf_file.exists()
+      }
+      case _ => false
+    }
+  }
+  
+  def getView(viewName: String, file: String): File = {
+    val folder = FileFolder.getFolder(file)
+    viewName match {
+      case "pdf" => {
+        val pdf_file = new File(folder, PDF_FILENAME)
+        if (pdf_file.exists()) pdf_file else null
+      }
+      case _ => null
+    }
+  }
   
   val ZIP_MIME_TYPE = "application/zip"
   def is_zip(mime: String) = mime == ZIP_MIME_TYPE
