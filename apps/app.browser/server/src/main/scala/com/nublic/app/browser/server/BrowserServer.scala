@@ -8,6 +8,7 @@ import net.liftweb.json.Serialization.{read, write}
 import org.apache.commons.httpclient.util.URIUtil
 import org.apache.commons.io.FilenameUtils
 import com.nublic.app.browser.server.filewatcher.FileActor
+import com.nublic.app.browser.server.filewatcher.FileFolder
 import com.nublic.app.browser.server.filewatcher.workers.Workers
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
@@ -121,6 +122,35 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
         Zip.zip(nublic_path).toByteArray()
       }
     }
+  }
+  
+  get("/thumbnail/*") {
+    val path = URIUtil.decode(params(THE_REST))
+    if (path.contains("..")) {
+      // We don't want paths going upwards
+      halt(403)
+    } else {
+      val nublic_path = NUBLIC_DATA_ROOT + path
+      val file = new File(nublic_path)
+      if (!file.exists()) {
+        halt(404)
+      } else {
+        val thumb_file = FileFolder.getThumbnail(nublic_path)
+        if (thumb_file.exists()) {
+          response.setContentType("image/png")
+          thumb_file
+        } else {
+          Solr.getMimeType(nublic_path) match {
+            case None       => redirect("/generic-thumbnail/unknown")
+            case Some(mime) => redirect("/generic-thumbnail/" + mime)
+          }
+        }
+      }
+    }
+  }
+  
+  get("/generic-thumbnail/*") {
+    halt(404)
   }
   
   notFound {  // Executed when no other route succeeds
