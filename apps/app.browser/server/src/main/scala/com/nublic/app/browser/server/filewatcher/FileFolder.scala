@@ -7,6 +7,7 @@ object FileFolder {
   
   val ROOT_FOLDER = "/var/nublic/cache/browser"
   val THUMBNAIL_FILENAME = "thumbnail.png"
+  val THUMBNAIL_SIZE = 64
   
   def getName(filepath: String): String = DigestUtils.shaHex(filepath)
   def getFolder(filepath: String): File = new File(ROOT_FOLDER, getName(filepath))

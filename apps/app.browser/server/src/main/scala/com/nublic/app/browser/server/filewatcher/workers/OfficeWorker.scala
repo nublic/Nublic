@@ -8,6 +8,8 @@ import java.io.File
 import java.io.FileOutputStream
 import org.apache.commons.io.FilenameUtils
 import com.nublic.app.browser.server.filewatcher.FileFolder
+import org.im4java.core.ConvertCmd
+import org.im4java.core.IMOperation
 
 object OfficeWorker extends DocumentWorker {
 
@@ -90,8 +92,8 @@ object OfficeWorker extends DocumentWorker {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
     val cmd = new ProcessBuilder("unoconv", "--stdout", "-f", "pdf", file)
     val process = cmd.start()
+    val pdfFile = new File(folder, "doc.pdf")
     actor {
-      val pdfFile = new File(folder, "doc.pdf")
       val pdfStream = new FileOutputStream(pdfFile)
       // Read file
       val buffer = new Array[Byte](1024)
@@ -107,6 +109,15 @@ object OfficeWorker extends DocumentWorker {
     }.start
     // Create the "pipe" to get the file
     process.waitFor()
+    
+    // Now create the thumbnail
+    val thumb_file = new File(folder, FileFolder.THUMBNAIL_FILENAME)
+    val magick = new ConvertCmd()
+    val op = new IMOperation() 
+    op.addImage(pdfFile.getAbsolutePath() + "[0]")
+    op.resize(FileFolder.THUMBNAIL_SIZE)
+    op.addImage(thumb_file.getAbsolutePath())
+    magick.run(op)
   }
   
   def getMimeTypeForView(viewName: String) = viewName match {
