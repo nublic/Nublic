@@ -6,6 +6,7 @@ import org.scalatra.liftjson.JsonSupport
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
 import org.apache.commons.httpclient.util.URIUtil
+import org.apache.commons.io.FilenameUtils
 import com.nublic.app.browser.server.filewatcher.FileActor
 import com.nublic.app.browser.server.filewatcher.workers.Workers
 
@@ -99,6 +100,25 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
             file
           }
         }
+      }
+    }
+  }
+  
+  get("/zip/*") {
+    val path = URIUtil.decode(params(THE_REST))
+    if (path.contains("..")) {
+      // We don't want paths going upwards
+      halt(403)
+    } else {
+      val nublic_path = NUBLIC_DATA_ROOT + path
+      val file = new File(nublic_path)
+      if (!file.exists()) {
+        halt(404)
+      } else {
+        val zip_name = FilenameUtils.getBaseName(path) + ".zip"
+        response.setContentType("application/zip")
+        response.setHeader("Content-Disposition", "attachment; filename=" + zip_name)
+        Zip.zip(nublic_path).toByteArray()
       }
     }
   }
