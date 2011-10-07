@@ -6,20 +6,9 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import com.nublic.app.browser.server.filewatcher.workers.OfficeWorker
 import com.nublic.app.browser.server.Solr
+import com.nublic.app.browser.server.filewatcher.workers.Workers
 
 class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher) {
-
-  val ROOT_FOLDER = "/var/nublic/cache/browser"
-
-  // List here all available workers in the system
-  val workers = List(OfficeWorker)
-  // A map of all workers with their mime types
-  var workers_map: Map[String, DocumentWorker] = Map()
-  for(worker <- workers) {
-    for(mimeType <- worker.supportedMimeTypes) {
-      workers_map += (mimeType -> worker)
-    }
-  }
   
   def process(c: FileChange) = c match {
     // case Created(filename, false)  => process_updated_file(filename)
@@ -31,7 +20,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
   }
   
   def process_updated_file(filename: String): Unit = {
-    val cache_folder = get_folder_for(filename)
+    val cache_folder = FileFolder.getFolder(filename)
     // Create folder if it does not exist
     if (!cache_folder.exists()) {
       cache_folder.mkdirs()
@@ -50,7 +39,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
             mime
           }
         // Send to worker
-        workers_map.get(real_mime) match {
+        Workers.byMimeType.get(real_mime) match {
           case None         => { /* Do nothing */ }
           case Some(worker) => worker.process(filename, cache_folder)
         }
@@ -59,8 +48,8 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
   }
   
   def process_moved_file(from: String, to: String): Unit = {
-    val from_cache_folder = get_folder_for(from)
-    val to_cache_folder = get_folder_for(to)
+    val from_cache_folder = FileFolder.getFolder(from)
+    val to_cache_folder = FileFolder.getFolder(to)
     if (from_cache_folder.exists()) {
       from_cache_folder.renameTo(to_cache_folder)
     }
@@ -82,10 +71,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
   }
   
   def process_deleted_file(filename: String): Unit = {
-    val cache_folder = get_folder_for(filename)
+    val cache_folder = FileFolder.getFolder(filename)
     FileUtils.deleteDirectory(cache_folder)
   }
-  
-  def get_folder_name(filepath: String): String = DigestUtils.shaHex(filepath)
-  def get_folder_for(filepath: String): File = new File(ROOT_FOLDER, get_folder_name(filepath))  
 }

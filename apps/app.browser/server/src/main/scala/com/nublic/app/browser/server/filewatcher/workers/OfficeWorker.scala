@@ -7,6 +7,9 @@ import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import org.apache.commons.io.FilenameUtils
+import com.nublic.app.browser.server.filewatcher.FileFolder
+import org.im4java.core.ConvertCmd
+import org.im4java.core.IMOperation
 
 object OfficeWorker extends DocumentWorker {
 
@@ -83,12 +86,14 @@ object OfficeWorker extends DocumentWorker {
       "application/rtf", "application/x-rtf", "text/rtf", "text/richtext"
       )
 
+  def supportedViews: List[String] = List("pdf")
+      
   def process(file: String, folder: File): Unit = {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
     val cmd = new ProcessBuilder("unoconv", "--stdout", "-f", "pdf", file)
     val process = cmd.start()
+    val pdfFile = new File(folder, "doc.pdf")
     actor {
-      val pdfFile = new File(folder, "doc.pdf")
       val pdfStream = new FileOutputStream(pdfFile)
       // Read file
       val buffer = new Array[Byte](1024)
@@ -104,6 +109,44 @@ object OfficeWorker extends DocumentWorker {
     }.start
     // Create the "pipe" to get the file
     process.waitFor()
+    
+    // Now create the thumbnail
+    val thumb_file = new File(folder, FileFolder.THUMBNAIL_FILENAME)
+    val magick = new ConvertCmd()
+    val op = new IMOperation() 
+    op.addImage(pdfFile.getAbsolutePath() + "[0]")
+    op.resize(FileFolder.THUMBNAIL_SIZE)
+    op.addImage(thumb_file.getAbsolutePath())
+    magick.run(op)
+  }
+  
+  def getMimeTypeForView(viewName: String): String = viewName match {
+    case "pdf" => "application/pdf"
+    case _     => null
+  }
+  
+  val PDF_FILENAME = "doc.pdf"
+  
+  def hasView(viewName: String, file: String): Boolean = {
+    val folder = FileFolder.getFolder(file)
+    viewName match {
+      case "pdf" => {
+        val pdf_file = new File(folder, PDF_FILENAME)
+        pdf_file.exists()
+      }
+      case _ => false
+    }
+  }
+  
+  def getView(viewName: String, file: String): File = {
+    val folder = FileFolder.getFolder(file)
+    viewName match {
+      case "pdf" => {
+        val pdf_file = new File(folder, PDF_FILENAME)
+        if (pdf_file.exists()) pdf_file else null
+      }
+      case _ => null
+    }
   }
   
   val ZIP_MIME_TYPE = "application/zip"
