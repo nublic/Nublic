@@ -10,6 +10,7 @@ import org.apache.commons.io.FilenameUtils
 import com.nublic.app.browser.server.filewatcher.FileActor
 import com.nublic.app.browser.server.filewatcher.FileFolder
 import com.nublic.app.browser.server.filewatcher.workers.Workers
+import javax.servlet.http.HttpServlet
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -141,8 +142,8 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           thumb_file
         } else {
           Solr.getMimeType(nublic_path) match {
-            case None       => redirect("/generic-thumbnail/unknown")
-            case Some(mime) => redirect("/generic-thumbnail/" + mime)
+            case None       => redirect(request.getContextPath() + "/generic-thumbnail/unknown")
+            case Some(mime) => redirect(request.getContextPath() + "/generic-thumbnail/" + mime)
           }
         }
       }
