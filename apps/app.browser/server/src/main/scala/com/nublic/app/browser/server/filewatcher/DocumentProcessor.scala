@@ -6,20 +6,11 @@ import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import com.nublic.app.browser.server.filewatcher.workers.OfficeWorker
 import com.nublic.app.browser.server.Solr
+import com.nublic.app.browser.server.filewatcher.workers.Workers
 
 class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher) {
 
   val ROOT_FOLDER = "/var/nublic/cache/browser"
-
-  // List here all available workers in the system
-  val workers = List(OfficeWorker)
-  // A map of all workers with their mime types
-  var workers_map: Map[String, DocumentWorker] = Map()
-  for(worker <- workers) {
-    for(mimeType <- worker.supportedMimeTypes) {
-      workers_map += (mimeType -> worker)
-    }
-  }
   
   def process(c: FileChange) = c match {
     // case Created(filename, false)  => process_updated_file(filename)
@@ -50,7 +41,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
             mime
           }
         // Send to worker
-        workers_map.get(real_mime) match {
+        Workers.byMimeType.get(real_mime) match {
           case None         => { /* Do nothing */ }
           case Some(worker) => worker.process(filename, cache_folder)
         }

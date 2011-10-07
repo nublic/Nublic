@@ -83,6 +83,8 @@ object OfficeWorker extends DocumentWorker {
       "application/rtf", "application/x-rtf", "text/rtf", "text/richtext"
       )
 
+  def supportedViews = List("pdf")
+      
   def process(file: String, folder: File): Unit = {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
     val cmd = new ProcessBuilder("unoconv", "--stdout", "-f", "pdf", file)
@@ -105,6 +107,10 @@ object OfficeWorker extends DocumentWorker {
     // Create the "pipe" to get the file
     process.waitFor()
   }
+  
+  def hasView(file: String): Boolean = true
+  
+  def getView(file: String): File = null
   
   val ZIP_MIME_TYPE = "application/zip"
   def is_zip(mime: String) = mime == ZIP_MIME_TYPE
