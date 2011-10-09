@@ -49,14 +49,19 @@ object VideoWorker extends DocumentWorker {
   val FLV_FILENAME      = "video.flv"
       
   def process(file: String, folder: File): Unit = {
-    // Run `mencoder -forceidx -of lavf -oac mp3lame -lameopts abr:br=56 -srate 22050 -ovc lavc
-    //      -lavcopts vcodec=flv:vbitrate=250:mbd=2:mv0:trell:v4mv:cbp:last_pred=3 -o <temp> <in>`
     // First do it on a temporary file and them move the result
     val flvTempFile = new File(folder, FLV_TEMP_FILENAME)
-    val cmd = new ProcessBuilder("mencoder", "-forceidx", "-of", "lavf", "-oac", "mp3lame",
+    // OPTION 1: USE mencoder
+    // Run `mencoder -forceidx -of lavf -oac mp3lame -lameopts abr:br=56 -srate 22050 -ovc lavc
+    //      -lavcopts vcodec=flv:vbitrate=250:mbd=2:mv0:trell:v4mv:cbp:last_pred=3 -o <temp> <in>`
+    /* val cmd = new ProcessBuilder("mencoder", "-forceidx", "-of", "lavf", "-oac", "mp3lame",
         "-lameopts", "abr:br=56", "-srate", "22050", "-ovc", "lavc", "-lavcopts",
         "vcodec=flv:vbitrate=250:mbd=2:mv0:trell:v4mv:cbp:last_pred=3",
-        "-o", flvTempFile.getAbsolutePath(), file)
+        "-o", flvTempFile.getAbsolutePath(), file)*/
+    // OPTION 2: USE ffmpeg
+    // Run `ffmpeg -i <in> -f flv -vcodec flv -r 25 -acodec libmp3lame -ar 22050 <out>`
+    val cmd = new ProcessBuilder("ffmpeg", "-i", file, "-f", "flv", "-vcodec", "flv", "-r", "25",
+        "-acodec", "libmp3lame", "-ar", "22050", flvTempFile.getAbsolutePath())
     cmd.redirectErrorStream(true)
     val process = cmd.start()
     flushActor(process).start
