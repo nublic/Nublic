@@ -57,11 +57,15 @@ object VideoWorker extends DocumentWorker {
         "-lameopts", "abr:br=56", "-srate", "22050", "-ovc", "lavc", "-lavcopts",
         "vcodec=flv:vbitrate=250:mbd=2:mv0:trell:v4mv:cbp:last_pred=3",
         "-o", flvTempFile.getAbsolutePath(), file)
+    cmd.redirectErrorStream(true)
     val process = cmd.start()
+    flushActor(process).start
     process.waitFor()
     // Run `flvtool2 -U <temp>` to get metadata
     val cmd2 = new ProcessBuilder("flvtool2", "-U", flvTempFile.getAbsolutePath())
+    cmd2.redirectErrorStream(true)
     val process2 = cmd2.start()
+    flushActor(process2).start
     process2.waitFor()
     // Now rename the file
     val flvFile = new File(folder, FLV_FILENAME)

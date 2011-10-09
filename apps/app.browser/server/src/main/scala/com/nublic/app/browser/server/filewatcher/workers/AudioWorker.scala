@@ -67,7 +67,10 @@ object AudioWorker extends DocumentWorker {
     val mp3File = new File(folder, MP3_FILENAME)
     val cmd = new ProcessBuilder("ffmpeg", "-i", file, "-f", "mp3", "-acodec", "libmp3lame",
         "-ab", BITRATE.toString(), "-ar", SAMPLE_FREQ.toString(), mp3File.getAbsolutePath())
+    cmd.redirectErrorStream(true)
     val process = cmd.start()
+    // Flush the entire output
+    flushActor(process).start
     process.waitFor()
   }
   
