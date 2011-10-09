@@ -88,11 +88,13 @@ object OfficeWorker extends DocumentWorker {
 
   def supportedViews: List[String] = List("pdf")
       
+  val PDF_FILENAME = "doc.pdf"
+  
   def process(file: String, folder: File): Unit = {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
     val cmd = new ProcessBuilder("unoconv", "--stdout", "-f", "pdf", file)
     val process = cmd.start()
-    val pdfFile = new File(folder, "doc.pdf")
+    val pdfFile = new File(folder, PDF_FILENAME)
     actor {
       val pdfStream = new FileOutputStream(pdfFile)
       // Read file
@@ -124,8 +126,6 @@ object OfficeWorker extends DocumentWorker {
     case "pdf" => "application/pdf"
     case _     => null
   }
-  
-  val PDF_FILENAME = "doc.pdf"
   
   def hasView(viewName: String, file: String): Boolean = {
     val folder = FileFolder.getFolder(file)
