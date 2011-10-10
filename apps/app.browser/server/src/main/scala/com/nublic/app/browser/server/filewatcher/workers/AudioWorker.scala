@@ -63,10 +63,10 @@ object AudioWorker extends DocumentWorker {
   val MP3_FILENAME = "audio.mp3"
       
   def process(file: String, folder: File): Unit = {
-    // Run `ffmpeg -i <inputfile> -f mp3 -acodec libmp3lame -ab <bitrate> -ar <sample_freq> <outputfile>`
+    // Run `ffmpeg -i <inputfile> -f mp3 -acodec libmp3lame -ab <bitrate> -ar <sample_freq> -y <outputfile>`
     val mp3File = new File(folder, MP3_FILENAME)
     val cmd = new ProcessBuilder("ffmpeg", "-i", file, "-f", "mp3", "-acodec", "libmp3lame",
-        "-ab", BITRATE.toString(), "-ar", SAMPLE_FREQ.toString(), mp3File.getAbsolutePath())
+        "-ab", BITRATE.toString(), "-ar", SAMPLE_FREQ.toString(), "-y", mp3File.getAbsolutePath())
     cmd.redirectErrorStream(true)
     val process = cmd.start()
     // Flush the entire output

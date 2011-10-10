@@ -44,9 +44,11 @@ object VideoWorker extends DocumentWorker {
 
   def supportedViews: List[String] = List("flv")
   
-  val SAMPLE_FREQ       = 22050
-  val FLV_TEMP_FILENAME = "video_temp.flv"
-  val FLV_FILENAME      = "video.flv"
+  val SAMPLE_FREQ         = 22050
+  val FLV_TEMP_FILENAME   = "video_temp.flv"
+  val FLV_FILENAME        = "video.flv"
+  val SECOND              = 3
+  val THUMB_TEMP_FILENAME = "thumb.jpg" 
       
   def process(file: String, folder: File): Unit = {
     // First do it on a temporary file and them move the result
@@ -59,9 +61,9 @@ object VideoWorker extends DocumentWorker {
         "vcodec=flv:vbitrate=250:mbd=2:mv0:trell:v4mv:cbp:last_pred=3",
         "-o", flvTempFile.getAbsolutePath(), file)*/
     // OPTION 2: USE ffmpeg
-    // Run `ffmpeg -i <in> -f flv -vcodec flv -r 25 -acodec libmp3lame -ar 22050 <out>`
+    // Run `ffmpeg -i <in> -f flv -vcodec flv -r 25 -acodec libmp3lame -ar 22050 -y <out>`
     val cmd = new ProcessBuilder("ffmpeg", "-i", file, "-f", "flv", "-vcodec", "flv", "-r", "25",
-        "-acodec", "libmp3lame", "-ar", "22050", flvTempFile.getAbsolutePath())
+        "-acodec", "libmp3lame", "-ar", SAMPLE_FREQ.toString(), "-y", flvTempFile.getAbsolutePath())
     cmd.redirectErrorStream(true)
     val process = cmd.start()
     flushActor(process).start
@@ -75,6 +77,27 @@ object VideoWorker extends DocumentWorker {
     // Now rename the file
     val flvFile = new File(folder, FLV_FILENAME)
     flvTempFile.renameTo(flvFile)
+    
+    // Create thumbnail
+    // First extract 3rd second from video
+    // Run `ffmpeg -i <in> -itsoffset <second> -vcodec mjpeg -vframes 1 -an -f rawvideo -y <temp>`
+    val thumbTempFile = new File(folder, THUMB_TEMP_FILENAME)
+    val cmd3 = new ProcessBuilder("ffmpeg", "-i", file, "-itsoffset", SECOND.toString(),
+        "-vcodec", "mjpeg", "-vframes", "1", "-f", "rawvideo", "-y", thumbTempFile.getAbsolutePath())
+    cmd3.redirectErrorStream(true)
+    val process3 = cmd3.start()
+    flushActor(process3).start
+    process3.waitFor()
+    // Now create the thumbnail
+    val thumb_file = new File(folder, FileFolder.THUMBNAIL_FILENAME)
+    val magick = new ConvertCmd()
+    val op = new IMOperation() 
+    op.addImage(thumbTempFile.getAbsolutePath())
+    op.resize(FileFolder.THUMBNAIL_SIZE)
+    op.addImage(thumb_file.getAbsolutePath())
+    magick.run(op)
+    // Delete temporal thumbnail
+    thumbTempFile.delete()
   }
   
   def getMimeTypeForView(viewName: String): String = viewName match {

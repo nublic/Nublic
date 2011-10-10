@@ -29,7 +29,7 @@ object ImageWorker extends DocumentWorker {
     op.addImage(file)
     op.resize(FileFolder.THUMBNAIL_SIZE)
     op.addImage(thumb_file.getAbsolutePath())
-    magick.run(op) 
+    magick.run(op)
   }
 
   def getMimeTypeForView(viewName: String): String = viewName match {
