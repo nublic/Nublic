@@ -47,7 +47,7 @@ object VideoWorker extends DocumentWorker {
   val SAMPLE_FREQ         = 22050
   val FLV_TEMP_FILENAME   = "video_temp.flv"
   val FLV_FILENAME        = "video.flv"
-  val SECOND              = 3
+  val SECOND              = 5
   val THUMB_TEMP_FILENAME = "thumb.jpg" 
       
   def process(file: String, folder: File): Unit = {
@@ -80,10 +80,10 @@ object VideoWorker extends DocumentWorker {
     
     // Create thumbnail
     // First extract 3rd second from video
-    // Run `ffmpeg -i <in> -itsoffset <second> -vcodec mjpeg -vframes 1 -an -f rawvideo -y <temp>`
+    // Run `ffmpeg -i <in> -ss 00:00:0<second> -vcodec mjpeg -vframes 1 -an -f rawvideo -y <temp>`
     val thumbTempFile = new File(folder, THUMB_TEMP_FILENAME)
-    val cmd3 = new ProcessBuilder("ffmpeg", "-i", file, "-itsoffset", SECOND.toString(),
-        "-vcodec", "mjpeg", "-vframes", "1", "-f", "rawvideo", "-y", thumbTempFile.getAbsolutePath())
+    val cmd3 = new ProcessBuilder("ffmpeg", "-i", file, "-ss", "00:00:0" + SECOND.toString(),
+        "-vcodec", "mjpeg", "-vframes", "1", "-an", "-f", "rawvideo", "-y", thumbTempFile.getAbsolutePath())
     cmd3.redirectErrorStream(true)
     val process3 = cmd3.start()
     flushActor(process3).start
