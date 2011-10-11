@@ -1,5 +1,5 @@
 all:
-	mvn package
+	${MAVEN} package
 
 install:
 	mkdir -p ${DESTDIR}/var/lib/tomcat6/webapps

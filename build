@@ -1,25 +1,40 @@
 #!/bin/bash
 
-export INITIAL_DIR=`pwd`
+# For .deb packages
 export DEBFULLNAME='Nublic Packaging Team'
 export DEBEMAIL='packaging@nublic.com'
 
+# Used directories
+export INITIAL_DIR=`pwd`
+export TARGET_DIR=${INITIAL_DIR}/target
+export REPO_DIR=${TARGET_DIR}/repo
+export MAVEN_REPO_DIR=${TARGET_DIR}/temp/maven
+export MAVEN_CONFIG_FILE=${INITIAL_DIR}/conf/maven/settings.xml
+export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE}"
+
+install_in_maven_repo() {
+    ${MAVEN} install:install-file -Dfile=$1 -DgroupId=$2 \
+        -DartifactId=$3 -Dversion=$4 -Dpackaging=jar
+}
+
 initialize() {
-    sudo apt-get install libdbus-java maven2 reprepro
-    mvn install:install-file \
-        -Dfile=/usr/share/java/dbus.jar \
-        -DgroupId=org.freedesktop \
-        -DartifactId=dbus \
-        -Dversion=2.8.1 \
-        -Dpackaging=jar
-    mkdir target
+    # Make sure you have libdbus-java maven2 and reprepro installed
+    # sudo apt-get install libdbus-java maven2 reprepro
+    # Create build folders, if non existant
+    mkdir -p ${TARGET_DIR}
+    mkdir -p ${REPO_DIR}
+    mkdir -p ${MAVEN_REPO_DIR}
+    # Delete previous builds
+    rm -rf ${TARGET_DIR}/*.{deb,build,changes}
+    # Install dbus in maven repo
+    install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
 }
 
 package_and_install() {
     echo
     echo "PACKAGING AND INSTALLING IN MAVEN " $1
     cd $1
-    mvn install
+    ${MAVEN} install
     cd ${INITIAL_DIR}
 }
 
@@ -30,7 +45,7 @@ build_deb_package() {
     debuild -i -us -uc -b
     debuild clean
     cd ..
-    mv *.deb *.build *.changes ${INITIAL_DIR}/target
+    mv *.deb *.build *.changes ${TARGET_DIR}
     cd ${INITIAL_DIR}
 }
 
@@ -44,17 +59,18 @@ build_submodule_lib() {
     debuild -i -us -uc -b
     debuild clean
     cd ..
-    mv *.deb *.build *.changes ${INITIAL_DIR}/target
+    mv *.deb *.build *.changes ${TARGET_DIR}
     cd ${INITIAL_DIR}
 }
 
 create_repo() {
     echo
     echo "CREATING REPOSITORY"
-    mkdir -p target/repo/conf
-    mkdir -p target/repo/incoming
-    cp repo/conf/distributions target/repo/conf
-    cd target
+    rm -rf ${REPO_DIR}
+    mkdir -p ${REPO_DIR}/conf
+    mkdir -p ${REPO_DIR}/incoming
+    cp repo/conf/distributions ${REPO_DIR}/conf
+    cd ${TARGET_DIR}
     for pkg in *.changes
     do
         reprepro -Vb repo include nublic $pkg
