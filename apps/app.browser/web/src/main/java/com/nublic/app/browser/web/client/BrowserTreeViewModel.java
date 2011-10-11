@@ -1,5 +1,7 @@
 package com.nublic.app.browser.web.client;
 
+import java.util.List;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -7,28 +9,37 @@ import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 
 public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHandler {
-	final ListDataProvider<Node> dataProvider = new ListDataProvider<Node>();
+	BrowserModel model;
+	
+	ListDataProvider<Node> rootDataProvider;
 	//final AbstractSelectionModel<String> selectionModel = new NoSelectionModel<String>();
-	BrowserModel model = null;
+	
 
 //	public BrowserTreeViewModel(BrowserModel model) {
 //		// To provide the data in the tree we will use the model which is updated asynchronously
 //		this.model = model;
 //	}
 	public BrowserTreeViewModel() {
+		model = null;
+		rootDataProvider = new ListDataProvider<Node>();
 	}
 	
-	
-	
+		
 	public void setModel(BrowserModel model) {
 		// To provide the data in the tree we will use the model which is updated asynchronously
 		this.model = model;
+		
+		model.getFolderTree().setDataProvider(rootDataProvider);
 		model.addUpdateHandler(this);
 	}
 	
 	@Override
 	public void onUpdate(BrowserModel m) {
-		updateTree();
+		//dataProvider.setList(model.getFolderTree().getChildren());
+		//dataProvider.updateRowCount(model.getFolderTree().getChildren().size(), true);
+		// debugging purpose
+		List<Node> a = rootDataProvider.getList();
+		Node b = model.getFolderTree();
 	}
 	
 	/**
@@ -50,36 +61,34 @@ public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHa
 			// We passed null as the root value. Return the folders in the root.
 
 			// Create a data provider that contains the list of folders.
-			//ListDataProvider<Node> dataProvider = null;
-			if (model != null) {
-//				CellList dataList = new CellList(model.getFolderTree().getChildren());
-//				dataProvider.addDataDisplay(dataList);
-//				dataProvider = new ListDataProvider<Node>(model.getFolderTree().getChildren());
-				
-				dataProvider.setList(model.getFolderTree().getChildren());
-			} else {
-//				dataProvider = new ListDataProvider<Node>();
-			}
+//			if (model != null) {
+//				dataProvider.setList(model.getFolderTree().getChildren());
+//			} else {
+//			}
 
 			// Create a cell to display a folder.
-			Cell<Node> cell = new NodeCell();
-
-			return new DefaultNodeInfo<Node>(dataProvider, cell);
+			final Cell<Node> cell = new NodeCell();
+			
+			//return new DefaultNodeInfo<Node>(dataProvider, cell);
+			//return new DefaultNodeInfo<Node>(model.getFolderTree().getDataProvider(), cell);
+			return new DefaultNodeInfo<Node>(rootDataProvider, cell);
 
 		} else if (value instanceof Node) {
 			// LEVEL 1.
 			// We want the children of the given folder. Return the children folders.
 			Node n = (Node) value;
-			ListDataProvider<Node> dataProvider;
-			if (n.getChildren() != null) {
-				dataProvider = new ListDataProvider<Node>(n.getChildren());
-			} else {
-				dataProvider = new ListDataProvider<Node>();
-			}
+//			ListDataProvider<Node> dataProvider;
+//			if (n.getChildren() != null) {
+//				dataProvider = new ListDataProvider<Node>(n.getChildren());
+//			} else {
+//				dataProvider = new ListDataProvider<Node>();
+//			}
 			
 			Cell<Node> cell = new NodeCell();
 
-			return new DefaultNodeInfo<Node>(dataProvider, cell);
+			//DefaultNodeInfo<Node> a = new DefaultNodeInfo<Node>(n.getDataProvider(), cell);
+			
+			return new DefaultNodeInfo<Node>(n.getDataProvider(), cell);
 		}
 		return null;
 		
@@ -89,19 +98,10 @@ public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHa
 	@Override
 	public boolean isLeaf(Object value) {
 		if (value instanceof Node) {
-//			if (((Node) value).getChildren() == null) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-			return (((Node) value).getChildren() == null);
+			return ((Node) value).getChildren().isEmpty();
 		} else {
 			return false;
 		}
-	}
-
-	public void updateTree() {
-		dataProvider.setList(model.getFolderTree().getChildren());
 	}
 
 

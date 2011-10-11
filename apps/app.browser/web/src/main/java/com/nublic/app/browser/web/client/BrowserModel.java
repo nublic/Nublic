@@ -1,7 +1,6 @@
 package com.nublic.app.browser.web.client;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -12,6 +11,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 
 public class BrowserModel {
 	
@@ -40,7 +40,7 @@ public class BrowserModel {
 			// It is not unused, we maintain callbacks
 			Request request = builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
-					// Do something on error
+					error("Error receiving answer from server");
 				}
 
 				public void onResponseReceived(Request request, Response response) {
@@ -52,20 +52,23 @@ public class BrowserModel {
 						folderList = JsonUtils.safeEval(text);
 						// Update the tree with the information of folders
 						if (folderList == null) {
-							// TODO: something on error (This folder is no longer available)
-						}
-						updateTree(n, folderList);
-						for (BrowserModelUpdateHandler handler : updateHandlers) {
-							handler.onUpdate(BrowserModel.this);
+							error("Empty folder tree received");
+						} else {
+							updateTree(n, folderList);
+							for (BrowserModelUpdateHandler handler : updateHandlers) {
+								handler.onUpdate(BrowserModel.this);
+							}
+							error("Folders updated");
 						}
 					} else {
-						// Do something on error
+						error("Bad response status");
+
 					}
 				}
 
 			});
 		} catch (RequestException e) {
-			// Do something on error
+			error("Exception occurred while processing update of folders");
 		}
 	}
 
@@ -77,26 +80,29 @@ public class BrowserModel {
 		
 		if (folderList.length() != 0) {
 			// if the folder has children
-			List<Node> childrenList = new ArrayList<Node>();
+			// reset the subtree
+			n.clear();
+			// add new received data
 			for (int j = 0; j < folderList.length(); j++) {
 				Folder f = folderList.get(j);
-				Node child = new Node(n, f, null);
-				childrenList.add(child);
+				Node child = new Node(n, f);
+				n.addChild(child);
 				// Recursive call to update child
 				updateTreeNoSync(child, f.getSubfolders());
 			}
-			n.setChildren(childrenList);
 		} else {
-			n.setChildren(null);
+			// reset subtree
+			n.clear();
 		}
-	}
-	
-	public void setTreeListener() {
-		
 	}
 	
 	public Node getFolderTree() {
 		return folderTree;
+	}
+	
+	public void error(String message) {
+		// extender DialogBox
+		Window.alert(message);
 	}
 	
 	
