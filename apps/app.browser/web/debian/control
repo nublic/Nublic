@@ -1,0 +1,13 @@
+Source: nublic-app-browser-web
+Section: nublic
+Priority: extra
+Maintainer: Alejandro Serrano <alex@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), maven2, junit4
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-browser-web
+Architecture: all
+Depends: ${misc:Depends}, tomcat6
+Description: Nublic Example app - server
+ Example app for the Nublic platform - server part

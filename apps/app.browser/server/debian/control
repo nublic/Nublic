@@ -1,0 +1,13 @@
+Source: nublic-app-browser-server
+Section: nublic
+Priority: extra
+Maintainer: Alejandro Serrano <alex@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), maven2, junit4, scala, libdbus-java
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-example-server
+Architecture: all
+Depends: ${misc:Depends}, tomcat6, scala-library, libdbus-java, ffmpeg, lame, imagemagick, flvtool2, unoconv
+Description: Nublic Browser app - server
+ Browser app for the Nublic platform - server part

@@ -33,7 +33,8 @@ build_deb_package() {
 
 build_submodule_lib() {
     cd libs
-    cp -R $1-debian $1
+    mkdir $1/debian
+    cp -R $1-debian/* $1/debian
     cd $1
     debuild -i -us -uc -b
     cd ..
