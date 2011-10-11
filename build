@@ -16,27 +16,33 @@ initialize() {
 }
 
 package_and_install() {
-    echo "Packaging " $1
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
     cd $1
     mvn install
     cd ${INITIAL_DIR}
 }
 
 build_deb_package() {
-    echo "Building .deb for " $1
+    echo
+    echo "BUILDING .DEB FOR " $1
     cd $1
     debuild -i -us -uc -b
+    debuild clean
     cd ..
     cp *.deb *.build *.changes ${INITIAL_DIR}/target
     cd ${INITIAL_DIR}
 }
 
 build_submodule_lib() {
+    echo
+    echo "BUILDING EXTERNAL LIBRARY " $1
     cd libs
     mkdir $1/debian
     cp -R $1-debian/* $1/debian
     cd $1
     debuild -i -us -uc -b
+    debuild clean
     cd ..
     cp *.deb *.build *.changes ${INITIAL_DIR}/target
     cd ${INITIAL_DIR}
@@ -52,4 +58,5 @@ package_and_install filewatcher/scala
 #package_and_install resource/java
 build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
+build_deb_package apps/app.browser
 

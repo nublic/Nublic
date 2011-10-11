@@ -4,9 +4,10 @@
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
      
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>app.example.server</artifactId>
   <packaging>war</packaging>
-
+  <groupId>com.nublic</groupId>
+  <artifactId>app.example.server</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   
   <build>
     <!-- <finalName>scalatra-maven-prototype</finalName> -->
@@ -133,10 +134,5 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <parent>
-  	<artifactId>app.example</artifactId>
-  	<groupId>com.nublic</groupId>
-  	<version>0.0.1-SNAPSHOT</version>
-  </parent>
   <name>Example app server</name>
 </project>

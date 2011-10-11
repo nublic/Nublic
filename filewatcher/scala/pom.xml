@@ -2,13 +2,8 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>filewatcher.scala</artifactId>
   <name>Scala bindings for Nublic File Watcher</name>
-  <licenses>
-    <license>
-      <name>My License</name>
-      <url>http://....</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+  <version>0.0.1-SNAPSHOT</version>
+  <groupId>com.nublic</groupId>
 
   <properties>
     <maven.compiler.source>1.5</maven.compiler.source>
@@ -100,6 +95,4 @@
       </plugin>
     </plugins>
   </build>
-  <version>0.0.1-SNAPSHOT</version>
-  <groupId>com.nublic</groupId>
 </project>

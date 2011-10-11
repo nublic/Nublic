@@ -1,0 +1,13 @@
+Source: nublic-app-browser
+Section: nublic
+Priority: extra
+Maintainer: Alejandro Serrano <alex@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-browser
+Architecture: all
+Depends: ${misc:Depends}, nublic-app-browser-server, nublic-app-browser-web
+Description: Nublic Browser app
+ Browser app for the Nublic platform - metapackage

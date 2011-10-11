@@ -1,8 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  <groupId>com.nublic</groupId>
   <artifactId>resource.java</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>resource.java</name>
@@ -19,16 +20,6 @@
       <version>4.10</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-    	<groupId>com.nublic</groupId>
-    	<artifactId>resource.main</artifactId>
-    	<version>0.0.1-SNAPSHOT</version>
-    	<type>pom</type>
-    </dependency>
   </dependencies>
-  <parent>
-  	<groupId>com.nublic</groupId>
-  	<artifactId>resource</artifactId>
-  	<version>0.0.1-SNAPSHOT</version>
-  </parent>
+
 </project>

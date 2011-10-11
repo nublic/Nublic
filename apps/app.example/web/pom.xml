@@ -4,9 +4,11 @@
 
   <!-- POM file generated with GWT webAppCreator -->
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>app.example.web</artifactId>
   <packaging>war</packaging>
   <name>Example app GWT client</name>
+  <groupId>com.nublic</groupId>
+  <artifactId>app.example.web</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   
   <properties>
     <!-- Convenience property to set the GWT version -->
@@ -184,9 +186,4 @@
 
     </plugins>
   </build>
-  <parent>
-  	<groupId>com.nublic</groupId>
-  	<artifactId>app.example</artifactId>
-  	<version>0.0.1-SNAPSHOT</version>
-  </parent>
 </project>

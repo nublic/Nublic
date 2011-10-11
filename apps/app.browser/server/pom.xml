@@ -4,7 +4,9 @@
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
      
   <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nublic</groupId>
   <artifactId>app.browser.server</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
 
   
@@ -180,10 +182,5 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <parent>
-  	<artifactId>app.browser</artifactId>
-  	<groupId>com.nublic</groupId>
-  	<version>0.0.1-SNAPSHOT</version>
-  </parent>
   <name>Browser app server</name>
 </project>

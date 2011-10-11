@@ -48,3 +48,6 @@ build.log
 *.deb
 *.build
 *.changes
+files
+*.debhelper.log
+*.substvars
