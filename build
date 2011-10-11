@@ -30,7 +30,7 @@ build_deb_package() {
     debuild -i -us -uc -b
     debuild clean
     cd ..
-    cp *.deb *.build *.changes ${INITIAL_DIR}/target
+    mv *.deb *.build *.changes ${INITIAL_DIR}/target
     cd ${INITIAL_DIR}
 }
 
@@ -44,7 +44,7 @@ build_submodule_lib() {
     debuild -i -us -uc -b
     debuild clean
     cd ..
-    cp *.deb *.build *.changes ${INITIAL_DIR}/target
+    mv *.deb *.build *.changes ${INITIAL_DIR}/target
     cd ${INITIAL_DIR}
 }
 
