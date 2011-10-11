@@ -57,12 +57,6 @@ public class Node {
 		return children;
 	}
 	
-//	public void setChildren(List<Node> children) {
-//		this.children = children;
-//		if (children != null) {
-//			dataProvider.setList(children);
-//		}
-//	}
 	public void addChild(Node child) {
 		children.add(child);
 	}

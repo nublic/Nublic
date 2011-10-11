@@ -1,7 +1,5 @@
 package com.nublic.app.browser.web.client;
 
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
@@ -16,16 +14,10 @@ import com.google.gwt.user.client.Window;
 public class BrowserModel {
 	
 	Node folderTree;
-	ArrayList<BrowserModelUpdateHandler> updateHandlers;
 	
 	BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new Node();
-	    updateHandlers = new ArrayList<BrowserModelUpdateHandler>();
-	}
-	
-	public void addUpdateHandler(BrowserModelUpdateHandler handler) {
-		updateHandlers.add(handler);
 	}
 	
 
@@ -55,9 +47,6 @@ public class BrowserModel {
 							error("Empty folder tree received");
 						} else {
 							updateTree(n, folderList);
-							for (BrowserModelUpdateHandler handler : updateHandlers) {
-								handler.onUpdate(BrowserModel.this);
-							}
 							error("Folders updated");
 						}
 					} else {
@@ -80,7 +69,8 @@ public class BrowserModel {
 		
 		if (folderList.length() != 0) {
 			// if the folder has children
-			// reset the subtree
+			// reset the subtree - TODO: if the following line is removed, the application seems to work properly
+			// except for the duplication...
 			n.clear();
 			// add new received data
 			for (int j = 0; j < folderList.length(); j++) {
