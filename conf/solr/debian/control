@@ -1,0 +1,14 @@
+Source: nublic-solr-config
+Section: nublic
+Priority: extra
+Maintainer: Alejandro Serrano <alex@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-solr-config
+Architecture: all
+Depends: ${misc:Depends}, solr-tomcat
+Replaces: solr-tomcat
+Description: Nublic Solr configuration files
+ Nublic Solr configuration files
