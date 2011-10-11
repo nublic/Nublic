@@ -1,6 +1,8 @@
 #!/bin/bash
 
 export INITIAL_DIR=`pwd`
+export DEBFULLNAME='Nublic Packaging Team'
+export DEBEMAIL='packaging@nublic.com'
 
 initialize() {
     sudo apt-get install libdbus-java maven2
@@ -30,9 +32,13 @@ build_deb_package() {
 }
 
 initialize
+build_deb_package libs/sunburnt
 build_deb_package notification/main/src
 package_and_install notification/java
 build_deb_package filewatcher/main/src
 package_and_install filewatcher/scala
-build_deb_package apps/app.example/server
-build_deb_package apps/app.example/web
+#build_deb_package resource/main/src
+#package_and_install resource/java
+build_deb_package apps/app.browser/server
+build_deb_package apps/app.browser/web
+
