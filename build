@@ -5,7 +5,7 @@ export DEBFULLNAME='Nublic Packaging Team'
 export DEBEMAIL='packaging@nublic.com'
 
 initialize() {
-    sudo apt-get install libdbus-java maven2
+    sudo apt-get install libdbus-java maven2 reprepo
     mvn install:install-file \
         -Dfile=/usr/share/java/dbus.jar \
         -DgroupId=org.freedesktop \
@@ -48,6 +48,23 @@ build_submodule_lib() {
     cd ${INITIAL_DIR}
 }
 
+create_repo() {
+    echo
+    echo "CREATING REPOSITORY"
+    mkdir -p target/repo/conf
+    mkdir -p target/repo/incoming
+    cp repo/conf/distributions target/repo/conf
+    cd target
+    for pkg in *.changes
+    do
+        reprepro -Vb repo include nublic $pkg
+    done
+    cd ${INITIAL_DIR}
+}
+
+create_repo
+exit 0
+
 initialize
 build_submodule_lib sunburnt
 build_deb_package notification/main/src
@@ -59,4 +76,5 @@ package_and_install filewatcher/scala
 build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
+create_repo
 
