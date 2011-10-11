@@ -1,0 +1,38 @@
+#!/bin/bash
+
+export INITIAL_DIR=`pwd`
+
+initialize() {
+    sudo apt-get install libdbus-java maven2
+    mvn install:install-file \
+        -Dfile=/usr/share/java/dbus.jar \
+        -DgroupId=org.freedesktop \
+        -DartifactId=dbus \
+        -Dversion=2.8.1 \
+        -Dpackaging=jar
+    mkdir target
+}
+
+package_and_install() {
+    echo "Packaging " $1
+    cd $1
+    mvn install
+    cd ${INITIAL_DIR}
+}
+
+build_deb_package() {
+    echo "Building .deb for " $1
+    cd $1
+    debuild -i -us -uc -b
+    cd ..
+    cp *.deb *.build *.changes ${INITIAL_DIR}/target
+    cd ${INITIAL_DIR}
+}
+
+initialize
+build_deb_package notification/main/src
+package_and_install notification/java
+build_deb_package filewatcher/main/src
+package_and_install filewatcher/scala
+build_deb_package apps/app.example/server
+build_deb_package apps/app.example/web
