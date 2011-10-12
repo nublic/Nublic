@@ -14,7 +14,7 @@ import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
 # from watcher import (
-from nublic.filewatcher.watcher import (
+from nublic_file_watcher.watcher import (
     start_watching,
     scan_folder
     )
