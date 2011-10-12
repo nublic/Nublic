@@ -1,0 +1,7 @@
+#!/bin/sh
+
+for dir in cache data
+do
+    mkdir -p /var/nublic/${dir}
+    chmod 777 /var/nublic/${dir}
+done

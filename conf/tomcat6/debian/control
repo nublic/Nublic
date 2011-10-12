@@ -1,0 +1,14 @@
+Source: nublic-tomcat6-config
+Section: nublic
+Priority: extra
+Maintainer: Alejandro Serrano <alex@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-tomcat6-config
+Architecture: all
+Depends: ${misc:Depends}, tomcat6
+Replaces: tomcat6
+Description: Nublic Tomcat 6 configuration files
+ Nublic Tomcat6 configuration files

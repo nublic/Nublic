@@ -1,0 +1,23 @@
+#!/bin/bash
+
+export INITIAL_DIR=`pwd`
+export ISO_DIR=${INITIAL_DIR}/iso
+export ISO_WGET=http://ubuntu.grn.cat/ubuntu-releases/oneiric/ubuntu-11.10-beta2-server-i386.iso
+export ISO_FILE=ubuntu-11.10-beta2-server-i386.iso
+export ISO_MOUNT=${ISO_DIR}/mnt
+export ISO_TEMP=${ISO_DIR}/temp
+
+# Remove previous build
+rm -rf ${ISO_TEMP}
+
+# Create working dirs
+mkdir -p ${ISO_TEMP}
+mkdir -p ${ISO_MOUNT}
+
+# Download and extract the Ubuntu iso
+cd ${ISO_TEMP}
+wget ${ISO_WGET}  # Do not redownload, just uncoment this the first time
+sudo mount -o loop ${ISO_FILE} ${ISO_MOUNT}
+rsync -av ${ISO_MOUNT}/ ${ISO_TEMP}
+sudo umount ${ISO_MOUNT}
+

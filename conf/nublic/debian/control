@@ -1,0 +1,13 @@
+Source: nublic
+Section: nublic
+Priority: extra
+Maintainer: Alejandro Serrano <alex@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic
+Architecture: all
+Depends: ${misc:Depends}, nublic-solr-config, nublic-tomcat6-config, nublic-file-watcher, nublic-notification, nublic-app-browser
+Description: Nublic metapackage
+ Nublic metapackage

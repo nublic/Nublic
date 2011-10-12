@@ -19,7 +19,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig
     # Create build folders, if non existant
     mkdir -p ${TARGET_DIR}
     mkdir -p ${REPO_DIR}
@@ -28,6 +28,8 @@ initialize() {
     rm -rf ${TARGET_DIR}/*.{deb,build,changes}
     # Install dbus in maven repo
     install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
+    # Install key into user keychain
+    gpg --import conf/keys/packaging.key
 }
 
 package_and_install() {
@@ -53,6 +55,7 @@ build_submodule_lib() {
     echo
     echo "BUILDING EXTERNAL LIBRARY " $1
     cd 3rd-party-libs
+    rm -rf $1/debian
     mkdir $1/debian
     cp -R $1-debian/* $1/debian
     cd $1
@@ -90,5 +93,7 @@ build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
 build_deb_package conf/solr
+build_deb_package conf/tomcat6
+build_deb_package conf/nublic
 create_repo
 
