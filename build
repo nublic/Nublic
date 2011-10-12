@@ -21,7 +21,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl
     # Create build folders, if non existant
     mkdir -p ${TARGET_DIR}
     mkdir -p ${REPO_DIR}
@@ -77,15 +77,11 @@ create_repo() {
     mkdir -p ${REPO_DIR}/incoming
     cp conf/repo/conf/distributions ${REPO_DIR}/conf
     cd ${TARGET_DIR}
-    # Sign packages
+    # Sign packages and add packages to repo
     for pkg in *.deb
     do
-        dpkg-sig -k ${DEBKEY} -f ${INITIAL_DIR}/conf/keys/passphrase --sign builder $pkg
-    done
-    # Add packages to repo
-    for pkg in *.changes
-    do
-        reprepro -Vb repo include nublic $pkg
+        dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
+        reprepro --ignore=wrongdistribution -Vb repo includedeb oneiric $pkg
     done
     cd ${INITIAL_DIR}
 }

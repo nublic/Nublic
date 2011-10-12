@@ -9,6 +9,6 @@ Homepage: http://nublic.com
 Package: nublic-solr-config
 Architecture: all
 Depends: ${misc:Depends}, solr-tomcat
-Replaces: solr-tomcat
+Replaces: solr-tomcat, solr-common
 Description: Nublic Solr configuration files
  Nublic Solr configuration files

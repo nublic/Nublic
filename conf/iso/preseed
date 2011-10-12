@@ -1,0 +1,13 @@
+d-i debian-installer/country string ES
+choose-mirror-bin mirror/http/countries select ES
+partman-auto partman-auto/select_disk select /var/lib/partman/devices/=dev=sda
+partman-auto partman-auto/choose_recipe select /lib/partman/recipes/30atomic
+clock-setup clock-setup/utc boolean true
+d-i preseed/late_command string cp -r /cdrom/nublic-repo /target/root/; cp /cdrom/finisher/finisher.sh /target/root/; chroot /target chmod +x /root/finisher.sh; chroot /target bash /root/finisher.sh
+d-i pkgsel/include string tomcat6 solr-tomcat mysql-server postgresql dbus
+user-setup-udeb passwd/user-fullname string Nublic
+user-setup-udeb passwd/username string nublic
+user-setup-udeb passwd/user-fullname string nublic
+apt-setup-udeb apt-setup/services-select multiselect security
+d-i time/zone string Europe/Madrid
+tzsetup-udeb time/zone string Europe/Madrid
