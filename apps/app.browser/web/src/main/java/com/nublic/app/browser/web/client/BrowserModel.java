@@ -47,7 +47,6 @@ public class BrowserModel {
 							error("Empty folder tree received");
 						} else {
 							updateTree(n, folderList);
-							error("Folders updated");
 						}
 					} else {
 						error("Bad response status");

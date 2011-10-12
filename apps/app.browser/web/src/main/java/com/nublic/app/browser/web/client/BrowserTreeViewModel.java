@@ -65,6 +65,7 @@ public class BrowserTreeViewModel implements TreeViewModel {
 		} else {
 			return false;
 		}
+//		return false;
 	}
 
 

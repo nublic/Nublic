@@ -84,6 +84,10 @@ public class Node {
 		dataProvider = dataProv;
 		//dataProvider.setList(children);
 		children = dataProvider.getList();
+		for (int i = 0; i < children.size(); i++) {
+			// for some strange reason children.clear() doesn't work
+			children.remove(i);
+		}
 	}
 
 	// Calculates and returns the path to this node
