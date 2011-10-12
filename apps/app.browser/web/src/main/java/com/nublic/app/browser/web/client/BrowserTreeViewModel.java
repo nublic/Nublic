@@ -35,6 +35,18 @@ public class BrowserTreeViewModel implements TreeViewModel {
 				sb.appendEscaped(value.getContent().getName());
 			}
 		}
+		
+//		@Override
+//        public void onBrowserEvent(Context context, Element parent, Node value, NativeEvent event, ValueUpdater<Node> valueUpdater) {
+//			if (value != null) {
+//				super.onBrowserEvent(context, parent, value, event, valueUpdater);
+//				if (event.getButton() == NativeEvent.BUTTON_LEFT) {
+//					
+//				}
+//
+//			}
+//		}
+		
 	}
 	
 	@Override
@@ -45,10 +57,18 @@ public class BrowserTreeViewModel implements TreeViewModel {
 			
 			// Create a cell to display a folder.
 			final Cell<Node> cell = new NodeCell();
+//			DefaultNodeInfo<Node> nodeInfo = new DefaultNodeInfo<Node>(rootDataProvider, cell);
+//			nodeInfo.getSelectionModel().addSelectionChangeHandler(new Handler() {
+//				@Override
+//				public void onSelectionChange(SelectionChangeEvent event) {
+//					event.getSource();
+//					
+//				}
+//			});
 			return new DefaultNodeInfo<Node>(rootDataProvider, cell);
 
 		} else if (value instanceof Node) {
-			// LEVEL 1.
+			// LEVEL 1+.
 			// We want the children of the given folder. Return the children folders.
 			Node n = (Node) value;
 			Cell<Node> cell = new NodeCell();

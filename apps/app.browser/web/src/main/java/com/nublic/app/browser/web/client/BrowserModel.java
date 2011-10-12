@@ -36,7 +36,7 @@ public class BrowserModel {
 				}
 
 				public void onResponseReceived(Request request, Response response) {
-					JsArray <Folder> folderList = null;
+					JsArray <FolderContent> folderList = null;
 					
 					if (Response.SC_OK == response.getStatusCode()) {
 						// When the call is successful
@@ -60,11 +60,11 @@ public class BrowserModel {
 		}
 	}
 
-	public synchronized void updateTree(Node n, JsArray<Folder> folderList) {
+	public synchronized void updateTree(Node n, JsArray<FolderContent> folderList) {
 		updateTreeNoSync(n, folderList);
 	}
 	
-	public void updateTreeNoSync(Node n, JsArray<Folder> folderList) {
+	public void updateTreeNoSync(Node n, JsArray<FolderContent> folderList) {
 		
 		if (folderList.length() != 0) {
 			// if the folder has children
@@ -73,7 +73,7 @@ public class BrowserModel {
 			//n.clear();
 			// add new received data
 			for (int j = 0; j < folderList.length(); j++) {
-				Folder f = folderList.get(j);
+				FolderContent f = folderList.get(j);
 				Node child = new Node(n, f);
 				//n.addChild(child);
 				n.replaceChild(j, child);

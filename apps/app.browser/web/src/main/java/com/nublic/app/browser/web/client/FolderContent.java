@@ -3,15 +3,15 @@ package com.nublic.app.browser.web.client;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;
 
-public class Folder extends JavaScriptObject implements NodeContent {
+public class FolderContent extends JavaScriptObject {
 
-	protected Folder () { }
+	protected FolderContent () { }
 	
 	public final native String getName() /*-{
 	  return this.name;
     }-*/;
 
-	public final native JsArray<Folder> getSubfolders() /*-{
+	public final native JsArray<FolderContent> getSubfolders() /*-{
 	  return this.subfolders;
     }-*/;
 

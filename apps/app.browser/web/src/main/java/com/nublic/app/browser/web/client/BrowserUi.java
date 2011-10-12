@@ -42,6 +42,7 @@ public class BrowserUi extends Composite implements OpenHandler<TreeNode> {
 		//treeView.updateTree();
 	}
 
+	// Handler of open action for the browser tree
 	@Override
 	public void onOpen(OpenEvent<TreeNode> event) {
 		Object openedValue = event.getTarget().getValue();

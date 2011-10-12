@@ -6,7 +6,7 @@ import java.util.List;
 import com.google.gwt.view.client.ListDataProvider;
 
 public class Node {
-	NodeContent content;
+	FolderContent content;
 	Node parent;
 	List<Node> children;
 	ListDataProvider<Node> dataProvider;
@@ -20,7 +20,7 @@ public class Node {
 		dataProvider = null;
 	}
 	
-	Node(Node parent, NodeContent content) {
+	Node(Node parent, FolderContent content) {
 		this.parent = parent;
 		this.content = content;
 		children = new ArrayList<Node>();
@@ -37,11 +37,11 @@ public class Node {
 
 
 	// Getters and Setters
-	public NodeContent getContent() {
+	public FolderContent getContent() {
 		return content;
 	}
 	
-	public void setContent(NodeContent content) {
+	public void setContent(FolderContent content) {
 		this.content = content;
 	}
 	
