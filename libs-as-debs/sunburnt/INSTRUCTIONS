@@ -1,8 +1,0 @@
-Sunburnt - Pyhton to Solr library
-=================================
-
-0. You need "python-setuptools" and "python-stdeb"
-1. git clone git://github.com/tow/sunburnt.git
-2. cd sunburnt
-3. python setup.py --command-packages=stdeb.command sdist_dsc
-4. Build the Debian package that will appear in deb_dist

@@ -1,2 +1,0 @@
-This folder contains libraries that have been converted from its normal source format into Debian packages.
-You should create a folder per library, with the .deb file and instructions to repeat the building.
