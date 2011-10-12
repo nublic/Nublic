@@ -1,4 +1,4 @@
-This package was debianized by Alejandro Serrano Mena <davisein@gmail.com> on
+This package was debianized by Alejandro Serrano Mena <alex@nublic.com> on
 Thu, 08 Sep 2011 16:38:00 +0200.
 
 Upstream Author(s):
@@ -7,7 +7,7 @@ Upstream Author(s):
 
 Copyright:
 
-    <Copyright (C) 2010 Alejandro Serrano Mena>
+    <Copyright (C) 2010 Nublic>
 
 License:
 
@@ -15,5 +15,5 @@ License:
 
 The Debian packaging is:
 
-    Copyright (C) 2010 Alejandro Serrano Mena <alex@nublic.com>
+    Copyright (C) 2010 Nublic Packaging Team <packaging@nublic.com>
 

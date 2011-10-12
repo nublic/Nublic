@@ -16,7 +16,7 @@ mkdir -p ${ISO_MOUNT}
 
 # Download and extract the Ubuntu iso
 cd ${ISO_TEMP}
-wget ${ISO_WGET}  # Do not redownload, just uncoment this the first time
+# wget ${ISO_WGET}  # Do not redownload, just uncoment this the first time
 sudo mount -o loop ${ISO_FILE} ${ISO_MOUNT}
 rsync -av ${ISO_MOUNT}/ ${ISO_TEMP}
 sudo umount ${ISO_MOUNT}

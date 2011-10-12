@@ -1,7 +1,7 @@
 Source: nublic-app-browser-server
 Section: nublic
 Priority: extra
-Maintainer: Alejandro Serrano <alex@nublic.com>
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
 Build-Depends: debhelper (>= 8.0.0), maven2, junit4, scala, libdbus-java
 Standards-Version: 3.9.2
 Homepage: http://nublic.com

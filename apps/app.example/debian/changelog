@@ -1,5 +1,5 @@
-nublic-app-browser (0.0.1-1) unstable; urgency=low
+nublic-app-example (0.0.1-1) unstable; urgency=low
 
   * Initial release
 
- -- Alejandro Serrano <alex@nublic.com>  Mon, 11 Oct 2011 14:52:48 +0200
+ -- Nublic Packaging Team <packaging@nublic.com>  Mon, 11 Oct 2011 14:52:48 +0200

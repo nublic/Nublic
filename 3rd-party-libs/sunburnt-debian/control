@@ -1,5 +1,5 @@
 Source: sunburnt
-Maintainer: Toby White <toby@timetric.com>
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
 Section: python
 Priority: optional
 Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7)
