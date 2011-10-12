@@ -64,7 +64,7 @@ build_submodule_lib() {
     ${DEBUILD} -i -us -uc -b
     ${DEBUILD} clean
     cd ..
-    mv *.deb *.build *.changes ${TARGET_DIR}
+    mv *.deb *.build *.changes *.dsc *.tar.gz ${TARGET_DIR}
     cd ${INITIAL_DIR}
 }
 
