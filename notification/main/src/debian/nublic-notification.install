@@ -1,4 +1,4 @@
-nublic/notification/nublic-notify /usr/bin
-nublic/notification/nublic-notification-daemon /usr/sbin
+nublic_notification/nublic-notify /usr/bin
+nublic_notification/nublic-notification-daemon /usr/sbin
 com.nublic.notification.conf /etc/dbus-1/system.d
 nublic-notification.conf /etc/init
