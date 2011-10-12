@@ -18,7 +18,7 @@ public class BrowserUi extends Composite {
 
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	
-	@UiField(provided=true) CellTree folderTree = new CellTree(treeView, null);;
+	@UiField(provided=true) CellTree folderTree = new CellTree(treeView, null);
 	@UiField FlowPanel contentPlace;
 	@UiField Button buttonFolderRequest;
 
@@ -28,10 +28,8 @@ public class BrowserUi extends Composite {
 	public BrowserUi(BrowserModel model) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.model = model;
-		this.model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 		treeView.setModel(model);
-		//treeView.updateTree();
-		//folderTree.getRootTreeNode().setChildOpen(0, true);
+		this.model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 	}
 
 	@UiHandler("buttonFolderRequest")

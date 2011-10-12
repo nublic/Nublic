@@ -6,31 +6,25 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 
-public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHandler {
-	final ListDataProvider<Node> dataProvider = new ListDataProvider<Node>();
+public class BrowserTreeViewModel implements TreeViewModel {
+	BrowserModel model;
+	
+	ListDataProvider<Node> rootDataProvider;
 	//final AbstractSelectionModel<String> selectionModel = new NoSelectionModel<String>();
-	BrowserModel model = null;
 
-//	public BrowserTreeViewModel(BrowserModel model) {
-//		// To provide the data in the tree we will use the model which is updated asynchronously
-//		this.model = model;
-//	}
 	public BrowserTreeViewModel() {
+		model = null;
+		rootDataProvider = new ListDataProvider<Node>();
 	}
 	
-	
-	
+		
 	public void setModel(BrowserModel model) {
 		// To provide the data in the tree we will use the model which is updated asynchronously
 		this.model = model;
-		model.addUpdateHandler(this);
+		
+		model.getFolderTree().setDataProvider(rootDataProvider);
 	}
-	
-	@Override
-	public void onUpdate(BrowserModel m) {
-		updateTree();
-	}
-	
+
 	/**
 	 * The cell used to render Nodes.
 	 */
@@ -48,60 +42,29 @@ public class BrowserTreeViewModel implements TreeViewModel, BrowserModelUpdateHa
 		if (value == null) {
 			// LEVEL 0.
 			// We passed null as the root value. Return the folders in the root.
-
-			// Create a data provider that contains the list of folders.
-			//ListDataProvider<Node> dataProvider = null;
-			if (model != null) {
-//				CellList dataList = new CellList(model.getFolderTree().getChildren());
-//				dataProvider.addDataDisplay(dataList);
-//				dataProvider = new ListDataProvider<Node>(model.getFolderTree().getChildren());
-				
-				dataProvider.setList(model.getFolderTree().getChildren());
-			} else {
-//				dataProvider = new ListDataProvider<Node>();
-			}
-
+			
 			// Create a cell to display a folder.
-			Cell<Node> cell = new NodeCell();
-
-			return new DefaultNodeInfo<Node>(dataProvider, cell);
+			final Cell<Node> cell = new NodeCell();
+			return new DefaultNodeInfo<Node>(rootDataProvider, cell);
 
 		} else if (value instanceof Node) {
 			// LEVEL 1.
 			// We want the children of the given folder. Return the children folders.
 			Node n = (Node) value;
-			ListDataProvider<Node> dataProvider;
-			if (n.getChildren() != null) {
-				dataProvider = new ListDataProvider<Node>(n.getChildren());
-			} else {
-				dataProvider = new ListDataProvider<Node>();
-			}
-			
 			Cell<Node> cell = new NodeCell();
-
-			return new DefaultNodeInfo<Node>(dataProvider, cell);
+			
+			return new DefaultNodeInfo<Node>(n.getDataProvider(), cell);
 		}
 		return null;
-		
-		//return new DefaultNodeInfo<String>(dataProvider, new TextCell(), selectionModel, null);
 	}
 
 	@Override
 	public boolean isLeaf(Object value) {
 		if (value instanceof Node) {
-//			if (((Node) value).getChildren() == null) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-			return (((Node) value).getChildren() == null);
+			return ((Node) value).getChildren().isEmpty();
 		} else {
 			return false;
 		}
-	}
-
-	public void updateTree() {
-		dataProvider.setList(model.getFolderTree().getChildren());
 	}
 
 

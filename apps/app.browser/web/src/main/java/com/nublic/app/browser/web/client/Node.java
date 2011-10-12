@@ -1,25 +1,41 @@
 package com.nublic.app.browser.web.client;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gwt.view.client.ListDataProvider;
 
 public class Node {
 	NodeContent content;
 	Node parent;
 	List<Node> children;
+	ListDataProvider<Node> dataProvider;
 	
 	// Constructors
 	Node() {
 		parent = null;
 		content = null;
-		children = null;
+		children = new ArrayList<Node>();
+		//dataProvider = new ListDataProvider<Node>();
+		dataProvider = null;
 	}
 	
-	Node(Node parent, NodeContent content, List<Node> children) {
+	Node(Node parent, NodeContent content) {
 		this.parent = parent;
 		this.content = content;
-		this.children = children;
+		children = new ArrayList<Node>();
+		dataProvider = new ListDataProvider<Node>(children);
+		
+//		dataProvider = new ListDataProvider<Node>();
+//		children = dataProvider.getList();
+		
+//		children = new ArrayList<Node>();
+//		dataProvider = new ListDataProvider<Node>();
+//		dataProvider.setList(children);
 	}
 	
+
+
 	// Getters and Setters
 	public NodeContent getContent() {
 		return content;
@@ -41,8 +57,33 @@ public class Node {
 		return children;
 	}
 	
-	public void setChildren(List<Node> children) {
-		this.children = children;
+	public void addChild(Node child) {
+		children.add(child);
+	}
+	
+	public void replaceChild(int j, Node child) {
+		if (j >= children.size()) {
+			children.add(child);
+		} else {
+			ListDataProvider<Node> tempProvider = children.get(j).getDataProvider();
+			child.setDataProvider(tempProvider);
+			children.set(j, child);
+		}
+	}
+	
+	public void clear() {
+		children.clear();
+	}
+
+	
+	public ListDataProvider<Node> getDataProvider() {
+		return dataProvider;
+	}
+	
+	public void setDataProvider(ListDataProvider<Node> dataProv) {
+		dataProvider = dataProv;
+		//dataProvider.setList(children);
+		children = dataProvider.getList();
 	}
 
 	// Calculates and returns the path to this node
@@ -62,4 +103,5 @@ public class Node {
 			return parent.getPath(content.getName() + "/" + accumulated);
 		}
 	}
+	
 }
