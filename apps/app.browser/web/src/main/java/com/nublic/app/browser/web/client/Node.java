@@ -61,6 +61,16 @@ public class Node {
 		children.add(child);
 	}
 	
+	public void replaceChild(int j, Node child) {
+		if (j >= children.size()) {
+			children.add(child);
+		} else {
+			ListDataProvider<Node> tempProvider = children.get(j).getDataProvider();
+			child.setDataProvider(tempProvider);
+			children.set(j, child);
+		}
+	}
+	
 	public void clear() {
 		children.clear();
 	}

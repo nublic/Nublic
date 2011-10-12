@@ -69,14 +69,15 @@ public class BrowserModel {
 		
 		if (folderList.length() != 0) {
 			// if the folder has children
-			// reset the subtree - TODO: if the following line is removed, the application seems to work properly
-			// except for the duplication...
-			n.clear();
+			// reset the subtree - if the following line is removed, the application seems to work properly
+			// except for the duplication... replaceChild maintains the dataProvider of the last child in that position
+			//n.clear();
 			// add new received data
 			for (int j = 0; j < folderList.length(); j++) {
 				Folder f = folderList.get(j);
 				Node child = new Node(n, f);
-				n.addChild(child);
+				//n.addChild(child);
+				n.replaceChild(j, child);
 				// Recursive call to update child
 				updateTreeNoSync(child, f.getSubfolders());
 			}
