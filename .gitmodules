@@ -1,3 +1,3 @@
 [submodule "libs/sunburnt"]
-	path = libs/sunburnt
+	path = 3rd-party-libs/sunburnt
 	url = git://github.com/tow/sunburnt.git

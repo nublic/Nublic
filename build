@@ -52,7 +52,7 @@ build_deb_package() {
 build_submodule_lib() {
     echo
     echo "BUILDING EXTERNAL LIBRARY " $1
-    cd libs
+    cd 3rd-party-libs
     mkdir $1/debian
     cp -R $1-debian/* $1/debian
     cd $1
@@ -69,7 +69,7 @@ create_repo() {
     rm -rf ${REPO_DIR}
     mkdir -p ${REPO_DIR}/conf
     mkdir -p ${REPO_DIR}/incoming
-    cp repo/conf/distributions ${REPO_DIR}/conf
+    cp conf/repo/conf/distributions ${REPO_DIR}/conf
     cd ${TARGET_DIR}
     for pkg in *.changes
     do
