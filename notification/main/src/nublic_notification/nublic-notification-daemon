@@ -11,7 +11,7 @@
 import os
 import logging
 
-from nublic.notification.dbus_handler import (
+from nublic_notification.dbus_handler import (
     initial_program_setup,
     do_main_program,
     program_cleanup,
