@@ -1,5 +1,6 @@
 package com.nublic.app.browser.web.client;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -17,10 +18,18 @@ public class BrowserModel {
 	
 	FolderNode folderTree;
 	List<FileNode> fileList;
+	
+	ArrayList<FileListUpdateHandler> updateHandlers;
 
 	BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new FolderNode();
+	    fileList = new ArrayList<FileNode>();
+	    updateHandlers = new ArrayList<FileListUpdateHandler>();
+	}
+
+	public void addUpdateHandler(FileListUpdateHandler handler) {	 	
+	    updateHandlers.add(handler);
 	}
 	
 	// Getters
@@ -71,8 +80,8 @@ public class BrowserModel {
 		}
 	}
 	
-	public void updateFiles(FolderNode n) {
-		String pathEncoded = URL.encodePathSegment(n.getPath());
+	public void updateFiles(ParamsHashMap params) {
+		String pathEncoded = URL.encodePathSegment(params.get(Constants.BROWSER_PATH_PARAMETER));
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + pathEncoded);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
@@ -96,6 +105,11 @@ public class BrowserModel {
 							error("Wrong file list received");
 						} else {
 							updateFileList(fileContentList);
+						}
+						
+						// Call every handler looking at the file list
+						for (FileListUpdateHandler handler : updateHandlers) {	 	
+							handler.onUpdate(BrowserModel.this);	 	
 						}
 					} else {
 						error("Bad response status");

@@ -2,7 +2,11 @@ package com.nublic.app.browser.web.client;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
+import com.google.gwt.cell.client.ValueUpdater;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.History;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.TreeViewModel;
 
@@ -36,16 +40,17 @@ public class BrowserTreeViewModel implements TreeViewModel {
 			}
 		}
 		
-//		@Override
-//        public void onBrowserEvent(Context context, Element parent, Node value, NativeEvent event, ValueUpdater<Node> valueUpdater) {
-//			if (value != null) {
-//				super.onBrowserEvent(context, parent, value, event, valueUpdater);
-//				if (event.getButton() == NativeEvent.BUTTON_LEFT) {
-//					
-//				}
-//
-//			}
-//		}
+		@Override
+        public void onBrowserEvent(Context context, Element parent, FolderNode value, NativeEvent event, ValueUpdater<FolderNode> valueUpdater) {
+			if (value != null) {
+				super.onBrowserEvent(context, parent, value, event, valueUpdater);
+				if ("click".equals(event.getType())) {
+					History.newItem(Constants.BROWSER_VIEW
+							+ "?" + Constants.BROWSER_PATH_PARAMETER
+							+ "=" + value.getPath(), true);
+				}
+			}
+		}
 		
 	}
 	
