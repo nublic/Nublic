@@ -12,16 +12,13 @@ import com.google.gwt.view.client.TreeViewModel;
 
 public class BrowserTreeViewModel implements TreeViewModel {
 	BrowserModel model;
-	
 	ListDataProvider<FolderNode> rootDataProvider;
-	//final AbstractSelectionModel<String> selectionModel = new NoSelectionModel<String>();
 
 	public BrowserTreeViewModel() {
 		model = null;
 		rootDataProvider = new ListDataProvider<FolderNode>();
 	}
-	
-		
+
 	public void setModel(BrowserModel model) {
 		// To provide the data in the tree we will use the model which is updated asynchronously
 		this.model = model;
@@ -29,10 +26,12 @@ public class BrowserTreeViewModel implements TreeViewModel {
 		model.getFolderTree().setDataProvider(rootDataProvider);
 	}
 
-	/**
-	 * The cell used to render Nodes.
-	 */
+	// The cell used to render Nodes.
 	private static class NodeCell extends AbstractCell<FolderNode> {
+		NodeCell(){
+			super("click", "keydown");
+		}
+		
 		@Override
 		public void render(Context context, FolderNode value, SafeHtmlBuilder sb) {
 			if (value != null) {
@@ -40,16 +39,32 @@ public class BrowserTreeViewModel implements TreeViewModel {
 			}
 		}
 		
+		// To handle clicks on the tree cells
 		@Override
         public void onBrowserEvent(Context context, Element parent, FolderNode value, NativeEvent event, ValueUpdater<FolderNode> valueUpdater) {
-			if (value != null) {
-				super.onBrowserEvent(context, parent, value, event, valueUpdater);
-				if ("click".equals(event.getType())) {
-					History.newItem(Constants.BROWSER_VIEW
-							+ "?" + Constants.BROWSER_PATH_PARAMETER
-							+ "=" + value.getPath(), true);
-				}
+			// Let AbstractCell handle the keydown event.
+			super.onBrowserEvent(context, parent, value, event, valueUpdater);
+
+			// Handle the click event.
+			if ("click".equals(event.getType()) && value != null) {
+				cellAction(value);
 			}
+		}
+		
+		// To handle the Enter key press
+		@Override
+	    protected void onEnterKeyDown(Context context, Element parent, FolderNode value, NativeEvent event,
+	        ValueUpdater<FolderNode> valueUpdater) {
+			if (value != null) {
+				cellAction(value);
+			}
+	    }
+		
+		public static void cellAction(FolderNode node) {
+			// "Redirect" to the correspondent browser page
+			History.newItem(Constants.BROWSER_VIEW
+					+ "?" + Constants.BROWSER_PATH_PARAMETER
+					+ "=" + node.getPath(), true);
 		}
 		
 	}
@@ -59,19 +74,10 @@ public class BrowserTreeViewModel implements TreeViewModel {
 		if (value == null) {
 			// LEVEL 0.
 			// We passed null as the root value. Return the folders in the root.
-			
 			// Create a cell to display a folder.
 			final Cell<FolderNode> cell = new NodeCell();
-//			DefaultNodeInfo<Node> nodeInfo = new DefaultNodeInfo<Node>(rootDataProvider, cell);
-//			nodeInfo.getSelectionModel().addSelectionChangeHandler(new Handler() {
-//				@Override
-//				public void onSelectionChange(SelectionChangeEvent event) {
-//					event.getSource();
-//					
-//				}
-//			});
-			return new DefaultNodeInfo<FolderNode>(rootDataProvider, cell);
 
+			return new DefaultNodeInfo<FolderNode>(rootDataProvider, cell);
 		} else if (value instanceof FolderNode) {
 			// LEVEL 1+.
 			// We want the children of the given folder. Return the children folders.
@@ -90,7 +96,6 @@ public class BrowserTreeViewModel implements TreeViewModel {
 		} else {
 			return false;
 		}
-//		return false;
 	}
 
 

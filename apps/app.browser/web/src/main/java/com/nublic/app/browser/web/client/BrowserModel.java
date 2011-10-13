@@ -109,7 +109,7 @@ public class BrowserModel {
 						
 						// Call every handler looking at the file list
 						for (FileListUpdateHandler handler : updateHandlers) {	 	
-							handler.onUpdate(BrowserModel.this);	 	
+							handler.onUpdate(BrowserModel.this);	
 						}
 					} else {
 						error("Bad response status");

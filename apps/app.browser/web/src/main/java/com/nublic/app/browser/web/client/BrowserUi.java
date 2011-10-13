@@ -33,11 +33,19 @@ public class BrowserUi extends Composite implements OpenHandler<TreeNode>, FileL
 	}
 
 	public BrowserUi(BrowserModel model) {
+		// inits
 		initWidget(uiBinder.createAndBindUi(this));
 		this.model = model;
 		treeView.setModel(model);
+		
+		// request to update folder tree with the root directory
 		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
+		
+		// to handle openings of tree nodes
 		folderTree.addOpenHandler(this);
+		
+		// to handle updates on files list
+		model.addUpdateHandler(this);
 	}
 
 	@UiHandler("buttonFolderRequest")

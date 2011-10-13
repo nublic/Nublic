@@ -5,7 +5,6 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.RootPanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -41,11 +40,10 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			args = token.substring(question + 1);
 			token = token.substring(0, question);
 		}
-		
-		//RootPanel.get().add(RootLayoutPanel.get());
+
 		if (token.isEmpty()) {
-			// show the initial screen or menu
-			//RootPanel.get().add(RootLayoutPanel.get());
+			// show the initial screen (empties the file list of the model)
+			model.updateFiles(new ParamsHashMap());
 		} else if (token.equals(Constants.BROWSER_VIEW)) {
 			// show the desired browser page
 			model.updateFiles(new ParamsHashMap(args));
