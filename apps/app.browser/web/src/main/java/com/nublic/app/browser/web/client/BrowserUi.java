@@ -46,8 +46,8 @@ public class BrowserUi extends Composite implements OpenHandler<TreeNode> {
 	@Override
 	public void onOpen(OpenEvent<TreeNode> event) {
 		Object openedValue = event.getTarget().getValue();
-		if (openedValue instanceof Node) {
-			model.updateFolders((Node) openedValue, Constants.DEFAULT_DEPTH);
+		if (openedValue instanceof FolderNode) {
+			model.updateFolders((FolderNode) openedValue, Constants.DEFAULT_DEPTH);
 		}
 	}
 }

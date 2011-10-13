@@ -5,26 +5,26 @@ import java.util.List;
 
 import com.google.gwt.view.client.ListDataProvider;
 
-public class Node {
+public class FolderNode {
 	FolderContent content;
-	Node parent;
-	List<Node> children;
-	ListDataProvider<Node> dataProvider;
+	FolderNode parent;
+	List<FolderNode> children;
+	ListDataProvider<FolderNode> dataProvider;
 	
 	// Constructors
-	Node() {
+	FolderNode() {
 		parent = null;
 		content = null;
-		children = new ArrayList<Node>();
+		children = new ArrayList<FolderNode>();
 		//dataProvider = new ListDataProvider<Node>();
 		dataProvider = null;
 	}
 	
-	Node(Node parent, FolderContent content) {
+	FolderNode(FolderNode parent, FolderContent content) {
 		this.parent = parent;
 		this.content = content;
-		children = new ArrayList<Node>();
-		dataProvider = new ListDataProvider<Node>(children);
+		children = new ArrayList<FolderNode>();
+		dataProvider = new ListDataProvider<FolderNode>(children);
 		
 //		dataProvider = new ListDataProvider<Node>();
 //		children = dataProvider.getList();
@@ -45,27 +45,27 @@ public class Node {
 		this.content = content;
 	}
 	
-	public Node getParent() {
+	public FolderNode getParent() {
 		return parent;
 	}
 	
-	public void setParent(Node parent) {
+	public void setParent(FolderNode parent) {
 		this.parent = parent;
 	}
 	
-	public List<Node> getChildren() {
+	public List<FolderNode> getChildren() {
 		return children;
 	}
 	
-	public void addChild(Node child) {
+	public void addChild(FolderNode child) {
 		children.add(child);
 	}
 	
-	public void replaceChild(int j, Node child) {
+	public void replaceChild(int j, FolderNode child) {
 		if (j >= children.size()) {
 			children.add(child);
 		} else {
-			ListDataProvider<Node> tempProvider = children.get(j).getDataProvider();
+			ListDataProvider<FolderNode> tempProvider = children.get(j).getDataProvider();
 			child.setDataProvider(tempProvider);
 			children.set(j, child);
 		}
@@ -76,11 +76,11 @@ public class Node {
 	}
 
 	
-	public ListDataProvider<Node> getDataProvider() {
+	public ListDataProvider<FolderNode> getDataProvider() {
 		return dataProvider;
 	}
 	
-	public void setDataProvider(ListDataProvider<Node> dataProv) {
+	public void setDataProvider(ListDataProvider<FolderNode> dataProv) {
 		dataProvider = dataProv;
 		//dataProvider.setList(children);
 		children = dataProvider.getList();

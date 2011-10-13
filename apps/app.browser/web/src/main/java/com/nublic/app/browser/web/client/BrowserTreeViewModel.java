@@ -9,12 +9,12 @@ import com.google.gwt.view.client.TreeViewModel;
 public class BrowserTreeViewModel implements TreeViewModel {
 	BrowserModel model;
 	
-	ListDataProvider<Node> rootDataProvider;
+	ListDataProvider<FolderNode> rootDataProvider;
 	//final AbstractSelectionModel<String> selectionModel = new NoSelectionModel<String>();
 
 	public BrowserTreeViewModel() {
 		model = null;
-		rootDataProvider = new ListDataProvider<Node>();
+		rootDataProvider = new ListDataProvider<FolderNode>();
 	}
 	
 		
@@ -28,9 +28,9 @@ public class BrowserTreeViewModel implements TreeViewModel {
 	/**
 	 * The cell used to render Nodes.
 	 */
-	private static class NodeCell extends AbstractCell<Node> {
+	private static class NodeCell extends AbstractCell<FolderNode> {
 		@Override
-		public void render(Context context, Node value, SafeHtmlBuilder sb) {
+		public void render(Context context, FolderNode value, SafeHtmlBuilder sb) {
 			if (value != null) {
 				sb.appendEscaped(value.getContent().getName());
 			}
@@ -56,7 +56,7 @@ public class BrowserTreeViewModel implements TreeViewModel {
 			// We passed null as the root value. Return the folders in the root.
 			
 			// Create a cell to display a folder.
-			final Cell<Node> cell = new NodeCell();
+			final Cell<FolderNode> cell = new NodeCell();
 //			DefaultNodeInfo<Node> nodeInfo = new DefaultNodeInfo<Node>(rootDataProvider, cell);
 //			nodeInfo.getSelectionModel().addSelectionChangeHandler(new Handler() {
 //				@Override
@@ -65,23 +65,23 @@ public class BrowserTreeViewModel implements TreeViewModel {
 //					
 //				}
 //			});
-			return new DefaultNodeInfo<Node>(rootDataProvider, cell);
+			return new DefaultNodeInfo<FolderNode>(rootDataProvider, cell);
 
-		} else if (value instanceof Node) {
+		} else if (value instanceof FolderNode) {
 			// LEVEL 1+.
 			// We want the children of the given folder. Return the children folders.
-			Node n = (Node) value;
-			Cell<Node> cell = new NodeCell();
+			FolderNode n = (FolderNode) value;
+			Cell<FolderNode> cell = new NodeCell();
 			
-			return new DefaultNodeInfo<Node>(n.getDataProvider(), cell);
+			return new DefaultNodeInfo<FolderNode>(n.getDataProvider(), cell);
 		}
 		return null;
 	}
 
 	@Override
 	public boolean isLeaf(Object value) {
-		if (value instanceof Node) {
-			return ((Node) value).getChildren().isEmpty();
+		if (value instanceof FolderNode) {
+			return ((FolderNode) value).getChildren().isEmpty();
 		} else {
 			return false;
 		}
