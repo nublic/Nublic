@@ -1,0 +1,16 @@
+Source: nublic-resource
+Maintainer: David Navarro Estruch <davisein@gmail.com>
+Section: python
+Priority: optional
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7)
+Standards-Version: 3.9.1
+
+Package: python-nublic-resource
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, dbconfig-common
+Breaks: ${python:Breaks}
+Recommends: postgresql-client
+Suggests: postgresql
+Description: Nublic Resource System
+ This system provides a common and easy way to access to different resources
+ managing the creation, security issues and access to private values.
