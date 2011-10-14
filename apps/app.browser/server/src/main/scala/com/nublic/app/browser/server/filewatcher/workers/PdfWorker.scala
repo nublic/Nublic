@@ -33,7 +33,8 @@ object PdfWorker extends DocumentWorker {
     case _     => null
   }
 
-  def hasView(viewName: String, file: String): Boolean = viewName == "pdf"
+  def hasView(viewName: String, file: String, mime: String): Boolean = 
+    viewName == "pdf" && supportedMimeTypes.contains(mime)
 
   def getView(viewName: String, file: String): File = new File(file)
 
