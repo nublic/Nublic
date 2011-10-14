@@ -1,5 +1,5 @@
 Source: nublic-notification
-Section: web
+Section: nublic
 Priority: extra
 Maintainer: Nublic Packaging Team <packaging@nublic.com>
 Build-Depends: cdbs, debhelper (>= 7), python (>= 2.6), python-support (>= 0.90)
@@ -9,7 +9,7 @@ Homepage: http://nublic.com
 
 Package: nublic-notification
 Architecture: all
-Depends: mysql-server, dbus, python (>= 2.6), python-central, python-support (>= 0.90), python-dbus, python-elixir, python-sqlalchemy
+Depends: mysql-server, dbus, python (>= 2.6), python-central, python-support (>= 0.90), python-dbus, python-elixir, python-sqlalchemy, mysql-server, python-gtk2, python-mysqldb
 Description: The Nublic Notification system.
  A system providing an easy way to send notifications
  via console and D-bus. It is intended to work with Nublic.

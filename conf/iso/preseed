@@ -1,0 +1,46 @@
+d-i preseed/late_command string cp -r /cdrom/nublic-repo /target/root/; cp /cdrom/finisher/finisher.sh /target/root/; chroot /target chmod +x /root/finisher.sh; chroot /target bash /root/finisher.sh
+d-i debconf/language string en
+d-i debian-installer/country string ES
+choose-mirror-bin mirror/http/countries select ES
+choose-mirror-bin mirror/http/hostname string us.archive.ubuntu.com
+choose-mirror-bin mirror/http/proxy string 
+choose-mirror-bin mirror/ftp/proxy string 
+clock-setup clock-setup/utc boolean true
+d-i tasksel/first multiselect 
+d-i pkgsel/include string tomcat6 solr-tomcat mysql-server postgresql dbus ffmpeg lame imagemagick flvtool2 default-jdk scala-library unoconv
+netcfg netcfg/get_hostname string nublic
+user-setup-udeb passwd/user-fullname string Nublic
+user-setup-udeb passwd/username string nublic
+user-setup-udeb passwd/user-fullname string nublic
+apt-setup-udeb apt-setup/services-select multiselect security
+d-i time/zone string Europe/Madrid
+tzsetup-udeb time/zone string Europe/Madrid
+mysql-server-5.1 mysql-server/root_password nublic
+mysql-server-5.1 mysql-server/root_password_again nublic
+mysql-server-5.1 mysql-server/start_on_boot boolean	true
+tzdata tzdata/Zones/Australia select 
+tzdata tzdata/Zones/US select 
+tzdata tzdata/Zones/Asia select 
+tzdata tzdata/Zones/Etc select UTC
+tzdata tzdata/Zones/SystemV select 
+tzdata tzdata/Zones/Arctic select 
+tzdata tzdata/Zones/Pacific select 
+tzdata tzdata/Zones/Antarctica select 
+tzdata tzdata/Zones/Europe select Madrid
+tzdata tzdata/Zones/Africa select 
+tzdata tzdata/Zones/America select 
+tzdata tzdata/Zones/Atlantic select 
+tzdata tzdata/Zones/Indian select 
+d-i localechooser/countrylist/Antarctica select 
+d-i localechooser/countrylist/other select 
+d-i localechooser/countrylist/South_America select 
+d-i localechooser/countrylist/Caribbean select 
+d-i localechooser/countrylist/North_America select 
+d-i localechooser/countrylist/Africa select 
+d-i localechooser/countrylist/Europe select Spain
+d-i localechooser/countrylist/Atlantic_Ocean select 
+d-i localechooser/countrylist/Asia select 
+d-i localechooser/countrylist/Oceania select 
+d-i localechooser/countrylist/Central_America select 
+d-i localechooser/countrylist/Indian_Ocean select 
+d-i keyboard-configuration/layoutcode string es

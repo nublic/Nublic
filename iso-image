@@ -2,8 +2,8 @@
 
 export INITIAL_DIR=`pwd`
 export ISO_DIR=${INITIAL_DIR}/target/iso
-export ISO_WGET=http://ubuntu.grn.cat/ubuntu-releases/oneiric/ubuntu-11.10-beta2-server-i386.iso
-export ISO_FILE=ubuntu-11.10-beta2-server-i386.iso
+export ISO_WGET='http://www.ubuntu.com/start-download?distro=server&bits=32&release=latest'
+export ISO_FILE=ubuntu-server-i386.iso
 export ISO_MOUNT=${ISO_DIR}/mnt
 export ISO_TEMP=${ISO_DIR}/temp
 
@@ -15,9 +15,24 @@ mkdir -p ${ISO_TEMP}
 mkdir -p ${ISO_MOUNT}
 
 # Download and extract the Ubuntu iso
+echo "Extracting Ubuntu iso..."
 cd ${ISO_DIR}
-wget ${ISO_WGET}  # Do not redownload, just uncoment this the first time
-sudo mount -o loop ${ISO_FILE} ${ISO_MOUNT}
-rsync -av ${ISO_MOUNT}/ ${ISO_TEMP}
+# axel --alternate --output=${ISO_FILE} ${ISO_WGET}
+sudo mount -o loop,uid=1000,gid=1000 ${ISO_FILE} ${ISO_MOUNT}
+cp -rT ${ISO_MOUNT}/ ${ISO_TEMP}
 sudo umount ${ISO_MOUNT}
+chmod -R a+w ${ISO_TEMP}
 
+# Copy the repository to iso
+echo "Copying repository and changing debian-installer preseed..."
+mkdir -p ${ISO_TEMP}/nublic-repo
+cp -r ${INITIAL_DIR}/target/repo/* ${ISO_TEMP}/nublic-repo
+# Copy and add "finisher.sh" command to iso
+mkdir -p ${ISO_TEMP}/finisher
+cp ${INITIAL_DIR}/conf/iso/finisher.sh ${ISO_TEMP}/finisher
+cat ${INITIAL_DIR}/conf/iso/preseed >> ${ISO_TEMP}/preseed/ubuntu-server.seed
+
+# Create iso
+echo "Creating final iso..."
+mkisofs -r -V "Nublic Install CD" -cache-inodes -J -l -b isolinux/isolinux.bin -c isolinux/boot.cat \
+    -no-emul-boot -boot-load-size 4 -boot-info-table -o ${ISO_DIR}/nublic.iso ${ISO_DIR}/temp

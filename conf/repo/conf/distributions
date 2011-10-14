@@ -1,8 +1,8 @@
 Origin: Nublic
 Label: Nublic
-Suite: unstable
-Codename: nublic
+Codename: oneiric
+Suite: oneiric
 Version: 3.1
 Architectures: i386 amd64 source
-Components: main
+Components: nublic
 Description: Apt repository for Nublic

@@ -1,5 +1,4 @@
 setup.py
-nublic/__init__.py
-nublic/notification/__init__.py
-nublic/notification/main_terminal.py
-nublic/notification/model.py
+nublic_notification/__init__.py
+nublic_notification/main_terminal.py
+nublic_notification/model.py

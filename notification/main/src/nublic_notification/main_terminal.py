@@ -8,8 +8,8 @@ Created on 15/08/2010
 '''
 from elixir import *
 from optparse import OptionParser
-from nublic.notification.model import Notification, Action, StockAction
-from nublic.notification.notification import new_message 
+from nublic_notification.model import Notification, Action, StockAction
+from nublic_notification.notification import new_message 
 
 def main():
     usage = "sends a message to the Nublic notification system"
