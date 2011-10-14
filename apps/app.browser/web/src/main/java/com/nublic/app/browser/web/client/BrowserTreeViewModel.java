@@ -68,7 +68,7 @@ public class BrowserTreeViewModel implements TreeViewModel {
 		}
 		
 	}
-	
+
 	@Override
 	public <T> NodeInfo<?> getNodeInfo(T value) {
 		if (value == null) {

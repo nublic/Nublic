@@ -19,5 +19,6 @@ public class FileWidget extends Composite {
 	
 	public FileWidget(FileNode n) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
 	}
 }
