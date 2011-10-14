@@ -169,7 +169,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	    }
 	  }
 	}
-	subfolders
+	subfolders.sort((a, b) => a.name.compareToIgnoreCase(b.name) < 0)
   }
   
   def get_files(folder: File): List[BrowserFile] = {
@@ -182,7 +182,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	    }
 	  }
 	}
-	files
+	files.sort((a, b) => a.name.compareToIgnoreCase(b.name) < 0)
   }
   
   def find_view(file: String): String = {
