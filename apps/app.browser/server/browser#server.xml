@@ -1,1 +1,1 @@
-<Context path="/browser/server" docBase="/var/lib/nublic/webapps/app.browser.server.xml" />
+<Context path="/browser/server" docBase="/var/lib/nublic/webapps/app.browser.server.war" />
