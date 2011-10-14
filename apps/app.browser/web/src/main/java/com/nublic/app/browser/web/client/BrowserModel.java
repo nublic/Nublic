@@ -67,6 +67,7 @@ public class BrowserModel {
 						if (folderList == null) {
 							error("Empty folder tree received");
 						} else {
+							//FolderContent.sortList(folderList);
 							updateTree(n, folderList);
 						}
 					} else {

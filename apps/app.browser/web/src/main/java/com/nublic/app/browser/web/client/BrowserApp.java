@@ -41,6 +41,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			token = token.substring(0, question);
 		}
 
+		// TODO: request folder if it's not loaded
 		if (token.isEmpty()) {
 			// show the initial screen (empties the file list of the model)
 			model.updateFiles(new ParamsHashMap());

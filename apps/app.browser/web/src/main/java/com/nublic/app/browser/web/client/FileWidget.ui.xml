@@ -8,9 +8,9 @@
 		}
 	</ui:style>
 	<g:VerticalPanel width="96px" styleName="{style.inLine}">
-		<g:Label text="I'm a picture" />
-		<g:Image/>
-		<g:Label text="I'm the name of the folder" />
+		<g:Label ui:field="noImage" text="Image unavailable" />
+		<g:Image ui:field="fileImage"/>
+		<g:Label ui:field="fileName" text="Name unavailable"/>
 	</g:VerticalPanel>
 	
 </ui:UiBinder> 
