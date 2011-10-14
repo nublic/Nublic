@@ -68,22 +68,23 @@ public class FolderNode {
 		}
 	}
 	
-	// same as getPath, but returns the result in a ArrayList <String> instead in URL format
-	public Stack<String> getPathStack() {
-		Stack<String> stack = new Stack<String>();
-		stack.push(content.getName());
+	// same as getPath, but returns the result in a ArrayList <FolderNode> instead in URL format
+	// TODO: can be done with a for instead recursion
+	public Stack<FolderNode> getPathStack() {
+		Stack<FolderNode> stack = new Stack<FolderNode>();
 		if (parent == null) {
 			return stack;
 		} else {
+			stack.push(this);
 			return parent.getPathStack(stack);
 		}
 	}
 	
-	public Stack<String> getPathStack(Stack<String> accumStack) {
-		accumStack.push(content.getName());
+	public Stack<FolderNode> getPathStack(Stack<FolderNode> accumStack) {
 		if (parent == null) {
 			return accumStack;
 		} else {
+			accumStack.push(this);
 			return parent.getPathStack(accumStack);
 		}
 	}

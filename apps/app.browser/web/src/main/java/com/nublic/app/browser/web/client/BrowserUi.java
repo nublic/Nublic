@@ -4,6 +4,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -12,9 +14,10 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class BrowserUi extends Composite implements ModelUpdateHandler {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem> {
 	
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
@@ -37,7 +40,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler {
 		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 		
 		// to handle openings of tree nodes
-		//treeView.addOpenHandler(this);
+		treeView.addOpenHandler(this);
 		
 		// to handle updates on files list
 		model.addUpdateHandler(this);
@@ -58,13 +61,11 @@ public class BrowserUi extends Composite implements ModelUpdateHandler {
 	}
 
 	// Handler of the open action for the browser tree
-//	@Override
-//	public void onOpen(OpenEvent<TreeNode> event) {
-//		Object openedValue = event.getTarget().getValue();
-//		if (openedValue instanceof FolderNode) {
-//			model.updateFolders((FolderNode) openedValue, Constants.DEFAULT_DEPTH);
-//		}
-//	}
+	@Override
+	public void onOpen(OpenEvent<TreeItem> event) {
+		FolderNode node = (FolderNode) event.getTarget().getUserObject();
+		model.updateFolders(node, Constants.DEFAULT_DEPTH);
+	}
 
 	// Handler fired when a new update of the file list is available
 	@Override

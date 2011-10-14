@@ -18,15 +18,34 @@ public class TreeAdapter {
 		// Searches and/or creates the node on the tree
 		TreeItem nodeView = search(node);
 		
-		nodeView.removeItems();
-		for (FolderNode child : node.getChildren()) {
-			updateNodeView(nodeView, child);
+		if (nodeView == null) {
+			// we're updating the root of the tree
+			// (the FolderNode (node) passed was the root node)
+			treeView.removeItems();
+			for (FolderNode child : node.getChildren()) {
+				updateRootView(child);
+			}
+		} else {
+			nodeView.removeItems();
+			for (FolderNode child : node.getChildren()) {
+				updateNodeView(nodeView, child);
+			}
 		}
 
 	}
 
+	private void updateRootView(FolderNode node) {
+		TreeItem newNode = treeView.addItem(node.getContent().getName());
+		newNode.setUserObject(node);
+
+		for (FolderNode child : node.getChildren()) {
+			updateNodeView(newNode, child);
+		}
+	}
+
 	private void updateNodeView(TreeItem nodeView, FolderNode node) {
 		TreeItem newNode = nodeView.addItem(node.getContent().getName());
+		newNode.setUserObject(node);
 
 		for (FolderNode child : node.getChildren()) {
 			updateNodeView(newNode, child);
@@ -36,35 +55,48 @@ public class TreeAdapter {
 	// Searches for the node on the viewTree and if it doesn't exists this method creates the path to it.
 	// If we want to maintain the model abstract from the view it's necessary to go through the treeView each time.
 	private TreeItem search(FolderNode node) {
-		Stack<String> pathStack = node.getPathStack();
-		String nodeName1 = pathStack.pop();
+		Stack<FolderNode> pathStack = node.getPathStack();
+		FolderNode firstInStack = null;
 		TreeItem nodeView = null;
+		TreeItem childNode = null;
 		boolean found = false;
+		
+		if (pathStack.isEmpty()) {
+			return null;
+		}
+		
+		firstInStack = pathStack.pop();
 
 		// This first step cannot be done with the rest because the first level is of a different type
 		// Iterates through nodes in treeView until it finds the desired node  
 		for (int i = 0 ; i < treeView.getItemCount() && !found; i++){
 			nodeView = treeView.getItem(i);
-			found = nodeView.getHTML().equals(nodeName1);
+			found = nodeView.getHTML().equals(firstInStack.getContent().getName());
 		}
 		
 		// If it hasn't been found we have to create the complete path stack in the tree view 
 		if  (!found) {
-			nodeView = treeView.addItem(nodeName1);
+			nodeView = treeView.addItem(firstInStack.getContent().getName());
+			nodeView.setUserObject(firstInStack);
 			return createNewBranch(nodeView, pathStack);
 		}
 		
 		// The same as before for the TreeItem type of the rest of the tree
-		for (String nodeName2 : pathStack) {
+		//for (FolderNode nodeInStack = null ; !pathStack.isEmpty() ; nodeInStack = pathStack.pop()) {
+		FolderNode nodeInStack = null;
+		while (!pathStack.isEmpty()) {
+			nodeInStack = pathStack.pop();
 			found = false;
-			for (int i = 0 ; i < treeView.getItemCount() && !found ; i++) {
-				nodeView = treeView.getItem(i);
-				found = nodeView.getHTML().equals(nodeName2);
+			for (int i = 0 ; i < nodeView.getChildCount() && !found ; i++) {
+				childNode = nodeView.getChild(i);
+				found = childNode.getHTML().equals(nodeInStack.getContent().getName());
 			}
 			if  (!found) {
-				nodeView = nodeView.addItem(nodeName2);
-				return createNewBranch(nodeView, pathStack);
+				childNode = nodeView.addItem(nodeInStack.getContent().getName());
+				childNode.setUserObject(nodeInStack);
+				return createNewBranch(childNode, pathStack);
 			}
+			nodeView = childNode;
 		}
 
 		// If we reach this point we will have found all the path in the viewTree
@@ -72,11 +104,15 @@ public class TreeAdapter {
 	}
 
 	// Creates a new branch for the given pathStack of names from the given point (nodeView)
-	private TreeItem createNewBranch(TreeItem nodeView, Stack<String> pathStack) {
+	private TreeItem createNewBranch(TreeItem nodeView, Stack<FolderNode> pathStack) {
 		TreeItem createdNode = nodeView;
 
-		for (String nodeName : pathStack) {
-			createdNode = createdNode.addItem(nodeName);
+//		for (FolderNode node = null ; !pathStack.isEmpty() ; node = pathStack.pop()) {
+		FolderNode node = null;
+		while (!pathStack.isEmpty()) {
+			node = pathStack.pop();
+			createdNode = createdNode.addItem(node.getContent().getName());
+			createdNode.setUserObject(node);
 		}
 
 		return createdNode;
