@@ -19,7 +19,7 @@ public class TreeAdapter {
 		TreeItem nodeView = search(node);
 		
 		if (nodeView == null) {
-			// we're updating the root of the tree
+			// We're updating the root of the tree
 			// (the FolderNode (node) passed was the root node)
 			treeView.removeItems();
 			for (FolderNode child : node.getChildren()) {
@@ -82,7 +82,7 @@ public class TreeAdapter {
 		}
 		
 		// The same as before for the TreeItem type of the rest of the tree
-		//for (FolderNode nodeInStack = null ; !pathStack.isEmpty() ; nodeInStack = pathStack.pop()) {
+		// Iteration in java style (FolderNode node : pathStack) doesn't pop things out 
 		FolderNode nodeInStack = null;
 		while (!pathStack.isEmpty()) {
 			nodeInStack = pathStack.pop();
@@ -107,7 +107,6 @@ public class TreeAdapter {
 	private TreeItem createNewBranch(TreeItem nodeView, Stack<FolderNode> pathStack) {
 		TreeItem createdNode = nodeView;
 
-//		for (FolderNode node = null ; !pathStack.isEmpty() ; node = pathStack.pop()) {
 		FolderNode node = null;
 		while (!pathStack.isEmpty()) {
 			node = pathStack.pop();
