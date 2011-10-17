@@ -12,10 +12,15 @@ class DbusSignaler(dbus.service.Object):
     '''
     Sends signals via D-Bus
     '''
-    def __init__(self, app_name):
+    def __init__(self, app_name, context):
         bus_name = dbus.service.BusName('com.nublic.filewatcher', bus=dbus.SystemBus())
         dbus.service.Object.__init__(self, bus_name, '/com/nublic/filewatcher/' + app_name)
+        self.context = '/var/nublic/data/' + context
 
-    @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssb')
-    def file_changed(self, ty, pathname, src_pathname, isdir):
-        print "%s %s" % (ty, pathname)
+    def raise_event(self, ty, pathname, src_pathname, isdir):
+        if pathname.startswith(self.context):
+            self.file_changed(ty, pathname, src_pathname, isdir, self.context)
+
+    @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
+    def file_changed(self, ty, pathname, src_pathname, isdir, context):
+        print "%s %s (context %s)" % (ty, pathname, context)
