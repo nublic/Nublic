@@ -30,7 +30,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 	    History.addValueChangeHandler(this);
 	    History.fireCurrentHistoryState();
 	}
-	
+
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue();

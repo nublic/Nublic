@@ -54,7 +54,7 @@ public class TreeAdapter {
 
 	// Searches for the node on the viewTree and if it doesn't exists this method creates the path to it.
 	// If we want to maintain the model abstract from the view it's necessary to go through the treeView each time.
-	private TreeItem search(FolderNode node) {
+	public synchronized TreeItem search(FolderNode node) {
 		Stack<FolderNode> pathStack = node.getPathStack();
 		FolderNode firstInStack = null;
 		TreeItem nodeView = null;

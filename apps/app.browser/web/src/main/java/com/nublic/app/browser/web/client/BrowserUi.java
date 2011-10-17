@@ -1,6 +1,7 @@
 package com.nublic.app.browser.web.client;
 
 import java.util.List;
+import java.util.Stack;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -39,7 +40,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		this.model = model;
 
 		// Request to update folder tree with the root directory
-		initFolder("");
+		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 		
 		// To handle openings of tree nodes
 		treeView.addOpenHandler(this);
@@ -53,10 +54,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	
-	public void initFolder(String path) {
-		FolderNode node = model.createBranch(path);
-		model.updateFolders(node, Constants.DEFAULT_DEPTH);
-	}
+//	public void initFolder(String path) {
+//		FolderNode node = model.createBranch(path);
+//		model.updateFolders(node, Constants.DEFAULT_DEPTH);
+//	}
 
 	@UiHandler("buttonFolderRequest")
 	void onButtonFolderRequestClick(ClickEvent event) {
@@ -91,7 +92,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void onFilesUpdate(BrowserModel m, String path) {
 		List <FileNode> fileList = m.getFileList();
-		
+
+		// Update the information shown in the central panel
 		centralPanel.clear();
 		for (FileNode n : fileList) {
 			centralPanel.add(new FileWidget(n));
@@ -102,7 +104,23 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		if (node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
-		//treeView.setSelectedItem(item);
+		
+		TreeItem nodeView = treeAdapter.search(node);
+		
+		// Open the tree and show all the parents of the selected node open
+		TreeItem parent = nodeView.getParentItem();
+		Stack<TreeItem> pathStack = new Stack<TreeItem>();
+		while (parent != null) {
+			pathStack.push(parent);
+			parent = parent.getParentItem();
+		}
+		while (!pathStack.isEmpty()) {
+			TreeItem iterator = pathStack.pop();
+			iterator.setState(true, false);
+		}
+		
+		// Set the node as selected
+		treeView.setSelectedItem(nodeView);
 	}
 
 	@Override

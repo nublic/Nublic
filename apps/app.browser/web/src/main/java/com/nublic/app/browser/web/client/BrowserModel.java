@@ -44,6 +44,7 @@ public class BrowserModel {
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		
+		// TODO: Sequence numbers to "ignore" unupdated responses
 		String pathEncoded = URL.encodePathSegment(n.getPath());
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + pathEncoded);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
@@ -88,7 +89,11 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(final ParamsHashMap params) {
-		String pathEncoded = URL.encodePathSegment(params.get(Constants.BROWSER_PATH_PARAMETER));
+		String path = params.get(Constants.BROWSER_PATH_PARAMETER);
+		if (path == null) {
+			path = new String("");
+		}
+		String pathEncoded = URL.encodePathSegment(path);
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + pathEncoded);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
@@ -115,8 +120,13 @@ public class BrowserModel {
 						}
 						
 						// Call every handler looking at the file list
-						for (ModelUpdateHandler handler : updateHandlers) {	 	
-							handler.onFilesUpdate(BrowserModel.this, params.get(Constants.BROWSER_PATH_PARAMETER));	
+						for (ModelUpdateHandler handler : updateHandlers) {
+							String path = params.get(Constants.BROWSER_PATH_PARAMETER);
+							if (path == null) {
+								path = new String("");
+							}
+							handler.onFilesUpdate(BrowserModel.this, path);
+							//handler.onFilesUpdate(BrowserModel.this, params.get(Constants.BROWSER_PATH_PARAMETER));
 						}
 					} else {
 						error("Bad response status");
