@@ -54,11 +54,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	
-//	public void initFolder(String path) {
-//		FolderNode node = model.createBranch(path);
-//		model.updateFolders(node, Constants.DEFAULT_DEPTH);
-//	}
-
 	@UiHandler("buttonFolderRequest")
 	void onButtonFolderRequestClick(ClickEvent event) {
 		model.updateFolders(model.getFolderTree(), 4);
@@ -66,7 +61,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	@UiHandler("buttonFilesRequest")
 	void onButtonFilesRequestClick(ClickEvent event) {
-		//centralPanel.add(new FileWidget());
 		History.newItem(Constants.BROWSER_VIEW
 				+ "?" + Constants.BROWSER_PATH_PARAMETER
 				+ "=" + model.getFolderTree().getPath(), true);
@@ -96,7 +90,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Update the information shown in the central panel
 		centralPanel.clear();
 		for (FileNode n : fileList) {
-			centralPanel.add(new FileWidget(n));
+			centralPanel.add(new FileWidget(n, path));
 		}
 
 		FolderNode node = model.createBranch(path);
@@ -106,21 +100,24 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 		
 		TreeItem nodeView = treeAdapter.search(node);
-		
-		// Open the tree and show all the parents of the selected node open
-		TreeItem parent = nodeView.getParentItem();
-		Stack<TreeItem> pathStack = new Stack<TreeItem>();
-		while (parent != null) {
-			pathStack.push(parent);
-			parent = parent.getParentItem();
+
+		// nodeView is null when node is the root (there is no view for the main root)
+		if (nodeView != null) {
+			// Open the tree and show all the parents of the selected node open
+			TreeItem parent = nodeView.getParentItem();
+			Stack<TreeItem> pathStack = new Stack<TreeItem>();
+			while (parent != null) {
+				pathStack.push(parent);
+				parent = parent.getParentItem();
+			}
+			while (!pathStack.isEmpty()) {
+				TreeItem iterator = pathStack.pop();
+				iterator.setState(true, false);
+			}
+			
+			// Set the node as selected
+			treeView.setSelectedItem(nodeView);
 		}
-		while (!pathStack.isEmpty()) {
-			TreeItem iterator = pathStack.pop();
-			iterator.setState(true, false);
-		}
-		
-		// Set the node as selected
-		treeView.setSelectedItem(nodeView);
 	}
 
 	@Override

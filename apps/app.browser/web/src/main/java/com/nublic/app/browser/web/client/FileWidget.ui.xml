@@ -6,11 +6,13 @@
 			display: inline-table;
 			margin: 5px;
 		}
+		.center {
+			text-align: center;
+		}
 	</ui:style>
-	<g:VerticalPanel width="96px" styleName="{style.inLine}">
-		<g:Label ui:field="noImage" text="Image unavailable" />
+	<g:VerticalPanel horizontalAlignment="center" width="96px" styleName="{style.inLine}">
 		<g:Image ui:field="fileImage"/>
-		<g:Label ui:field="fileName" text="Name unavailable"/>
+		<g:Label styleName="{style.center}" ui:field="fileName" text="Name unavailable"/>
 	</g:VerticalPanel>
 	
 </ui:UiBinder> 

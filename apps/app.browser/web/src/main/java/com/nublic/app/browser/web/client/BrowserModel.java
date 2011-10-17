@@ -45,8 +45,7 @@ public class BrowserModel {
 	public void updateFolders(final FolderNode n, int depth) {
 		
 		// TODO: Sequence numbers to "ignore" unupdated responses
-		String pathEncoded = URL.encodePathSegment(n.getPath());
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + pathEncoded);
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + n.getPath());
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
@@ -93,8 +92,7 @@ public class BrowserModel {
 		if (path == null) {
 			path = new String("");
 		}
-		String pathEncoded = URL.encodePathSegment(path);
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + pathEncoded);
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
@@ -167,7 +165,7 @@ public class BrowserModel {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent);
+				FileNode file = new FileNode(fileContent.getName(), fileContent.getMime(), fileContent.getView());
 				fileList.add(file);
 			}
 		} else {

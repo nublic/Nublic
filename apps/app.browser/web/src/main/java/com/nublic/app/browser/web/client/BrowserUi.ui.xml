@@ -11,7 +11,7 @@
 	   </g:layer>
 	   <g:layer top="50px" bottom="0px">
 	   	<g:SplitLayoutPanel>
-	   		<g:west size="100.0">
+	   		<g:west size="200.0">
 	   			<g:Tree ui:field="treeView"/>
 	   		</g:west>
 	   		<g:center>
