@@ -6,26 +6,27 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTree;
-import com.google.gwt.user.cellview.client.TreeNode;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Tree;
+import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class BrowserUi extends Composite implements OpenHandler<TreeNode>, FileListUpdateHandler {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
 	
 	BrowserModel model = null;
-	BrowserTreeViewModel treeView = new BrowserTreeViewModel();
+	TreeAdapter treeAdapter = null;
 
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
-	
-	@UiField(provided=true) CellTree folderTree = new CellTree(treeView, null);
 	@UiField FlowPanel centralPanel;
+	@UiField Tree treeView;
 	@UiField Button buttonFolderRequest;
 	@UiField Button buttonFilesRequest;
 
@@ -33,19 +34,22 @@ public class BrowserUi extends Composite implements OpenHandler<TreeNode>, FileL
 	}
 
 	public BrowserUi(BrowserModel model) {
-		// inits
+		// Inits
 		initWidget(uiBinder.createAndBindUi(this));
 		this.model = model;
-		treeView.setModel(model);
-		
-		// request to update folder tree with the root directory
+
+		// Request to update folder tree with the root directory
 		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 		
-		// to handle openings of tree nodes
-		folderTree.addOpenHandler(this);
+		// To handle openings of tree nodes
+		treeView.addOpenHandler(this);
 		
-		// to handle updates on files list
+		// To handle selections on an item of the tree
+		treeView.addSelectionHandler(this);
+		
+		// To handle updates on files list
 		model.addUpdateHandler(this);
+		treeAdapter = new TreeAdapter(treeView, model);
 	}
 
 	@UiHandler("buttonFolderRequest")
@@ -63,21 +67,36 @@ public class BrowserUi extends Composite implements OpenHandler<TreeNode>, FileL
 
 	// Handler of the open action for the browser tree
 	@Override
-	public void onOpen(OpenEvent<TreeNode> event) {
-		Object openedValue = event.getTarget().getValue();
-		if (openedValue instanceof FolderNode) {
-			model.updateFolders((FolderNode) openedValue, Constants.DEFAULT_DEPTH);
-		}
+	public void onOpen(OpenEvent<TreeItem> event) {
+		FolderNode node = (FolderNode) event.getTarget().getUserObject();
+		model.updateFolders(node, Constants.DEFAULT_DEPTH);
+	}
+	
+	// Handler of the selection (click) action on the tree
+	@Override
+	public void onSelection(SelectionEvent<TreeItem> event) {
+		TreeItem item = event.getSelectedItem();
+		History.newItem(Constants.BROWSER_VIEW
+				+ "?" + Constants.BROWSER_PATH_PARAMETER
+				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
+		// expand the selected item
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onUpdate(BrowserModel m) {
+	public void onFilesUpdate(BrowserModel m) {
 		List <FileNode> fileList = m.getFileList();
 		
 		centralPanel.clear();
 		for (FileNode n : fileList) {
 			centralPanel.add(new FileWidget(n));
 		}
+		
+		//treeView.setSelectedItem(item);
+	}
+
+	@Override
+	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
+		treeAdapter.updateView(node);
 	}
 }

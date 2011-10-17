@@ -19,16 +19,16 @@ public class BrowserModel {
 	FolderNode folderTree;
 	List<FileNode> fileList;
 	
-	ArrayList<FileListUpdateHandler> updateHandlers;
+	ArrayList<ModelUpdateHandler> updateHandlers;
 
 	BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new FolderNode();
 	    fileList = new ArrayList<FileNode>();
-	    updateHandlers = new ArrayList<FileListUpdateHandler>();
+	    updateHandlers = new ArrayList<ModelUpdateHandler>();
 	}
 
-	public void addUpdateHandler(FileListUpdateHandler handler) {	 	
+	public void addUpdateHandler(ModelUpdateHandler handler) {	 	
 	    updateHandlers.add(handler);
 	}
 	
@@ -67,8 +67,15 @@ public class BrowserModel {
 						if (folderList == null) {
 							error("Empty folder tree received");
 						} else {
+							//FolderContent.sortList(folderList);
 							updateTree(n, folderList);
 						}
+
+						// Call every handler looking at the folder tree
+						for (ModelUpdateHandler handler : updateHandlers) {	 	
+							handler.onFoldersUpdate(BrowserModel.this, n);	
+						}
+						
 					} else {
 						error("Bad response status");
 					}
@@ -108,8 +115,8 @@ public class BrowserModel {
 						}
 						
 						// Call every handler looking at the file list
-						for (FileListUpdateHandler handler : updateHandlers) {	 	
-							handler.onUpdate(BrowserModel.this);	
+						for (ModelUpdateHandler handler : updateHandlers) {	 	
+							handler.onFilesUpdate(BrowserModel.this);	
 						}
 					} else {
 						error("Bad response status");
@@ -130,15 +137,12 @@ public class BrowserModel {
 	public void updateTreeNoSync(FolderNode n, JsArray<FolderContent> folderList) {
 		if (folderList.length() != 0) {
 			// if the folder has children
-			// reset the subtree - if the following line is removed, the application seems to work properly
-			// except for the duplication... replaceChild maintains the dataProvider of the last child in that position
-			//n.clear();
+			n.clear();
 			// add new received data
 			for (int i = 0; i < folderList.length(); i++) {
 				FolderContent f = folderList.get(i);
 				FolderNode child = new FolderNode(n, f);
-				//n.addChild(child);
-				n.replaceChild(i, child);
+				n.addChild(child);
 				// Recursive call to update child
 				updateTreeNoSync(child, f.getSubfolders());
 			}
@@ -160,7 +164,6 @@ public class BrowserModel {
 			// The requested folder is empty
 			fileList.clear();
 		}
-		
 	}
 	
 	public void error(String message) {

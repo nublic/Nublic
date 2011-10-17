@@ -8,11 +8,11 @@ public class FolderContent extends JavaScriptObject {
 	protected FolderContent () { }
 	
 	public final native String getName() /*-{
-	  return this.name;
+		return this.name;
     }-*/;
 
 	public final native JsArray<FolderContent> getSubfolders() /*-{
-	  return this.subfolders;
+	 	return this.subfolders;
     }-*/;
 
 }
