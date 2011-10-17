@@ -39,7 +39,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		this.model = model;
 
 		// Request to update folder tree with the root directory
-		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
+		initFolder("");
 		
 		// To handle openings of tree nodes
 		treeView.addOpenHandler(this);
@@ -50,6 +50,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// To handle updates on files list
 		model.addUpdateHandler(this);
 		treeAdapter = new TreeAdapter(treeView, model);
+	}
+	
+	
+	public void initFolder(String path) {
+		FolderNode node = model.createBranch(path);
+		model.updateFolders(node, Constants.DEFAULT_DEPTH);
 	}
 
 	@UiHandler("buttonFolderRequest")
@@ -79,19 +85,23 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		History.newItem(Constants.BROWSER_VIEW
 				+ "?" + Constants.BROWSER_PATH_PARAMETER
 				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
-		// expand the selected item
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onFilesUpdate(BrowserModel m) {
+	public void onFilesUpdate(BrowserModel m, String path) {
 		List <FileNode> fileList = m.getFileList();
 		
 		centralPanel.clear();
 		for (FileNode n : fileList) {
 			centralPanel.add(new FileWidget(n));
 		}
-		
+
+		FolderNode node = model.createBranch(path);
+		// If the given node has no children we try to update its info
+		if (node.getChildren().isEmpty()) {
+			model.updateFolders(node, Constants.DEFAULT_DEPTH);
+		}
 		//treeView.setSelectedItem(item);
 	}
 

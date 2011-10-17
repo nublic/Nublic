@@ -14,7 +14,7 @@ public class TreeAdapter {
 		this.model = model;
 	}
 
-	public void updateView(FolderNode node) {
+	public synchronized void updateView(FolderNode node) {
 		// Searches and/or creates the node on the tree
 		TreeItem nodeView = search(node);
 		
@@ -35,7 +35,7 @@ public class TreeAdapter {
 	}
 
 	private void updateRootView(FolderNode node) {
-		TreeItem newNode = treeView.addItem(node.getContent().getName());
+		TreeItem newNode = treeView.addItem(node.getName());
 		newNode.setUserObject(node);
 
 		for (FolderNode child : node.getChildren()) {
@@ -44,7 +44,7 @@ public class TreeAdapter {
 	}
 
 	private void updateNodeView(TreeItem nodeView, FolderNode node) {
-		TreeItem newNode = nodeView.addItem(node.getContent().getName());
+		TreeItem newNode = nodeView.addItem(node.getName());
 		newNode.setUserObject(node);
 
 		for (FolderNode child : node.getChildren()) {
@@ -71,12 +71,12 @@ public class TreeAdapter {
 		// Iterates through nodes in treeView until it finds the desired node  
 		for (int i = 0 ; i < treeView.getItemCount() && !found; i++){
 			nodeView = treeView.getItem(i);
-			found = nodeView.getHTML().equals(firstInStack.getContent().getName());
+			found = nodeView.getHTML().equals(firstInStack.getName());
 		}
 		
 		// If it hasn't been found we have to create the complete path stack in the tree view 
 		if  (!found) {
-			nodeView = treeView.addItem(firstInStack.getContent().getName());
+			nodeView = treeView.addItem(firstInStack.getName());
 			nodeView.setUserObject(firstInStack);
 			return createNewBranch(nodeView, pathStack);
 		}
@@ -89,10 +89,10 @@ public class TreeAdapter {
 			found = false;
 			for (int i = 0 ; i < nodeView.getChildCount() && !found ; i++) {
 				childNode = nodeView.getChild(i);
-				found = childNode.getHTML().equals(nodeInStack.getContent().getName());
+				found = childNode.getHTML().equals(nodeInStack.getName());
 			}
 			if  (!found) {
-				childNode = nodeView.addItem(nodeInStack.getContent().getName());
+				childNode = nodeView.addItem(nodeInStack.getName());
 				childNode.setUserObject(nodeInStack);
 				return createNewBranch(childNode, pathStack);
 			}
@@ -110,7 +110,7 @@ public class TreeAdapter {
 		FolderNode node = null;
 		while (!pathStack.isEmpty()) {
 			node = pathStack.pop();
-			createdNode = createdNode.addItem(node.getContent().getName());
+			createdNode = createdNode.addItem(node.getName());
 			createdNode.setUserObject(node);
 		}
 

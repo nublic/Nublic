@@ -26,8 +26,9 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 	    rp.add(theUi);
 	    
 	    String startingToken = History.getToken();
+	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
-	    History.newItem(startingToken, true);
+	    History.fireCurrentHistoryState();
 	}
 	
 	@Override
