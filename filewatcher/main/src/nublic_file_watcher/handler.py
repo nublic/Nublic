@@ -19,9 +19,9 @@ class EventHandler(pyinotify.ProcessEvent):
     '''
     Listens the inotify events
     '''
-    def __init__(self, signaler, manager):
+    def __init__(self, signalers, manager):
         pyinotify.ProcessEvent.__init__(self)
-        self.signaler = signaler
+        self.signalers = signalers
         self.manager = manager
     
     def mask(self):
@@ -101,16 +101,19 @@ class EventHandler(pyinotify.ProcessEvent):
         self.send_signal(ty, event.pathname, '', event.dir)
     
     def send_signal(self, ty, pathname, src_pathname, is_dir):
-        self.signaler.file_changed(ty, pathname, src_pathname, is_dir)
+        for signaler in self.signalers:
+            signaler.raise_event(ty, pathname, src_pathname, is_dir)
     
     def send_repeated_creation(self, pathname, is_dir):
         # Check if it is in Solr
         if not solr.has_doc(pathname):
             file_info = solr.new_doc(pathname, is_dir)
             file_info.save()
-            self.signaler.file_changed("create", pathname, '', is_dir)
+            for signaler in self.signalers:
+                signaler.raise_event("create", pathname, '', is_dir)
         else:
             file_info = solr.retrieve_doc(pathname)
             file_info.save()
             # Send repeat message via D-Bus
-            self.signaler.file_changed("repeat", pathname, '', is_dir)
+            for signaler in self.signalers:
+                signaler.raise_event("repeat", pathname, '', is_dir)

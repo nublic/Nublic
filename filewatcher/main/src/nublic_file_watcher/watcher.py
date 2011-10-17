@@ -13,10 +13,12 @@ from dbus_signals import DbusSignaler
 from handler import EventHandler
 from manager import WatchManager2
 
+def create_signalers():
+    return [ DbusSignaler('Browser', ''), DbusSignaler('Music', 'music') ]
+
 def start_watching(folder):
     wm = WatchManager2()
-    signaler = DbusSignaler('Browser')
-    handler = EventHandler(signaler, wm)
+    handler = EventHandler(create_signalers(), wm)
     notifier = pyinotify.Notifier(wm, handler, timeout=10)
     gobject.timeout_add(500, quick_check, notifier)
     # Exclude files beginning with . or ending in ~
@@ -32,8 +34,7 @@ def quick_check(notifier):
     return True
 
 def scan_folder(folder):
-    signaler = DbusSignaler('Browser')
-    handler = EventHandler(signaler)
+    handler = EventHandler(create_signalers())
     for element, isdir in walk_folder(folder):
         handler.send_repeated_creation(element, isdir)
     
