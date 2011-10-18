@@ -8,7 +8,7 @@ setup(name='nublic-resource',
       author='David Navarro Estruch',
       author_email='davisein@gmail.com',
       url='http://nublic.com',
-      packages=['nublic','nublic.resource'],
+      packages=['nublic_resource'],
       license='ALL_RIGHTS_RESERVED',
       long_description= \
 "This system provides a common and easy way to access to different resources\n managing the creation, security issues and access to private values.",

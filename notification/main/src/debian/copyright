@@ -1,19 +1,8 @@
-This package was debianized by David Navarro Estruch <davisein@gmail.com> on
-Mon, 06 Sep 2010 00:28:28 +0200.
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: nublic-app-browser
+Source: http://nublic.com
 
-Upstream Author(s):
-
-    David Navarro Estruch, davisein@gmail.com
-
-Copyright:
-
-    <Copyright (C) 2010 David Navarro Estruch>
-
-License:
-
-    All rights reserved
-
-The Debian packaging is:
-
-    Copyright (C) 2010 Nublic Packaging Team <packaging@nublic.com>
+Files: *
+Copyright: (c) 2011, Nublic
+License: All rights reserved
 

@@ -1,1 +1,2 @@
-python-nublic-resource_0.1_all.deb python optional
+nublic-resource-postgres-db-install.sh /usr/sbin/nublic-resource-db-install
+nublic-resource/nublic-
