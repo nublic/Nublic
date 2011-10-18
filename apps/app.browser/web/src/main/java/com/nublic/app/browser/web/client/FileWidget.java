@@ -16,8 +16,7 @@ public class FileWidget extends Composite {
 	
 	FileNode node;
 	String path;
-	
-	
+
 	@UiField Hyperlink fileThumbnail;
 	@UiField Hyperlink fileName;
 	@UiField Image altThumbnail;
@@ -45,7 +44,7 @@ public class FileWidget extends Composite {
 		if (node.getMime().equals(Constants.FOLDER_MIME)) {
 			viewType = Constants.FOLDER_TYPE;
 		}
-		// Check whether the file has a view or not (to files with views we'll show links)
+		// Check whether the file has a view or not (to files with views and folders we'll show links)
 		if (viewType != null) {
 			// Set unused fields to not visible
 			altThumbnail.setVisible(false);

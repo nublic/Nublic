@@ -5,6 +5,8 @@ import java.util.Stack;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -18,11 +20,12 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel> {
 	
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
@@ -32,7 +35,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField Tree treeView;
 	@UiField Button buttonFolderRequest;
 	@UiField Button buttonFilesRequest;
-	DialogBox popUpDialog;
+	//DialogBox popUpDialog;
+	PopupPanel popUpBox;
 
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 
@@ -54,9 +58,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		model.addUpdateHandler(this);
 		treeAdapter = new TreeAdapter(treeView, model);
 		
-		// Our popUpDialog should start empty and not shown
-		popUpDialog = new DialogBox();
-		popUpDialog.hide();
+		// Set the properties of our popUpDialog. Should start empty, hidden, ...
+		popUpBox = new DialogBox(true, true); // auto-hide, modal
+		popUpBox.hide();
+		popUpBox.setGlassEnabled(true);
+		popUpBox.addCloseHandler(this);
+
 	}
 	
 	
@@ -92,7 +99,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void onFilesUpdate(BrowserModel m, String path) {
 		// We cancel any popup which could be hidding the central panel
-		popUpDialog.hide();
+		popUpBox.hide();
 		
 		List <FileNode> fileList = m.getFileList();
 
@@ -128,6 +135,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			treeView.setSelectedItem(nodeView);
 		}
 	}
+	
+	// Handler of the pop-up close event
+	@Override
+	public void onClose(CloseEvent<PopupPanel> event) {
+		if (event.isAutoClosed()) {
+			History.back();
+		}
+	}
 
 	@Override
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
@@ -136,17 +151,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	public void showImage(ParamsHashMap paramsHashMap) {
 		// We remove any previous element shown
-		popUpDialog.clear();
+		popUpBox.clear();
 		
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
 			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + Constants.IMAGE_TYPE + "/" + path);
-			popUpDialog.add(newImage);
+			popUpBox.add(newImage);
 		} else {
 			// TODO: error, image not found
 		}
 
 		// center = center + show
-		popUpDialog.center();
+		popUpBox.center();
 	}
 }
