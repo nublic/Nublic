@@ -1,4 +1,5 @@
 nublic-resource-postgres-db-install /usr/sbin
+nublic-resource-postgres-db-uninstall /usr/sbin
 nublic_resource/nublic-resource /usr/bin
 nublic_resource/nublic-resource-daemon /usr/sbin
 nublic_resource/nublic-resource-setup /usr/sbin

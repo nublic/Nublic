@@ -1,5 +1,6 @@
 nublic-resource (0.01) unstable; urgency=low
 
-  * source package automatically created by stdeb 0.6.0+git
+  [ Nublic Packaging Team ]
+  * Initial release of nublic-resource
 
- -- Nublic Packaging Team <packaging@nublic.com>  Mon, 10 Oct 2011 20:13:34 +0100
+ -- David Navarro Estruch <david@nublic.com>  Tue, 18 Oct 2011 03:16:36 +0100
