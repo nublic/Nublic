@@ -42,8 +42,8 @@ abstract class FileWatcherActor(val app_name: String) extends Actor {
         case c : FileChange => {
           // Save in Derby database
           val dbChange = c match {
-            case Moved(from, to, isdir) => new FileChangeInDatabase(c.getType, to, from, isdir)
-            case _: FileChange => new FileChangeInDatabase(c.getType, c.getFileName, c.isDirectory)
+            case Moved(from, to, context, isdir) => new FileChangeInDatabase(c.getType, to, from, context, isdir)
+            case _: FileChange => new FileChangeInDatabase(c.getType, c.getFileName, c.getContext, c.isDirectory)
           }
           transaction {
             FileWatcherDatabase.files.insert(dbChange)
