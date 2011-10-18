@@ -1,0 +1,5 @@
+#!/bin/bash
+nublic-resource-db-install
+
+
+#DEBHELPER#

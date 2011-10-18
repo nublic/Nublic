@@ -3,3 +3,6 @@ nublic-notification.debhelper.log
 nublic-notification.substvars
 python-module-stampdir
 nublic-notification
+nublic-notification.postinst.debhelper
+nublic-notification.prerm.debhelper
+nublic-notification.debhelper.log

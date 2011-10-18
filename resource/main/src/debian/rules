@@ -5,7 +5,7 @@
 
 #%:
 #	dh $@ --with python2 --buildsystem=python_distutils
-
+export DH_VERBOSE=1
 DEB_PYTHON_SYSTEM=pysupport
 
 include /usr/share/cdbs/1/rules/debhelper.mk
