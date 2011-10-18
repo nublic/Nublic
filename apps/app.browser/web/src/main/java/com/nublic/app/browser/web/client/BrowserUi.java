@@ -15,7 +15,9 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -30,9 +32,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField Tree treeView;
 	@UiField Button buttonFolderRequest;
 	@UiField Button buttonFilesRequest;
+	DialogBox popUpDialog;
 
-	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> {
-	}
+	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 
 	public BrowserUi(BrowserModel model) {
 		// Inits
@@ -51,6 +53,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// To handle updates on files list
 		model.addUpdateHandler(this);
 		treeAdapter = new TreeAdapter(treeView, model);
+		
+		// Our popUpDialog should start empty and not shown
+		popUpDialog = new DialogBox();
+		popUpDialog.hide();
 	}
 	
 	
@@ -62,7 +68,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiHandler("buttonFilesRequest")
 	void onButtonFilesRequestClick(ClickEvent event) {
 		History.newItem(Constants.BROWSER_VIEW
-				+ "?" + Constants.BROWSER_PATH_PARAMETER
+				+ "?" + Constants.PATH_PARAMETER
 				+ "=" + model.getFolderTree().getPath(), true);
 	}
 
@@ -78,13 +84,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public void onSelection(SelectionEvent<TreeItem> event) {
 		TreeItem item = event.getSelectedItem();
 		History.newItem(Constants.BROWSER_VIEW
-				+ "?" + Constants.BROWSER_PATH_PARAMETER
+				+ "?" + Constants.PATH_PARAMETER
 				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
 	public void onFilesUpdate(BrowserModel m, String path) {
+		// We cancel any popup which could be hidding the central panel
+		popUpDialog.hide();
+		
 		List <FileNode> fileList = m.getFileList();
 
 		// Update the information shown in the central panel
@@ -123,5 +132,21 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
 		treeAdapter.updateView(node);
+	}
+	
+	public void showImage(ParamsHashMap paramsHashMap) {
+		// We remove any previous element shown
+		popUpDialog.clear();
+		
+		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + Constants.IMAGE_TYPE + "/" + path);
+			popUpDialog.add(newImage);
+		} else {
+			// TODO: error, image not found
+		}
+
+		// center = center + show
+		popUpDialog.center();
 	}
 }

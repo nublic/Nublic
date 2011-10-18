@@ -88,7 +88,7 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(final ParamsHashMap params) {
-		String path = params.get(Constants.BROWSER_PATH_PARAMETER);
+		String path = params.get(Constants.PATH_PARAMETER);
 		if (path == null) {
 			path = new String("");
 		}
@@ -119,7 +119,7 @@ public class BrowserModel {
 						
 						// Call every handler looking at the file list
 						for (ModelUpdateHandler handler : updateHandlers) {
-							String path = params.get(Constants.BROWSER_PATH_PARAMETER);
+							String path = params.get(Constants.PATH_PARAMETER);
 							if (path == null) {
 								path = new String("");
 							}

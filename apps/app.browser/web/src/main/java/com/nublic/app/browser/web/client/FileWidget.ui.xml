@@ -11,8 +11,10 @@
 		}
 	</ui:style>
 	<g:VerticalPanel horizontalAlignment="center" width="96px" styleName="{style.inLine}">
-		<g:Image ui:field="fileImage"/>
-		<g:Label styleName="{style.center}" ui:field="fileName" text="Name unavailable"/>
+		<g:Hyperlink ui:field="fileThumbnail" />						<!-- To place the thumbnail -->
+		<g:Image ui:field="altThumbnail"/>
+		<g:Hyperlink ui:field="fileName" styleName="{style.center}"/>	<!-- To place the name (which use to be a link) -->
+		<g:Label ui:field="altName" styleName="{style.center}"/>		<!-- An alternative name label in case it is not a link -->
 	</g:VerticalPanel>
 	
-</ui:UiBinder> 
+</ui:UiBinder>

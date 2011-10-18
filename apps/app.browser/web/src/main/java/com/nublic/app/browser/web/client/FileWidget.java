@@ -5,6 +5,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,8 +17,11 @@ public class FileWidget extends Composite {
 	FileNode node;
 	String path;
 	
-	@UiField Label fileName;
-	@UiField Image fileImage;
+	
+	@UiField Hyperlink fileThumbnail;
+	@UiField Hyperlink fileName;
+	@UiField Image altThumbnail;
+	@UiField Label altName;
 
 	interface FileWidgetUiBinder extends UiBinder<Widget, FileWidget> {
 	}
@@ -26,13 +30,55 @@ public class FileWidget extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
+	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		// init internal variables
 		this.node = n;
-		this.path = path;
-		//String pathEncoded = URL.encodePathSegment(path + n.getName());
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + path + "/" + n.getName());
-		fileImage.setUrl(url);
-		fileName.setText(n.getName());
+		this.path = path + "/" + n.getName();
+		
+		// Gets the thumbnail of the file
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
+		
+		String viewType = node.getView();
+		// Check whether the file has a view or not (to files with views we'll show links)
+		if (viewType != null) {
+			// Set unused fields to not visible
+			altThumbnail.setVisible(false);
+			altName.setVisible(false);
+
+			// Add the image thumbnail to the hypertext widget
+			Image fileImage = new Image(url);
+			fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
+			
+			// Set up name
+			fileName.setText(n.getName());
+			
+			// Set the destination URL
+			setURL(viewType); // modifies both fileThumbnail and fileName
+		} else {
+			// Set unused fields to not visible
+			fileThumbnail.setVisible(false);
+			fileName.setVisible(false);
+			
+			// Gets the thumbnail of the file
+			altThumbnail.setUrl(url); 
+			
+			// Set up name
+			altName.setText(n.getName());
+		}
+	}
+
+	private void setURL(String viewType) {
+		String target = null;
+		if (viewType.equals(Constants.IMAGE_TYPE)) {
+			target = Constants.IMAGE_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
+		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
+		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
+		}
+		fileThumbnail.setTargetHistoryToken(target);
+		fileName.setTargetHistoryToken(target);
 	}
 }
