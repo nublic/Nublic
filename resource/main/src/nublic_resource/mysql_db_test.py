@@ -4,9 +4,9 @@ Created on 06/09/2011
 @author: david
 '''
 import unittest
-from nublic-resource.mysql_db import MysqlDB
-from nublic-resource.database_stored import ExistingKeyError
-from nublic-resource import database_stored
+from nublic_resource.mysql_db import MysqlDB
+from nublic_resource.database_stored import ExistingKeyError
+from nublic_resource import database_stored
 
 class MysqlDBTest(unittest.TestCase):
 

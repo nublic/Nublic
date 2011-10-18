@@ -4,9 +4,9 @@ Created on 06/09/2011
 @author: david
 '''
 import unittest
-from nublic-resource.postgresql_db import PostgresqlDB
-from nublic-resource.database_stored import ExistingKeyError
-from nublic-resource import database_stored
+from nublic_resource.postgresql_db import PostgresqlDB
+from nublic_resource.database_stored import ExistingKeyError
+from nublic_resource import database_stored
 
 class PostgresqlDBTest(unittest.TestCase):
 
