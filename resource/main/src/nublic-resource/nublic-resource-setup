@@ -10,7 +10,7 @@ It works for usage during the install of applications.
 
 from optparse import OptionParser
 
-from nublic.resource.select_provider import SelectProvider
+from nublic-resource.select_provider import SelectProvider
 
 def main():
     usage = "usage: \n" + \

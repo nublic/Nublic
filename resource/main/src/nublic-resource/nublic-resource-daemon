@@ -11,7 +11,7 @@ import dbus
 import dbus.service
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
-from nublic.resource.select_provider import SelectProvider
+from nublic-resource.select_provider import SelectProvider
 
 class DBusValue(dbus.service.Object):
     bus_path = 'com.nublic.resource'

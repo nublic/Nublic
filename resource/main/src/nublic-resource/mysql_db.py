@@ -10,7 +10,7 @@ from random import Random
 
 from .database_stored import DatabaseStored
 from .model import metadata
-from nublic.resource.database_stored import ExistingKeyError,\
+from nublic-resource.database_stored import ExistingKeyError,\
     NotExistingKeyError
 
 class MysqlDB(DatabaseStored):

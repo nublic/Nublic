@@ -8,9 +8,9 @@ import string
 from sqlalchemy.sql.expression import text
 from random import Random
 
-from .database_stored import DatabaseStored
-from .model import metadata
-from nublic.resource.database_stored import ExistingKeyError, \
+from database_stored import DatabaseStored
+from model import metadata
+from database_stored import ExistingKeyError, \
     NotExistingKeyError
 
 class PostgresqlDB(DatabaseStored):

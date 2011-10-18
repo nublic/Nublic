@@ -6,7 +6,7 @@ Created on 10/08/2010
 '''
 from elixir import setup_all, session
 
-from .provider import Provider
+from provider import Provider
 from model import App, Key, Value
 
 class DatabaseStored(Provider):
@@ -19,7 +19,7 @@ class DatabaseStored(Provider):
         '''
         Constructor
         
-        @see:  nublic.resource.Provider.__init__
+        @see:  nublic-resource.Provider.__init__
         '''
         Provider.__init__(self, resource_type)
         setup_all(create_tables=True)
@@ -30,7 +30,7 @@ class DatabaseStored(Provider):
         If you want to perform something else just override
         this function.
         
-        @see: nublic.resource.provider.Provider
+        @see: nublic-resource.provider.Provider
         @raise TypeProviderError
         @raise IntegrityError and other SQLAlchemyErrors
         '''
