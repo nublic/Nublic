@@ -9,4 +9,6 @@ public class Constants {
 	final static String DOCUMENT_TYPE = "pdf";
 	final static String MUSIC_TYPE = "mp3";
 	final static String VIDEO_TYPE = "flv";
+	final static String FOLDER_MIME = "application/x-directory";
+	final static String FOLDER_TYPE = "folder";
 }

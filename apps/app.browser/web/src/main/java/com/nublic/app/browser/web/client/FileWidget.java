@@ -42,6 +42,9 @@ public class FileWidget extends Composite {
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
 		
 		String viewType = node.getView();
+		if (node.getMime().equals(Constants.FOLDER_MIME)) {
+			viewType = Constants.FOLDER_TYPE;
+		}
 		// Check whether the file has a view or not (to files with views we'll show links)
 		if (viewType != null) {
 			// Set unused fields to not visible
@@ -77,6 +80,8 @@ public class FileWidget extends Composite {
 		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
 		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
 		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
+		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
+			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		}
 		fileThumbnail.setTargetHistoryToken(target);
 		fileName.setTargetHistoryToken(target);
