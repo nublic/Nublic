@@ -5,6 +5,8 @@ import java.util.Stack;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -155,12 +157,21 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
 			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + Constants.IMAGE_TYPE + "/" + path);
+			newImage.addLoadHandler(new LoadHandler() {
+				@Override
+				public void onLoad(LoadEvent event) {
+					// center = center + show
+					popUpBox.center();
+				}
+			});
 			popUpBox.add(newImage);
 		} else {
 			// TODO: error, image not found
 		}
 
+//		popUpBox.show();
 		// center = center + show
 		popUpBox.center();
+		
 	}
 }
