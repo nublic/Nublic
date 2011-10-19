@@ -2,8 +2,7 @@ package com.nublic.filewatcher.scala
 
 import scala.actors.Actor
 import scala.actors.Actor._
-import org.freedesktop.dbus.DBusConnection
-import org.freedesktop.dbus.DBusSigHandler
+import org.freedesktop.dbus._
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -12,11 +11,35 @@ import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Session
 import org.squeryl.SessionFactory
 import FileWatcherDatabase._
+import java.util.HashMap
+
+object FileWatcherActor extends DBusSigHandler[FileWatcher.file_changed] {
+  var lock: AnyRef = new Object()  
+  var actors_map: Map[String, FileWatcherActor] = Map()
+  val bus_name = "com.nublic.filewatcher"
+  val connection = DBusConnection.getConnection(DBusConnection.SYSTEM)
+  connection.addSigHandler(classOf[FileWatcher.file_changed], this)
+  
+  def handle(change: FileWatcher.file_changed): Unit = {
+    // Console.print("Something arrived on " + change.getObjectPath)
+    lock.synchronized {
+      actors_map.get(change.getObjectPath) match {
+        case Some(actor) => actor ! change.getChange
+        case None        => { /* Nothing */ }
+      }
+    }
+  }
+  
+  def addActor(object_path: String, actor: FileWatcherActor) = {
+    lock.synchronized {
+      actors_map += (object_path -> actor)
+    }
+  }
+}
 
 abstract class FileWatcherActor(val app_name: String) extends Actor {
   val processors: Map[String, Processor]
   
-  val bus_name = "com.nublic.filewatcher"
   val object_path = "/com/nublic/filewatcher/" + app_name
   val derby_db_file = "/var/nublic/cache/" + app_name + ".filewatcher"
   val derby_db = "jdbc:derby:" + derby_db_file + ";create=true"
@@ -33,9 +56,7 @@ abstract class FileWatcherActor(val app_name: String) extends Actor {
     loadSqueryl()
     executeNotFinishedActions()
     // Create D-Bus connection
-    val conn = DBusConnection.getConnection(DBusConnection.SYSTEM);
-    val watcher = conn.getRemoteObject(bus_name, object_path)
-    conn.addSigHandler(classOf[FileWatcher.file_changed], watcher, new DBusHandler(this))
+    FileWatcherActor.addActor(object_path, this)
     // Start actor loop
     loop {
       react {
@@ -131,16 +152,6 @@ abstract class FileWatcherActor(val app_name: String) extends Actor {
      processor_numbers.get(processor_name) match {
       case None         => ()
       case Some(number) => dbChange.processed |= number
-    }
-  }
-
-  class DBusHandler(actor: FileWatcherActor) extends DBusSigHandler[FileWatcher.file_changed] {
-    var lock : AnyRef = new Object()
-    
-    def handle(change: FileWatcher.file_changed): Unit = {
-      lock.synchronized {
-        actor ! change.getChange
-      }
     }
   }
 }
