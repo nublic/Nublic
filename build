@@ -91,7 +91,8 @@ build_submodule_lib sunburnt
 build_deb_package notification/main/src
 package_and_install notification/java
 build_deb_package filewatcher/main/src
-package_and_install filewatcher/scala
+build_deb_package filewatcher/scala
+install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 #build_deb_package resource/main/src
 #package_and_install resource/java
 build_deb_package apps/app.browser/server
