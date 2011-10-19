@@ -35,7 +35,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField Tree treeView;
 	@UiField Button buttonFolderRequest;
 	@UiField Button buttonFilesRequest;
-	//DialogBox popUpDialog;
 	PopupPanel popUpBox;
 
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }

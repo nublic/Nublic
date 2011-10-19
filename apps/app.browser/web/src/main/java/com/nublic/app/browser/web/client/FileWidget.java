@@ -65,7 +65,7 @@ public class FileWidget extends Composite {
 			fileName.setVisible(false);
 			
 			// Gets the thumbnail of the file
-			altThumbnail.setUrl(url); 
+			altThumbnail.setUrl(url);
 			
 			// Set up name
 			altName.setText(n.getName());
