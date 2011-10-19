@@ -44,8 +44,8 @@ public class BrowserModel {
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		
-		String pathEncoded = URL.encodePathSegment(n.getPath());
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + pathEncoded);
+		// TODO: Sequence numbers to "ignore" unupdated responses
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + n.getPath());
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
@@ -87,9 +87,12 @@ public class BrowserModel {
 		}
 	}
 	
-	public void updateFiles(ParamsHashMap params) {
-		String pathEncoded = URL.encodePathSegment(params.get(Constants.BROWSER_PATH_PARAMETER));
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + pathEncoded);
+	public void updateFiles(final ParamsHashMap params) {
+		String path = params.get(Constants.PATH_PARAMETER);
+		if (path == null) {
+			path = new String("");
+		}
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
@@ -115,8 +118,13 @@ public class BrowserModel {
 						}
 						
 						// Call every handler looking at the file list
-						for (ModelUpdateHandler handler : updateHandlers) {	 	
-							handler.onFilesUpdate(BrowserModel.this);	
+						for (ModelUpdateHandler handler : updateHandlers) {
+							String path = params.get(Constants.PATH_PARAMETER);
+							if (path == null) {
+								path = new String("");
+							}
+							handler.onFilesUpdate(BrowserModel.this, path);
+							//handler.onFilesUpdate(BrowserModel.this, params.get(Constants.BROWSER_PATH_PARAMETER));
 						}
 					} else {
 						error("Bad response status");
@@ -141,7 +149,7 @@ public class BrowserModel {
 			// add new received data
 			for (int i = 0; i < folderList.length(); i++) {
 				FolderContent f = folderList.get(i);
-				FolderNode child = new FolderNode(n, f);
+				FolderNode child = new FolderNode(n, f.getName());
 				n.addChild(child);
 				// Recursive call to update child
 				updateTreeNoSync(child, f.getSubfolders());
@@ -157,7 +165,7 @@ public class BrowserModel {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent);
+				FileNode file = new FileNode(fileContent.getName(), fileContent.getMime(), fileContent.getView());
 				fileList.add(file);
 			}
 		} else {
@@ -166,11 +174,31 @@ public class BrowserModel {
 		}
 	}
 	
+	// Other methods
+	public synchronized FolderNode createBranch(String path) {
+		if (path.equals("")) {
+			return folderTree;
+		}
+
+		String splited[] = path.split("/");
+
+		FolderNode currentNode = folderTree;
+		for (int i = 0; i < splited.length ; i++) {
+			FolderNode newNode = currentNode.getChild(splited[i]);
+			if (newNode == null) {
+				newNode = new FolderNode(currentNode, splited[i]);
+				currentNode.addChild(newNode);
+			}
+			currentNode = newNode;
+		}
+
+		return currentNode;
+	}
+	
 	public void error(String message) {
 		// TODO: extend DialogBox
 		Window.alert(message);
 	}
-	
-	
-	
+
+
 }

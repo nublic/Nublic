@@ -1,9 +1,12 @@
 package com.nublic.app.browser.web.client;
 
 import java.util.List;
+import java.util.Stack;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.logical.shared.CloseEvent;
+import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -14,12 +17,15 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 
-public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem> {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel> {
 	
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
@@ -29,9 +35,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField Tree treeView;
 	@UiField Button buttonFolderRequest;
 	@UiField Button buttonFilesRequest;
+	//DialogBox popUpDialog;
+	PopupPanel popUpBox;
 
-	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> {
-	}
+	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 
 	public BrowserUi(BrowserModel model) {
 		// Inits
@@ -50,8 +57,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// To handle updates on files list
 		model.addUpdateHandler(this);
 		treeAdapter = new TreeAdapter(treeView, model);
-	}
+		
+		// Set the properties of our popUpDialog. Should start empty, hidden, ...
+		popUpBox = new DialogBox(true, true); // auto-hide, modal
+		popUpBox.hide();
+		popUpBox.setGlassEnabled(true);
+		popUpBox.addCloseHandler(this);
 
+	}
+	
+	
 	@UiHandler("buttonFolderRequest")
 	void onButtonFolderRequestClick(ClickEvent event) {
 		model.updateFolders(model.getFolderTree(), 4);
@@ -59,9 +74,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	@UiHandler("buttonFilesRequest")
 	void onButtonFilesRequestClick(ClickEvent event) {
-		//centralPanel.add(new FileWidget());
 		History.newItem(Constants.BROWSER_VIEW
-				+ "?" + Constants.BROWSER_PATH_PARAMETER
+				+ "?" + Constants.PATH_PARAMETER
 				+ "=" + model.getFolderTree().getPath(), true);
 	}
 
@@ -77,26 +91,77 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public void onSelection(SelectionEvent<TreeItem> event) {
 		TreeItem item = event.getSelectedItem();
 		History.newItem(Constants.BROWSER_VIEW
-				+ "?" + Constants.BROWSER_PATH_PARAMETER
+				+ "?" + Constants.PATH_PARAMETER
 				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
-		// expand the selected item
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onFilesUpdate(BrowserModel m) {
-		List <FileNode> fileList = m.getFileList();
+	public void onFilesUpdate(BrowserModel m, String path) {
+		// We cancel any popup which could be hidding the central panel
+		popUpBox.hide();
 		
+		List <FileNode> fileList = m.getFileList();
+
+		// Update the information shown in the central panel
 		centralPanel.clear();
 		for (FileNode n : fileList) {
-			centralPanel.add(new FileWidget(n));
+			centralPanel.add(new FileWidget(n, path));
+		}
+
+		FolderNode node = model.createBranch(path);
+		// If the given node has no children we try to update its info
+		if (node.getChildren().isEmpty()) {
+			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
 		
-		//treeView.setSelectedItem(item);
+		TreeItem nodeView = treeAdapter.search(node);
+
+		// nodeView is null when node is the root (there is no view for the main root)
+		if (nodeView != null) {
+			// Open the tree and show all the parents of the selected node open
+			TreeItem parent = nodeView.getParentItem();
+			Stack<TreeItem> pathStack = new Stack<TreeItem>();
+			while (parent != null) {
+				pathStack.push(parent);
+				parent = parent.getParentItem();
+			}
+			while (!pathStack.isEmpty()) {
+				TreeItem iterator = pathStack.pop();
+				iterator.setState(true, false);
+			}
+			
+			// Set the node as selected
+			treeView.setSelectedItem(nodeView);
+		}
+	}
+	
+	// Handler of the pop-up close event
+	@Override
+	public void onClose(CloseEvent<PopupPanel> event) {
+		if (event.isAutoClosed()) {
+			History.back();
+		}
 	}
 
 	@Override
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
 		treeAdapter.updateView(node);
+	}
+	
+	public void showImage(ParamsHashMap paramsHashMap) {
+		// We remove any previous element shown
+		popUpBox.clear();
+		
+		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + Constants.IMAGE_TYPE + "/" + path);
+			popUpBox.add(newImage);
+		} else {
+			// TODO: error, image not found
+		}
+
+		// center = center + show
+		popUpBox.center();
 	}
 }

@@ -5,30 +5,31 @@ import java.util.List;
 import java.util.Stack;
 
 public class FolderNode {
-	FolderContent content;
+	String name;
 	FolderNode parent;
 	List<FolderNode> children;
+	
 	
 	// Constructors
 	FolderNode() {
 		parent = null;
-		content = null;
+		name = null;
 		children = new ArrayList<FolderNode>();
 	}
 	
-	FolderNode(FolderNode parent, FolderContent content) {
+	FolderNode(FolderNode parent, String name) {
 		this.parent = parent;
-		this.content = content;
+		this.name = name;
 		children = new ArrayList<FolderNode>();
 	}
 
 	// Getters and Setters
-	public FolderContent getContent() {
-		return content;
+	public String getName() {
+		return name;
 	}
-	
-	public void setContent(FolderContent content) {
-		this.content = content;
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	public FolderNode getParent() {
@@ -56,7 +57,7 @@ public class FolderNode {
 		if (parent == null) {
 			return "";
 		} else {
-			return parent.getPath(content.getName());
+			return parent.getPath(name);
 		}
 	}
 
@@ -64,7 +65,7 @@ public class FolderNode {
 		if (parent == null) {
 			return accumulated;
 		} else {
-			return parent.getPath(content.getName() + "/" + accumulated);
+			return parent.getPath(name + "/" + accumulated);
 		}
 	}
 	
@@ -87,6 +88,16 @@ public class FolderNode {
 			accumStack.push(this);
 			return parent.getPathStack(accumStack);
 		}
+	}
+
+	public FolderNode getChild(String name) {
+		for (FolderNode child : children){
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+		
+		return null;
 	}
 	
 }
