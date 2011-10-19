@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" 
+         xmlns="http://maven.apache.org/POM/4.0.0" 
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+     
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nublic</groupId>
+  <artifactId>app.music.server</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  
+  <build>
+    <!-- <finalName>scalatra-maven-prototype</finalName> -->
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <version>2.15.0</version>
+        <executions>
+          <execution>
+          <goals>
+            <goal>compile</goal>
+            <goal>testCompile</goal>
+          </goals>
+          <configuration>
+          <args>
+            <arg>-make:transitive</arg>
+            <arg>-dependencyfile</arg>
+            <arg>${project.build.directory}/.scala_dependencies</arg>
+          </args>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.9</version>
+        <configuration>
+          <useFile>false</useFile>
+          <disableXmlReport>true</disableXmlReport>
+          <includes>
+            <include>**/*Test.*</include>
+            <include>**/*Suite.*</include>
+          </includes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <configuration>
+    	  <webAppConfig>
+            <contextPath>/music/server</contextPath>
+          </webAppConfig>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.9.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scalatra</groupId>
+    	<artifactId>scalatra_2.9.0-1</artifactId>
+    	<version>2.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scalatra</groupId>
+    	<artifactId>scalatra-scalate_2.9.0-1</artifactId>
+    	<version>2.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scalatra</groupId>
+    	<artifactId>scalatra-scalatest_2.9.0-1</artifactId>
+    	<version>2.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.scalatra</groupId>
+    	<artifactId>scalatra-lift-json_2.9.0-1</artifactId>
+    	<version>2.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>net.liftweb</groupId>
+    	<artifactId>lift-json_2.9.0-1</artifactId>
+    	<version>2.4-M4</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.derby</groupId>
+    	<artifactId>derby</artifactId>
+    	<version>10.8.1.2</version>
+    </dependency>
+    <dependency>
+    	<groupId>com.nublic</groupId>
+    	<artifactId>filewatcher.scala</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    	<scope>provided</scope>
+    </dependency>
+    <dependency>
+    	<groupId>commons-codec</groupId>
+    	<artifactId>commons-codec</artifactId>
+    	<version>1.5</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-io</groupId>
+    	<artifactId>commons-io</artifactId>
+    	<version>2.0.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.solr</groupId>
+    	<artifactId>solr-solrj</artifactId>
+    	<version>1.4.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>javax.servlet</groupId>
+    	<artifactId>servlet-api</artifactId>
+    	<version>2.5</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.im4java</groupId>
+    	<artifactId>im4java</artifactId>
+    	<version>0.98.0</version>
+    </dependency>
+    <dependency>
+    	<groupId>commons-httpclient</groupId>
+    	<artifactId>commons-httpclient</artifactId>
+    	<version>3.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org</groupId>
+    	<artifactId>jaudiotagger</artifactId>
+    	<version>2.0.3</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-log4j12</artifactId>
+    	<version>1.5.5</version>
+    </dependency>
+	<dependency>
+		<groupId>commons-logging</groupId>
+		<artifactId>commons-logging</artifactId>
+		<version>1.1.1</version>
+		<scope>provided</scope>
+	</dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>SonatypeNexusSnapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>FuseSourceSnapshotRepository</id>
+      <name>FuseSource Snapshot Repository</name>
+      <url>http://repo.fusesource.com/nexus/content/repositories/snapshots/</url>
+    </repository>
+    <repository>
+      <id>ScalaToolsMaven2Repository</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases/</url>
+    </repository>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </repository>
+	<repository>
+	  <id>JRAF.org</id>
+	  <name>JRAF.org Maven Repository</name>
+	  <url>http://www.JRAF.org/static/maven/2</url>
+	  <layout>default</layout>
+	</repository>
+  </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>scala-tools.org</id>
+      <name>Scala-Tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <name>Music app server</name>
+</project>

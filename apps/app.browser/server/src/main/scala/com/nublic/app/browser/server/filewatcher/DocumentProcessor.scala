@@ -12,10 +12,10 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
   
   def process(c: FileChange) = c match {
     // case Created(filename, false)  => process_updated_file(filename)
-    case Modified(filename, false) => process_updated_file(filename)
-    case Moved(from, to, false)    => process_moved_file(from, to)
-    case Moved(from, to, true)     => process_moved_folder(from, to)
-    case Deleted(filename, false)  => process_deleted_file(filename)
+    case Modified(filename, _, false) => process_updated_file(filename)
+    case Moved(from, to, _, false)    => process_moved_file(from, to)
+    case Moved(from, to, _, true)     => process_moved_folder(from, to)
+    case Deleted(filename, _, false)  => process_deleted_file(filename)
     case _                         => { /* Nothing */ }
   }
   

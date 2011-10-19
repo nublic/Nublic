@@ -79,14 +79,18 @@ object AudioWorker extends DocumentWorker {
     case _     => null
   }
   
-  def hasView(viewName: String, file: String): Boolean = {
-    val folder = FileFolder.getFolder(file)
-    viewName match {
-      case "mp3" => {
-        val mp3_file = new File(folder, MP3_FILENAME)
-        mp3_file.exists()
+  def hasView(viewName: String, file: String, mime: String): Boolean = {
+    if (!supportedMimeTypes.contains(mime)) {
+      false
+    } else {
+      val folder = FileFolder.getFolder(file)
+      viewName match {
+        case "mp3" => {
+          val mp3_file = new File(folder, MP3_FILENAME)
+          mp3_file.exists()
+        }
+        case _ => false
       }
-      case _ => false
     }
   }
   

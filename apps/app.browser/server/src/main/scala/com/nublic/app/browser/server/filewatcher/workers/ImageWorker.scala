@@ -37,7 +37,8 @@ object ImageWorker extends DocumentWorker {
     case _       => null
   }
 
-  def hasView(viewName: String, file: String): Boolean = viewName == "image"
+  def hasView(viewName: String, file: String, mime: String): Boolean = 
+    viewName == "image" && supportedMimeTypes.contains(mime)
 
   def getView(viewName: String, file: String): File = new File(file)
 

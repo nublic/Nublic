@@ -1,5 +1,8 @@
 package com.nublic.app.browser.web.client;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
@@ -13,18 +16,36 @@ import com.google.gwt.user.client.Window;
 
 public class BrowserModel {
 	
-	Node folderTree;
+	FolderNode folderTree;
+	List<FileNode> fileList;
 	
+	ArrayList<ModelUpdateHandler> updateHandlers;
+
 	BrowserModel() {
 		 // To initialise the tree
-	    folderTree = new Node();
+	    folderTree = new FolderNode();
+	    fileList = new ArrayList<FileNode>();
+	    updateHandlers = new ArrayList<ModelUpdateHandler>();
+	}
+
+	public void addUpdateHandler(ModelUpdateHandler handler) {	 	
+	    updateHandlers.add(handler);
 	}
 	
+	// Getters
+	public FolderNode getFolderTree() {
+		return folderTree;
+	}
 
-	public void updateFolders(final Node n, int depth) {
+	public List<FileNode> getFileList() {
+		return fileList;
+	}
+	
+	// Server request methods
+	public void updateFolders(final FolderNode n, int depth) {
 		
-		String pathEncoded = URL.encodePathSegment(n.getPath());
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + pathEncoded);
+		// TODO: Sequence numbers to "ignore" unupdated responses
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + n.getPath());
 		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
 		try {
@@ -36,7 +57,7 @@ public class BrowserModel {
 				}
 
 				public void onResponseReceived(Request request, Response response) {
-					JsArray <Folder> folderList = null;
+					JsArray <FolderContent> folderList = null;
 					
 					if (Response.SC_OK == response.getStatusCode()) {
 						// When the call is successful
@@ -46,12 +67,17 @@ public class BrowserModel {
 						if (folderList == null) {
 							error("Empty folder tree received");
 						} else {
+							//FolderContent.sortList(folderList);
 							updateTree(n, folderList);
-							error("Folders updated");
 						}
+
+						// Call every handler looking at the folder tree
+						for (ModelUpdateHandler handler : updateHandlers) {	 	
+							handler.onFoldersUpdate(BrowserModel.this, n);	
+						}
+						
 					} else {
 						error("Bad response status");
-
 					}
 				}
 
@@ -60,24 +86,71 @@ public class BrowserModel {
 			error("Exception occurred while processing update of folders");
 		}
 	}
+	
+	public void updateFiles(final ParamsHashMap params) {
+		String path = params.get(Constants.PATH_PARAMETER);
+		if (path == null) {
+			path = new String("");
+		}
+		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
+		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
-	public synchronized void updateTree(Node n, JsArray<Folder> folderList) {
+		try {
+			@SuppressWarnings("unused")
+			// It is not unused, we maintain callbacks
+			Request request = builder.sendRequest(null, new RequestCallback() {
+				public void onError(Request request, Throwable exception) {
+					error("Error receiving answer from server");
+				}
+
+				public void onResponseReceived(Request request, Response response) {
+					JsArray <FileContent> fileContentList = null;
+					
+					if (Response.SC_OK == response.getStatusCode()) {
+						// When the call is successful
+						String text = response.getText();
+						fileContentList = JsonUtils.safeEval(text);
+						// Update the tree with the information of folders
+						if (fileContentList == null) {
+							error("Wrong file list received");
+						} else {
+							updateFileList(fileContentList);
+						}
+						
+						// Call every handler looking at the file list
+						for (ModelUpdateHandler handler : updateHandlers) {
+							String path = params.get(Constants.PATH_PARAMETER);
+							if (path == null) {
+								path = new String("");
+							}
+							handler.onFilesUpdate(BrowserModel.this, path);
+							//handler.onFilesUpdate(BrowserModel.this, params.get(Constants.BROWSER_PATH_PARAMETER));
+						}
+					} else {
+						error("Bad response status");
+					}
+				}
+
+			});
+		} catch (RequestException e) {
+			error("Exception occurred while processing update of files");
+		}
+	}
+
+	// Update methods for responses
+	public synchronized void updateTree(FolderNode n, JsArray<FolderContent> folderList) {
 		updateTreeNoSync(n, folderList);
 	}
 	
-	public void updateTreeNoSync(Node n, JsArray<Folder> folderList) {
-		
+	public void updateTreeNoSync(FolderNode n, JsArray<FolderContent> folderList) {
 		if (folderList.length() != 0) {
 			// if the folder has children
-			// reset the subtree - if the following line is removed, the application seems to work properly
-			// except for the duplication... replaceChild maintains the dataProvider of the last child in that position
-			//n.clear();
+			n.clear();
 			// add new received data
-			for (int j = 0; j < folderList.length(); j++) {
-				Folder f = folderList.get(j);
-				Node child = new Node(n, f);
-				//n.addChild(child);
-				n.replaceChild(j, child);
+			for (int i = 0; i < folderList.length(); i++) {
+				FolderContent f = folderList.get(i);
+				FolderNode child = new FolderNode(n, f.getName());
+				n.addChild(child);
 				// Recursive call to update child
 				updateTreeNoSync(child, f.getSubfolders());
 			}
@@ -87,15 +160,45 @@ public class BrowserModel {
 		}
 	}
 	
-	public Node getFolderTree() {
-		return folderTree;
+	public synchronized void updateFileList(JsArray<FileContent> fileContentList) {
+		if (fileContentList.length() != 0) {
+			fileList.clear();
+			for (int i = 0; i < fileContentList.length(); i++) {
+				FileContent fileContent = fileContentList.get(i);
+				FileNode file = new FileNode(fileContent.getName(), fileContent.getMime(), fileContent.getView());
+				fileList.add(file);
+			}
+		} else {
+			// The requested folder is empty
+			fileList.clear();
+		}
+	}
+	
+	// Other methods
+	public synchronized FolderNode createBranch(String path) {
+		if (path.equals("")) {
+			return folderTree;
+		}
+
+		String splited[] = path.split("/");
+
+		FolderNode currentNode = folderTree;
+		for (int i = 0; i < splited.length ; i++) {
+			FolderNode newNode = currentNode.getChild(splited[i]);
+			if (newNode == null) {
+				newNode = new FolderNode(currentNode, splited[i]);
+				currentNode.addChild(newNode);
+			}
+			currentNode = newNode;
+		}
+
+		return currentNode;
 	}
 	
 	public void error(String message) {
-		// extender DialogBox
+		// TODO: extend DialogBox
 		Window.alert(message);
 	}
-	
-	
-	
+
+
 }

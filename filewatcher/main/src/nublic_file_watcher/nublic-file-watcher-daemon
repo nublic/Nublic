@@ -20,7 +20,7 @@ from nublic_file_watcher.watcher import (
     )
 
 # from solr import (
-from nublic.filewatcher.solr import (
+from nublic_file_watcher.solr import (
     delete_all_documents
     )
 

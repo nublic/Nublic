@@ -1,0 +1,13 @@
+Source: libnublic-file-watcher-scala
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: libnublic-file-watcher-scala
+Architecture: all
+Depends: ${misc:Depends}, libdbus-java, default-jre, nublic-file-watcher
+Description: Nublic File Watcher Scala libraries
+ Nublic File Watcher Scala libraries
