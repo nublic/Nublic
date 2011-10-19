@@ -174,4 +174,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.center();
 		
 	}
+
+
+	public void showPDF(ParamsHashMap hmap) {
+		// TODO showPDF
+		
+	}
 }

@@ -64,8 +64,8 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			// show the desired browser page
 			model.updateFiles(new ParamsHashMap(args));
 		} else if (token.equals(Constants.IMAGE_VIEW)) {
+			ParamsHashMap hmap = new ParamsHashMap(args);
 			if (model == null) {
-				ParamsHashMap hmap = new ParamsHashMap(args);
 				String path = hmap.get(Constants.PATH_PARAMETER);
 				if (path != null) {
 					// Redirect navigation to raw resource in server
@@ -75,7 +75,21 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				}
 			} else {
 				// show the image lightbox
-				theUi.showImage(new ParamsHashMap(args));
+				theUi.showImage(hmap);
+			}
+		} else if (token.equals(Constants.DOCUMENT_VIEW)) {
+			ParamsHashMap hmap = new ParamsHashMap(args);
+			if (model == null) {
+				String path = hmap.get(Constants.PATH_PARAMETER);
+				if (path != null) {
+					// Redirect navigation to raw resource in server
+					Window.open(GWT.getHostPageBaseURL() + "server/view/"  + Constants.DOCUMENT_TYPE + "/" + path, "_self", "");
+				} else {
+					// TODO: error, must specify a path 
+				}
+			} else {
+				// show the image lightbox
+				theUi.showPDF(hmap);
 			}
 			
 			
