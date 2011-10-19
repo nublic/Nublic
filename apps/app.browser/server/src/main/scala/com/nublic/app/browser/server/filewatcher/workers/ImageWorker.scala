@@ -19,7 +19,9 @@ object ImageWorker extends DocumentWorker {
       "application/x-wmf", "image/wmf", "image/x-wmf" 
     )
 
-  def supportedViews(): List[String] = List("image")
+  def supportedViews(): List[String] = List("png")
+  
+  val PNG_FILENAME = "image.png"
 
   def process(file: String, folder: File): Unit = {
     // Now create the thumbnail
@@ -30,16 +32,44 @@ object ImageWorker extends DocumentWorker {
     op.resize(FileFolder.THUMBNAIL_SIZE)
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
+    // And now the same image in png
+    val png_file = new File(folder, PNG_FILENAME)
+    val magick2 = new ConvertCmd()
+    val op2 = new IMOperation() 
+    op2.addImage(file)
+    op2.addImage(png_file.getAbsolutePath())
+    magick2.run(op2)
   }
 
   def getMimeTypeForView(viewName: String): String = viewName match {
-    case "image" => "image"
+    case "png" => "image/png"
     case _       => null
   }
 
-  def hasView(viewName: String, file: String, mime: String): Boolean = 
-    viewName == "image" && supportedMimeTypes.contains(mime)
+  def hasView(viewName: String, file: String, mime: String): Boolean = {
+    if (!supportedMimeTypes.contains(mime)) {
+      false
+    } else {
+      val folder = FileFolder.getFolder(file)
+      viewName match {
+        case "png" => {
+          val png_file = new File(folder, PNG_FILENAME)
+          png_file.exists()
+        }
+        case _ => false
+      }
+    }
+  }
 
-  def getView(viewName: String, file: String): File = new File(file)
+  def getView(viewName: String, file: String): File =  {
+    val folder = FileFolder.getFolder(file)
+    viewName match {
+      case "png" => {
+        val png_file = new File(folder, PNG_FILENAME)
+        if (png_file.exists()) png_file else null
+      }
+      case _ => null
+    }
+  }
 
 }
