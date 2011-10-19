@@ -3,4 +3,4 @@ all:
 
 install:
 	mkdir -p ${DESTDIR}/var/lib/nublic
-	cp target/*jar-with-dependencies.jar ${DESTDIR}/var/lib/nublic/nublic-filewatcher-scala.war
+	cp target/*jar-with-dependencies.jar ${DESTDIR}/var/lib/nublic/nublic-filewatcher-scala.jar

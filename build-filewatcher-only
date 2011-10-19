@@ -1,0 +1,106 @@
+#!/bin/bash
+
+# For .deb packages
+export DEBFULLNAME='Nublic Packaging Team'
+export DEBEMAIL='packaging@nublic.com'
+export DEBKEY=4EEA5986
+
+# Used directories
+export INITIAL_DIR=`pwd`
+export TARGET_DIR=${INITIAL_DIR}/target
+export REPO_DIR=${TARGET_DIR}/repo
+export MAVEN_REPO_DIR=${TARGET_DIR}/temp/maven
+export MAVEN_CONFIG_FILE=${INITIAL_DIR}/conf/maven/settings.xml
+export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE}"
+export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR"
+
+install_in_maven_repo() {
+    ${MAVEN} install:install-file -Dfile=$1 -DgroupId=$2 \
+        -DartifactId=$3 -Dversion=$4 -Dpackaging=jar
+}
+
+initialize() {
+    # Make sure you have libdbus-java maven2 and reprepro installed
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl
+    # Create build folders, if non existant
+    mkdir -p ${TARGET_DIR}
+    mkdir -p ${REPO_DIR}
+    mkdir -p ${MAVEN_REPO_DIR}
+    # Delete previous builds
+    rm -rf ${TARGET_DIR}/*.{deb,build,changes}
+    # Install dbus in maven repo
+    install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
+    # Install key into user keychain
+    gpg --import conf/keys/packaging.key
+}
+
+package_and_install() {
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
+    cd $1
+    ${MAVEN} install
+    cd ${INITIAL_DIR}
+}
+
+build_deb_package() {
+    echo
+    echo "BUILDING .DEB FOR " $1
+    cd $1
+    ${DEBUILD} -i -us -uc -b
+    ${DEBUILD} clean
+    cd ..
+    mv *.deb *.build *.changes ${TARGET_DIR}
+    cd ${INITIAL_DIR}
+}
+
+build_submodule_lib() {
+    echo
+    echo "BUILDING EXTERNAL LIBRARY " $1
+    cd 3rd-party-libs
+    rm -rf $1/debian
+    mkdir $1/debian
+    cp -R $1-debian/* $1/debian
+    cd $1
+    ${DEBUILD} -i -us -uc -b
+    ${DEBUILD} clean
+    cd ..
+    mv *.deb *.build *.changes *.dsc *.tar.gz ${TARGET_DIR}
+    cd ${INITIAL_DIR}
+}
+
+create_repo() {
+    echo
+    echo "CREATING REPOSITORY"
+    # Create repo structure
+    rm -rf ${REPO_DIR}
+    mkdir -p ${REPO_DIR}/conf
+    mkdir -p ${REPO_DIR}/incoming
+    cp conf/repo/conf/distributions ${REPO_DIR}/conf
+    cd ${TARGET_DIR}
+    # Sign packages and add packages to repo
+    for pkg in *.deb
+    do
+        dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
+        reprepro --ignore=wrongdistribution -Vb repo includedeb oneiric $pkg
+    done
+    cd ${INITIAL_DIR}
+}
+
+initialize
+build_submodule_lib sunburnt
+# build_deb_package notification/main/src
+# package_and_install notification/java
+build_deb_package filewatcher/main/src
+build_deb_package filewatcher/scala
+install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
+exit 0
+#build_deb_package resource/main/src
+#package_and_install resource/java
+build_deb_package apps/app.browser/server
+build_deb_package apps/app.browser/web
+build_deb_package apps/app.browser
+build_deb_package conf/solr
+build_deb_package conf/tomcat6
+build_deb_package conf/nublic
+create_repo
+
