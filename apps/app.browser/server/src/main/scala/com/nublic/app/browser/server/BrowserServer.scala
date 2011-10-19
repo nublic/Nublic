@@ -182,7 +182,15 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	    }
 	  }
 	}
-	files.sort((a, b) => a.name.compareToIgnoreCase(b.name) < 0)
+	files.sort(fileLt)
+  }
+  
+  def fileLt(a: BrowserFile, b: BrowserFile) = {
+    (a.isDirectory, b.isDirectory) match {
+      case (true, false) => true
+      case (false, true) => false
+      case _             => a.name.compareToIgnoreCase(b.name) < 0
+    }
   }
   
   def find_view(file: String, mime: String): String = {
