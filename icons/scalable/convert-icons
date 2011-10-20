@@ -1,0 +1,18 @@
+#!/bin/bash
+
+for dir in *
+do
+    if [ -d ${dir} ]
+    then
+        mkdir -p ../48x48/${dir}
+        mkdir -p ../96x96/${dir}
+        cd ${dir}
+        for svgfile in *.svg
+        do
+            echo "Converting ${svgfile} to ${svgfile/svg/png}"
+            inkscape -z -w 48 -f ${svgfile} -e ../../48x48/${dir}/${svgfile/svg/png}
+            inkscape -z -w 96 -f ${svgfile} -e ../../96x96/${dir}/${svgfile/svg/png}
+        done
+        cd ..
+    fi
+done
