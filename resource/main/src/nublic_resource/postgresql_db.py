@@ -10,6 +10,7 @@ from random import Random
 
 from database_stored import DatabaseStored
 from model import metadata
+import model
 from database_stored import ExistingKeyError, \
     NotExistingKeyError
 
@@ -25,18 +26,16 @@ class PostgresqlDB(DatabaseStored):
         * port: Returns the connection port
         * uri: Returns the connection uri
     '''
-    
     __lenght_of_database_sufix = 16
     __lenght_of_user_name = 14 # Max of 16 in database
     __lenght_of_password = 32
     __random_characters = string.letters + string.digits + ""
-    __root_password = 'ScamUp'
-    __root_user = 'nublic_resource'
+    __root_password = model.postgres_root_password
+    __root_user = model.postgres_root_user
     __connection_protocol = "postgresql"
 
     def __init__(self):
         DatabaseStored.__init__(self, "postgresql-db")
-        # @todo: Needs to read the root password and root user from somewhere
 
     def install(self, app, key):
         if self.__is_key(app, key):
@@ -107,7 +106,7 @@ class PostgresqlDB(DatabaseStored):
         else:
             return self.__connection_protocol + "://" + user + ":" + password \
                     + "@localhost" + "/" + database
-        
+    
     def __create_postgre_resource(self, app, key):
         bind = metadata.bind
         # Creates a connection with permission to create users and databases

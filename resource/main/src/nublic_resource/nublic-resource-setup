@@ -7,16 +7,21 @@ It works for usage during the install of applications.
 @author: David Navarro Estruch
 @copyright: 2011 Nublic
 '''
-
+import os
+import sys
 from optparse import OptionParser
 
-from nublic_resource.select_provider import SelectProvider
+from nublic_resource.select_provider import generate_provider, get_provider
 
 def main():
+    if not os.geteuid() == 0:
+        sys.exit('nublic-resource-setup must be run as root')
     usage = "usage: \n" + \
-            "\t%prog request app_id key_name resource [[-o optional_arg]]\n" + \
-            "\t%prog release app_id key_name [[-o optional_arg]]\n" + \
-            "\t%prog value   app_id key_name/subkey \n" + \
+            "\t%prog install app_id key_name resource [[-o optional_arg]]\n" + \
+            "\t%prog request app_id key_name [[-o optional_arg]]\n" + \
+            "\t%prog uninstall app_id key_name\n" + \
+            "\t%prog release app_id key_name\n" + \
+            "\t%prog value   app_id key_name#subkey \n" + \
             "\n" + \
             "Optional args:\n" + \
             "\t-o --optional_arg: Provides a optional_arg"
@@ -33,17 +38,16 @@ def main():
         app = args[1]
         key = args[2]
         resource_id = args[3]
-        provider = SelectProvider().generate_provider(resource_id)
+        provider = generate_provider(resource_id)
         if provider == None:
             parser.error("Invalid resource")
         provider.install(app, key)        
     elif args[0] == 'uninstall':
-        if len(args) != 4:
+        if len(args) != 3:
             parser.error("Invalid number of parameters")
         app = args[1]
         key = args[2]
-        resource_id = args[3]
-        provider = SelectProvider().generate_provider(resource_id)
+        provider = get_provider(app, key)
         if provider == None:
             parser.error("Invalid resource")
         provider.uninstall(app, key)
@@ -53,7 +57,7 @@ def main():
         app = args[1]
         key = args[2]
         resource_id = args[3]
-        provider = SelectProvider().generate_provider(resource_id)
+        provider = generate_provider(resource_id)
         if provider == None:
             parser.error("Invalid resource")
         provider.request(app, key)        
@@ -62,7 +66,7 @@ def main():
             parser.error("Invalid number of parameters")
         app = args[1]
         key = args[2]
-        provider = SelectProvider().get_provider(app, key)
+        provider = get_provider(app, key)
         if provider == None:
             parser.error("Invalid resource")
         provider.release(app, key)
@@ -71,10 +75,10 @@ def main():
             parser.error("Invalid number of parameters")
         app = args[1]
         key_subkey = args[2]
-        key, separator, subkey = key_subkey.partition("/")
-        provider = SelectProvider().get_provider(app, key)
+        key, separator, subkey = key_subkey.partition("#")
+        provider = get_provider(app, key)
         if separator != "/": # Doesn't have a subkey value
-            print(provider.value(app, key, None))
+            parser.error("subkey not specified")
         else:
             print(provider.value(app, key, subkey))
     else:

@@ -11,8 +11,15 @@ from elixir import Entity, Field, using_options
 from elixir import ManyToOne
 from elixir.relationships import OneToMany
 from sqlalchemy.types import Unicode
+import ConfigParser
 
-metadata.bind = 'postgresql://nublic_resource:ScamUp@localhost/nublic_resource'
+# Load configuration file for user and password
+__config = ConfigParser.RawConfigParser()
+__config.read('/etc/nublic/resource.conf')
+postgres_root_password = __config.get('DB_ACCESS','NUBLIC_RESOURCE_PASS').strip("'")
+postgres_root_user = __config.get('DB_ACCESS','NUBLIC_RESOURCE_USER').strip("'")
+
+metadata.bind = "postgresql://"+postgres_root_user+":"+postgres_root_password+'@localhost/nublic_resource'
 metadata.bind.echo = True
 
 class App(Entity):

@@ -7,11 +7,13 @@ Created on 10/08/2010
 @copyright: 2011 Nublic
 
 '''
+import os
+import sys
 import dbus
 import dbus.service
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
-from nublic_resource.select_provider import SelectProvider
+from nublic_resource.select_provider import get_provider 
 
 class DBusValue(dbus.service.Object):
     bus_path = 'com.nublic.resource'
@@ -20,7 +22,7 @@ class DBusValue(dbus.service.Object):
     def __init__(self, app_name, key):
         self.app = app_name
         self.key = key
-        provider = SelectProvider().get_provider(app_name, key)
+        provider = get_provider(app_name, key)
         self.provider = provider
         self.object_path = self._base_object_path + '/' + app_name + '/' + key 
         # Init DBus object
@@ -32,9 +34,10 @@ class DBusValue(dbus.service.Object):
         return self.provider.value(self.app, self.key, subkey)
 
 if __name__ == '__main__':
+    if not os.geteuid() == 0:
+        sys.exit('Script must be run as root')
+
     DBusGMainLoop(set_as_default=True)
-    
-    provider = SelectProvider()
     
     dbus = DBusValue("app","key")
     
