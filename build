@@ -93,7 +93,7 @@ package_and_install notification/java
 build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
-#build_deb_package resource/main/src
+build_deb_package resource/main/src
 #package_and_install resource/java
 build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
