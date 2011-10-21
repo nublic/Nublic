@@ -72,7 +72,37 @@ class FileInfo:
         self.props = props
     
     def compute_mime_type(self):
-        return Magic.file(from_utf8(self.props['path']))
+        path = from_utf8(self.props['path'])
+        mime = Magic.file(path)
+        extension = os.path.splitext(path)[1].lower()
+        if mime == "application/zip": # for Office XML docs
+            if extension == ".docx":
+                mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            elif extension == ".xlsx":
+                mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            elif extension == ".pptx":
+                mime = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        elif mime == "application/vnd.ms-office": # for Office non-XML docs
+            if extension == ".doc":
+                mime = "application/msword"
+            elif extension == ".xls":
+                mime = "application/msexcel"
+            elif extension == ".ppt":
+                mime = "application/mspowerpoint"
+        elif mime == "application/x-staroffice" or mime == "application/soffice" or mime == "application/x-soffice":
+            if extension == ".sdw":
+                mime = "application/vnd.stardivision.writer"
+            elif extension == ".sdc":
+                mime = "application/vnd.stardivision.calc"
+            elif extension == ".sdd":
+                mime = "application/vnd.stardivision.impress"
+            elif extension == ".sda":
+                mime = "application/vnd.stardivision.draw"
+        elif mime == "application/octet-stream":
+            if extension == ".mp3":
+                mime = "audio/mpeg"
+        # In any other case
+        return mime
     
     def set_new_pathname(self, new_pathname):
         self.props['path'] = to_utf8(new_pathname)
