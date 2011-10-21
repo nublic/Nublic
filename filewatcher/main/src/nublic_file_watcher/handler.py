@@ -46,7 +46,8 @@ class EventHandler(pyinotify.ProcessEvent):
     def process_IN_DELETE(self, event):
         # Delete in Solr
         file_info = solr.retrieve_doc(event.pathname)
-        file_info.delete()
+        if file_info != None:
+            file_info.delete()
         # Notify via D-Bus
         self.handle_process("delete", event)
     
@@ -58,6 +59,8 @@ class EventHandler(pyinotify.ProcessEvent):
     def process_IN_CLOSE_WRITE(self, event):
         # Change in Solr
         file_info = solr.retrieve_doc(event.pathname)
+        if file_info == None:
+            file_info = solr.new_doc(event.pathname, event.dir)
         # This recomputes the MIME type
         file_info.save()
         # Notify via D-Bus

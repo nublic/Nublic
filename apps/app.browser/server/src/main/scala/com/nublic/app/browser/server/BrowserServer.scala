@@ -11,6 +11,8 @@ import com.nublic.app.browser.server.filewatcher.FileActor
 import com.nublic.app.browser.server.filewatcher.FileFolder
 import com.nublic.app.browser.server.filewatcher.workers.Workers
 import javax.servlet.http.HttpServlet
+import org.apache.commons.io.output.ByteArrayOutputStream
+import org.apache.commons.io.CopyUtils
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -155,7 +157,9 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/generic-thumbnail/*") {
-    halt(404)
+    val name = URIUtil.decode(params(THE_REST))
+    response.setContentType("image/png")
+    ImageDatabase.getImageBytes(name)
   }
   
   notFound {  // Executed when no other route succeeds
