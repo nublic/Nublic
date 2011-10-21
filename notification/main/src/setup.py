@@ -3,10 +3,10 @@
 from distutils.core import setup
 
 setup(name='nublic-notification',
-      version='0.1',
+      version='0.01',
       description='The Nublic Notification System',
       author='David Navarro Estruch',
-      author_email='davisein@gmail.com',
+      author_email='david@nublic.com',
       url='http://nublic.com',
       packages=['nublic_notification'],
       license='ALL_RIGHTS_RESERVED',

@@ -1,0 +1,4 @@
+*.dsc
+nublic-resource_*.tar.gz
+nublic-resource_*_amd64.*
+*.deb

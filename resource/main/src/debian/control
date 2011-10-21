@@ -1,0 +1,15 @@
+Source: nublic-resource
+Section: nublic
+Priority: optional
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7), cdbs, python-support
+Standards-Version: 3.9.1
+XS-Python-Version: >= 2.6
+Homepage: http://nublic.com
+
+Package: nublic-resource
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, postgresql, dbus, python-dbus, python-elixir, python-sqlalchemy
+Description: Nublic Resource System
+ This system provides a common and easy way to access to different resources
+ managing the creation, security issues and access to private values.

@@ -1,0 +1,5 @@
+#!/bin/bash
+nublic-resource-postgres-db-install
+
+
+#DEBHELPER#

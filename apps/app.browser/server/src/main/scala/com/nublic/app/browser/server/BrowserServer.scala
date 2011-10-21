@@ -77,18 +77,22 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  get("/view/:type/*") {
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..")) {
+  get("/view/*") { // Where * = :file.:type
+    val rest = URIUtil.decode(params(THE_REST))
+    if (rest.contains("..") || !rest.contains(".")) {
       // We don't want paths going upwards
       halt(403)
     } else {
+      // Separate view from rest of file name
+      val index_of_point = rest.lastIndexOf('.')
+      val path = rest.substring(0, index_of_point)
+      val viewName = rest.substring(index_of_point + 1)
+      // Find in file system
       val nublic_path = NUBLIC_DATA_ROOT + path
       val file = new File(nublic_path)
       if (!file.exists() || file.isDirectory()) {
         halt(403)
       } else {
-        val viewName = params("type")
         var found: Option[Tuple2[File, String]] = None
         for (worker <- Workers.byViewName.getOrElse(viewName, Nil)) {
           if (worker.hasView(viewName, nublic_path, Solr.getMimeType(nublic_path).getOrElse("unknown"))) {

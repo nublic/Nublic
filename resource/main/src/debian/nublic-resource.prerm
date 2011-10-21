@@ -1,0 +1,3 @@
+#!/bin/bash
+nublic-resource-postgres-db-uninstall
+#DEBHELPER#
