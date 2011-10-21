@@ -69,7 +69,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				String path = hmap.get(Constants.PATH_PARAMETER);
 				if (path != null) {
 					// Redirect navigation to raw resource in server
-					Window.open(GWT.getHostPageBaseURL() + "server/view/"  + Constants.IMAGE_TYPE + "/" + path, "_self", "");
+					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
 				} else {
 					// TODO: error, must specify a path 
 				}
@@ -83,7 +83,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				String path = hmap.get(Constants.PATH_PARAMETER);
 				if (path != null) {
 					// Redirect navigation to raw resource in server
-					Window.open(GWT.getHostPageBaseURL() + "server/view/"  + Constants.DOCUMENT_TYPE + "/" + path, "_self", "");
+					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
 				} else {
 					// TODO: error, must specify a path 
 				}

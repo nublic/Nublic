@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Tree;
@@ -156,11 +157,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
-			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + Constants.IMAGE_TYPE + "/" + path);
+			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE);
 			newImage.addLoadHandler(new LoadHandler() {
 				@Override
 				public void onLoad(LoadEvent event) {
 					// center = center + show
+					// TODO: try to look instead for popUpBox.setPopupPositionAndShow(callback);
 					popUpBox.center();
 				}
 			});
@@ -177,7 +179,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 
 	public void showPDF(ParamsHashMap hmap) {
-		// TODO showPDF
-		
+		popUpBox.clear();
+		String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
+			popUpBox.add(frame);
+		} else {
+			// TODO: error, image not found
+		}
+		// TODO: make setSize work!
+		popUpBox.setSize("90%", "90%");
+		popUpBox.center();
+		// TODO: also try RootPanel.get().add(frame);
 	}
 }
