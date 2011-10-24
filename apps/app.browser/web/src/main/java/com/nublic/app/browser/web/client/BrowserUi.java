@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Stack;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -28,13 +30,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	TreeAdapter treeAdapter = null;
 
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
-//	@UiField LayoutPanel rootPanel;
 	@UiField FlowPanel centralPanel;
 	@UiField Tree treeView;
-//	@UiField Button buttonFolderRequest;
-//	@UiField Button buttonFilesRequest;
 	FixedPopup popUpBox;
-	//@UiField LayoutPanel popUpContent;
 	
 
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
@@ -64,18 +62,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
 	}
-
-//	@UiHandler("buttonFolderRequest")
-//	void onButtonFolderRequestClick(ClickEvent event) {
-//		model.updateFolders(model.getFolderTree(), 4);
-//	}
-//	
-//	@UiHandler("buttonFilesRequest")
-//	void onButtonFilesRequestClick(ClickEvent event) {
-//		History.newItem(Constants.BROWSER_VIEW
-//				+ "?" + Constants.PATH_PARAMETER
-//				+ "=" + model.getFolderTree().getPath(), true);
-//	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -151,6 +137,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
 			final Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE);
+			newImage.addLoadHandler(new LoadHandler() {
+				@Override
+				public void onLoad(LoadEvent event) {
+					// these 4 things give the same result
+//					int width = newImage.getWidth();
+//					int width2 = newImage.getElement().getOffsetWidth();
+//					int width3 = ImageElement.as(newImage.getElement()).getWidth();
+//					int width4 = newImage.getOffsetWidth();
+					popUpBox.setOriginalSize(newImage.getWidth(), newImage.getHeight());
+				}
+			});
 
 			popUpBox.setContentWidget(newImage);
 			popUpBox.show();

@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 // A pop-up that occupy all the space except a margin at boundaries
 public class FixedPopup extends PopupPanel implements ResizeHandler {
+	private int width;
+	private int height;
 	int margin;
 	PopupContent content;
 
@@ -49,8 +51,8 @@ public class FixedPopup extends PopupPanel implements ResizeHandler {
 	
 	// Receives the size of the window where it is placed
 	public void resize(int newWidth, int newHeight) {
-		int width = newWidth - 2*margin;
-		int height = newHeight - 2*margin;
+		width = newWidth - 2*margin;
+		height = newHeight - 2*margin;
 		if (width < 0) {
 			width = 0;
 		}
@@ -66,6 +68,15 @@ public class FixedPopup extends PopupPanel implements ResizeHandler {
 	public void setContentWidget(Widget w) {
 		if (content != null) {
 			content.setContent(w);
+			content.fitSize(width, height - Constants.POPUP_BOTTOM);
+		}
+	}
+
+	// To be called if an Image widget is set as content when that image is loaded.
+	public void setOriginalSize(int width, int height) {
+		if (content != null) {
+			content.setOriginalSize(width, height);
+			content.fitSize(this.width, this.height - Constants.POPUP_BOTTOM);
 		}
 	}
 	

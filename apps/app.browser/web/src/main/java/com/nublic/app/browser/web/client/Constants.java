@@ -2,7 +2,7 @@ package com.nublic.app.browser.web.client;
 
 public class Constants {
 	final static int POPUP_MARGIN = 50;
-	final static int POPUP_BOTTOM = 60; // also defined in PopupContent.ui.xml
+	final static int POPUP_BOTTOM = 50; // also defined in PopupContent.ui.xml
 	final static int DEFAULT_DEPTH = 2; // Number of levels of the tree requested each time
 	final static String BROWSER_VIEW = "browser";
 	final static String PATH_PARAMETER = "path";

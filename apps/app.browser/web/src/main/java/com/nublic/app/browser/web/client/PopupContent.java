@@ -71,15 +71,22 @@ public class PopupContent extends Composite {
 						}
 					}
 				} else {
-					// some of the widths are 0
-					internalWidget.setPixelSize(0, 0);
+					// some of the widths are 0, set the image size to 0, but not if the original sizes are not set yet
+					if (originalHeight != 0 && originalHeight != 0) {
+						internalWidget.setPixelSize(0, 0);
+					}
 				}
 			} else {
-				// If it's not an Image
+				// If it's not an Image we'll fill the space we have for it
 				internalWidget.setPixelSize(width, height);
 			}
 		}
 		
+	}
+
+	public void setOriginalSize(int width, int height) {
+		originalWidth = width;
+		originalHeight = height;
 	}
 	
 
