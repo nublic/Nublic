@@ -13,6 +13,7 @@ import com.nublic.app.browser.server.filewatcher.workers.Workers
 import javax.servlet.http.HttpServlet
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.commons.io.CopyUtils
+import org.apache.commons.io.FileUtils
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -160,6 +161,72 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     val name = URIUtil.decode(params(THE_REST))
     response.setContentType("image/png")
     ImageDatabase.getImageBytes(name)
+  }
+  
+  post("/rename") {
+    val from = params("from")
+    val to = params("to")
+    if (from.contains("..") || to.contains("..")) {
+      halt(403)
+    } else {
+      val from_path = new File(NUBLIC_DATA_ROOT + from)
+      val to_path = new File(NUBLIC_DATA_ROOT + to)
+      if (from_path.isDirectory()) {
+        FileUtils.moveDirectory(from_path, to_path)
+      } else {
+    	FileUtils.moveFile(from_path, to_path)
+      }
+      halt(200)
+    }
+  }
+  
+  post("/move") {
+    val from = params("files").split(":")
+    val to = params("target")
+    if ( from.exists(_.contains("..")) || to.contains("..") ) {
+      halt(403)
+    } else {
+      val from_paths = from.map(s => new File(NUBLIC_DATA_ROOT + s))
+      val to_path = new File(NUBLIC_DATA_ROOT + to)
+      from_paths.map(f => FileUtils.moveToDirectory(f, to_path, true))
+      halt(200)
+    }
+  }
+  
+  post("/copy") {
+    val from = params("files").split(":")
+    val to = params("target")
+    if ( from.exists(_.contains("..")) || to.contains("..") ) {
+      halt(403)
+    } else {
+      val from_paths = from.map(s => new File(NUBLIC_DATA_ROOT + s))
+      val to_path = new File(NUBLIC_DATA_ROOT + to)
+      from_paths.map(f => 
+        if (f.isDirectory) {
+          FileUtils.copyDirectoryToDirectory(f, to_path)
+        } else {
+          FileUtils.copyFileToDirectory(f, to_path)
+        }
+      )
+      halt(200)
+    }
+  }
+  
+  post("/delete") {
+    val files = params("files").split(":")
+    if (files.exists(_.contains(".."))) {
+      halt(403)
+    } else {
+      val files_paths = files.map(s => new File(NUBLIC_DATA_ROOT + s))
+      files_paths.map(f => 
+        if (f.isDirectory) {
+          FileUtils.deleteDirectory(f)
+        } else {
+          FileUtils.deleteQuietly(f)
+        }
+      )
+      halt(200)
+    }
   }
   
   notFound {  // Executed when no other route succeeds

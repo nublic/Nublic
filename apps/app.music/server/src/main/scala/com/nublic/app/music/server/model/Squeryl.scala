@@ -7,24 +7,40 @@ import org.squeryl.dsl.ManyToOne
 import org.squeryl.dsl.OneToMany
 import org.squeryl.Query
 import org.squeryl.Table
+import java.text.Normalizer
+import java.util.regex.Pattern
 
-class Artist(val id: Long, var name: String) extends KeyedEntity[Long] {
-  def this() = this(0, "")
+object StringUtil {
+  def unaccent(s: String): String = {
+    val temp = Normalizer.normalize(s, Normalizer.Form.NFD)
+    val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
+    pattern.matcher(temp).replaceAll("")
+  }
+  
+  def normalize(s: String): String = unaccent(s).toLowerCase
+}
+
+class Artist(val id: Long, var name: String, var normalized: String) extends KeyedEntity[Long] {
+  def this() = this(0, "", "")
+  def this(id: Long, name: String) = this(id, name, StringUtil.normalize(name))
+  def this(name: String) = this(0, name)
   def getId() = id
   lazy val songs: OneToMany[Song] = Database.songArtists.left(this)
 }
 
-class Album(val id: Long, var name: String) extends KeyedEntity[Long] {
-  def this() = this(0, "")
+class Album(val id: Long, var name: String, var normalized: String) extends KeyedEntity[Long] {
+  def this() = this(0, "", "")
+  def this(id: Long, name: String) = this(id, name, StringUtil.normalize(name))
+  def this(name: String) = this(0, name)
   def getId() = id
   lazy val songs: OneToMany[Song] = Database.songAlbums.left(this)
 }
 
 class Song(val id: Long, var file: String, var title: String,
-  var artistId: Option[Long], var albumId: Option[Long],
+  var artistId: Long, var albumId: Long,
   var year: Option[Int], var track: Option[Int], var disc_no: Option[Int])
   extends KeyedEntity[Long] {
-  def this() = this(0, "", "", Some(0), Some(0), Some(0), Some(0), Some(0))
+  def this() = this(0, "", "", 0, 0, Some(0), Some(0), Some(0))
   
   lazy val artist: ManyToOne[Artist] = Database.songArtists.right(this)
   lazy val album: ManyToOne[Album] = Database.songAlbums.right(this)
@@ -41,8 +57,8 @@ object Database extends Schema {
     via((album, song) => album.id === song.albumId)
   
   def songByFilename(file: String) = maybe(songs.where(s => s.file === file))
-  def artistByName(name: String) = maybe(artists.where(a => a.name === name))
-  def albumByName(name: String) = maybe(albums.where(a => a.name === name))
+  def artistByNameNormalizing(name: String) = maybe(artists.where(a => a.normalized === StringUtil.normalize(name)))
+  def albumByNameNormalizing(name: String) = maybe(albums.where(a => a.normalized === StringUtil.normalize(name)))
   
   def maybe[R](q: Query[R]): Option[R] = {
     try {
@@ -52,28 +68,21 @@ object Database extends Schema {
     }
   }
   
-  def ensureInDb[R <: { def getId(): Long }](name: Option[String], table: Table[R], 
+  def ensureInDb[R <: { def getId(): Long }](name: String, table: Table[R], 
       searcher: String => Option[R], constructor: String => R): Option[Long] = {
-    name match {
-      case None => None
-      case Some(innerName) => {
-        searcher(innerName) match {
-          case Some(element) => Some(element.getId)
-          case None => {
-            val newElement = constructor(innerName)
-            table.insert(newElement)
-            Some(newElement.getId)
-          }
-        }
+    searcher(name) match {
+      case Some(element) => Some(element.getId)
+      case None => {
+        val newElement = constructor(name)
+        table.insert(newElement)
+        Some(newElement.getId)
       }
     }
   }
   
-  def deleteIfNoAssocInDb[R <: { def getId(): Long }](idToCheck: Option[Long], table: Table[R], checker: Song => Option[Long]) = {
-    idToCheck.map(id => {
-      if (Database.songs.where(s => checker(s) === id).isEmpty) {
-        table.deleteWhere(a => a.getId() === id)
-      }
-    })
+  def deleteIfNoAssocInDb[R <: { def getId(): Long }](id: Long, table: Table[R], checker: Song => Long) = {
+    if (Database.songs.where(s => checker(s) === id).isEmpty) {
+      table.deleteWhere(a => a.getId() === id)
+    }
   }
 }
