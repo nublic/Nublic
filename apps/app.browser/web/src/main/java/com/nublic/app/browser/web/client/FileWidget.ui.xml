@@ -4,7 +4,7 @@
 	<ui:style>
 		.inLine {
 			display: inline-table;
-			margin: 5px;
+			margin: 15px;
 			vertical-align: top;
 		}
 		.center {

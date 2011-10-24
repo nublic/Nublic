@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Stack;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -15,11 +12,8 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
@@ -34,11 +28,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	TreeAdapter treeAdapter = null;
 
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
+//	@UiField LayoutPanel rootPanel;
 	@UiField FlowPanel centralPanel;
 	@UiField Tree treeView;
-	@UiField Button buttonFolderRequest;
-	@UiField Button buttonFilesRequest;
-	PopupPanel popUpBox;
+//	@UiField Button buttonFolderRequest;
+//	@UiField Button buttonFilesRequest;
+	FixedPopup popUpBox;
+	//@UiField LayoutPanel popUpContent;
+	
 
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 
@@ -61,25 +58,24 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		treeAdapter = new TreeAdapter(treeView, model);
 		
 		// Set the properties of our popUpDialog. Should start empty, hidden, ...
-		popUpBox = new DialogBox(true, true); // auto-hide, modal
+		popUpBox = new FixedPopup(true, true); // auto-hide, modal
+
 		popUpBox.hide();
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
+	}
 
-	}
-	
-	
-	@UiHandler("buttonFolderRequest")
-	void onButtonFolderRequestClick(ClickEvent event) {
-		model.updateFolders(model.getFolderTree(), 4);
-	}
-	
-	@UiHandler("buttonFilesRequest")
-	void onButtonFilesRequestClick(ClickEvent event) {
-		History.newItem(Constants.BROWSER_VIEW
-				+ "?" + Constants.PATH_PARAMETER
-				+ "=" + model.getFolderTree().getPath(), true);
-	}
+//	@UiHandler("buttonFolderRequest")
+//	void onButtonFolderRequestClick(ClickEvent event) {
+//		model.updateFolders(model.getFolderTree(), 4);
+//	}
+//	
+//	@UiHandler("buttonFilesRequest")
+//	void onButtonFilesRequestClick(ClickEvent event) {
+//		History.newItem(Constants.BROWSER_VIEW
+//				+ "?" + Constants.PATH_PARAMETER
+//				+ "=" + model.getFolderTree().getPath(), true);
+//	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -152,44 +148,28 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showImage(ParamsHashMap paramsHashMap) {
-		// We remove any previous element shown
-		popUpBox.clear();
-		
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
-			Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE);
-			newImage.addLoadHandler(new LoadHandler() {
-				@Override
-				public void onLoad(LoadEvent event) {
-					// center = center + show
-					// TODO: try to look instead for popUpBox.setPopupPositionAndShow(callback);
-					popUpBox.center();
-				}
-			});
-			popUpBox.add(newImage);
+			final Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE);
+
+			popUpBox.setContentWidget(newImage);
+			popUpBox.show();
 		} else {
 			// TODO: error, image not found
 		}
 
-//		popUpBox.show();
-		// center = center + show
-		popUpBox.center();
-		
 	}
 
 
 	public void showPDF(ParamsHashMap hmap) {
-		popUpBox.clear();
 		String path = hmap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
 			Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
-			popUpBox.add(frame);
+			popUpBox.setContentWidget(frame);
+			popUpBox.show();
 		} else {
 			// TODO: error, image not found
 		}
-		// TODO: make setSize work!
-		popUpBox.setSize("90%", "90%");
-		popUpBox.center();
-		// TODO: also try RootPanel.get().add(frame);
+
 	}
 }
