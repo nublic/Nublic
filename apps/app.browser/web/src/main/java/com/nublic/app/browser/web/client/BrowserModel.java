@@ -115,16 +115,19 @@ public class BrowserModel {
 							error("Wrong file list received");
 						} else {
 							updateFileList(fileContentList);
-						}
-						
-						// Call every handler looking at the file list
-						for (ModelUpdateHandler handler : updateHandlers) {
-							String path = params.get(Constants.PATH_PARAMETER);
-							if (path == null) {
-								path = new String("");
+
+							// Call every handler looking at the file list
+							for (ModelUpdateHandler handler : updateHandlers) {
+								String path = params.get(Constants.PATH_PARAMETER);
+								if (path == null) {
+									path = new String("");
+								}
+								// Trim the possible firsts '/'
+								while (path.length() != 0 && path.charAt(0) == '/') {
+									path = path.substring(1);
+								}
+								handler.onFilesUpdate(BrowserModel.this, path);
 							}
-							handler.onFilesUpdate(BrowserModel.this, path);
-							//handler.onFilesUpdate(BrowserModel.this, params.get(Constants.BROWSER_PATH_PARAMETER));
 						}
 					} else {
 						error("Bad response status");

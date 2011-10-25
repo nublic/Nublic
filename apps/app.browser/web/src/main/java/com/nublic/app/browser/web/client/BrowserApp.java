@@ -54,8 +54,8 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			if (model == null) {
 				initBrowser();
 			}
-			// show the initial screen (empties the file list of the model) TODO: welcome screen?
-			//model.updateFiles(new ParamsHashMap());
+			// show the initial screen (empties the file list of the model)
+			model.updateFiles(new ParamsHashMap());
 		} else if (token.equals(Constants.BROWSER_VIEW)) {
 			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
 			if (model == null) {
@@ -93,8 +93,8 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			}
 			
 			
-//		} else {
-//			Window.alert("Unrecognized token=" + token);
+		} else {
+			// TODO: error, unrecognised token
 		}
 	}
 	
