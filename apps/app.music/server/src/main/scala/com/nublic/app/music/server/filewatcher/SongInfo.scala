@@ -12,7 +12,7 @@ import java.io.BufferedInputStream
 object SongInfo {
   
   def from(filename: String, context: String): SongInfo = {
-    var tag_info = JAudioTaggerExtractor.from(filename)
+    var tag_info = clean(JAudioTaggerExtractor.from(filename))
 	if (tag_info.hasImportantInfoMissing) {
 	  EchonestExtractor.from(filename) match {
 	    case None => { /* */ }
@@ -24,6 +24,22 @@ object SongInfo {
       tag_info = merge(tag_info, fextract)
     }
     tag_info
+  }
+  
+  def clean(s: SongInfo): SongInfo = {
+    var title = s.title
+    val track_regex = """(?i)track (\d+)""".r
+    title.map(t =>
+      t match {
+        case track_regex(n) => {
+          val track_no = Some(Integer.parseInt(n))
+          s match {
+            case SongInfo(_, ar, ab, y, _, d) => SongInfo(None, ar, ab, y, track_no, y)
+          }
+        }
+        case _: String => s
+      }
+    ).getOrElse(s)
   }
   
   def merge(s1: SongInfo, s2: SongInfo): SongInfo = {

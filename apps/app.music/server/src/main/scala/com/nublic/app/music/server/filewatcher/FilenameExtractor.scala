@@ -46,7 +46,16 @@ object FilenameExtractor {
       path = path.getParentFile()
       val name = path.getName()
       album match {
-        case None    => album = Some(name)
+        case None    => {
+          val artist_album = """\s*(.*)-\s*(.*)$""".r
+          name match {
+            case artist_album(art, alb) => {
+              artist = Some(art)
+              album = Some(alb)
+            }
+            case _: String => album = Some(name)
+          }
+        }
         case Some(_) => artist match {
           case None    => artist = Some(name)
           case Some(_) => { /* */ }
