@@ -16,7 +16,8 @@ object ImageWorker extends DocumentWorker {
       "image/x-pcx", "image/pict", "image/x-portable-bitmap",
       "image/tiff", "image/x-tiff", "image/x-xbitmap",
       "image/x-xbm", "image/xbm", "application/wmf", 
-      "application/x-wmf", "image/wmf", "image/x-wmf" 
+      "application/x-wmf", "image/wmf", "image/x-wmf" ,
+      "image/x-ms-bmp"
     )
 
   def supportedViews(): List[String] = List("png")
