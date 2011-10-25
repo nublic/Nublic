@@ -69,13 +69,13 @@ object Database extends Schema {
   }
   
   def ensureInDb[R <: { def getId(): Long }](name: String, table: Table[R], 
-      searcher: String => Option[R], constructor: String => R): Option[Long] = {
+      searcher: String => Option[R], constructor: String => R): R = {
     searcher(name) match {
-      case Some(element) => Some(element.getId)
+      case Some(element) => element
       case None => {
         val newElement = constructor(name)
         table.insert(newElement)
-        Some(newElement.getId)
+        newElement
       }
     }
   }

@@ -8,6 +8,13 @@ import net.liftweb.json._
 import org.apache.commons.io.output.ByteArrayOutputStream
 import java.io.BufferedInputStream
 
+//Complete information about a Song
+// =================================
+case class SongInfo(title: Option[String], artist: Option[String], album: Option[String],
+  year: Option[Int], track: Option[Int], disc_no: Option[Int]) {
+ 
+  def hasImportantInfoMissing = title == None || artist == None || album == None
+}
 
 object SongInfo {
   
@@ -54,28 +61,4 @@ object SongInfo {
   
   def merge[T](o1: Option[T], o2: Option[T]): Option[T] = if (o1 != None) o1 else o2
   
-}
-
-//Complete information about a Song
-// =================================
-case class SongInfo(title: Option[String], artist: Option[String], album: Option[String],
-  year: Option[Int], track: Option[Int], disc_no: Option[Int]) {
- 
-  def hasImportantInfoMissing = title == None || artist == None || album == None
-  
-  def toSqueryl(filename: String) = {
-    new Song(0, filename, title.getOrElse(filename),
-        artist.map(a => Database.artistByNameNormalizing(a).get).map(_.id).getOrElse(-1),
-        album.map(a => Database.albumByNameNormalizing(a).get).map(_.id).getOrElse(-1),
-        year, track, disc_no)
-  }
- 
-  def toExistingSqueryl(song: Song) = {
-    song.title = title.getOrElse(song.file)
-    song.artistId = artist.map(a => Database.artistByNameNormalizing(a).get).map(_.id).getOrElse(-1)
-    song.albumId = album.map(a => Database.albumByNameNormalizing(a).get).map(_.id).getOrElse(-1)
-    song.year = year
-    song.track = track
-    song.disc_no = disc_no
-  }
 }

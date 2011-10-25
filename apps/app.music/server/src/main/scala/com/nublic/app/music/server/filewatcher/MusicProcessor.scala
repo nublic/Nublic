@@ -66,7 +66,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         taggedMimeTypes.contains(Solr.getMimeType(filename))) {
       val song_info = SongInfo.from(filename, context)
       Database.songByFilename(filename) match {
-        case Some(song) => replace_in_database(song.id, song_info)
+        case Some(song) => replace_in_database(filename, song.id, song_info)
         case None       => add_to_database(filename, song_info)
       }
     }
@@ -151,29 +151,63 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       }
     }
   }
+  
+  def update_solr(file: String, info: SongInfo) = {
+    Solr.getInputDocument(file) match {
+      case None      => { /* Cannot update it */ }
+      case Some(doc) => {
+        doc.setField("title", info.title.getOrElse(""))
+        doc.setField("artist", info.artist.getOrElse(""))
+        doc.setField("album", info.album.getOrElse(""))
+        info.year match {
+          case None    => doc.removeField("year")
+          case Some(y) => doc.setField("year", y)
+        }
+        info.track match {
+          case None    => doc.removeField("trackNumber")
+          case Some(t) => doc.setField("trackNumber", t)
+        }
+        Solr.update(doc)
+      }
+    }
+  }
 
   def add_to_database(file: String, info: SongInfo) = {
     inTransaction {
-      Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
-      ensure_or_create_album(file, info.artist, info.album)
-      Console.println(info.album)
-      Database.songs.insert(info.toSqueryl(file))
+      val artist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
+      val album = ensure_or_create_album(file, info.artist, info.album)
+      val song = new Song()
+      song.file = file
+      song.title = info.title.getOrElse("")
+      song.artistId = artist.id
+      song.albumId = album.id
+      song.year = info.year
+      song.track = info.track
+      song.disc_no = info.disc_no
+      Database.songs.insert(song)
     }
+    update_solr(file, info)
   }
   
-  def replace_in_database(id: Long, info: SongInfo) = {
+  def replace_in_database(file: String, id: Long, info: SongInfo) = {
     inTransaction {
       Database.songs.lookup(id).map(song => {
         val prevArtistId = song.artistId
         val prevAlbumId = song.albumId
-        Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
-        ensure_or_create_album(song.file, info.artist, info.album)
-        info.toExistingSqueryl(song)
+        val newArtist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
+        val newAlbum = ensure_or_create_album(song.file, info.artist, info.album)
+        song.title = info.title.getOrElse("")
+        song.artistId = newArtist.id
+        song.albumId = newAlbum.id
+        song.year = info.year
+        song.track = info.track
+        song.disc_no = info.disc_no
         Database.songs.update(song)
         Database.deleteIfNoAssocInDb(prevArtistId, Database.artists, _.artistId)
         Database.deleteIfNoAssocInDb(prevAlbumId, Database.albums, _.albumId)
       })
     }
+    update_solr(file, info)
   }
   
   def remove_from_database(filename: String) = {
