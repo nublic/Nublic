@@ -3,6 +3,12 @@ package com.nublic.app.browser.web.client;
 import java.util.List;
 import java.util.Stack;
 
+import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
+import com.bramosystems.oss.player.core.client.LoadException;
+import com.bramosystems.oss.player.core.client.PlayerUtil;
+import com.bramosystems.oss.player.core.client.Plugin;
+import com.bramosystems.oss.player.core.client.PluginNotFoundException;
+import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
@@ -168,5 +174,35 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			// TODO: error, image not found
 		}
 
+	}
+
+	public void showPlayer(ParamsHashMap hmap) {
+		AbstractMediaPlayer player = null;
+		try {
+			String path = hmap.get(Constants.PATH_PARAMETER);
+			if (path != null) {
+			     // get any player that can playback media
+			     player = PlayerUtil.getPlayer(Plugin.Auto, 
+			    		    GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
+			                false, "50px", "100%");
+	//		     panel.setWidget(player); // add player to panel.
+			     popUpBox.setContentWidget(player);
+			     popUpBox.show();
+			} else {
+				// TODO: error, music not found
+			}
+		} catch(LoadException e) {
+		     // catch loading exception and alert user
+			// TODO: error
+//		     Window.alert("An error occured while loading");
+		} catch (PluginVersionException e) {
+		     // catch PluginVersionException, thrown if required plugin version is not found
+			popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
+			popUpBox.show();
+		} catch(PluginNotFoundException e) {
+		     // catch PluginNotFoundException, thrown if no plugin is not found
+			popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
+			popUpBox.show();
+		}
 	}
 }

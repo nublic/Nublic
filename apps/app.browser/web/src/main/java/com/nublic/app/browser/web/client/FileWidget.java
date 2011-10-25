@@ -2,32 +2,48 @@ package com.nublic.app.browser.web.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class FileWidget extends Composite {
 
 	private static FileWidgetUiBinder uiBinder = GWT.create(FileWidgetUiBinder.class);
 	
-	FileNode node;
-	String path;
-
-	@UiField Hyperlink fileThumbnail;
-	@UiField Hyperlink fileName;
-	@UiField Image altThumbnail;
-	@UiField Label altName;
-
 	interface FileWidgetUiBinder extends UiBinder<Widget, FileWidget> {
 	}
-
-	public FileWidget() {
-		initWidget(uiBinder.createAndBindUi(this));
+	
+	// CSS Styles defined in the .xml file
+	interface FileStyle extends CssResource {
+		String inLine();
+	    String maxheight();
+	    String ellipcenter();
 	}
+	
+	FileNode node;
+	String path;
+	Hyperlink fileThumbnail;
+	Image altThumbnail;
+	Hyperlink fileName;
+	Label altName;
+	@UiField VerticalPanel imagePanel;
+	@UiField VerticalPanel textPanel;
+	@UiField FileStyle style;
+
+//	public FileWidget() {
+//		initWidget(uiBinder.createAndBindUi(this));
+//		fileThumbnail = null;
+//		altThumbnail = null;
+//		fileName = null;
+//		altName = null;
+//		path = null;
+//	}
 	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
@@ -44,12 +60,16 @@ public class FileWidget extends Composite {
 		if (node.getMime().equals(Constants.FOLDER_MIME)) {
 			viewType = Constants.FOLDER_TYPE;
 		}
-		// Check whether the file has a view or not (to files with views and folders we'll show links)
+		// Check whether the file has a view or not (to files with views and to folders we'll show links)
 		if (viewType != null) {
-			// Set unused fields to not visible
-			altThumbnail.setVisible(false);
-			altName.setVisible(false);
-
+			// Create the widgets
+			fileThumbnail = new Hyperlink();
+			fileName = new Hyperlink();
+			
+			// Associate CSS styles
+			fileThumbnail.getElement().addClassName(style.maxheight());
+			fileName.getElement().addClassName(style.ellipcenter());
+			
 			// Add the image thumbnail to the hypertext widget
 			Image fileImage = new Image(url);
 			fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
@@ -59,16 +79,22 @@ public class FileWidget extends Composite {
 			
 			// Set the destination URL
 			setURL(viewType); // modifies both fileThumbnail and fileName
+			
+			// Add the widgets to the panels
+			imagePanel.add(fileThumbnail);
+			textPanel.add(fileName);
 		} else {
-			// Set unused fields to not visible
-			fileThumbnail.setVisible(false);
-			fileName.setVisible(false);
+			// Create the alternative widgets (which are not links)
+			altThumbnail = new Image(url);
+			altName = new Label(n.getName());
 			
-			// Gets the thumbnail of the file
-			altThumbnail.setUrl(url);
+			// Associate CSS styles
+			altThumbnail.getElement().addClassName(style.maxheight());
+			altName.getElement().addClassName(style.ellipcenter());
 			
-			// Set up name
-			altName.setText(n.getName());
+			// Add the widgets to the panels
+			imagePanel.add(altThumbnail);
+			textPanel.add(altName);
 		}
 	}
 
@@ -79,11 +105,14 @@ public class FileWidget extends Composite {
 		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
 			target = Constants.DOCUMENT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
+			target = Constants.MUSIC_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
 		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
 			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		}
-		fileThumbnail.setTargetHistoryToken(target);
-		fileName.setTargetHistoryToken(target);
+		if (fileThumbnail != null && fileName != null) {
+			fileThumbnail.setTargetHistoryToken(target);
+			fileName.setTargetHistoryToken(target);
+		}
 	}
 }

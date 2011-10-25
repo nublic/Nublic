@@ -23,6 +23,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		model = null;
 		theUi = null;
 		
+		// TODO: install IEs4Linux and try everything
 	    String startingToken = History.getToken();
 	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
@@ -49,13 +50,18 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			token = token.substring(0, question);
 		}
 
+		// TODO: not reload when not necessary
+		
+		// Initial page
 		if (token.isEmpty()) {
 			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
 			if (model == null) {
 				initBrowser();
 			}
-			// show the initial screen (empties the file list of the model) TODO: welcome screen?
-			//model.updateFiles(new ParamsHashMap());
+			// show the initial screen (empties the file list of the model)
+			model.updateFiles(new ParamsHashMap());
+			
+		// A browser page
 		} else if (token.equals(Constants.BROWSER_VIEW)) {
 			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
 			if (model == null) {
@@ -63,6 +69,10 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			}
 			// show the desired browser page
 			model.updateFiles(new ParamsHashMap(args));
+		
+			
+		// TODO: refactor these (3) switches
+		// An image visualization
 		} else if (token.equals(Constants.IMAGE_VIEW)) {
 			ParamsHashMap hmap = new ParamsHashMap(args);
 			if (model == null) {
@@ -77,6 +87,8 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// show the image lightbox
 				theUi.showImage(hmap);
 			}
+			
+		// A document visualization
 		} else if (token.equals(Constants.DOCUMENT_VIEW)) {
 			ParamsHashMap hmap = new ParamsHashMap(args);
 			if (model == null) {
@@ -85,16 +97,30 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 					// Redirect navigation to raw resource in server
 					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
 				} else {
-					// TODO: error, must specify a path 
+					// TODO: error, must specify a path
 				}
 			} else {
-				// show the image lightbox
+				// show the PDF lightbox
 				theUi.showPDF(hmap);
 			}
 			
-			
-//		} else {
-//			Window.alert("Unrecognized token=" + token);
+		// A music visualization	
+		} else if (token.equals(Constants.MUSIC_VIEW)) {
+			ParamsHashMap hmap = new ParamsHashMap(args);
+			if (model == null) {
+				String path = hmap.get(Constants.PATH_PARAMETER);
+				if (path != null) {
+					// Redirect navigation to raw resource in server
+					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE, "_self", "");
+				} else {
+					// TODO: error, must specify a path 
+				}
+			} else {
+				// show the music player lightbox
+				theUi.showPlayer(hmap);
+			}
+		} else {
+			// TODO: error, unrecognised token
 		}
 	}
 	

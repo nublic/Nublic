@@ -10,6 +10,7 @@ public class Constants {
 	final static String IMAGE_TYPE = "png";
 	final static String DOCUMENT_VIEW = "document";
 	final static String DOCUMENT_TYPE = "pdf";
+	final static String MUSIC_VIEW = "music";
 	final static String MUSIC_TYPE = "mp3";
 	final static String VIDEO_TYPE = "flv";
 	final static String FOLDER_MIME = "application/x-directory";

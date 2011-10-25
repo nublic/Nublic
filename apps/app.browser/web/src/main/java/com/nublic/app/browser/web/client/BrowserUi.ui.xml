@@ -2,7 +2,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p1="urn:import:com.google.gwt.user.cellview.client">
 	<ui:style>
-
+		.aligntop {
+			vertical-align: top;
+		}
+		.scroll {
+			overflow: scroll;
+		}
 	</ui:style>
 
 	<g:SplitLayoutPanel>
@@ -10,8 +15,8 @@
 	   		<g:Tree ui:field="treeView"/>
 	   	</g:west>
 	   	<g:center>
-	   		<g:FlowPanel ui:field="centralPanel"/>
+	   		<g:FlowPanel ui:field="centralPanel" styleName="{style.aligntop} {style.scroll}"/>
 	   	</g:center>
 	</g:SplitLayoutPanel>
 
-</ui:UiBinder> 
+</ui:UiBinder>
