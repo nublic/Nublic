@@ -105,6 +105,7 @@ public class FileWidget extends Composite {
 		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
 			target = Constants.DOCUMENT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
+			target = Constants.MUSIC_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
 		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
 			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
