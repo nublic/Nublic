@@ -156,6 +156,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     inTransaction {
       Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
       ensure_or_create_album(file, info.artist, info.album)
+      Console.println(info.album)
       Database.songs.insert(info.toSqueryl(file))
     }
   }

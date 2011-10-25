@@ -11,8 +11,6 @@ import java.io.BufferedInputStream
 
 object SongInfo {
   
-  
-  
   def from(filename: String, context: String): SongInfo = {
     var tag_info = JAudioTaggerExtractor.from(filename)
 	if (tag_info.hasImportantInfoMissing) {
@@ -22,7 +20,8 @@ object SongInfo {
 	  }
 	}
     if (tag_info.hasImportantInfoMissing) {
-      val fname = filename.replaceFirst(context, "")
+      val fextract = FilenameExtractor.from(filename, context)
+      tag_info = merge(tag_info, fextract)
     }
     tag_info
   }
