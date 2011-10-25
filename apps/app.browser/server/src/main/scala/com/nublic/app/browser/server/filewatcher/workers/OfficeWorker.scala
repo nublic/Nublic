@@ -122,7 +122,7 @@ object OfficeWorker extends DocumentWorker {
     val magick = new ConvertCmd()
     val op = new IMOperation() 
     op.addImage(pdfFile.getAbsolutePath() + "[0]")
-    op.resize(FileFolder.THUMBNAIL_SIZE)
+    op.resize(FileFolder.THUMBNAIL_SIZE, FileFolder.THUMBNAIL_SIZE)
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
   }

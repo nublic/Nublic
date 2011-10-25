@@ -5,7 +5,6 @@ import org.apache.commons.io.FilenameUtils
 import org.squeryl.PrimitiveTypeMode._
 import com.nublic.filewatcher.scala._
 import com.nublic.app.music.server.Solr
-import com.nublic.app.music.server.SongInfo
 import com.nublic.app.music.server.model._
 
 class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher) {
@@ -65,7 +64,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     val extension = FilenameUtils.getExtension(filename)
     if (taggedExtensions.contains(extension) || 
         taggedMimeTypes.contains(Solr.getMimeType(filename))) {
-      val song_info = SongInfo.from(filename)
+      val song_info = SongInfo.from(filename, context)
       Database.songByFilename(filename) match {
         case Some(song) => replace_in_database(song.id, song_info)
         case None       => add_to_database(filename, song_info)
@@ -157,6 +156,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     inTransaction {
       Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
       ensure_or_create_album(file, info.artist, info.album)
+      Console.println(info.album)
       Database.songs.insert(info.toSqueryl(file))
     }
   }
