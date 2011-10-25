@@ -49,6 +49,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			token = token.substring(0, question);
 		}
 
+		// TODO: not reload when not necessary
 		if (token.isEmpty()) {
 			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
 			if (model == null) {

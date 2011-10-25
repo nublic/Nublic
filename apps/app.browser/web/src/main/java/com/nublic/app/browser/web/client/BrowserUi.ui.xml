@@ -5,6 +5,9 @@
 		.aligntop {
 			vertical-align: top;
 		}
+		.scroll {
+			overflow: scroll;
+		}
 	</ui:style>
 
 	<g:SplitLayoutPanel>
@@ -12,7 +15,7 @@
 	   		<g:Tree ui:field="treeView"/>
 	   	</g:west>
 	   	<g:center>
-	   		<g:FlowPanel ui:field="centralPanel" styleName="{style.aligntop}"/>
+	   		<g:FlowPanel ui:field="centralPanel" styleName="{style.aligntop} {style.scroll}"/>
 	   	</g:center>
 	</g:SplitLayoutPanel>
 
