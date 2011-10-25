@@ -1,3 +1,6 @@
 [submodule "3rd-party-libs/sunburnt"]
 	path = 3rd-party-libs/sunburnt
 	url = git://github.com/tow/sunburnt.git
+[submodule "3rd-party-libs/echoprint-codegen"]
+	path = 3rd-party-libs/echoprint-codegen
+	url = git://github.com/echonest/echoprint-codegen.git

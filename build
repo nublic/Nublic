@@ -30,6 +30,8 @@ initialize() {
     rm -rf ${TARGET_DIR}/*.{deb,build,changes}
     # Install dbus in maven repo
     install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
+    install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar jEN json-simple 1.1
+    install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar jEN jEN 4.x.o
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
 }
@@ -87,7 +89,11 @@ create_repo() {
 }
 
 initialize
+# Libraries
+cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
+build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+# Base modules
 build_deb_package notification/main/src
 package_and_install notification/java
 build_deb_package filewatcher/main/src
@@ -95,9 +101,11 @@ build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 build_deb_package resource/main/src
 #package_and_install resource/java
+# Browser App
 build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
+# Extra configuration packages
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
 build_deb_package conf/nublic

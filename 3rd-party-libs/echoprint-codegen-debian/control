@@ -1,0 +1,12 @@
+Source: echoprint-codegen
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Section: python
+Priority: optional
+Build-Depends: debhelper (>= 7), libtag1-dev, ffmpeg, libboost1.42-dev, zlib1g-dev
+Standards-Version: 3.9.1
+
+Package: echoprint-codegen
+Architecture: all
+Depends: ${misc:Depends}, libtag1c2a, libtagc0, ffmpeg, zlib1g
+Description: Library to convert PCM samples from a microphone or file into Echoprint codes
+
