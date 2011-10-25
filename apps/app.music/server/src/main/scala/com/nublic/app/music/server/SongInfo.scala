@@ -4,12 +4,25 @@ import java.io.File
 import org.jaudiotagger.audio._
 import org.jaudiotagger.tag._
 import com.nublic.app.music.server.model._
+import com.echonest.api.{v4 => E}
 
 object SongInfo {
   
-  def from(filename: String) = {
+  val ECHONEST_API_KEY = "UR4VKX7JXDXAULIWB"
+  
+  def from(filename: String): SongInfo = {
+    Console.println(extract_from_echonest(filename))
     val audio = AudioFileIO.read(new File(filename))
-	extract_info_from_tag(audio.getTag())
+	val tag_info = extract_info_from_tag(audio.getTag())
+	tag_info
+  }
+  
+  def extract_from_echonest(filename: String): String = {
+    val file = new File(filename)
+    val api = new E.EchoNestAPI(ECHONEST_API_KEY)
+    val track = api.getKnownTrack(file)
+    val song = new E.Song(api, track.getSongID())
+    return song.getTitle()
   }
   
   // Functions for extracting tags with JAudioTagger
@@ -38,6 +51,8 @@ object SongInfo {
 case class SongInfo(title: Option[String], artist: Option[String], album: Option[String],
   year: Option[Int], track: Option[Int], disc_no: Option[Int]) {
  
+  def hasImportantInfoMissing = title == None || artist == None || album == None
+  
   def toSqueryl(filename: String) = {
     new Song(0, filename, title.getOrElse(filename),
         artist.map(a => Database.artistByNameNormalizing(a).get).map(_.id).getOrElse(-1),

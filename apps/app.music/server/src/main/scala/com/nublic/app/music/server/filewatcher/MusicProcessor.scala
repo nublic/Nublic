@@ -65,8 +65,11 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     val extension = FilenameUtils.getExtension(filename)
     if (taggedExtensions.contains(extension) || 
         taggedMimeTypes.contains(Solr.getMimeType(filename))) {
-	  val song_info = SongInfo.from(filename)
-	  add_to_database(filename, song_info)
+      val song_info = SongInfo.from(filename)
+      Database.songByFilename(filename) match {
+        case Some(song) => replace_in_database(song.id, song_info)
+        case None       => add_to_database(filename, song_info)
+      }
     }
   }
   
