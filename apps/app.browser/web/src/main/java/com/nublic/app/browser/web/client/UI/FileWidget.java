@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.UI;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.model.FileNode;
 
 public class FileWidget extends Composite {
 
@@ -76,6 +78,7 @@ public class FileWidget extends Composite {
 			
 			// Set up name
 			fileName.setText(n.getName());
+			fileName.setTitle(n.getName());
 			
 			// Set the destination URL
 			setURL(viewType); // modifies both fileThumbnail and fileName
@@ -87,6 +90,7 @@ public class FileWidget extends Composite {
 			// Create the alternative widgets (which are not links)
 			altThumbnail = new Image(url);
 			altName = new Label(n.getName());
+			altName.setTitle(n.getName());
 			
 			// Associate CSS styles
 			altThumbnail.getElement().addClassName(style.maxheight());
@@ -110,6 +114,7 @@ public class FileWidget extends Composite {
 		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
 			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		}
+		// TODO txt type
 		if (fileThumbnail != null && fileName != null) {
 			fileThumbnail.setTargetHistoryToken(target);
 			fileName.setTargetHistoryToken(target);

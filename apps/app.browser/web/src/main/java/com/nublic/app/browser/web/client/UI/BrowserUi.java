@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.UI;
 
 import java.util.List;
 import java.util.Stack;
@@ -10,6 +10,8 @@ import com.bramosystems.oss.player.core.client.Plugin;
 import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -29,19 +31,24 @@ import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.error.ErrorPopup;
+import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FileNode;
+import com.nublic.app.browser.web.client.model.FolderNode;
+import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
+import com.nublic.app.browser.web.client.model.ParamsHashMap;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel> {
+	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
+	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 	
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
-
-	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
+	
 	@UiField FlowPanel centralPanel;
 	@UiField Tree treeView;
 	FixedPopup popUpBox;
-	
-
-	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 
 	public BrowserUi(BrowserModel model) {
 		// Inits
@@ -143,66 +150,86 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
 			final Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE);
+			// Load handler
 			newImage.addLoadHandler(new LoadHandler() {
 				@Override
 				public void onLoad(LoadEvent event) {
-					// these 4 things give the same result
-//					int width = newImage.getWidth();
-//					int width2 = newImage.getElement().getOffsetWidth();
-//					int width3 = ImageElement.as(newImage.getElement()).getWidth();
-//					int width4 = newImage.getOffsetWidth();
 					popUpBox.setOriginalSize(newImage.getWidth(), newImage.getHeight());
+				}
+			});
+			// Error handler (for example when the image hasn't been found)
+			newImage.addErrorHandler(new ErrorHandler() {	
+				@Override
+				public void onError(ErrorEvent event) {
+					popUpBox.hide();
+					ErrorPopup.showError("Image file not found");
 				}
 			});
 
 			popUpBox.setContentWidget(newImage);
 			popUpBox.show();
 		} else {
-			// TODO: error, image not found
+			ErrorPopup.showError("Image file not found");
 		}
 
 	}
-
 
 	public void showPDF(ParamsHashMap hmap) {
 		String path = hmap.get(Constants.PATH_PARAMETER);
 		if (path != null) {
 			Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
+		
 			popUpBox.setContentWidget(frame);
 			popUpBox.show();
 		} else {
-			// TODO: error, image not found
+			ErrorPopup.showError("Document file not found");
 		}
 
 	}
 
-	public void showPlayer(ParamsHashMap hmap) {
+	public void showPlayer(ParamsHashMap hmap, boolean anyplayer) {
 		AbstractMediaPlayer player = null;
 		try {
 			String path = hmap.get(Constants.PATH_PARAMETER);
 			if (path != null) {
-			     // get any player that can playback media
-			     player = PlayerUtil.getPlayer(Plugin.Auto, 
-			    		    GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
-			                false, "50px", "100%");
-	//		     panel.setWidget(player); // add player to panel.
-			     popUpBox.setContentWidget(player);
-			     popUpBox.show();
+				Plugin p = null;
+				// if anyplayer is false will try with the flash plugin, which is the "best" one.
+				if (anyplayer) {
+					p = Plugin.Auto;
+				} else {
+					p = Plugin.FlashPlayer;
+				}
+				player = PlayerUtil.getPlayer(p,
+						GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
+			    		true, "50px", "300px");
+
+				// TODO: if anyplayer quit lists controls
+				
+				popUpBox.setContentWidget(player);
+				popUpBox.show();
 			} else {
-				// TODO: error, music not found
+				ErrorPopup.showError("No path to the resource found");
 			}
 		} catch(LoadException e) {
 		     // catch loading exception and alert user
-			// TODO: error
-//		     Window.alert("An error occured while loading");
+			ErrorPopup.showError("Music file not found");
 		} catch (PluginVersionException e) {
 		     // catch PluginVersionException, thrown if required plugin version is not found
-			popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
-			popUpBox.show();
+			if (anyplayer) {
+				popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
+				popUpBox.show();
+			} else {
+				// If couldn't load with flash plugin we still can try with any other
+				showPlayer(hmap, true);
+			}
 		} catch(PluginNotFoundException e) {
 		     // catch PluginNotFoundException, thrown if no plugin is not found
-			popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
-			popUpBox.show();
+			if (anyplayer) {
+				popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
+				popUpBox.show();
+			} else {
+				showPlayer(hmap, true);
+			}
 		}
 	}
 }

@@ -1,9 +1,11 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.UI;
 
 import java.util.Stack;
 
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FolderNode;
 
 public class TreeAdapter {
 	BrowserModel model;

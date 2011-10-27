@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.model;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.core.client.JsArray;

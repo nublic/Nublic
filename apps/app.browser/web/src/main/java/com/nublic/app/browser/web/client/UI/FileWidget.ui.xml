@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style type='com.nublic.app.browser.web.client.FileWidget.FileStyle'>
+	<ui:style type='com.nublic.app.browser.web.client.UI.FileWidget.FileStyle'>
 		.inLine {
 			display: inline-table;
 			margin: 15px;

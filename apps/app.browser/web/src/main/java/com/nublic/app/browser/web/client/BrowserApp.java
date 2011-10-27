@@ -7,6 +7,11 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.nublic.app.browser.web.client.UI.BrowserUi;
+import com.nublic.app.browser.web.client.UI.EmptyUI;
+import com.nublic.app.browser.web.client.error.ErrorPopup;
+import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.ParamsHashMap;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -22,8 +27,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 	public void onModuleLoad() {
 		model = null;
 		theUi = null;
-		
-		// TODO: install IEs4Linux and try everything
+	
 	    String startingToken = History.getToken();
 	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
@@ -49,8 +53,6 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			args = token.substring(question + 1);
 			token = token.substring(0, question);
 		}
-
-		// TODO: not reload when not necessary
 		
 		// Initial page
 		if (token.isEmpty()) {
@@ -81,13 +83,12 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 					// Redirect navigation to raw resource in server
 					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
 				} else {
-					// TODO: error, must specify a path 
+					ErrorPopup.showError("No path to the resource found");
 				}
 			} else {
 				// show the image lightbox
 				theUi.showImage(hmap);
 			}
-			
 		// A document visualization
 		} else if (token.equals(Constants.DOCUMENT_VIEW)) {
 			ParamsHashMap hmap = new ParamsHashMap(args);
@@ -97,7 +98,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 					// Redirect navigation to raw resource in server
 					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
 				} else {
-					// TODO: error, must specify a path
+					ErrorPopup.showError("No path to the resource found");
 				}
 			} else {
 				// show the PDF lightbox
@@ -110,17 +111,20 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			if (model == null) {
 				String path = hmap.get(Constants.PATH_PARAMETER);
 				if (path != null) {
-					// Redirect navigation to raw resource in server
-					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE, "_self", "");
+					// Create a new "empty" windows with the player
+					EmptyUI empty = new EmptyUI();
+					RootLayoutPanel rp = RootLayoutPanel.get();
+				    rp.add(empty);
+				    empty.showPlayer(hmap, false);
 				} else {
-					// TODO: error, must specify a path 
+					ErrorPopup.showError("No path to the resource found");
 				}
 			} else {
-				// show the music player lightbox
-				theUi.showPlayer(hmap);
+				// show the music player (false will try to look first for the flash player)
+				theUi.showPlayer(hmap, false);
 			}
 		} else {
-			// TODO: error, unrecognised token
+			ErrorPopup.showError("Unrecognized token");
 		}
 	}
 	

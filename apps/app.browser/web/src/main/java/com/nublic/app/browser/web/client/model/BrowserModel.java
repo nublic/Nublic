@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +12,23 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
+import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.error.ErrorPopup;;
 
 public class BrowserModel {
 	
 	FolderNode folderTree;
 	List<FileNode> fileList;
-	
+	String showingURL;
+
 	ArrayList<ModelUpdateHandler> updateHandlers;
 
-	BrowserModel() {
+	public BrowserModel() {
 		 // To initialise the tree
 	    folderTree = new FolderNode();
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
+	    showingURL = "";
 	}
 
 	public void addUpdateHandler(ModelUpdateHandler handler) {	 	
@@ -53,7 +56,7 @@ public class BrowserModel {
 			// It is not unused, we maintain callbacks
 			Request request = builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
-					error("Error receiving answer from server");
+					ErrorPopup.showError("Server unavailable");
 				}
 
 				public void onResponseReceived(Request request, Response response) {
@@ -65,7 +68,7 @@ public class BrowserModel {
 						folderList = JsonUtils.safeEval(text);
 						// Update the tree with the information of folders
 						if (folderList == null) {
-							error("Empty folder tree received");
+							ErrorPopup.showError("Folder not found");
 						} else {
 							//FolderContent.sortList(folderList);
 							updateTree(n, folderList);
@@ -77,13 +80,13 @@ public class BrowserModel {
 						}
 						
 					} else {
-						error("Bad response status");
+						ErrorPopup.showError("The request could not be processed");
 					}
 				}
 
 			});
 		} catch (RequestException e) {
-			error("Exception occurred while processing update of folders");
+			ErrorPopup.showError("Fatal error");
 		}
 	}
 	
@@ -92,51 +95,54 @@ public class BrowserModel {
 		if (path == null) {
 			path = new String("");
 		}
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+		final String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
+		if (!showingURL.equals(url)) {
+			// If the browser is already showing the requested URL we won't update anything
+			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
-		try {
-			@SuppressWarnings("unused")
-			// It is not unused, we maintain callbacks
-			Request request = builder.sendRequest(null, new RequestCallback() {
-				public void onError(Request request, Throwable exception) {
-					error("Error receiving answer from server");
-				}
-
-				public void onResponseReceived(Request request, Response response) {
-					JsArray <FileContent> fileContentList = null;
-					
-					if (Response.SC_OK == response.getStatusCode()) {
-						// When the call is successful
-						String text = response.getText();
-						fileContentList = JsonUtils.safeEval(text);
-						// Update the tree with the information of folders
-						if (fileContentList == null) {
-							error("Wrong file list received");
-						} else {
-							updateFileList(fileContentList);
-
-							// Call every handler looking at the file list
-							for (ModelUpdateHandler handler : updateHandlers) {
-								String path = params.get(Constants.PATH_PARAMETER);
-								if (path == null) {
-									path = new String("");
-								}
-								// Trim the possible firsts '/'
-								while (path.length() != 0 && path.charAt(0) == '/') {
-									path = path.substring(1);
-								}
-								handler.onFilesUpdate(BrowserModel.this, path);
-							}
-						}
-					} else {
-						error("Bad response status");
+			try {
+				@SuppressWarnings("unused")
+				// It is not unused, we maintain callbacks
+				Request request = builder.sendRequest(null, new RequestCallback() {
+					public void onError(Request request, Throwable exception) {
+						ErrorPopup.showError("Server unavailable");
 					}
-				}
+	
+					public void onResponseReceived(Request request, Response response) {
+						JsArray <FileContent> fileContentList = null;
+						
+						if (Response.SC_OK == response.getStatusCode()) {
+							// When the call is successful
+							String text = response.getText();
+							fileContentList = JsonUtils.safeEval(text);
+							// Update the tree with the information of folders
+							if (fileContentList == null) {
+								ErrorPopup.showError("Folder not found");
+							} else {
+								updateFileList(fileContentList, url);
+	
+								// Call every handler looking at the file list
+								for (ModelUpdateHandler handler : updateHandlers) {
+									String path = params.get(Constants.PATH_PARAMETER);
+									if (path == null) {
+										path = new String("");
+									}
+									// Trim the possible firsts '/'
+									while (path.length() != 0 && path.charAt(0) == '/') {
+										path = path.substring(1);
+									}
+									handler.onFilesUpdate(BrowserModel.this, path);
+								}
+							}
+						} else {
+							ErrorPopup.showError("The request could not be processed");
+						}
+					}
 
-			});
-		} catch (RequestException e) {
-			error("Exception occurred while processing update of files");
+				});
+			} catch (RequestException e) {
+				ErrorPopup.showError("Fatal error");
+			}
 		}
 	}
 
@@ -163,7 +169,8 @@ public class BrowserModel {
 		}
 	}
 	
-	public synchronized void updateFileList(JsArray<FileContent> fileContentList) {
+	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url) {
+		showingURL = url;
 		if (fileContentList.length() != 0) {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
@@ -198,10 +205,4 @@ public class BrowserModel {
 		return currentNode;
 	}
 	
-	public void error(String message) {
-		// TODO: extend DialogBox
-		Window.alert(message);
-	}
-
-
 }

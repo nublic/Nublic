@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.model;
 
 
 public class FileNode {

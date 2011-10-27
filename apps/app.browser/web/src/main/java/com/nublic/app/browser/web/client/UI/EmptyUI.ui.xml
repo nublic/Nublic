@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.background {
+			background-color: gray;
+			vertical-align: middle;
+			height: 100%;
+			width: 100%;
+		}
+	</ui:style>
+
+	<g:SimplePanel styleName="{style.background}">
+		<g:FlexTable ui:field="rootPanel" height="100%" width="100%">
+		</g:FlexTable>
+	</g:SimplePanel>
+
+</ui:UiBinder> 

@@ -1,5 +1,6 @@
-package com.nublic.app.browser.web.client;
+package com.nublic.app.browser.web.client.UI;
 
+import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -76,6 +77,8 @@ public class PopupContent extends Composite {
 						internalWidget.setPixelSize(0, 0);
 					}
 				}
+			} else if (internalWidget instanceof AbstractMediaPlayer) {
+//				((AbstractMediaPlayer) internalWidget).ge
 			} else {
 				// If it's not an Image we'll fill the space we have for it
 				internalWidget.setPixelSize(width, height);
