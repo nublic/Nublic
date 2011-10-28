@@ -114,7 +114,7 @@ public class FileWidget extends Composite {
 		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
 			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		}
-		// TODO txt type
+		// TODO: txt type
 		if (fileThumbnail != null && fileName != null) {
 			fileThumbnail.setTargetHistoryToken(target);
 			fileName.setTargetHistoryToken(target);

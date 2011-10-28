@@ -4,11 +4,6 @@ import java.util.List;
 import java.util.Stack;
 
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
-import com.bramosystems.oss.player.core.client.LoadException;
-import com.bramosystems.oss.player.core.client.PlayerUtil;
-import com.bramosystems.oss.player.core.client.Plugin;
-import com.bramosystems.oss.player.core.client.PluginNotFoundException;
-import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
@@ -39,7 +34,7 @@ import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
 
-public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel> {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 	
@@ -171,7 +166,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		} else {
 			ErrorPopup.showError("Image file not found");
 		}
-
 	}
 
 	public void showPDF(ParamsHashMap hmap) {
@@ -184,52 +178,11 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		} else {
 			ErrorPopup.showError("Document file not found");
 		}
-
 	}
 
-	public void showPlayer(ParamsHashMap hmap, boolean anyplayer) {
-		AbstractMediaPlayer player = null;
-		try {
-			String path = hmap.get(Constants.PATH_PARAMETER);
-			if (path != null) {
-				Plugin p = null;
-				// if anyplayer is false will try with the flash plugin, which is the "best" one.
-				if (anyplayer) {
-					p = Plugin.Auto;
-				} else {
-					p = Plugin.FlashPlayer;
-				}
-				player = PlayerUtil.getPlayer(p,
-						GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
-			    		true, "50px", "300px");
-
-				// TODO: if anyplayer quit lists controls
-				
-				popUpBox.setContentWidget(player);
-				popUpBox.show();
-			} else {
-				ErrorPopup.showError("No path to the resource found");
-			}
-		} catch(LoadException e) {
-		     // catch loading exception and alert user
-			ErrorPopup.showError("Music file not found");
-		} catch (PluginVersionException e) {
-		     // catch PluginVersionException, thrown if required plugin version is not found
-			if (anyplayer) {
-				popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
-				popUpBox.show();
-			} else {
-				// If couldn't load with flash plugin we still can try with any other
-				showPlayer(hmap, true);
-			}
-		} catch(PluginNotFoundException e) {
-		     // catch PluginNotFoundException, thrown if no plugin is not found
-			if (anyplayer) {
-				popUpBox.setContentWidget(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
-				popUpBox.show();
-			} else {
-				showPlayer(hmap, true);
-			}
-		}
+	@Override
+	public void showPlayer(AbstractMediaPlayer player) {
+		popUpBox.setContentWidget(player);
+		popUpBox.show();
 	}
 }

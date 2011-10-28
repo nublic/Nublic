@@ -7,7 +7,7 @@
 			margin: 5px;
 		}
 	</ui:style>
-	<g:VerticalPanel horizontalAlignment="center">
+	<g:VerticalPanel ui:field="errorRoot" horizontalAlignment="center">
 		<g:Label ui:field="messageLabel" styleName="{style.padding}">
 		</g:Label>
 		<g:Button ui:field="closeButton" text="Close" styleName="{style.padding}">

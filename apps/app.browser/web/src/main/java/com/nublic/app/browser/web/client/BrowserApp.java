@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.EmptyUI;
+import com.nublic.app.browser.web.client.UI.UIUtils;
 import com.nublic.app.browser.web.client.error.ErrorPopup;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
@@ -106,7 +107,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			}
 			
 		// A music visualization	
-		} else if (token.equals(Constants.MUSIC_VIEW)) {
+		} else if (token.equals(Constants.MUSIC_VIEW) || token.equals(Constants.VIDEO_VIEW)) {
 			ParamsHashMap hmap = new ParamsHashMap(args);
 			if (model == null) {
 				String path = hmap.get(Constants.PATH_PARAMETER);
@@ -115,13 +116,15 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 					EmptyUI empty = new EmptyUI();
 					RootLayoutPanel rp = RootLayoutPanel.get();
 				    rp.add(empty);
-				    empty.showPlayer(hmap, false);
+				    UIUtils.showPlayer(empty, hmap, false);
+//				    empty.showPlayer(hmap, false);
 				} else {
 					ErrorPopup.showError("No path to the resource found");
 				}
 			} else {
 				// show the music player (false will try to look first for the flash player)
-				theUi.showPlayer(hmap, false);
+				UIUtils.showPlayer(theUi, hmap, false);
+				//theUi.showPlayer(hmap, false);
 			}
 		} else {
 			ErrorPopup.showError("Unrecognized token");
