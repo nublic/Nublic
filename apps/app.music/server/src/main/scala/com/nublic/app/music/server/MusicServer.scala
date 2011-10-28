@@ -240,6 +240,9 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/songs/:artistid/:albumid/:order/:asc/:start/:length/*") {
+    // Get start and length
+    val start = Integer.parseInt(params("start"))
+    val length = Integer.parseInt(params("length"))
     // Get query about artists
     val artistid = params("artistid")
     val artist_query: Song => LogicalBoolean = if(artistid == ALL_OF_SOMETHING) {
@@ -291,7 +294,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
             select(s))
         )
       }
-      query.toList
+      query.page(start, length).toList
     }
     val json_songs = songs.map(song_to_json(_))
     write(json_songs)
@@ -308,7 +311,36 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   def song_to_json(s: Song) =
-    JsonSong(s.id, s.title, s.artistId, s.albumId, s.disc_no, s.track)
+		  JsonSong(s.id, s.title, s.artistId, s.albumId, s.disc_no, s.track)
+  
+  // Song files
+  // ==========
+  
+  get("/raw/:songid") {
+    val song_id = Long.parseLong(params("songid"))
+    val song = transaction { Database.songs.lookup(song_id) }
+    song match {
+      case None    => halt(404)
+      case Some(s) => new File(s.file)
+    }
+  }
+  
+  get("/view/:songid.mp3") {
+    val song_id = Long.parseLong(params("songid"))
+    val song = transaction { Database.songs.lookup(song_id) }
+    song match {
+      case None    => halt(404)
+      case Some(s) => {
+        val mp3 = BrowserFolder.getMp3(s.file)
+        if (!mp3.exists()) {
+          halt(404)
+        } else {
+          response.setContentType("audio/mpeg")
+          mp3
+        }
+      }
+    }
+  }
   
   notFound {  // Executed when no other route succeeds
     JNull
