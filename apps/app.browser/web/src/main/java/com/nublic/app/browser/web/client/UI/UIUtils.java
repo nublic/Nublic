@@ -12,7 +12,7 @@ import com.nublic.app.browser.web.client.error.ErrorPopup;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
 
 public class UIUtils {
-	static public void showPlayer(ShowsPlayer destination, ParamsHashMap hmap, boolean anyplayer) {
+	static public void showPlayer(ShowsPlayer destination, ParamsHashMap hmap, boolean anyplayer, String type) {
 		AbstractMediaPlayer player = null;
 		try {
 			String path = hmap.get(Constants.PATH_PARAMETER);
@@ -24,9 +24,16 @@ public class UIUtils {
 				} else {
 					p = Plugin.FlashPlayer;
 				}
-				player = PlayerUtil.getPlayer(p,
-						GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
-			    		true, "50px", "300px");
+				if (type.equals(Constants.MUSIC_VIEW)) {
+					player = PlayerUtil.getPlayer(p,
+							GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
+				    		true, "50px", "300px");
+				} else {
+					player = PlayerUtil.getPlayer(p,
+							GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.VIDEO_TYPE,
+				    		true);
+//				    		, "50px", "300px");
+				}
 
 				// TODO: if anyplayer quit lists controls
 				destination.showPlayer(player);
@@ -42,14 +49,14 @@ public class UIUtils {
 				ErrorPopup.showError(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
 			} else {
 				// If couldn't load with flash plugin we still can try with any other
-				UIUtils.showPlayer(destination, hmap, true);
+				UIUtils.showPlayer(destination, hmap, true, type);
 			}
 		} catch(PluginNotFoundException e) {
 			// No plugin found
 			if (anyplayer) {
 				ErrorPopup.showError(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
 			} else {
-				UIUtils.showPlayer(destination, hmap, true);
+				UIUtils.showPlayer(destination, hmap, true, type);
 			}
 		}
 	}

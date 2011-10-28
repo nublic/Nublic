@@ -46,6 +46,4 @@ public class ErrorPopup extends PopupPanel implements HasText {
 		content.setText(text);
 	}
 
-	
-
 }

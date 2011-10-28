@@ -55,26 +55,15 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			token = token.substring(0, question);
 		}
 		
-		// Initial page
-		if (token.isEmpty()) {
+		// Initial or browser page
+		if (token.isEmpty() || token.equals(Constants.BROWSER_VIEW)) {
 			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
 			if (model == null) {
 				initBrowser();
 			}
 			// show the initial screen (empties the file list of the model)
-			model.updateFiles(new ParamsHashMap());
-			
-		// A browser page
-		} else if (token.equals(Constants.BROWSER_VIEW)) {
-			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
-			if (model == null) {
-				initBrowser();
-			}
-			// show the desired browser page
 			model.updateFiles(new ParamsHashMap(args));
-		
 			
-		// TODO: refactor these (3) switches
 		// An image visualization
 		} else if (token.equals(Constants.IMAGE_VIEW)) {
 			ParamsHashMap hmap = new ParamsHashMap(args);
@@ -116,15 +105,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 					EmptyUI empty = new EmptyUI();
 					RootLayoutPanel rp = RootLayoutPanel.get();
 				    rp.add(empty);
-				    UIUtils.showPlayer(empty, hmap, false);
-//				    empty.showPlayer(hmap, false);
+				    UIUtils.showPlayer(empty, hmap, false, token);
 				} else {
 					ErrorPopup.showError("No path to the resource found");
 				}
 			} else {
 				// show the music player (false will try to look first for the flash player)
-				UIUtils.showPlayer(theUi, hmap, false);
-				//theUi.showPlayer(hmap, false);
+				UIUtils.showPlayer(theUi, hmap, false, token);
 			}
 		} else {
 			ErrorPopup.showError("Unrecognized token");

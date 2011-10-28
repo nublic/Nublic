@@ -38,15 +38,6 @@ public class FileWidget extends Composite {
 	@UiField VerticalPanel textPanel;
 	@UiField FileStyle style;
 
-//	public FileWidget() {
-//		initWidget(uiBinder.createAndBindUi(this));
-//		fileThumbnail = null;
-//		altThumbnail = null;
-//		fileName = null;
-//		altName = null;
-//		path = null;
-//	}
-	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -111,6 +102,7 @@ public class FileWidget extends Composite {
 		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
 			target = Constants.MUSIC_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
+			target = Constants.VIDEO_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
 			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
 		}
