@@ -9,6 +9,7 @@ import org.squeryl.Query
 import org.squeryl.Table
 import java.text.Normalizer
 import java.util.regex.Pattern
+import org.squeryl.dsl.CompositeKey2
 
 object StringUtil {
   def unaccent(s: String): String = {
@@ -44,21 +45,37 @@ class Song(val id: Long, var file: String, var title: String,
   
   lazy val artist: ManyToOne[Artist] = Database.songArtists.right(this)
   lazy val album: ManyToOne[Album] = Database.songAlbums.right(this)
+  lazy val tags = Database.songTags.left(this)
+}
+
+class Tag(val id: Long, var name: String) extends KeyedEntity[Long] {
+  def this() = this(0, "")
+  def this(name: String) = this(0, name)
+  
+  lazy val songs = Database.songTags.right(this)
+}
+
+class SongTag(val songId: Long, val tagId: Long) extends KeyedEntity[CompositeKey2[Long, Long]] {
+  def id = compositeKey(songId, tagId)
 }
 
 object Database extends Schema {
   val artists = table[Artist]
   val albums = table[Album]
   val songs = table[Song]
+  val tags = table[Tag]
   
   val songArtists = oneToManyRelation(artists, songs).
     via((artist, song) => artist.id === song.artistId)
   val songAlbums = oneToManyRelation(albums, songs).
     via((album, song) => album.id === song.albumId)
+  val songTags = manyToManyRelation(songs, tags).
+  	via[SongTag]((s, t, st) => (s.id === st.songId, t.id === st.tagId))
   
   def songByFilename(file: String) = maybe(songs.where(s => s.file === file))
   def artistByNameNormalizing(name: String) = maybe(artists.where(a => a.normalized === StringUtil.normalize(name)))
   def albumByNameNormalizing(name: String) = maybe(albums.where(a => a.normalized === StringUtil.normalize(name)))
+  def tagByName(name: String) = maybe(tags.where(t => t.name === name))
   
   def maybe[R](q: Query[R]): Option[R] = {
     try {
