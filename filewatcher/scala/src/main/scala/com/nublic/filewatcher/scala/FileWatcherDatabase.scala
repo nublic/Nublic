@@ -18,4 +18,10 @@ class FileChangeInDatabase(val id: Long, val ty: String, val pathname: String,
 
 object FileWatcherDatabase extends Schema {
   val files = table[FileChangeInDatabase]("files")
+  
+  on(files)(f => declare(
+    f.pathname     is (dbType("varchar(" + Integer.MAX_VALUE.toString() + ")")),
+    f.src_pathname is (dbType("varchar(" + Integer.MAX_VALUE.toString() + ")")),
+    f.context      is (dbType("varchar(" + Integer.MAX_VALUE.toString() + ")"))
+  ))
 }

@@ -11,7 +11,11 @@ abstract class Processor(val name: String, val watcher: FileWatcherActor) extend
     loop {
       react {
         case ForwardFileChange(id, c) => {
-          process(c)
+          try {
+            process(c)
+          } catch {
+            case t: Throwable => Console.println("ERROR IN " + name + " PROCESSOR: " + t.getMessage())
+          }
           watcher ! BackFileChange(name, id, c)
         }
       }
