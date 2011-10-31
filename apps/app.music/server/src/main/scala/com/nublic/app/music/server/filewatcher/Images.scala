@@ -14,6 +14,8 @@ import org.im4java.core.IMOperation
 import net.liftweb.json._
 import org.apache.commons.io.IOUtils
 import java.net.URI
+import org.jaudiotagger.audio.AudioFileIO
+import java.io.FileOutputStream
 
 object Images {
   
@@ -58,10 +60,40 @@ object Images {
     }
   }
   
-  def ensureAlbum(ab: Album, ar: Option[Artist]) = 
-    ensure(ab.id, l => MusicFolder.getAlbumFolder(l), getAlbumImage(ab, ar))
+  def ensureAlbum(mp3_file: File, ab: Album, ar: Option[Artist]) = 
+    ensure(ab.id, l => MusicFolder.getAlbumFolder(l), getAlbumImage(mp3_file, ab, ar))
   
-  def getAlbumImage(ab: Album, ar: Option[Artist])(f: File) = {
+  def getAlbumImage(mp3_file: File, ab: Album, ar: Option[Artist])(f: File) {
+    for (getter <- List(getAlbumImageFilesystem(mp3_file)_, getAlbumImageEmbedded(mp3_file)_, getAlbumImageDiscogs(ab, ar)_)) {
+      if (!f.exists()) {
+        getter(f)
+      }
+    }
+  }
+    
+  def getAlbumImageFilesystem(mp3_f: File)(image_f: File) = {
+    val regex = """(cover|folder|front|album|albumart)\.(jpg|jpeg|png|bmp)"""
+    mp3_f.getParentFile().listFiles().toList.filterNot(_.isDirectory).filter(f => f.getName().matches(regex)) match {
+      case cover_file :: _ => FileUtils.copyFile(cover_file, image_f)
+      case _               => { /* Do nothing */ }
+    }
+  }
+  
+  def getAlbumImageEmbedded(mp3_f: File)(image_f: File) = {
+    try {
+      val audio = AudioFileIO.read(mp3_f)
+      val tag = audio.getTag()
+      val artwork = tag.getFirstArtwork()
+      if (artwork != null) {
+        val stream = new FileOutputStream(image_f)
+        stream.write(artwork.getBinaryData())
+        stream.flush()
+        stream.close()
+      }
+    }
+  }
+  
+  def getAlbumImageDiscogs(ab: Album, ar: Option[Artist])(f: File) = {
     try {
       val search = "f=json&type=releases&q=" + ab.name + " " + ar.map(_.name).getOrElse("")
       val json_uri = new URI("http", "api.discogs.com", "/search", search, null)

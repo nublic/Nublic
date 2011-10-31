@@ -177,7 +177,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       val artist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
       Images.ensureArtist(artist)
       val album = ensure_or_create_album(file, info.artist, info.album)
-      Images.ensureAlbum(album, Some(artist))
+      Images.ensureAlbum(new File(file), album, Some(artist))
       val song = new Song()
       song.file = file
       song.title = info.title.getOrElse("")
@@ -199,7 +199,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         val newArtist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
         Images.ensureArtist(newArtist)
         val newAlbum = ensure_or_create_album(song.file, info.artist, info.album)
-        Images.ensureAlbum(newAlbum, Some(newArtist))
+        Images.ensureAlbum(new File(file), newAlbum, Some(newArtist))
         song.title = info.title.getOrElse("")
         song.artistId = newArtist.id
         song.albumId = newAlbum.id
