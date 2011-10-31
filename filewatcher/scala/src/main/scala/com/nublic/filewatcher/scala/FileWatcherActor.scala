@@ -108,7 +108,9 @@ abstract class FileWatcherActor(val app_name: String) extends Actor {
       try {
         FileWatcherDatabase.create
       } catch {
-        case _ => { /* Table is already created */ }
+        case e: Throwable => { 
+          Console.println(e.getMessage())
+        }
       }
     }
   }
