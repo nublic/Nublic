@@ -12,7 +12,7 @@ public class ErrorPopup extends PopupPanel implements HasText {
 		this.add(content);
 		setStyle();
 	}
-	
+
 	public ErrorPopup(Widget w) {
 		content = new ErrorContent(this);
 		content.setInternalWidget(w);

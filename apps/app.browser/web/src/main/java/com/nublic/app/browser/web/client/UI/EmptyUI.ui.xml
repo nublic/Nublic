@@ -5,14 +5,17 @@
 		.background {
 			background-color: gray;
 			vertical-align: middle;
+			text-align: center;
 			height: 100%;
 			width: 100%;
 		}
 	</ui:style>
 
-	<g:SimplePanel styleName="{style.background}">
-		<g:FlexTable ui:field="rootPanel" height="100%" width="100%">
-		</g:FlexTable>
-	</g:SimplePanel>
+<!-- 	<g:SimplePanel styleName="{style.background}"> -->
+<!-- 		<g:FlexTable ui:field="rootPanel" height="100%" width="100%"> -->
+<!-- 		</g:FlexTable> -->
+<!-- 	</g:SimplePanel> -->
+	<g:SimpleLayoutPanel ui:field="rootPanel" styleName="{style.background}">
+	</g:SimpleLayoutPanel>
 
 </ui:UiBinder> 

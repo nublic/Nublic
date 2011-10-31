@@ -27,12 +27,13 @@ public class UIUtils {
 				if (type.equals(Constants.MUSIC_VIEW)) {
 					player = PlayerUtil.getPlayer(p,
 							GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
-				    		true, "50px", "300px");
+							true, "100%", "100%");
+//				    		true, "50px", "300px");
 				} else {
 					player = PlayerUtil.getPlayer(p,
 							GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.VIDEO_TYPE,
-				    		true);
-//				    		, "50px", "300px");
+				    		true, "100%", "100%");
+//					player.setResizeToVideoSize(true);
 				}
 
 				// TODO: if anyplayer quit lists controls

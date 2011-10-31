@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.SimpleLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class EmptyUI extends Composite implements ShowsPlayer {
@@ -17,17 +18,32 @@ public class EmptyUI extends Composite implements ShowsPlayer {
 	interface EmptyUIUiBinder extends UiBinder<Widget, EmptyUI> {
 	}
 
-	@UiField FlexTable rootPanel;
+//	@UiField FlexTable rootPanel;
+//	
+//	public EmptyUI() {
+//		initWidget(uiBinder.createAndBindUi(this));
+//		rootPanel.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
+//		rootPanel.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);;
+//	}
+//	
+//	@Override
+//	public void showPlayer(AbstractMediaPlayer player) {
+//		rootPanel.setWidget(0, 0, player);
+//	}
+
+	@UiField SimpleLayoutPanel rootPanel;
 	
 	public EmptyUI() {
 		initWidget(uiBinder.createAndBindUi(this));
-		rootPanel.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
-		rootPanel.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);;
+//		rootPanel.getFlexCellFormatter().setVerticalAlignment(0, 0, HasVerticalAlignment.ALIGN_MIDDLE);
+//		rootPanel.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER);;
 	}
 	
 	@Override
 	public void showPlayer(AbstractMediaPlayer player) {
-		rootPanel.setWidget(0, 0, player);
+//		rootPanel.setWidget(0, 0, player);
+		rootPanel.add(player);
 	}
 
+	
 }
