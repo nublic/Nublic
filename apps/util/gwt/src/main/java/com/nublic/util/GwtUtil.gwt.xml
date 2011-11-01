@@ -8,4 +8,5 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='gwt'/>
+  <source path='graph'/>
 </module>
