@@ -9,4 +9,5 @@
   <!-- Specify the paths for translatable code                    -->
   <source path='gwt'/>
   <source path='graph'/>
+  <source path='lattice'/>
 </module>
