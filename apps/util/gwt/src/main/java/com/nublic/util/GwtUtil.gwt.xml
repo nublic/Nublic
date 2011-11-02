@@ -5,9 +5,11 @@
   <inherits name='com.google.gwt.http.HTTP'/>
   <!-- To prevent "required inherited module" error               -->
   <inherits name="com.google.gwt.junit.JUnit"/>
+  <inherits name="com.google.common.collect.Collect"/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='gwt'/>
   <source path='graph'/>
   <source path='lattice'/>
+  <source path='messages'/>
 </module>
