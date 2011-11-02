@@ -16,6 +16,7 @@ public class SimpleLattice<T> implements Lattice<T> {
 	
 	public SimpleLattice(PartialComparator<T> comparator) {
 		this.elements = Lists.newArrayList();
+		this.comparator = comparator;
 	}
 
 	@Override
