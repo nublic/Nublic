@@ -156,6 +156,12 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
+  get("/artist-art/:artistid.png") {
+    val artist_id = Long.parseLong(params("artistid"))
+    val place = new File(MusicFolder.getArtistFolder(artist_id), MusicFolder.THUMBNAIL_FILENAME)
+    if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
+  }
+  
   def artist_to_json(a: GroupWithMeasures[LongType, Product3[StringType, LongType, LongType]]) =
     JsonArtist(a.key, a.measures._1, a.measures._2, a.measures._3)
   
@@ -215,6 +221,12 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       case None    => halt(404)
       case Some(a) => write(album_to_json(a))
     }
+  }
+  
+  get("/album-art/:albumid.png") {
+    val album_id = Long.parseLong(params("albumid"))
+    val place = new File(MusicFolder.getAlbumFolder(album_id), MusicFolder.THUMBNAIL_FILENAME)
+    if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
   }
   
   def album_to_json(a: GroupWithMeasures[LongType, Product2[StringType, LongType]]) =
@@ -311,7 +323,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   def song_to_json(s: Song) =
-		  JsonSong(s.id, s.title, s.artistId, s.albumId, s.disc_no, s.track)
+	JsonSong(s.id, s.title, s.artistId, s.albumId, s.disc_no, s.track)
   
   // Song files
   // ==========
