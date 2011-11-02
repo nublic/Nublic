@@ -13,10 +13,13 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.browser.web.client.Constants;
-import com.nublic.app.browser.web.client.error.ErrorPopup;;
+import com.nublic.app.browser.web.client.error.ErrorPopup;
+import com.nublic.util.messages.SequenceIgnorer;
+import com.nublic.util.messages.SequenceWaiter;
 
 public class BrowserModel {
-	
+	SequenceWaiter<FolderMessage> foldersMessageHelper;
+	SequenceIgnorer<FileMessage> filesMessageHelper;
 	FolderNode folderTree;
 	List<FileNode> fileList;
 	String showingURL;
@@ -29,10 +32,16 @@ public class BrowserModel {
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
 	    showingURL = "";
+	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
+	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
 	}
 
 	public void addUpdateHandler(ModelUpdateHandler handler) {	 	
 	    updateHandlers.add(handler);
+	}
+	
+	public List<ModelUpdateHandler> getUpdateHandlers() {
+		return updateHandlers;
 	}
 	
 	// Getters
@@ -47,47 +56,49 @@ public class BrowserModel {
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		
-		// TODO: Sequence numbers to "ignore" unupdated responses
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + n.getPath());
-		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+		FolderMessage message = new FolderMessage(n, depth, this);
+		foldersMessageHelper.send(message, RequestBuilder.GET);
+		
+//		String url = URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + n.getPath());
+//		RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
 
-		try {
-			@SuppressWarnings("unused")
-			// It is not unused, we maintain callbacks
-			Request request = builder.sendRequest(null, new RequestCallback() {
-				public void onError(Request request, Throwable exception) {
-					ErrorPopup.showError("Server unavailable");
-				}
-
-				public void onResponseReceived(Request request, Response response) {
-					JsArray <FolderContent> folderList = null;
-					
-					if (Response.SC_OK == response.getStatusCode()) {
-						// When the call is successful
-						String text = response.getText();
-						folderList = JsonUtils.safeEval(text);
-						// Update the tree with the information of folders
-						if (folderList == null) {
-							ErrorPopup.showError("Folder not found");
-						} else {
-							//FolderContent.sortList(folderList);
-							updateTree(n, folderList);
-						}
-
-						// Call every handler looking at the folder tree
-						for (ModelUpdateHandler handler : updateHandlers) {	 	
-							handler.onFoldersUpdate(BrowserModel.this, n);	
-						}
-						
-					} else {
-						ErrorPopup.showError("The request could not be processed");
-					}
-				}
-
-			});
-		} catch (RequestException e) {
-			ErrorPopup.showError("Fatal error");
-		}
+//		try {
+//			@SuppressWarnings("unused")
+//			// It is not unused, we maintain callbacks
+//			Request request = builder.sendRequest(null, new RequestCallback() {
+//				public void onError(Request request, Throwable exception) {
+//					ErrorPopup.showError("Server unavailable");
+//				}
+//
+//				public void onResponseReceived(Request request, Response response) {
+//					JsArray <FolderContent> folderList = null;
+//					
+//					if (Response.SC_OK == response.getStatusCode()) {
+//						// When the call is successful
+//						String text = response.getText();
+//						folderList = JsonUtils.safeEval(text);
+//						// Update the tree with the information of folders
+//						if (folderList == null) {
+//							ErrorPopup.showError("Folder not found");
+//						} else {
+//							//FolderContent.sortList(folderList);
+//							updateTree(n, folderList);
+//						}
+//
+//						// Call every handler looking at the folder tree
+//						for (ModelUpdateHandler handler : updateHandlers) {	 	
+//							handler.onFoldersUpdate(BrowserModel.this, n);	
+//						}
+//						
+//					} else {
+//						ErrorPopup.showError("The request could not be processed");
+//					}
+//				}
+//
+//			});
+//		} catch (RequestException e) {
+//			ErrorPopup.showError("Fatal error");
+//		}
 	}
 	
 	public void updateFiles(final ParamsHashMap params) {
@@ -95,55 +106,61 @@ public class BrowserModel {
 		if (path == null) {
 			path = new String("");
 		}
-		final String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
-		if (!showingURL.equals(url)) {
-			// If the browser is already showing the requested URL we won't update anything
-			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
-
-			try {
-				@SuppressWarnings("unused")
-				// It is not unused, we maintain callbacks
-				Request request = builder.sendRequest(null, new RequestCallback() {
-					public void onError(Request request, Throwable exception) {
-						ErrorPopup.showError("Server unavailable");
-					}
-	
-					public void onResponseReceived(Request request, Response response) {
-						JsArray <FileContent> fileContentList = null;
-						
-						if (Response.SC_OK == response.getStatusCode()) {
-							// When the call is successful
-							String text = response.getText();
-							fileContentList = JsonUtils.safeEval(text);
-							// Update the tree with the information of folders
-							if (fileContentList == null) {
-								ErrorPopup.showError("Folder not found");
-							} else {
-								updateFileList(fileContentList, url);
-	
-								// Call every handler looking at the file list
-								for (ModelUpdateHandler handler : updateHandlers) {
-									String path = params.get(Constants.PATH_PARAMETER);
-									if (path == null) {
-										path = new String("");
-									}
-									// Trim the possible firsts '/'
-									while (path.length() != 0 && path.charAt(0) == '/') {
-										path = path.substring(1);
-									}
-									handler.onFilesUpdate(BrowserModel.this, path);
-								}
-							}
-						} else {
-							ErrorPopup.showError("The request could not be processed");
-						}
-					}
-
-				});
-			} catch (RequestException e) {
-				ErrorPopup.showError("Fatal error");
-			}
+		FileMessage message = new FileMessage(path, this);
+		
+		if (!showingURL.equals(message.getURL())) {
+			filesMessageHelper.send(message, RequestBuilder.GET);
 		}
+		
+//		final String url = URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
+//		if (!showingURL.equals(url)) {
+//			// If the browser is already showing the requested URL we won't update anything
+//			RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, url);
+//
+//			try {
+//				@SuppressWarnings("unused")
+//				// It is not unused, we maintain callbacks
+//				Request request = builder.sendRequest(null, new RequestCallback() {
+//					public void onError(Request request, Throwable exception) {
+//						ErrorPopup.showError("Server unavailable");
+//					}
+//	
+//					public void onResponseReceived(Request request, Response response) {
+//						JsArray <FileContent> fileContentList = null;
+//						
+//						if (Response.SC_OK == response.getStatusCode()) {
+//							// When the call is successful
+//							String text = response.getText();
+//							fileContentList = JsonUtils.safeEval(text);
+//							// Update the tree with the information of folders
+//							if (fileContentList == null) {
+//								ErrorPopup.showError("Folder not found");
+//							} else {
+//								updateFileList(fileContentList, url);
+//	
+//								// Call every handler looking at the file list
+//								for (ModelUpdateHandler handler : updateHandlers) {
+//									String path = params.get(Constants.PATH_PARAMETER);
+//									if (path == null) {
+//										path = new String("");
+//									}
+//									// Trim the possible firsts '/'
+//									while (path.length() != 0 && path.charAt(0) == '/') {
+//										path = path.substring(1);
+//									}
+//									handler.onFilesUpdate(BrowserModel.this, path);
+//								}
+//							}
+//						} else {
+//							ErrorPopup.showError("The request could not be processed");
+//						}
+//					}
+//
+//				});
+//			} catch (RequestException e) {
+//				ErrorPopup.showError("Fatal error");
+//			}
+//		}
 	}
 
 	// Update methods for responses
