@@ -2,6 +2,7 @@ package com.nublic.util.lattice;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.thirdparty.guava.common.base.Function;
@@ -14,6 +15,7 @@ import com.nublic.util.graph.EdgeReversedGraph;
 import com.nublic.util.graph.Graph;
 import com.nublic.util.graph.SimpleDirectedGraph;
 import com.nublic.util.graph.algorithms.BellmanFordShortestPath;
+import com.nublic.util.graph.traversal.DepthFirstIterator;
 
 public class GraphLattice<T> implements Lattice<T> {
 	
@@ -26,8 +28,59 @@ public class GraphLattice<T> implements Lattice<T> {
 	}
 
 	@Override
-	public void insert(T t) {
-		
+	public void insert(final T t) {
+		// Generate maximal and minimal sets
+		final Set<T> greater = Sets.filter(graph.vertexSet(), new Predicate<T>() {
+			@Override
+			public boolean apply(T e) {
+				return comparator.compare(e, t) == Ordering.GREATER;
+			}
+		});
+		final Set<T> less = Sets.filter(graph.vertexSet(), new Predicate<T>() {
+			@Override
+			public boolean apply(T e) {
+				return comparator.compare(e, t) == Ordering.LESS;
+			}
+		});
+		Set<T> greater_minimal = Sets.filter(greater, new Predicate<T>() {
+			@Override
+			public boolean apply(T e) {
+				for (T g : greater) {
+					if (comparator.compare(e, g) == Ordering.GREATER) {
+						return false;
+					}
+				}
+				return true;
+			}
+		});
+		Set<T> less_maximal = Sets.filter(less, new Predicate<T>() {
+			@Override
+			public boolean apply(T e) {
+				for (T l : less) {
+					if (comparator.compare(e, l) == Ordering.LESS) {
+						return false;
+					}
+				}
+				return true;
+			}
+		});
+		// Check if some edge exists and break it
+		for (T in :less_maximal) {
+			for (T out : greater_minimal) {
+				if (graph.containsEdge(in, out)) {
+					graph.removeEdge(in, out);
+				}
+			}
+		}
+		// Add vertex
+		graph.addVertex(t);
+		// Create edges
+		for (T in : less_maximal) {
+			graph.addEdge(in, t);
+		}
+		for (T out : greater_minimal) {
+			graph.addEdge(t, out);
+		}
 	}
 
 	@Override
@@ -70,26 +123,20 @@ public class GraphLattice<T> implements Lattice<T> {
 	}
 
 	@Override
-	public Set<T> elementsGreaterThan(T t) {
+	public List<T> elementsGreaterThan(T t) {
 		return elementsReachable(graph, t);
 	}
 
 	@Override
-	public Set<T> elementsLessThan(T t) {
+	public List<T> elementsLessThan(T t) {
 		return elementsReachable(new EdgeReversedGraph<T, DefaultEdge>(graph), t);
 	}
 	
-	private Set<T> elementsReachable(Graph<T, DefaultEdge> g, T t) {
-		final BellmanFordShortestPath<T, DefaultEdge> bellman = new BellmanFordShortestPath<T, DefaultEdge>(g, t);
-		Set<T> vertices = Sets.newHashSet(graph.vertexSet());
-		Collection<T> filtered = Collections2.filter(vertices, new Predicate<T>() {
-			@Override
-			public boolean apply(T e) {
-				double cost = bellman.getCost(e);
-				return cost > 0 && !Double.isInfinite(cost);
-			}
-		});
-		return Sets.newHashSet(filtered);
+	private List<T> elementsReachable(Graph<T, DefaultEdge> g, final T t) {
+		DepthFirstIterator<T, DefaultEdge> breadth = new DepthFirstIterator<T, DefaultEdge>(g, t);
+		List<T> items = Lists.newArrayList(breadth);
+		items.remove(0);
+		return items;
 	}
 
 }

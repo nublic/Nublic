@@ -1,11 +1,11 @@
 package com.nublic.util.lattice;
 
-import java.util.Set;
+import java.util.List;
 
 public interface Lattice<T> {
 	void insert(T t);
 	void remove(T t);
 	boolean contains(T t);
-	Set<T> elementsGreaterThan(T t);
-	Set<T> elementsLessThan(T t);
+	List<T> elementsGreaterThan(T t);
+	List<T> elementsLessThan(T t);
 }
