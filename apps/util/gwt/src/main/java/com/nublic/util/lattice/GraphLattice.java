@@ -63,6 +63,11 @@ public class GraphLattice<T> implements Lattice<T> {
 			}
 		}
 	}
+	
+	@Override
+	public boolean contains(T t) {
+		return graph.containsVertex(t);
+	}
 
 	@Override
 	public Set<T> elementsGreaterThan(T t) {

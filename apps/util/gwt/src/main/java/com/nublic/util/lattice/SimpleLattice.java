@@ -28,6 +28,11 @@ public class SimpleLattice<T> implements Lattice<T> {
 	public void remove(T t) {
 		this.elements.remove(t);
 	}
+	
+	@Override
+	public boolean contains(T t) {
+		return this.elements.contains(t);
+	}
 
 	@Override
 	public Set<T> elementsGreaterThan(T t) {

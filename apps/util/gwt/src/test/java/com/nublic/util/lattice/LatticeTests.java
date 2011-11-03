@@ -41,6 +41,9 @@ public class LatticeTests {
 				LatticeElement elementToInsert = elements[permutation.get(i)];
 				simple.insert(elementToInsert);
 				graph.insert(elementToInsert);
+				// Check it is inserted
+				assertTrue(simple.contains(elementToInsert));
+				assertTrue(graph.contains(elementToInsert));
 				// Check in each stage everything is fine
 				for (int j = 0; j <= i; j++) {
 					LatticeElement elementToCheck = elements[permutation.get(j)];
@@ -55,6 +58,9 @@ public class LatticeTests {
 				LatticeElement elementToRemove = elements[permutation.get(i)];
 				simple.remove(elementToRemove);
 				graph.remove(elementToRemove);
+				// Check it is removed
+				assertFalse(simple.contains(elementToRemove));
+				assertFalse(graph.contains(elementToRemove));
 				// Check in each stage everything is fine
 				for (int j = i + 1; j < permutation.size(); j++) {
 					LatticeElement elementToCheck = elements[permutation.get(j)];
