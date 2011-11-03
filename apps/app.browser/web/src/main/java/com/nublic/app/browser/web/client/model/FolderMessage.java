@@ -18,9 +18,19 @@ public class FolderMessage extends Message {
 	public static class Comparator implements PartialComparator<FolderMessage> {
 		@Override
 		public Ordering compare(FolderMessage a, FolderMessage b) {
-			// TODO: check if one if subsequence of the other and then check sequence numbers
-//			if (a.getURL().)
-			return null;
+			if (a.equals(b)) {
+				// Same sequence number
+				return Ordering.EQUAL;
+			} else if (a.getURL().equals(b.getURL())) {
+				// Same path but different sequence numbers
+				return Ordering.INCOMPARABLE;
+			} else if (a.getURL().startsWith(b.getURL())) {
+				return Ordering.LESS;
+			} else if (b.getURL().startsWith(a.getURL())) {
+				return Ordering.GREATER;
+			} else {
+				return Ordering.INCOMPARABLE;
+			}
 		}
 	}
 	
@@ -29,6 +39,7 @@ public class FolderMessage extends Message {
 		this.depth = depth;
 		this.model = model;
 	}
+	
 
 	@Override
 	public String getURL() {
@@ -59,7 +70,6 @@ public class FolderMessage extends Message {
 		} else {
 			ErrorPopup.showError("The request could not be processed");
 		}
-		
 	}
 
 	@Override
