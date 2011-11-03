@@ -49,9 +49,7 @@ import java.io.*;
  *
  * @author John V. Sichi
  */
-class IntrusiveEdge
-    implements Cloneable,
-        Serializable
+class IntrusiveEdge implements Serializable
 {
     //~ Static fields/initializers ---------------------------------------------
 
@@ -63,18 +61,4 @@ class IntrusiveEdge
 
     Object target;
 
-    //~ Methods ----------------------------------------------------------------
-
-    /**
-     * @see Object#clone()
-     */
-    public Object clone()
-    {
-        try {
-            return super.clone();
-        } catch (CloneNotSupportedException e) {
-            // shouldn't happen as we are Cloneable
-            throw new InternalError();
-        }
-    }
 }

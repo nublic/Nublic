@@ -5,12 +5,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import com.google.gwt.thirdparty.guava.common.base.Function;
-import com.google.gwt.thirdparty.guava.common.base.Predicate;
-import com.google.gwt.thirdparty.guava.common.collect.Collections2;
-import com.google.gwt.thirdparty.guava.common.collect.Lists;
-import com.google.gwt.thirdparty.guava.common.collect.Sets;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.nublic.util.graph.DefaultEdge;
+import com.nublic.util.graph.DefaultEdgeFactory;
 import com.nublic.util.graph.DirectedGraph;
 import com.nublic.util.graph.DirectedSubgraph;
 import com.nublic.util.graph.EdgeReversedGraph;
@@ -26,7 +27,7 @@ public class GraphLattice<T> implements Lattice<T> {
 	
 	public GraphLattice(PartialComparator<T> comparator) {
 		this.comparator = comparator;
-		this.graph = new SimpleDirectedGraph<T, DefaultEdge>(DefaultEdge.class);
+		this.graph = new SimpleDirectedGraph<T, DefaultEdge>(new DefaultEdgeFactory<T>());
 	}
 
 	@Override

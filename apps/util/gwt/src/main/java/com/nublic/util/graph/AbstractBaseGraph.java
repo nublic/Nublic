@@ -312,44 +312,6 @@ public abstract class AbstractBaseGraph<V, E>
     }
 
     /**
-     * Returns a shallow copy of this graph instance. Neither edges nor vertices
-     * are cloned.
-     *
-     * @return a shallow copy of this set.
-     *
-     * @throws RuntimeException
-     *
-     * @see java.lang.Object#clone()
-     */
-    public Object clone()
-    {
-        try {
-            TypeUtil<AbstractBaseGraph<V, E>> typeDecl = null;
-
-            AbstractBaseGraph<V, E> newGraph =
-                TypeUtil.uncheckedCast(super.clone(), typeDecl);
-
-            newGraph.edgeMap = new LinkedHashMap<E, IntrusiveEdge>();
-
-            newGraph.edgeFactory = this.edgeFactory;
-            newGraph.unmodifiableEdgeSet = null;
-            newGraph.unmodifiableVertexSet = null;
-
-            // NOTE:  it's important for this to happen in an object
-            // method so that the new inner class instance gets associated with
-            // the right outer class instance
-            newGraph.specifics = newGraph.createSpecifics();
-
-            Graphs.addGraph(newGraph, this);
-
-            return newGraph;
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    /**
      * @see Graph#containsEdge(Object)
      */
     public boolean containsEdge(E e)

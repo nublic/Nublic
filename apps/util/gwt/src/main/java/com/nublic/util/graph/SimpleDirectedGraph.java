@@ -56,16 +56,6 @@ public class SimpleDirectedGraph<V, E>
     //~ Constructors -----------------------------------------------------------
 
     /**
-     * Creates a new simple directed graph.
-     *
-     * @param edgeClass class on which to base factory for edges
-     */
-    public SimpleDirectedGraph(Class<? extends E> edgeClass)
-    {
-        this(new ClassBasedEdgeFactory<V, E>(edgeClass));
-    }
-
-    /**
      * Creates a new simple directed graph with the specified edge factory.
      *
      * @param ef the edge factory of the new graph.

@@ -79,7 +79,7 @@ public class DepthFirstIterator<V, E>
     /**
      * @see #getStack
      */
-    private Deque<Object> stack = new ArrayDeque<Object>();
+    private Stack<Object> stack = new Stack<Object>();
 
     private transient TypeUtil<V> vertexTypeDecl = null;
 
@@ -121,7 +121,7 @@ public class DepthFirstIterator<V, E>
             if (stack.isEmpty()) {
                 return true;
             }
-            if (stack.getLast() != SENTINEL) {
+            if (stack.peek() != SENTINEL) {
                 // Found a non-sentinel.
                 return false;
             }
@@ -130,7 +130,7 @@ public class DepthFirstIterator<V, E>
             // and then loop to check the rest of the stack.
 
             // Pop null we peeked at above.
-            stack.removeLast();
+            stack.pop();
 
             // This will pop corresponding vertex to be recorded as finished.
             recordFinish();
@@ -143,7 +143,7 @@ public class DepthFirstIterator<V, E>
     protected void encounterVertex(V vertex, E edge)
     {
         putSeenData(vertex, VisitColor.WHITE);
-        stack.addLast(vertex);
+        stack.push(vertex);
     }
 
     /**
@@ -164,9 +164,27 @@ public class DepthFirstIterator<V, E>
         // assumption that for typical topologies and traversals,
         // it's likely to be nearer the top of the stack than
         // the bottom of the stack.
-        boolean found = stack.removeLastOccurrence(vertex);
+        boolean found = removeLastOccurrence(stack, vertex);
         assert (found);
-        stack.addLast(vertex);
+        stack.push(vertex);
+    }
+    
+    private boolean removeLastOccurrence(Stack<Object> s, Object vertex) {
+    	Stack<Object> es = new Stack<Object>();
+    	boolean found = false;
+    	while (!s.isEmpty()) {
+    		Object o = s.pop();
+    		if (o.equals(vertex)) {
+    			found = true;
+    			break;
+    		}
+    		es.push(o);
+    	}
+    	while (!es.isEmpty()) {
+    		Object o = es.pop();
+    		s.push(o);
+    	}
+    	return found;
     }
 
     /**
@@ -176,7 +194,7 @@ public class DepthFirstIterator<V, E>
     {
         V v;
         for (;;) {
-            Object o = stack.removeLast();
+            Object o = stack.pop();
             if (o == SENTINEL) {
                 // This is a finish-time sentinel we previously pushed.
                 recordFinish();
@@ -190,15 +208,15 @@ public class DepthFirstIterator<V, E>
 
         // Push a sentinel for v onto the stack so that we'll know
         // when we're done with it.
-        stack.addLast(v);
-        stack.addLast(SENTINEL);
+        stack.push(v);
+        stack.push(SENTINEL);
         putSeenData(v, VisitColor.GRAY);
         return v;
     }
 
     private void recordFinish()
     {
-        V v = TypeUtil.uncheckedCast(stack.removeLast(), vertexTypeDecl);
+        V v = TypeUtil.uncheckedCast(stack.pop(), vertexTypeDecl);
         putSeenData(v, VisitColor.BLACK);
         finishVertex(v);
     }
@@ -212,7 +230,7 @@ public class DepthFirstIterator<V, E>
      *
      * @return stack
      */
-    public Deque<Object> getStack()
+    public Stack<Object> getStack()
     {
         return stack;
     }

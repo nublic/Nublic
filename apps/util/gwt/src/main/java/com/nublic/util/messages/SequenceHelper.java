@@ -6,20 +6,19 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.util.lattice.Lattice;
+import com.nublic.util.lattice.GraphLattice;
 import com.nublic.util.lattice.PartialComparator;
-import com.nublic.util.lattice.SimpleLattice;
 
 public abstract class SequenceHelper <M extends Message> {
 	protected Object lock;
 	private long lastSequenceNumber;
-	protected Lattice<M> messageLattice;
+	protected GraphLattice<M> messageLattice;
 //	protected ArrayList<M> messageList = new ArrayList<M>();
 
 	SequenceHelper(PartialComparator<M> comparator) {
 		lock = new Object();
 		lastSequenceNumber = 0;
-		messageLattice = new SimpleLattice<M>(comparator);		
+		messageLattice = new GraphLattice<M>(comparator);		
 	}
 	
 	public void send(final M message, RequestBuilder.Method method) {
@@ -38,12 +37,16 @@ public abstract class SequenceHelper <M extends Message> {
 			// It is not unused, we maintain callbacks
 			Request request = builder.sendRequest(null, new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
-					actionOnError(message);
-//					message.onError();
+					if (messageLattice.contains(message)) {
+						// Otherwise the message has been ignored
+						actionOnError(message);
+					}
 				}
 				public void onResponseReceived(Request request, Response response) {
-					actionOnSuccess(message, response);
-//					message.onSuccess();
+					if (messageLattice.contains(message)) {
+						// Otherwise the message has been ignored
+						actionOnSuccess(message, response);
+					}
 				}
 			});
 		} catch (RequestException e) {
