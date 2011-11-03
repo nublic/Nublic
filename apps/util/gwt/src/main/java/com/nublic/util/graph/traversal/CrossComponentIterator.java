@@ -105,8 +105,6 @@ public abstract class CrossComponentIterator<V, E, D>
             this,
             ConnectedComponentTraversalEvent.CONNECTED_COMPONENT_STARTED);
 
-    // TODO: support ConcurrentModificationException if graph modified
-    // during iteration.
     private FlyweightEdgeEvent<V, E> reusableEdgeEvent;
     private FlyweightVertexEvent<V> reusableVertexEvent;
     private Iterator<V> vertexIterator = null;
@@ -344,8 +342,6 @@ public abstract class CrossComponentIterator<V, E, D>
      * @param <V>
      * @param <E>
      * @param g
-     *
-     * @return TODO Document me
      */
     static <V, E> Specifics<V, E> createGraphSpecifics(Graph<V, E> g)
     {
