@@ -11,6 +11,8 @@ import com.google.gwt.thirdparty.guava.common.collect.Collections2;
 import com.google.gwt.thirdparty.guava.common.collect.Lists;
 import com.google.gwt.thirdparty.guava.common.collect.Sets;
 import com.nublic.util.graph.DefaultEdge;
+import com.nublic.util.graph.DirectedGraph;
+import com.nublic.util.graph.DirectedSubgraph;
 import com.nublic.util.graph.EdgeReversedGraph;
 import com.nublic.util.graph.Graph;
 import com.nublic.util.graph.SimpleDirectedGraph;
@@ -132,11 +134,25 @@ public class GraphLattice<T> implements Lattice<T> {
 		return elementsReachable(new EdgeReversedGraph<T, DefaultEdge>(graph), t);
 	}
 	
-	private List<T> elementsReachable(Graph<T, DefaultEdge> g, final T t) {
-		DepthFirstIterator<T, DefaultEdge> breadth = new DepthFirstIterator<T, DefaultEdge>(g, t);
-		List<T> items = Lists.newArrayList(breadth);
+	public DirectedSubgraph<T, DefaultEdge> subgraphGreaterThan(T t) {
+		return subgraphReachable(graph, t);
+	}
+
+	public DirectedSubgraph<T, DefaultEdge> subgraphLessThan(T t) {
+		return subgraphReachable(new EdgeReversedGraph<T, DefaultEdge>(graph), t);
+	}
+	
+	private List<T> elementsReachable(Graph<T, DefaultEdge> g, T t) {
+		DepthFirstIterator<T, DefaultEdge> depth = new DepthFirstIterator<T, DefaultEdge>(g, t);
+		List<T> items = Lists.newArrayList(depth);
 		items.remove(0);
 		return items;
+	}
+	
+	private DirectedSubgraph<T, DefaultEdge> subgraphReachable(DirectedGraph<T, DefaultEdge> g, T t) {
+		DepthFirstIterator<T, DefaultEdge> depth = new DepthFirstIterator<T, DefaultEdge>(g, t);
+		Set<T> items = Sets.newHashSet(depth);
+		return new DirectedSubgraph<T, DefaultEdge>(g, items, null);
 	}
 
 }
