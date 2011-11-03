@@ -15,6 +15,8 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
@@ -33,6 +35,13 @@ import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
+import com.nublic.util.lattice.Ordering;
+import com.nublic.util.lattice.PartialComparator;
+import com.nublic.util.messages.Message;
+import com.nublic.util.messages.SequenceIgnorer;
+
+import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
+import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
@@ -175,6 +184,41 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		
 			popUpBox.setContentWidget(frame);
 			popUpBox.show();
+		} else {
+			ErrorPopup.showError("Document file not found");
+		}
+	}
+	
+	public void showText(ParamsHashMap hmap) {
+		final String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			final AceEditor editor = new AceEditor();
+			// Get text
+			Message m = new Message() {
+				@Override
+				public void onSuccess(Response response) {
+					editor.setText(response.getText());
+				}
+				@Override
+				public void onError() {	}
+				@Override
+				public String getURL() {
+					return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
+				}
+			};
+			SequenceIgnorer<Message> queue = new SequenceIgnorer<Message>(new PartialComparator<Message>() {
+				@Override
+				public Ordering compare(Message a, Message b) {
+					return a.equals(b) ? Ordering.EQUAL : Ordering.INCOMPARABLE;
+				}
+			});
+			queue.send(m, RequestBuilder.GET);
+			// Show the widget
+			popUpBox.setContentWidget(editor);
+			popUpBox.show();
+			editor.startEditor();
+			editor.setTheme(AceEditorTheme.ECLIPSE);
+			editor.setReadOnly(true);
 		} else {
 			ErrorPopup.showError("Document file not found");
 		}

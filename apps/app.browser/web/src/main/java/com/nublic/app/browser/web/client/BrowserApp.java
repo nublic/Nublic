@@ -94,7 +94,21 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// show the PDF lightbox
 				theUi.showPDF(hmap);
 			}
-			
+		// Plain text visualization
+		} else if (token.equals(Constants.TEXT_VIEW)) {
+			ParamsHashMap hmap = new ParamsHashMap(args);
+			if (model == null) {
+				String path = hmap.get(Constants.PATH_PARAMETER);
+				if (path != null) {
+					// Redirect navigation to raw resource in server
+					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE, "_self", "");
+				} else {
+					ErrorPopup.showError("No path to the resource found");
+				}
+			} else {
+				// show the Ace lightbox
+				theUi.showText(hmap);
+			}
 		// A music visualization	
 		} else if (token.equals(Constants.MUSIC_VIEW) || token.equals(Constants.VIDEO_VIEW)) {
 			ParamsHashMap hmap = new ParamsHashMap(args);
