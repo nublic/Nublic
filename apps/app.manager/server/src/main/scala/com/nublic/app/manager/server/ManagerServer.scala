@@ -1,4 +1,4 @@
-package com.nublic.app.browser.server
+package com.nublic.app.manager.server
 
 import java.io.File
 import org.scalatra._
