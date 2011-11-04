@@ -239,4 +239,24 @@ public class AceEditor extends Composite {
 		var editor = this.@edu.ycp.cs.dh.acegwt.client.ace.AceEditor::editor;
 		editor.setReadOnly(readOnly);
 	}-*/;
+	
+	/**
+	 * Show or hide the print margin.
+	 * 
+	 * @param readOnly true if editor should show the print margin
+	 */
+	public native void setShowPrintMargin(boolean shown) /*-{
+		var editor = this.@edu.ycp.cs.dh.acegwt.client.ace.AceEditor::editor;
+		editor.renderer.setShowPrintMargin(shown);
+	}-*/;
+	
+	/**
+	 * Set whether or not lines should be wrapped.
+	 * 
+	 * @param useSoftTabs true if lines should be wrapped, false otherwise
+	 */
+	public native void setUseWrapMode(boolean useWrapMode) /*-{
+		var editor = this.@edu.ycp.cs.dh.acegwt.client.ace.AceEditor::editor;
+		editor.getSession().setUseWrapMode(useWrapMode);
+	}-*/;
 }
