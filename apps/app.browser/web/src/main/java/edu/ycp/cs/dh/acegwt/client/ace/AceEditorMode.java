@@ -93,4 +93,40 @@ public enum AceEditorMode {
 	public String getName() {
 		return name;
 	}
+	
+	public static AceEditorMode fromPath(String path) {
+		int dotIndex = path.lastIndexOf('.');
+		int slashIndex = path.lastIndexOf('/');
+		// If no dot, or dot is before a slash
+		if (dotIndex == -1 || dotIndex < slashIndex) {
+			return null;
+		} else {
+			String extension = path.substring(dotIndex + 1);
+			for (AceEditorMode mode : AceEditorMode.values()) {
+				if (extension.equals(mode.getName())) {
+					return mode;
+				}
+			}
+			// Special cases not in names
+			if (extension.equals("c") || extension.equals("h") || extension.equals("cpp") || extension.equals("hpp"))
+				return AceEditorMode.C_CPP;
+			if (extension.equals("clj"))
+				return AceEditorMode.CLOJURE;
+			if (extension.equals("cs"))
+				return AceEditorMode.CSHARP;
+			if (extension.equals("js"))
+				return AceEditorMode.JAVASCRIPT;
+			if (extension.equals("md"))
+				return AceEditorMode.MARKDOWN;
+			if (extension.equals("pl"))
+				return AceEditorMode.PERL;
+			if (extension.equals("py"))
+				return AceEditorMode.PYTHON;
+			if (extension.equals("rb"))
+				return AceEditorMode.RUBY;
+			
+			// In any other case
+			return null;
+		}
+	}
 }

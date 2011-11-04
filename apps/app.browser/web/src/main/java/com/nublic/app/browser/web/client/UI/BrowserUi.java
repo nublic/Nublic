@@ -19,6 +19,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -35,12 +36,15 @@ import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
+import com.nublic.util.gwt.Callback;
+import com.nublic.util.gwt.LazyLoader;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
 
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
+import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer {
@@ -49,6 +53,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
+	LazyLoader loader = new LazyLoader();
 	
 	@UiField FlowPanel centralPanel;
 	@UiField Tree treeView;
@@ -219,6 +224,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			editor.startEditor();
 			editor.setTheme(AceEditorTheme.ECLIPSE);
 			editor.setReadOnly(true);
+			
+			final AceEditorMode mode = AceEditorMode.fromPath(path);
+			if (mode != null) {
+				loader.loadJS(GWT.getHostPageBaseURL() + "browserapp/ace/mode-" + mode.getName() + ".js", new Callback<Event>() {
+					@Override
+					public void execute(Event t) {
+						editor.setMode(mode);
+					}
+				});
+			}
+			
 		} else {
 			ErrorPopup.showError("Document file not found");
 		}
