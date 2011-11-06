@@ -4,29 +4,35 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class ManagerApp implements EntryPoint, ValueChangeHandler<String> {
 
+	ManagerUi theUi;
+	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		initUi();
+		
 	    String startingToken = History.getToken();
 	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
 	    History.fireCurrentHistoryState();
 	}
 	
-	public void initBrowser() {
-		// Create the model and the UI
-		// model = new BrowserModel();
-		// theUi = new BrowserUi(model);
-
-		// RootLayoutPanel rp = RootLayoutPanel.get();
-	    // rp.add(theUi);
+	public void initUi() {
+		theUi = new ManagerUi();
+		RootLayoutPanel rp = RootLayoutPanel.get();
+	    rp.add(theUi);
+	    theUi.setFrameUrl("http://localhost:8081/browser/BrowserApp.html");
+	    
+	    theUi.addTab("Browser", "images/browser.png", "http://localhost:8081/browser/BrowserApp.html");
+	    theUi.addTab("Music", "images/music.png", "http://localhost:8081/music/MusicApp.html");
 	}
 
 	@Override
