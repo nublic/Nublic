@@ -5,6 +5,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 /**
@@ -37,14 +38,19 @@ public class ManagerApp implements EntryPoint, ValueChangeHandler<String>, AppUr
 	    		"http://localhost:8081/browser/BrowserApp.html");
 	    theUi.addTab("music", "Music", "images/music.png",
 	    		"http://localhost:8081/music/MusicApp.html");
-	    
-	    theUi.select("browser");
 	}
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
-		// String token = event.getValue();
-		// Window.alert("Here");
+		String token = event.getValue();
+		Window.alert(token);
+		int slashPlace = token.indexOf("/");
+		if (slashPlace == -1) {
+			theUi.select("browser");
+		} else {
+			String appId = token.substring(0, slashPlace);
+			theUi.select(appId, token);
+		}
 	}
 
 	@Override

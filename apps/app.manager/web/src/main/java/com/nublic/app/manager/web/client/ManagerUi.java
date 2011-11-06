@@ -83,6 +83,12 @@ public class ManagerUi extends Composite {
 		int tabNumber = appIds.indexOf(id);
 		appBar.selectTab(tabNumber);
 	}
+	
+	public void select(String id, String url) {
+		int tabNumber = appIds.indexOf(id);
+		appBar.selectTab(tabNumber, false);
+		setFrameUrl(url);
+	}
 
 	public void addTab(String id, String name, String image, String url) {
 		HorizontalPanel tab = new HorizontalPanel();
