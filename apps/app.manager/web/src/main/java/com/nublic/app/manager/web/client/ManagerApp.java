@@ -7,6 +7,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
 
 /**
@@ -15,14 +16,17 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 public class ManagerApp implements EntryPoint, ValueChangeHandler<String>, AppUrlChangeHandler {
 
 	ManagerUi theUi;
+	ExtendedHistory extendedHistory;
 	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
 		initUi();
-		
-	    String startingToken = History.getToken();
+		// Initialize the extended history for controlling inside
+		extendedHistory = new ExtendedHistory(Location.getHref());
+		// Initialize tokens
+		String startingToken = History.getToken();
 	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
 	    History.fireCurrentHistoryState();
@@ -43,31 +47,62 @@ public class ManagerApp implements EntryPoint, ValueChangeHandler<String>, AppUr
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
+		// Handle token
 		String token = event.getValue();
 		int slashPlace = token.indexOf("/");
-		if (slashPlace == -1) {
-			theUi.select("browser");
+		String appId = slashPlace == -1 ? null : token.substring(0, slashPlace);
+		// Handle extended history
+		String current = Location.getHref();
+		if (extendedHistory.isCurrent(current)) {
+			// Do nothing
+		} else if (extendedHistory.isPrevious(current)) {
+			extendedHistory.back();
+			theUi.frameBack();
+			if (appId != null) {
+				theUi.selectTabOnly(appId);
+			}
+		} else if (extendedHistory.isNext(current)) {
+			extendedHistory.forward();
+			theUi.frameForward();
+			if (appId != null) {
+				theUi.selectTabOnly(appId);
+			}
 		} else {
-			String appId = token.substring(0, slashPlace);
-			theUi.select(appId, GWT.getHostPageBaseURL() + token);
+			extendedHistory.go(current);
+			// Handle token
+			if (appId == null) {
+				// TODO: Show notifications or things like that
+				theUi.select("browser");
+			} else {
+				theUi.select(appId, GWT.getHostPageBaseURL() + token);
+			}
 		}
 	}
 
 	@Override
 	public void appUrlChanged(AppUrlChangeEvent event) {
-		// Do nothing
 		String path = event.getUrl().replace(GWT.getHostPageBaseURL(), "");
-		History.newItem(path, false);
+		// Generate final URL
+		LocationWithHash location = new LocationWithHash(Location.getHref());
+		LocationWithHash newLocation = new LocationWithHash(location.getBase(), path);
+		String finalNewPath = newLocation.getLocation();
+		// Check in extended history
+		if (extendedHistory.isCurrent(finalNewPath)) {
+			// Do nothing
+		} else if (extendedHistory.isPrevious(finalNewPath)) {
+			History.back();
+		} else if (extendedHistory.isNext(finalNewPath)) {
+			History.forward();
+		} else {
+			History.newItem(path);
+		}
 	}
 	
 	@Override
 	public void appTitleChanged(AppUrlChangeEvent event) {
-		Document.get().setTitle(getTitle(event.getTitle()));
-	}
-	
-	private String getTitle(String title) {
-		String trimmed = title.trim();
-		return trimmed.isEmpty() ? "Nublic" : "Nublic - " + trimmed;
+		String trimmed = event.getTitle().trim();
+		String title = trimmed.isEmpty() ? "Nublic" : "Nublic - " + trimmed;
+		Document.get().setTitle(title);
 	}
 	
 }

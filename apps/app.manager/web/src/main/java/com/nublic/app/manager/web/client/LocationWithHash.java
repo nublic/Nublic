@@ -15,8 +15,17 @@ public class LocationWithHash {
 		}
 	}
 	
+	public LocationWithHash(String base, String hash) {
+		this.base = base;
+		this.hash = hash;
+	}
+	
 	public boolean sameBase(LocationWithHash other) {
 		return base.equals(other.getBase());
+	}
+	
+	public boolean sameHash(LocationWithHash other) {
+		return hash.equals(other.getHash());
 	}
 	
 	public String getBase() {
@@ -25,5 +34,9 @@ public class LocationWithHash {
 
 	public String getHash() {
 		return hash;
+	}
+	
+	public String getLocation() {
+		return hash.isEmpty() ? base : base + "#" + hash;
 	}
 }

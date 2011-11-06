@@ -81,10 +81,28 @@ public class ManagerUi extends Composite {
 		LocationWithHash now = new LocationWithHash(e.getLocationHref());
 		LocationWithHash then = new LocationWithHash(url);
 		if (now.sameBase(then)) {
-			e.setLocationHash(then.getHash());
+			if (!now.sameHash(then)) {
+				e.setLocationHash(then.getHash());
+			}
+			// If the URL is completely equal, we should not change it
 		} else {
 			innerFrame.setUrl(url);
 		}
+	}
+	
+	public void frameBack() {
+		ExtendedFrameElement e = innerFrame.getElement().cast();
+		e.back();
+	}
+	
+	public void frameForward() {
+		ExtendedFrameElement e = innerFrame.getElement().cast();
+		e.forward();
+	}
+	
+	public String getFrameUrl() {
+		ExtendedFrameElement e = innerFrame.getElement().cast();
+		return e.getLocationHref();
 	}
 	
 	public void select(String id) {
@@ -96,6 +114,11 @@ public class ManagerUi extends Composite {
 		int tabNumber = appIds.indexOf(id);
 		appBar.selectTab(tabNumber, false);
 		setFrameUrl(url);
+	}
+	
+	public void selectTabOnly(String id) {
+		int tabNumber = appIds.indexOf(id);
+		appBar.selectTab(tabNumber, false);
 	}
 
 	public void addTab(String id, String name, String image, String url) {

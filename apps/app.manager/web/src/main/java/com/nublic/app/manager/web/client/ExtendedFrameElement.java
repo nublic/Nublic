@@ -34,4 +34,16 @@ public class ExtendedFrameElement extends FrameElement {
 			return "";
 		}
 	}-*/;
+	
+	public final native void back() /*-{
+		if (this.contentWindow && this.contentWindow.history) {
+			this.contentWindow.history.back();
+		}
+	}-*/;
+	
+	public final native void forward() /*-{
+		if (this.contentWindow && this.contentWindow.history) {
+			this.contentWindow.history.forward();
+		}
+	}-*/;
 }
