@@ -49,7 +49,8 @@ public class ManagerUi extends Composite {
 			@Override
 			public synchronized void run() {
 				ExtendedFrameElement e = innerFrame.getElement().cast();
-				AppUrlChangeEvent event = new AppUrlChangeEvent(e.getLocationHref(), e.getDocumentTitle());
+				AppUrlChangeEvent event = new AppUrlChangeEvent(e.getLocationHref(),
+						e.getDocumentTitle(), e.getLocationHash());
 				if (!lastUrl.equals(e.getLocationHref())) {
 					lastUrl = e.getLocationHref();
 					for (AppUrlChangeHandler handler : urlChangeHandlers) {
@@ -76,7 +77,14 @@ public class ManagerUi extends Composite {
 	}
 	
 	public void setFrameUrl(String url) {
-		innerFrame.setUrl(url);
+		ExtendedFrameElement e = innerFrame.getElement().cast();
+		LocationWithHash now = new LocationWithHash(e.getLocationHref());
+		LocationWithHash then = new LocationWithHash(url);
+		if (now.sameBase(then)) {
+			e.setLocationHash(then.getHash());
+		} else {
+			innerFrame.setUrl(url);
+		}
 	}
 	
 	public void select(String id) {

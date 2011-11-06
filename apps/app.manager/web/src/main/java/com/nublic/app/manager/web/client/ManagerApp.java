@@ -1,6 +1,7 @@
 package com.nublic.app.manager.web.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -43,19 +44,20 @@ public class ManagerApp implements EntryPoint, ValueChangeHandler<String>, AppUr
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String token = event.getValue();
-		Window.alert(token);
 		int slashPlace = token.indexOf("/");
 		if (slashPlace == -1) {
 			theUi.select("browser");
 		} else {
 			String appId = token.substring(0, slashPlace);
-			theUi.select(appId, token);
+			theUi.select(appId, GWT.getHostPageBaseURL() + token);
 		}
 	}
 
 	@Override
 	public void appUrlChanged(AppUrlChangeEvent event) {
 		// Do nothing
+		String path = event.getUrl().replace(GWT.getHostPageBaseURL(), "");
+		History.newItem(path, false);
 	}
 	
 	@Override

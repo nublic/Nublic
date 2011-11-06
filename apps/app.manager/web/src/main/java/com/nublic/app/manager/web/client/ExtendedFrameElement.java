@@ -21,6 +21,12 @@ public class ExtendedFrameElement extends FrameElement {
 		}
 	}-*/;
 	
+	public final native void setLocationHash(String newHash) /*-{
+		if (this.contentDocument && this.contentDocument.location) {
+			this.contentDocument.location.hash = newHash;
+		}
+	}-*/;
+	
 	public final native String getDocumentTitle() /*-{
 		if (this.contentDocument && this.contentDocument.title) {
     		return this.contentDocument.title;
