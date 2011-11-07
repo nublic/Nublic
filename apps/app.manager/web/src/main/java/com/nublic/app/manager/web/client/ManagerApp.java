@@ -53,7 +53,7 @@ public class ManagerApp implements EntryPoint, ValueChangeHandler<String>, AppUr
 		String appId = slashPlace == -1 ? null : token.substring(0, slashPlace);
 		// Handle extended history
 		String current = Location.getHref();
-		if (extendedHistory.isCurrent(current)) {
+		if (extendedHistory.isCurrent(current) && !extendedHistory.isBareNew()) {
 			// Do nothing
 		} else if (extendedHistory.isPrevious(current)) {
 			extendedHistory.back();
