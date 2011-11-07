@@ -2,6 +2,7 @@ package com.nublic.util.messages;
 
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.RequestBuilder.Method;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
@@ -22,8 +23,6 @@ public abstract class SequenceHelper <M extends Message> {
 	}
 	
 	public void send(final M message, RequestBuilder.Method method) {
-		String url = URL.encode(message.getURL());
-		RequestBuilder builder = new RequestBuilder(method, url);
 		
 		// Assigns a sequence number and adds the message to the list safely
 		synchronized (lock) {
@@ -31,7 +30,38 @@ public abstract class SequenceHelper <M extends Message> {
 			messageLattice.insert(message);
 			lastSequenceNumber++;
 		}
+
+		performSend(message, method);
 		
+//		String url = URL.encode(message.getURL());
+//		RequestBuilder builder = new RequestBuilder(method, url);
+//		
+//		try {
+//			@SuppressWarnings("unused")
+//			// It is not unused, we maintain callbacks
+//			Request request = builder.sendRequest(null, new RequestCallback() {
+//				public void onError(Request request, Throwable exception) {
+//					if (messageLattice.contains(message)) {
+//						// Otherwise the message has been ignored
+//						actionOnError(message);
+//					}
+//				}
+//				public void onResponseReceived(Request request, Response response) {
+//					if (messageLattice.contains(message)) {
+//						// Otherwise the message has been ignored
+//						actionOnSuccess(message, response);
+//					}
+//				}
+//			});
+//		} catch (RequestException e) {
+//			message.onError();
+//		}
+	}
+
+	protected void performSend(final M message, Method method) {
+		String url = URL.encode(message.getURL());
+		RequestBuilder builder = new RequestBuilder(method, url);
+
 		try {
 			@SuppressWarnings("unused")
 			// It is not unused, we maintain callbacks
