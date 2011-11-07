@@ -14,6 +14,8 @@ public class Constants {
 	public final static String MUSIC_TYPE = "mp3";
 	public final static String VIDEO_VIEW = "video";
 	public final static String VIDEO_TYPE = "flv";
+	public final static String TEXT_VIEW = "text";
+	public final static String TEXT_TYPE = "txt";
 	public final static String FOLDER_MIME = "application/x-directory";
 	public final static String FOLDER_TYPE = "folder";
 

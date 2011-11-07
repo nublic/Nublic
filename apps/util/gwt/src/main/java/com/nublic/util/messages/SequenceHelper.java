@@ -8,6 +8,7 @@ import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.util.lattice.GraphLattice;
+import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 
 public abstract class SequenceHelper <M extends Message> {
@@ -86,5 +87,15 @@ public abstract class SequenceHelper <M extends Message> {
 
 	public abstract void actionOnError(M message);
 	public abstract void actionOnSuccess(M message, Response response);
+	
+	public static <M extends Message> void sendJustOne(M message, RequestBuilder.Method method) {
+		SequenceIgnorer<M> queue = new SequenceIgnorer<M>(new PartialComparator<M>() {
+			@Override
+			public Ordering compare(M a, M b) {
+				return a.equals(b) ? Ordering.EQUAL : Ordering.INCOMPARABLE;
+			}
+		});
+		queue.send(message, method);
+	}
 
 }
