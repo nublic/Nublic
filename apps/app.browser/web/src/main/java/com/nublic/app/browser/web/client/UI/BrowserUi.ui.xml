@@ -5,17 +5,73 @@
 		.aligntop {
 			vertical-align: top;
 		}
+		.margin {
+			margin: 5px;
+		}
 		.scroll {
 			overflow: scroll;
 		}
+		.topelementswith {
+			width: 150px;
+		}
+		.nobackground {
+			background: transparent;
+			padding: 0px;
+			border: none;
+		}
 	</ui:style>
+	
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
 	<g:SplitLayoutPanel>
-	   	<g:west size="200.0">
+		<!-- Panel for the navigator tree -->
+	   	<g:west size="150">
 	   		<g:Tree ui:field="treeView"/>
 	   	</g:west>
+	   	
+	   	<!-- Actions panel -->
+	   	<g:east size="150">
+	   		<g:FlowPanel>
+	   			<g:Label text="Actions">
+	   			</g:Label>
+	   			<g:Button>
+	   			</g:Button>
+	   		</g:FlowPanel>
+	   	</g:east>
+	   	
+	   	<!-- Center panel to show the files in each folder -->
 	   	<g:center>
-	   		<g:FlowPanel ui:field="centralPanel" styleName="{style.aligntop} {style.scroll}"/>
+	   		<g:DockLayoutPanel>
+	   			<!-- Panel to show order and filter controls -->
+	   			<g:north size="40">
+	   				<g:DockLayoutPanel>
+	   					<g:east size="226"> <!-- 20 margin + 36 image + 150 textbox + 20 scrol size-->
+	   						<g:HorizontalPanel verticalAlignment="middle">
+		   						<g:Image url="images/filter.png" styleName="{style.margin}"/>
+		   						<g:TextBox styleName="{style.margin} {style.topelementswith}"/>
+		   					</g:HorizontalPanel>
+		   				</g:east>
+		   				<g:center>
+		   					<g:HorizontalPanel verticalAlignment="middle">
+		   						<g:Label styleName="{style.margin}">Order:</g:Label>
+		   						<g:ListBox ui:field="orderList" addStyleNames="{style.margin} {style.topelementswith}" visibleItemCount='1'/>
+								<g:PushButton ui:field="upButton" addStyleNames="{style.nobackground}">
+									<g:upFace image="{res.up}"/>
+								</g:PushButton>
+								<g:PushButton ui:field="downButton" addStyleNames="{style.nobackground}">
+									<g:upFace image="{res.down}"/>
+								</g:PushButton>
+<!-- 		   						<g:Image url="images/up.png"/> -->
+<!-- 		   						<g:Image url="images/down.png"/> -->
+		   					</g:HorizontalPanel>
+		   				</g:center>
+	   				</g:DockLayoutPanel>
+	   			</g:north>
+	   			<!-- Actual central panel -->
+	   			<g:center>
+	   				<g:FlowPanel ui:field="centralPanel" styleName="{style.aligntop} {style.scroll}"/>
+	   			</g:center>
+	   		</g:DockLayoutPanel>
 	   	</g:center>
 	</g:SplitLayoutPanel>
 

@@ -25,7 +25,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -54,7 +56,11 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	LazyLoader loader = new LazyLoader();
 	
 	@UiField FlowPanel centralPanel;
+//	@UiField HorizontalPanel orderPanel;
 	@UiField Tree treeView;
+	@UiField PushButton upButton;
+	@UiField PushButton downButton;
+	@UiField ListBox orderList;
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -74,6 +80,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// To handle updates on files list
 		model.addUpdateHandler(this);
 		treeAdapter = new TreeAdapter(treeView, model);
+
+		// Init the current order mode
+		upButton.setEnabled(false);
+		orderList.addItem("by name");
+		orderList.addItem("by type");
+		orderList.addItem("by upload date");
 		
 		// Set the properties of our popUpDialog. Should start empty, hidden, ...
 		popUpBox = new FixedPopup(true, true); // auto-hide, modal
@@ -153,6 +165,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		treeAdapter.updateView(node);
 	}
 	
+	// TODO: set title of browser
 	public void showImage(ParamsHashMap paramsHashMap) {
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
 		if (path != null) {

@@ -1,6 +1,5 @@
 package com.nublic.app.browser.web.client.UI;
 
-import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -91,38 +90,8 @@ public class PopupContent extends Composite {
 						internalWidget.setPixelSize(0, 0);
 					}
 				}
-			} else if (internalWidget instanceof AbstractMediaPlayer) {
-				// Music and video
-//				int h = ((AbstractMediaPlayer) internalWidget).getVideoHeight();
-//				int w = ((AbstractMediaPlayer) internalWidget).getVideoWidth();
-//				if (w > 0 && width > 0 && h > 0 && height > 0) {
-//					// If we get to this point we have a video
-//					// to avoid 0 divisions and setting negative lengths
-//					float videoRatio = h / (float) w;
-//					float boxRatio = height / (float) width;
-//
-//					if (videoRatio < boxRatio) {
-//						// the video is flatter than the box
-//						if (w > width) {
-//							// its original image overflows the width
-//							((AbstractMediaPlayer) internalWidget).setSize("" + width + "px",
-//																		   "" + ((int) (width * videoRatio)) + "px");
-//						} else {
-//							((AbstractMediaPlayer) internalWidget).setSize("" + w + "px",
-//																		   "" + h + "px");
-//						}
-//					} else {
-//						// the widget is more stretched than the box
-//						if (h > height) {
-//							// its original image overflows the height
-//							((AbstractMediaPlayer) internalWidget).setSize("" + ((int) (height / videoRatio)) + "px",
-//									   									   "" + height + "px");
-//						} else {
-//							((AbstractMediaPlayer) internalWidget).setSize("" + w + "px",
-//									   "" + h + "px");
-//						}
-//					}
-//				}
+//			} else if (internalWidget instanceof AbstractMediaPlayer) {
+//				// Music and video
 			} else {
 				// If it's not an Image or a "player" (music/video) we'll fill the space we have for it
 				internalWidget.setPixelSize(width, height);
