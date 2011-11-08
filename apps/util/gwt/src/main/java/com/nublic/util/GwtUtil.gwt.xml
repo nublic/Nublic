@@ -13,4 +13,5 @@
   <source path='lattice'/>
   <source path='messages'/>
   <source path='error'/>
+  <source path='comparators'/>
 </module>
