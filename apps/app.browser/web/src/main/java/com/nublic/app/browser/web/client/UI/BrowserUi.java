@@ -1,10 +1,13 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
@@ -46,6 +49,8 @@ import com.nublic.util.messages.SequenceHelper;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
@@ -54,6 +59,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
 	LazyLoader loader = new LazyLoader();
+	String showingPath = "";
+	boolean descOrderCurrently = true;
 	
 	@UiField FlowPanel centralPanel;
 //	@UiField HorizontalPanel orderPanel;
@@ -82,10 +89,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		treeAdapter = new TreeAdapter(treeView, model);
 
 		// Init the current order mode
-		upButton.setEnabled(false);
+		downButton.setEnabled(false);
 		orderList.addItem("by name");
 		orderList.addItem("by type");
 		orderList.addItem("by upload date");
+		orderList.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				updateCentralPanel(showingPath);
+			}
+		});
 		
 		// Set the properties of our popUpDialog. Should start empty, hidden, ...
 		popUpBox = new FixedPopup(true, true); // auto-hide, modal
@@ -114,26 +127,19 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler fired when a new update of the file list is available
 	@Override
 	public void onFilesUpdate(BrowserModel m, String path) {
-		// We cancel any popup which could be hidding the central panel
-		popUpBox.hide();
-		
-		List <FileNode> fileList = m.getFileList();
-
-		// Update the information shown in the central panel
-		centralPanel.clear();
-		for (FileNode n : fileList) {
-			centralPanel.add(new FileWidget(n, path));
-		}
+		showingPath = path;
+		updateCentralPanel(path);
 
 		FolderNode node = model.createBranch(path);
 		// If the given node has no children we try to update its info
 		if (node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
-		
+
+		// Get the item in the tree corresponding to the node in the model
 		TreeItem nodeView = treeAdapter.search(node);
 
-		// nodeView is null when node is the root (there is no view for the main root)
+		// nodeView is null when node is the root (there is no view in the tree for the main root)
 		if (nodeView != null) {
 			// Open the tree and show all the parents of the selected node open
 			TreeItem parent = nodeView.getParentItem();
@@ -152,6 +158,44 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 	}
 	
+	private void updateCentralPanel(String path) {
+		// We cancel any popup which could be hiding the central panel
+		popUpBox.hide();
+
+		List <FileNode> fileList = model.getFileList();
+
+		// Order attending to orderList
+		switch (orderList.getSelectedIndex()) {
+			case 0:
+				if (descOrderCurrently) {
+					Collections.sort(fileList, FileNode.NAME_COMPARATOR);
+				} else {
+					Collections.sort(fileList, FileNode.INVERSE_NAME_COMPARATOR);
+				}
+				break;
+			case 1:
+				if (descOrderCurrently) {
+					Collections.sort(fileList, FileNode.TYPE_COMPARATOR);
+				} else {
+					Collections.sort(fileList, FileNode.INVERSE_TYPE_COMPARATOR);
+				}
+				break;
+			case 2:
+				if (descOrderCurrently) {
+					Collections.sort(fileList, FileNode.DATE_COMPARATOR);
+				} else {
+					Collections.sort(fileList, FileNode.INVERSE_DATE_COMPARATOR);
+				}
+				break;
+		}
+		
+		// Update the information shown in the central panel
+		centralPanel.clear();
+		for (FileNode n : fileList) {
+			centralPanel.add(new FileWidget(n, path));
+		}
+	}
+
 	// Handler of the pop-up close event
 	@Override
 	public void onClose(CloseEvent<PopupPanel> event) {
@@ -159,7 +203,31 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			History.back();
 		}
 	}
+	
+	// Handlers for ordering buttons
+	@UiHandler("upButton")
+	void onUpButtonClick(ClickEvent event) {
+		changeOrder(false);
+	}
+	
+	@UiHandler("downButton")
+	void onDownButtonClick(ClickEvent event) {
+		changeOrder(true);
+	}
+	
+	private void changeOrder(boolean desc) {
+		descOrderCurrently = desc;
+		if (desc) {
+			upButton.setEnabled(true);
+			downButton.setEnabled(false);
+		} else {
+			upButton.setEnabled(false);
+			downButton.setEnabled(true);
+		}
+		updateCentralPanel(showingPath);
+	}
 
+	// Handler for model change event
 	@Override
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
 		treeAdapter.updateView(node);
@@ -252,4 +320,5 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setContentWidget(player);
 		popUpBox.show();
 	}
+
 }
