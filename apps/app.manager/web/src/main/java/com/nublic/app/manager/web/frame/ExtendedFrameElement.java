@@ -1,4 +1,4 @@
-package com.nublic.app.manager.web.client;
+package com.nublic.app.manager.web.frame;
 
 import com.google.gwt.dom.client.FrameElement;
 
