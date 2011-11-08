@@ -8,6 +8,10 @@ import com.nublic.app.manager.web.client.LocationWithHash;
 
 public class AppFrame extends NamedFrame {
 	
+	private static Counter counter = new Counter();
+	
+	// To distinguish between frames
+	long id;
 	// To handle Url changes
 	ArrayList<AppUrlChangeHandler> urlChangeHandlers;
 	String lastUrl;
@@ -15,6 +19,8 @@ public class AppFrame extends NamedFrame {
 
 	public AppFrame(String name) {
 		super(name);
+		
+		id = counter.next();
 		
 		urlChangeHandlers = new ArrayList<AppUrlChangeHandler>();
 		lastUrl = "about:blank";
@@ -79,5 +85,9 @@ public class AppFrame extends NamedFrame {
 	public void forward() {
 		ExtendedFrameElement e = this.getElement().cast();
 		e.forward();
+	}
+	
+	public long getId() {
+		return this.id;
 	}
 }

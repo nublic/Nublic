@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.manager.web.frame.AppFrame;
 import com.nublic.app.manager.web.frame.AppUrlChangeEvent;
 import com.nublic.app.manager.web.frame.AppUrlChangeHandler;
+import com.nublic.app.manager.web.frame.Counter;
 import com.nublic.app.manager.web.welcome.WelcomePage;
 
 public class ManagerUi extends Composite implements AppUrlChangeHandler {
@@ -66,27 +67,37 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		String current = Location.getHref();
 		ClientState newState = ClientState.fromToken(token);
 		String newHref = GWT.getHostPageBaseURL() + token;
+		long innerId = innerWidget instanceof AppFrame ? ((AppFrame)innerWidget).getId() : Counter.NOT_ALLOWED;
 		if (history.isCurrent(current) && !history.isBareNew()) {
 			/* Do nothing */
 		} else if (history.isPrevious(current)) {
+			if (newState == ClientState.FRAME && state == ClientState.FRAME) {
+				AppFrame frame = (AppFrame)innerWidget;
+				if (history.isPreviousId(innerId)) {
+					frame.back();
+				} else {
+					changeTo(newState, newHref);
+				}
+			} else {
+				changeTo(newState, newHref);
+			}
 			history.back();
-			if (newState == ClientState.FRAME && state == ClientState.FRAME) {
-				AppFrame frame = (AppFrame)innerWidget;
-				frame.back();
-			} else {
-				changeTo(newState, newHref);
-			}
 		} else if (history.isNext(current)) {
-			history.forward();
 			if (newState == ClientState.FRAME && state == ClientState.FRAME) {
 				AppFrame frame = (AppFrame)innerWidget;
-				frame.forward();
+				if (history.isPreviousId(innerId)) {
+					frame.forward();
+				} else {
+					changeTo(newState, newHref);
+				}
 			} else {
 				changeTo(newState, newHref);
 			}
+			history.forward();
 		} else {
-			history.go(current);
 			changeTo(newState, newHref);
+			innerId = innerWidget instanceof AppFrame ? ((AppFrame)innerWidget).getId() : Counter.NOT_ALLOWED;
+			history.go(current, innerId);
 		}
 	}
 	
