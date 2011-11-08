@@ -31,11 +31,6 @@ public class CompoundComparator<T> implements Comparator <T> {
 	public int compare(T o1, T o2) {
 		int res = c1.compare(o1, o2);
 		return res == 0 ? c2.compare(o1, o2) : res;
-//		if (res == 0) {
-//			return c2.compare(o1, o2);
-//		} else {
-//			return res;
-//		}
 	}
 
 }
