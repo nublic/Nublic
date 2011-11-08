@@ -1,16 +1,10 @@
 package com.nublic.app.manager.web.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.nublic.app.manager.web.frame.AppUrlChangeEvent;
-import com.nublic.app.manager.web.frame.AppUrlChangeHandler;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

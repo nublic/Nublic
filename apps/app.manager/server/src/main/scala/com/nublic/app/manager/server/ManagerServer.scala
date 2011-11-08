@@ -98,9 +98,12 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     if (f.exists()) {
       try {
     	val reader = new FileReader(f)
-    	read(reader)  
+    	read[List[String]](reader)  
       } catch {
-        case _ => Nil
+        case e => {
+          Console.println(e.getMessage())
+          Nil
+        }
       }
     } else {
       val initial_favs = List("browser", "music", "photos")
