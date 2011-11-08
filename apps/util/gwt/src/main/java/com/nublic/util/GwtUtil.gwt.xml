@@ -12,4 +12,5 @@
   <source path='graph'/>
   <source path='lattice'/>
   <source path='messages'/>
+  <source path='tuples'/>
 </module>
