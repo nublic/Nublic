@@ -149,8 +149,14 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           thumb_file
         } else {
           Solr.getMimeType(nublic_path) match {
-            case None       => redirect(request.getContextPath() + "/generic-thumbnail/unknown")
-            case Some(mime) => redirect(request.getContextPath() + "/generic-thumbnail/" + mime)
+            case None => {
+              response.setContentType("image/png")
+              ImageDatabase.getImageBytes("unknown")
+            }
+            case Some(mime) => {
+              response.setContentType("image/png")
+              ImageDatabase.getImageBytes(mime)
+            }
           }
         }
       }
