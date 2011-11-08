@@ -16,7 +16,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
     case Moved(from, to, _, false)    => process_moved_file(from, to)
     case Moved(from, to, _, true)     => process_moved_folder(from, to)
     case Deleted(filename, _, false)  => process_deleted_file(filename)
-    case _                         => { /* Nothing */ }
+    case _                            => { /* Nothing */ }
   }
   
   def process_updated_file(filename: String): Unit = {
@@ -29,17 +29,8 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
     Solr.getMimeType(filename) match {
       case None       => { /* Do nothing */ }
       case Some(mime) => {
-        // Special case for OOXML formats (they are really zips)
-        val real_mime = if (OfficeWorker.is_zip(mime)) {
-            OfficeWorker.office_zip_mime_type(filename) match {
-              case None              => mime
-              case Some(office_mime) => office_mime
-            }
-          } else {
-            mime
-          }
         // Send to worker
-        Workers.byMimeType.get(real_mime) match {
+        Workers.byMimeType.get(mime) match {
           case None         => { /* Do nothing */ }
           case Some(worker) => worker.process(filename, cache_folder)
         }

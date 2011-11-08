@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-browser-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat6, scala-library, libdbus-java, ffmpeg, lame, imagemagick, flvtool2, unoconv, libnublic-file-watcher-scala
+Depends: ${misc:Depends}, tomcat6, scala-library, libdbus-java, ffmpeg, lame, imagemagick, flvtool2, unoconv, libnublic-file-watcher-scala, libavcodec-extra-53
 Description: Nublic Browser app - server
  Browser app for the Nublic platform - server part

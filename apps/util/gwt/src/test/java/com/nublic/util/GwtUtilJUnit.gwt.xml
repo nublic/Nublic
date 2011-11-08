@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='com.nublic.util.GwtUtil'/>
+  <!-- To prevent "required inherited module" error               -->
+  <inherits name="com.google.gwt.junit.JUnit"/>
+</module>

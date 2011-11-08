@@ -1,0 +1,13 @@
+Source: libnublic-gwt-util-java
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), maven2, junit
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: libnublic-gwt-util-java
+Architecture: all
+Depends: ${misc:Depends}
+Description: Utilities for GWT Nublic apps
+ Utilities for GWT Nublic apps

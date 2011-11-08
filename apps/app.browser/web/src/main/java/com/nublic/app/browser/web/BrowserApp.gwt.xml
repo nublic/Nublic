@@ -5,6 +5,11 @@
   <inherits name='com.google.gwt.http.HTTP'/>
   <!-- To prevent "required inherited module" error               -->
   <inherits name="com.google.gwt.junit.JUnit"/>
+  <inherits name="com.bramosystems.oss.player.core.Core"/>
+  <inherits name='com.nublic.util.GwtUtil'/>
+  <!-- <inherits name="com.bramosystems.oss.player.youtube.YouTube"/>  --> <!-- To use if YouTubePlayer is used -->
+  <inherits name='edu.ycp.cs.dh.acegwt.AceGWT'/>
+  <inherits name="com.google.common.collect.Collect"/>
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->

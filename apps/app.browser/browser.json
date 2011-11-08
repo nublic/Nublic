@@ -1,0 +1,15 @@
+{ "id" : "browser"
+, "name" : {
+    "default"   : "Browser"
+  , "localized" : {
+      "es": "Navegador"
+    }
+  }
+, "developer" : "Nublic"
+, "icon" : {
+    "32" : "/home/serras/nublic/code/apps/app.browser/icon.png"
+  }
+, "web" : {
+    "path" : ""
+  }
+}

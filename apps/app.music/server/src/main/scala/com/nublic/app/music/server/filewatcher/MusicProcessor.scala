@@ -1,8 +1,6 @@
 package com.nublic.app.music.server.filewatcher
 
 import java.io.File
-import org.jaudiotagger.audio._
-import org.jaudiotagger.tag._
 import org.apache.commons.io.FilenameUtils
 import org.squeryl.PrimitiveTypeMode._
 import com.nublic.filewatcher.scala._
@@ -66,8 +64,11 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     val extension = FilenameUtils.getExtension(filename)
     if (taggedExtensions.contains(extension) || 
         taggedMimeTypes.contains(Solr.getMimeType(filename))) {
-	  val audio = AudioFileIO.read(new File(filename))
-	  val song_info = extract_info(audio.getTag())
+      val song_info = SongInfo.from(filename, context)
+      Database.songByFilename(filename) match {
+        case Some(song) => replace_in_database(filename, song.id, song_info)
+        case None       => add_to_database(filename, song_info)
+      }
     }
   }
   
@@ -86,28 +87,131 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   }
   
   // Functions for working with the database
-  // =======================================
-  def add_to_database(file: String, info: SongInfo) = {
+  //
+  // Note: Unknown discs or artists are shown with "" in their names
+  // ===============================================================
+  def ensure_or_create_album(file: String, artistName: Option[String], albumName: Option[String]): Album = {
+    val directory = new File(file).getParentFile.getPath
+    
     inTransaction {
-      Database.ensureInDb(info.artist, Database.artists, Database.artistByName, new Artist(0, _))
-      Database.ensureInDb(info.album, Database.albums, Database.albumByName, new Album(0, _))
-      Database.songs.insert(info.toSqueryl(file))
+      // CASE 1. We have a artist name and an album name
+      if (artistName != None && albumName != None) {
+        // Try to find an album with the same name by the same artist
+        find_album_with_artist(artistName.get, albumName.get) match {
+          case Some(album) => album // Found an album with same artist and album
+          case None        => find_album_by_directory(directory, albumName.get)
+        }
+      // CASE 2. We have only album name
+      } else if (albumName != None /* I have the album name */) { 
+        find_album_by_directory(directory, albumName.get)
+      // CASE 3. We only have artist name or we have nothing
+      } else {
+        find_album_with_artist(artistName.getOrElse(""), albumName.getOrElse("")) match {
+          case Some(album) => album // Found an album with same artist and album
+          case None        => {
+            val newAlbum = new Album(albumName.getOrElse(""))
+            Database.albums.insert(newAlbum)
+            newAlbum
+          }
+        }
+      }
     }
   }
   
-  def replace_in_database(id: Long, info: SongInfo) = {
+  private def find_album_with_artist(artistName: String, albumName: String): Option[Album] = {
+    val normalizedArtist = StringUtil.normalize(artistName)
+    val normalizedAlbum = StringUtil.normalize(albumName)
+    val artistId: Long = Database.artistByNameNormalizing(artistName).map(_.id).getOrElse(-1)
+    
+    val sameArtistAndAlbum = from(Database.songs, Database.artists, Database.albums)(
+      (song, artist, album) =>
+        where(song.artistId === artistId and song.albumId === album.id /* join */
+              and album.normalized === normalizedAlbum)
+        select(album)
+      )
+    Database.maybe(sameArtistAndAlbum)
+  }
+  
+  private def find_album_by_directory(directory: String, albumName: String): Album = {
+    val normalizedAlbum = StringUtil.normalize(albumName)
+    // Try to find songs in the same folder with the same album name
+    val sameAlbumAndPath = from(Database.songs, Database.albums)(
+      (song, album) =>
+        where(song.albumId === album.id and album.normalized === normalizedAlbum
+              and (song.file like (directory + "/%")))
+        select(album)
+      )
+    Database.maybe(sameAlbumAndPath) match {
+      case Some(album) => album
+      case None        => {
+        // If nothing is found
+        val newAlbum = new Album(albumName)
+        Database.albums.insert(newAlbum)
+        newAlbum
+      }
+    }
+  }
+  
+  def update_solr(file: String, info: SongInfo) = {
+    Solr.getInputDocument(file) match {
+      case None      => { /* Cannot update it */ }
+      case Some(doc) => {
+        doc.setField("title", info.title.getOrElse(""))
+        doc.setField("artist", info.artist.getOrElse(""))
+        doc.setField("album", info.album.getOrElse(""))
+        info.year match {
+          case None    => doc.removeField("year")
+          case Some(y) => doc.setField("year", y)
+        }
+        info.track match {
+          case None    => doc.removeField("trackNumber")
+          case Some(t) => doc.setField("trackNumber", t)
+        }
+        Solr.update(doc)
+      }
+    }
+  }
+
+  def add_to_database(file: String, info: SongInfo) = {
     inTransaction {
-      Database.ensureInDb(info.artist, Database.artists, Database.artistByName, new Artist(0, _))
-      Database.ensureInDb(info.album, Database.albums, Database.albumByName, new Album(0, _))
+      val artist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
+      Images.ensureArtist(artist)
+      val album = ensure_or_create_album(file, info.artist, info.album)
+      Images.ensureAlbum(new File(file), album, Some(artist))
+      val song = new Song()
+      song.file = file
+      song.title = info.title.getOrElse("")
+      song.artistId = artist.id
+      song.albumId = album.id
+      song.year = info.year
+      song.track = info.track
+      song.disc_no = info.disc_no
+      Database.songs.insert(song)
+    }
+    update_solr(file, info)
+  }
+  
+  def replace_in_database(file: String, id: Long, info: SongInfo) = {
+    inTransaction {
       Database.songs.lookup(id).map(song => {
         val prevArtistId = song.artistId
         val prevAlbumId = song.albumId
-        info.toExistingSqueryl(song)
+        val newArtist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
+        Images.ensureArtist(newArtist)
+        val newAlbum = ensure_or_create_album(song.file, info.artist, info.album)
+        Images.ensureAlbum(new File(file), newAlbum, Some(newArtist))
+        song.title = info.title.getOrElse("")
+        song.artistId = newArtist.id
+        song.albumId = newAlbum.id
+        song.year = info.year
+        song.track = info.track
+        song.disc_no = info.disc_no
         Database.songs.update(song)
         Database.deleteIfNoAssocInDb(prevArtistId, Database.artists, _.artistId)
         Database.deleteIfNoAssocInDb(prevAlbumId, Database.albums, _.albumId)
       })
     }
+    update_solr(file, info)
   }
   
   def remove_from_database(filename: String) = {
@@ -119,48 +223,6 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         Database.deleteIfNoAssocInDb(artistId, Database.artists, _.artistId)
         Database.deleteIfNoAssocInDb(albumId, Database.albums, _.albumId)
       })
-    }
-  }
-  
-  // Functions for extracting tags with JAudioTagger
-  // ===============================================
-    
-  def extract_info(tag: Tag): SongInfo = {
-	val title = extract_tag_field(tag, FieldKey.TITLE)
-    val artist = extract_tag_field(tag, FieldKey.ARTIST)
-    val album = extract_tag_field(tag, FieldKey.ALBUM)
-	val year = extract_tag_field(tag, FieldKey.YEAR, _.toInt)
-	val track = extract_tag_field(tag, FieldKey.TRACK, _.toInt)
-	val disc_no = extract_tag_field(tag, FieldKey.DISC_NO, _.toInt)
-	SongInfo(title, artist, album, year, track, disc_no)
-  }
-  
-  def extract_tag_field[R](tag: Tag, key: FieldKey, f: (String => R) = (a: String) => a): Option[R] = {
-    try {
-      Some(f(tag.getFirst(key)))
-    } catch {
-      case _ => None
-    }
-  }
-  
-  // Complete information about a Song
-  // =================================
-  case class SongInfo(title: Option[String], artist: Option[String], album: Option[String],
-    year: Option[Int], track: Option[Int], disc_no: Option[Int]) {
-    
-    def toSqueryl(filename: String) =
-      new Song(0, filename, title.getOrElse(filename),
-          artist.map(a => Database.artistByName(a).get).map(_.id),
-          album.map(a => Database.albumByName(a).get).map(_.id),
-          year, track, disc_no)
-    
-    def toExistingSqueryl(song: Song) = {
-      song.title = title.getOrElse(song.file)
-      song.artistId = artist.map(a => Database.artistByName(a).get).map(_.id)
-      song.albumId = album.map(a => Database.albumByName(a).get).map(_.id)
-      song.year = year
-      song.track = track
-      song.disc_no = disc_no
     }
   }
 }

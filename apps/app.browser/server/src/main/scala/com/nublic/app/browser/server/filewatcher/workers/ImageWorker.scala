@@ -16,7 +16,8 @@ object ImageWorker extends DocumentWorker {
       "image/x-pcx", "image/pict", "image/x-portable-bitmap",
       "image/tiff", "image/x-tiff", "image/x-xbitmap",
       "image/x-xbm", "image/xbm", "application/wmf", 
-      "application/x-wmf", "image/wmf", "image/x-wmf" 
+      "application/x-wmf", "image/wmf", "image/x-wmf" ,
+      "image/x-ms-bmp"
     )
 
   def supportedViews(): List[String] = List("png")
@@ -29,7 +30,7 @@ object ImageWorker extends DocumentWorker {
     val magick = new ConvertCmd()
     val op = new IMOperation() 
     op.addImage(file)
-    op.resize(FileFolder.THUMBNAIL_SIZE)
+    op.resize(FileFolder.THUMBNAIL_SIZE, FileFolder.THUMBNAIL_SIZE)
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
     // And now the same image in png
