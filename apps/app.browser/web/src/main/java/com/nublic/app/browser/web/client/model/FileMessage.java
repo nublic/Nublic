@@ -5,7 +5,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.browser.web.client.error.ErrorPopup;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 import com.nublic.util.messages.Message;

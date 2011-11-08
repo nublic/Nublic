@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client.error;
+package com.nublic.util.error;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

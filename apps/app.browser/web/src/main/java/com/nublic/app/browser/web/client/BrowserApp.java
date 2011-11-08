@@ -10,9 +10,9 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.EmptyUI;
 import com.nublic.app.browser.web.client.UI.UIUtils;
-import com.nublic.app.browser.web.client.error.ErrorPopup;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
+import com.nublic.util.error.ErrorPopup;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

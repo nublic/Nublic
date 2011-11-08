@@ -8,8 +8,8 @@ import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.google.gwt.core.client.GWT;
 import com.nublic.app.browser.web.client.Constants;
-import com.nublic.app.browser.web.client.error.ErrorPopup;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
+import com.nublic.util.error.ErrorPopup;
 
 public class UIUtils {
 	static public void showPlayer(ShowsPlayer destination, ParamsHashMap hmap, boolean anyplayer, String type) {
