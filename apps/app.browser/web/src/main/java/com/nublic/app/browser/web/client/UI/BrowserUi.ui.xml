@@ -48,7 +48,7 @@
 	   					<g:east size="226"> <!-- 20 margin + 36 image + 150 textbox + 20 scrol size-->
 	   						<g:HorizontalPanel verticalAlignment="middle">
 		   						<g:Image url="images/filter.png" styleName="{style.margin}"/>
-		   						<g:TextBox styleName="{style.margin} {style.topelementswith}"/>
+		   						<g:TextBox ui:field="filterBox" styleName="{style.margin} {style.topelementswith}" title="filter"/>
 		   					</g:HorizontalPanel>
 		   				</g:east>
 		   				<g:center>

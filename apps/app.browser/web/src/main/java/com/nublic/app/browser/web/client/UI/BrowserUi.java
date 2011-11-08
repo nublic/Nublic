@@ -1,15 +1,21 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
@@ -22,6 +28,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
@@ -31,6 +38,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
@@ -49,8 +57,6 @@ import com.nublic.util.messages.SequenceHelper;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
@@ -60,6 +66,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	TreeAdapter treeAdapter = null;
 	LazyLoader loader = new LazyLoader();
 	String showingPath = "";
+	String lastFilter = "";
 	boolean descOrderCurrently = true;
 	
 	@UiField FlowPanel centralPanel;
@@ -68,6 +75,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField PushButton upButton;
 	@UiField PushButton downButton;
 	@UiField ListBox orderList;
+	@UiField TextBox filterBox;
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -158,11 +166,28 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 	}
 	
+	// Convert strings to lowercases without diacritical marks
+	String toComparable(String s) {
+		return s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+	}
+	
 	private void updateCentralPanel(String path) {
 		// We cancel any popup which could be hiding the central panel
 		popUpBox.hide();
 
 		List <FileNode> fileList = model.getFileList();
+		
+		// Filter the list
+		if (!filterBox.getText().equals("")) {
+			Collection<FileNode> fileColection = Collections2.filter(fileList, new Predicate<FileNode>(){
+				@Override
+				public boolean apply(FileNode elem) {
+					return (toComparable(elem.getName())).contains(toComparable(filterBox.getText()));
+//					return elem.getName().toLowerCase().contains(filterBox.getText().toLowerCase());
+				}
+			});
+			fileList = Lists.newArrayList(fileColection);
+		}
 
 		// Order attending to orderList
 		switch (orderList.getSelectedIndex()) {
@@ -226,13 +251,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 		updateCentralPanel(showingPath);
 	}
+	
+	// Handler for filter text change
+	@UiHandler("filterBox")
+	void onFilterBoxKeyUp(KeyUpEvent event) {
+		if (!filterBox.getText().equals(lastFilter)) {
+			lastFilter = filterBox.getText();
+			updateCentralPanel(showingPath);
+		}
+	}
 
 	// Handler for model change event
 	@Override
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
 		treeAdapter.updateView(node);
 	}
-	
+		
 	// TODO: set title of browser
 	public void showImage(ParamsHashMap paramsHashMap) {
 		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
