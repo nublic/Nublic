@@ -1,6 +1,7 @@
 package com.nublic.app.manager.web.welcome;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -24,6 +25,7 @@ public class WelcomePage extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.theUi = ui;
 		this.showApps();
+		Document.get().setTitle("Nublic - Welcome");
 	}
 
 	public void showApps() {
@@ -36,9 +38,11 @@ public class WelcomePage extends Composite {
 			int col = 0;
 			int row = 0;
 			// Add apps
-			for(AppData app : theUi.getApps().values()) {
-				AppCell cell = new AppCell(GWT.getHostPageBaseURL() + "manager/server/app-image/" + app.getId() + "/32",
-						app.getDefaultName(), app.getId() + "/" + app.getPath(), app.isFavourite());
+			for(String appId : theUi.getAppOrder()) {
+				AppData app = theUi.getApps().get(appId);
+				AppCell cell = new AppCell(theUi, appId, 
+						GWT.getHostPageBaseURL() + "manager/server/app-image/" + appId + "/32",
+						app.getDefaultName(), appId + "/" + app.getPath(), app.isFavourite());
 				appGrid.setWidget(row, col, cell);
 				// Set new rows
 				row += col;
