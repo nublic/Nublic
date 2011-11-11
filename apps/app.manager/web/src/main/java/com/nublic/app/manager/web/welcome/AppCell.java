@@ -3,6 +3,7 @@ package com.nublic.app.manager.web.welcome;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Image;
@@ -12,7 +13,7 @@ public class AppCell extends Composite {
 
 	private static AppCellUiBinder uiBinder = GWT.create(AppCellUiBinder.class);
 	@UiField Image image;
-	@UiField Label name;
+	@UiField Hyperlink name;
 	@UiField Image star;
 	
 	private static String FAV_SELECTED = "images/fav-selected.png";
@@ -25,10 +26,11 @@ public class AppCell extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
-	public AppCell(String image, String name, boolean favourite) {
+	public AppCell(String image, String name, String token, boolean favourite) {
 		this();
 		this.image.setUrl(image);
 		this.name.setText(name);
+		this.name.setTargetHistoryToken(token);
 	}
 	
 	public void setFavourite(boolean favourite) {

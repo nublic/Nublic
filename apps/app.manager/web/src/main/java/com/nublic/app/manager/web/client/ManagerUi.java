@@ -1,6 +1,7 @@
 package com.nublic.app.manager.web.client;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
@@ -39,10 +40,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	@UiField Image image;
 	Widget innerWidget = null;
 	// Model
-	ExtendedHistory history;
-	HashMap<String, AppData> apps;
-	ClientState state;
-	String path;
+	ExtendedHistory history = null;
+	HashMap<String, AppData> apps = null;
+	ClientState state = null;
+	String path = null;
 
 	interface ManagerUiUiBinder extends UiBinder<Widget, ManagerUi> {
 	}
@@ -69,6 +70,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 						GWT.getHostPageBaseURL() + "manager/server/app-image/" + data.getId() + "/32",
 						data.getId() + "/" + data.getPath());
 			}
+		}
+		// Show apps in welcome page if shown
+		if (state == ClientState.WELCOME) {
+			((WelcomePage)innerWidget).showApps();
 		}
 	}
 	
@@ -149,7 +154,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		case INITIAL:
 			return null;
 		case WELCOME:
-			return new WelcomePage();
+			return new WelcomePage(this);
 		case FRAME:
 			AppFrame frame = new AppFrame("inner");
 			frame.addAppUrlChangedHandler(this);
@@ -157,6 +162,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 			return frame;
 		}
 		return null;
+	}
+	
+	public Map<String, AppData> getApps() {
+		return this.apps;
 	}
 
 	@Override
