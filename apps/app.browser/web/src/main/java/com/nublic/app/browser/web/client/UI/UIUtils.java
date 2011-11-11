@@ -8,39 +8,33 @@ import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.google.gwt.core.client.GWT;
 import com.nublic.app.browser.web.client.Constants;
-import com.nublic.app.browser.web.client.model.ParamsHashMap;
 import com.nublic.util.error.ErrorPopup;
 
 public class UIUtils {
-	static public void showPlayer(ShowsPlayer destination, ParamsHashMap hmap, boolean anyplayer, String type) {
+	static public void showPlayer(ShowsPlayer destination, String path, boolean anyplayer, String type) {
 		AbstractMediaPlayer player = null;
 		try {
-			String path = hmap.get(Constants.PATH_PARAMETER);
-			if (path != null) {
-				Plugin p = null;
-				// if anyplayer is false will try with the flash plugin, which is the "best" one.
-				if (anyplayer) {
-					p = Plugin.Auto;
-				} else {
-					p = Plugin.FlashPlayer;
-				}
-				if (type.equals(Constants.MUSIC_VIEW)) {
-					player = PlayerUtil.getPlayer(p,
-							GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
-							true, "100%", "100%");
-//				    		true, "50px", "300px");
-				} else {
-					player = PlayerUtil.getPlayer(p,
-							GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.VIDEO_TYPE,
-				    		true, "100%", "100%");
-//					player.setResizeToVideoSize(true);
-				}
-
-				// TODO: if anyplayer quit lists controls
-				destination.showPlayer(player);
+			Plugin p = null;
+			// if anyplayer is false will try with the flash plugin, which is the "best" one.
+			if (anyplayer) {
+				p = Plugin.Auto;
 			} else {
-				ErrorPopup.showError("No path to the resource found");
+				p = Plugin.FlashPlayer;
 			}
+			if (type.equals(Constants.MUSIC_VIEW)) {
+				player = PlayerUtil.getPlayer(p,
+						GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.MUSIC_TYPE,
+						true, "100%", "100%");
+//				    		true, "50px", "300px");
+			} else {
+				player = PlayerUtil.getPlayer(p,
+						GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.VIDEO_TYPE,
+			    		true, "100%", "100%");
+//					player.setResizeToVideoSize(true);
+			}
+
+			// TODO: if anyplayer quit lists controls
+			destination.showPlayer(player);
 		} catch(LoadException e) {
 		     // catch loading exception and alert user
 			ErrorPopup.showError("Error loading file");
@@ -50,14 +44,14 @@ public class UIUtils {
 				ErrorPopup.showError(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
 			} else {
 				// If couldn't load with flash plugin we still can try with any other
-				UIUtils.showPlayer(destination, hmap, true, type);
+				UIUtils.showPlayer(destination, path, true, type);
 			}
 		} catch(PluginNotFoundException e) {
 			// No plugin found
 			if (anyplayer) {
 				ErrorPopup.showError(PlayerUtil.getMissingPluginNotice(e.getPlugin()));
 			} else {
-				UIUtils.showPlayer(destination, hmap, true, type);
+				UIUtils.showPlayer(destination, path, true, type);
 			}
 		}
 	}

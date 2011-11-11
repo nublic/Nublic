@@ -44,7 +44,11 @@ public class FileWidget extends Composite {
 		
 		// init internal variables
 		this.node = n;
-		this.path = path + "/" + n.getName();
+		if (path.equals("")) {
+			this.path = n.getName();
+		} else {
+			this.path = path + "/" + n.getName();
+		}
 		
 		// Gets the thumbnail of the file
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
