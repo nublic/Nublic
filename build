@@ -101,10 +101,18 @@ build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 build_deb_package resource/main/src
 #package_and_install resource/java
+# Manager App
+build_deb_package apps/app.manager/server
+build_deb_package apps/app.manager/web
+build_deb_package apps/app.manager
 # Browser App
 build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
+# Music App
+build_deb_package apps/app.music/server
+# build_deb_package apps/app.browser/web
+# build_deb_package apps/app.browser
 # Extra configuration packages
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
