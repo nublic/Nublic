@@ -146,10 +146,13 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	public void setFavourite(String id, boolean favourite) {
 		AppData app = this.apps.get(id);
 		if (app.isFavourite() != favourite) {
+			FavouriteMessage msg = new FavouriteMessage(id);
 			if (favourite) {
 				addAppTab(app);
+				SequenceHelper.sendJustOne(msg, RequestBuilder.PUT);
 			} else {
 				removeAppTab(id);
+				SequenceHelper.sendJustOne(msg, RequestBuilder.DELETE);
 			}
 			app.setFavourite(favourite);
 		}
