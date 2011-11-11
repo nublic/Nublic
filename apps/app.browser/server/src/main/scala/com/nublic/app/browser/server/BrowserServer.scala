@@ -259,7 +259,10 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	  if (!is_hidden(file.getName())) {
 	    Solr.getMimeType(file.getPath()) match {
 	      case None       => { /* This should not happen */ }
-	      case Some(mime) => files ::= BrowserFile(file.getName(), mime, find_view(file.getAbsolutePath(), mime))
+	      case Some(mime) => 
+	        files ::= BrowserFile(file.getName(), mime,
+	            find_view(file.getAbsolutePath(), mime),
+	            file.length(), file.lastModified())
 	    }
 	  }
 	}
