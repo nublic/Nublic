@@ -21,7 +21,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools
     # Create build folders, if non existant
     mkdir -p ${TARGET_DIR}
     mkdir -p ${REPO_DIR}
