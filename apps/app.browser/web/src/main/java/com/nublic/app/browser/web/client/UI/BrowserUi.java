@@ -101,6 +101,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		orderList.addItem("by name");
 		orderList.addItem("by type");
 		orderList.addItem("by upload date");
+		orderList.addItem("by size");
 		orderList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -213,6 +214,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					Collections.sort(fileList, FileNode.INVERSE_DATE_COMPARATOR);
 				}
 				break;
+			case 3:
+				if (descOrderCurrently) {
+					Collections.sort(fileList, FileNode.SIZE_COMPARATOR);
+				} else {
+					Collections.sort(fileList, FileNode.INVERSE_SIZE_COMPARATOR);
+				}
+				break;
+				
 		}
 		
 		// Update the information shown in the central panel

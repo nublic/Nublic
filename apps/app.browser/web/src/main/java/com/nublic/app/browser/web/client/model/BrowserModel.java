@@ -87,7 +87,12 @@ public class BrowserModel {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent.getName(), fileContent.getMime(), fileContent.getView());
+				// TODO: arreglar lo de pillar longs
+				FileNode file = new FileNode(fileContent.getName(),
+											 fileContent.getMime(),
+											 fileContent.getView(),
+											 fileContent.getSize(),
+											 fileContent.getLastUpdate());
 				fileList.add(file);
 			}
 		} else {

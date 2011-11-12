@@ -16,6 +16,22 @@ public class FileContent extends JavaScriptObject {
 	
 	public final native String getView() /*-{
 	  return this.view;
-  }-*/;
+  	}-*/;
+	
+	private final native int _getSize() /*-{
+	  return this.size;
+	}-*/;
+	
+	public final long getSize() {
+		return (long)_getSize();
+	}
+	
+	private final native double _getLastUpdate() /*-{
+	  return this.last_update;
+	}-*/;
+	
+	public final long getLastUpdate() {
+		return (long)_getLastUpdate();
+	}
 
 }
