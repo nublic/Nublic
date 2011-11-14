@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
-import com.nublic.app.browser.web.client.Constants;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.messages.SequenceWaiter;
 
@@ -51,11 +50,7 @@ public class BrowserModel {
 		foldersMessageHelper.send(message, RequestBuilder.GET);
 	}
 	
-	public void updateFiles(final ParamsHashMap params) {
-		String path = params.get(Constants.PATH_PARAMETER);
-		if (path == null) {
-			path = new String("");
-		}
+	public void updateFiles(String path) {
 		FileMessage message = new FileMessage(path, this);
 		
 		if (!showingURL.equals(message.getURL())) {
@@ -92,7 +87,12 @@ public class BrowserModel {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent.getName(), fileContent.getMime(), fileContent.getView());
+				// TODO: arreglar lo de pillar longs
+				FileNode file = new FileNode(fileContent.getName(),
+											 fileContent.getMime(),
+											 fileContent.getView(),
+											 fileContent.getSize(),
+											 fileContent.getLastUpdate());
 				fileList.add(file);
 			}
 		} else {

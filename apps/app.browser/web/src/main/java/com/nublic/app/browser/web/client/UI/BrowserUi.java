@@ -31,6 +31,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
@@ -47,7 +48,6 @@ import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
-import com.nublic.app.browser.web.client.model.ParamsHashMap;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.Callback;
 import com.nublic.util.gwt.LazyLoader;
@@ -101,6 +101,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		orderList.addItem("by name");
 		orderList.addItem("by type");
 		orderList.addItem("by upload date");
+		orderList.addItem("by size");
 		orderList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -135,6 +136,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler fired when a new update of the file list is available
 	@Override
 	public void onFilesUpdate(BrowserModel m, String path) {
+//		setWindowTitle(path);
 		showingPath = path;
 		updateCentralPanel(path);
 
@@ -212,6 +214,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					Collections.sort(fileList, FileNode.INVERSE_DATE_COMPARATOR);
 				}
 				break;
+			case 3:
+				if (descOrderCurrently) {
+					Collections.sort(fileList, FileNode.SIZE_COMPARATOR);
+				} else {
+					Collections.sort(fileList, FileNode.INVERSE_SIZE_COMPARATOR);
+				}
+				break;
+				
 		}
 		
 		// Update the information shown in the central panel
@@ -266,86 +276,73 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
 		treeAdapter.updateView(node);
 	}
-		
-	// TODO: set title of browser
-	public void showImage(ParamsHashMap paramsHashMap) {
-		String path = paramsHashMap.get(Constants.PATH_PARAMETER);
-		if (path != null) {
-			final Image newImage = new Image(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE);
-			// Load handler
-			newImage.addLoadHandler(new LoadHandler() {
-				@Override
-				public void onLoad(LoadEvent event) {
-					popUpBox.setOriginalSize(newImage.getWidth(), newImage.getHeight());
-				}
-			});
-			// Error handler (for example when the image hasn't been found)
-			newImage.addErrorHandler(new ErrorHandler() {	
-				@Override
-				public void onError(ErrorEvent event) {
-					popUpBox.hide();
-					ErrorPopup.showError("Image file not found");
-				}
-			});
 
-			popUpBox.setContentWidget(newImage);
-			popUpBox.show();
-		} else {
-			ErrorPopup.showError("Image file not found");
-		}
+	public void showImage(String path) {
+		final Image newImage = new Image(GWT.getHostPageBaseURL()
+				+ "server/view/" + path + "." + Constants.IMAGE_TYPE);
+		// Load handler
+		newImage.addLoadHandler(new LoadHandler() {
+			@Override
+			public void onLoad(LoadEvent event) {
+				popUpBox.setOriginalSize(newImage.getWidth(),
+						newImage.getHeight());
+			}
+		});
+		// Error handler (for example when the image hasn't been found)
+		newImage.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent event) {
+				popUpBox.hide();
+				ErrorPopup.showError("Image file not found");
+			}
+		});
+
+		popUpBox.setContentWidget(newImage);
+		popUpBox.show();
 	}
 
-	public void showPDF(ParamsHashMap hmap) {
-		String path = hmap.get(Constants.PATH_PARAMETER);
-		if (path != null) {
-			Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
-		
-			popUpBox.setContentWidget(frame);
-			popUpBox.show();
-		} else {
-			ErrorPopup.showError("Document file not found");
-		}
+	public void showPDF(String path) {
+		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
+		popUpBox.setContentWidget(frame);
+		popUpBox.show();
 	}
 	
-	public void showText(ParamsHashMap hmap) {
-		final String path = hmap.get(Constants.PATH_PARAMETER);
-		if (path != null) {
-			final AceEditor editor = new AceEditor();
-			// Get text
-			Message m = new Message() {
-				@Override
-				public void onSuccess(Response response) {
-					editor.setText(response.getText());
-				}
-				@Override
-				public void onError() {	}
-				@Override
-				public String getURL() {
-					return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
-				}
-			};
-			SequenceHelper.sendJustOne(m, RequestBuilder.GET);
-			// Show the widget
-			popUpBox.setContentWidget(editor);
-			popUpBox.show();
-			editor.startEditor();
-			editor.setTheme(AceEditorTheme.ECLIPSE);
-			editor.setReadOnly(true);
-			editor.setShowPrintMargin(false);
-			editor.setUseWrapMode(true);
-			
-			final AceEditorMode mode = AceEditorMode.fromPath(path);
-			if (mode != null) {
-				loader.loadJS(GWT.getHostPageBaseURL() + "browserapp/ace/mode-" + mode.getName() + ".js", new Callback<Event>() {
-					@Override
-					public void execute(Event t) {
-						editor.setMode(mode);
-					}
-				});
+	public void showText(final String path) {
+		final AceEditor editor = new AceEditor();
+		// Get text
+		Message m = new Message() {
+			@Override
+			public void onSuccess(Response response) {
+				editor.setText(response.getText());
 			}
-			
-		} else {
-			ErrorPopup.showError("Document file not found");
+			@Override
+			public void onError() {
+				ErrorPopup.showError("Error reading text file");
+			}
+			@Override
+			public String getURL() {
+				return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
+			}
+		};
+		SequenceHelper.sendJustOne(m, RequestBuilder.GET);
+
+		// Show the widget
+		popUpBox.setContentWidget(editor);
+		popUpBox.show();
+		editor.startEditor();
+		editor.setTheme(AceEditorTheme.ECLIPSE);
+		editor.setReadOnly(true);
+		editor.setShowPrintMargin(false);
+		editor.setUseWrapMode(true);
+
+		final AceEditorMode mode = AceEditorMode.fromPath(path);
+		if (mode != null) {
+			loader.loadJS(GWT.getHostPageBaseURL() + "browserapp/ace/mode-" + mode.getName() + ".js", new Callback<Event>() {
+				@Override
+				public void execute(Event t) {
+					editor.setMode(mode);
+				}
+			});
 		}
 	}
 
@@ -353,6 +350,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public void showPlayer(AbstractMediaPlayer player) {
 		popUpBox.setContentWidget(player);
 		popUpBox.show();
+	}
+		
+	public void setWindowTitle(String title) {
+		Window.setTitle(Constants.WINDOW_PRETITLE + title);
 	}
 
 }
