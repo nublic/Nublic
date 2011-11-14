@@ -10,8 +10,8 @@ public class FileNode {
 	String name;
 	String mime;
 	String view;
-	long size;
-	long lastUpdate;
+	double size;
+	double lastUpdate;
 
 	// Static Comparators
 	@SuppressWarnings("unchecked")
@@ -38,11 +38,13 @@ public class FileNode {
 	@SuppressWarnings("unchecked")
 	public static final Comparator<FileNode> DATE_COMPARATOR =
 			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
-												new SimpleDateComparator());
+												new SimpleDateComparator(),
+												new SimpleNameComparator());
 	@SuppressWarnings("unchecked")
 	public static final Comparator<FileNode> INVERSE_DATE_COMPARATOR =
 			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
-												new InverseComparator<FileNode>(new SimpleDateComparator()));
+												new InverseComparator<FileNode>(new SimpleDateComparator()),
+												new SimpleNameComparator());
 	
 	@SuppressWarnings("unchecked")
 	public static final Comparator<FileNode> SIZE_COMPARATOR =
@@ -62,7 +64,7 @@ public class FileNode {
 		lastUpdate = 0;
 	}
 
-	public FileNode(String name, String mime, String view, long size, long lastUpdate) {
+	public FileNode(String name, String mime, String view, double size, double lastUpdate) {
 		this.name = name;
 		this.mime = mime;
 		this.view = view;
@@ -112,28 +114,14 @@ public class FileNode {
 	private static class SimpleDateComparator implements Comparator<FileNode> {
 		@Override
 		public int compare(FileNode o1, FileNode o2) {
-			long comp = o1.getLastUpdate() - o2.getLastUpdate();
-			if (comp > Integer.MAX_VALUE) {
-				comp = Integer.MAX_VALUE; 
-			} else if (comp < Integer.MIN_VALUE) {
-				comp = Integer.MIN_VALUE;
-			}
-			return (int) comp;
-//			return o1.getLastUpdate() - o2.getLastUpdate();
+			return (int) (o1.getLastUpdate() - o2.getLastUpdate());
 		}
 	}
 	
 	private static class SimpleSizeComparator implements Comparator<FileNode> {
 		@Override
 		public int compare(FileNode o1, FileNode o2) {
-			long comp = o1.getSize() - o2.getSize();
-			if (comp > Integer.MAX_VALUE) {
-				comp = Integer.MAX_VALUE; 
-			} else if (comp < Integer.MIN_VALUE) {
-				comp = Integer.MIN_VALUE;
-			}
-			return (int) comp;
-//			return o1.getSize() - o2.getSize();
+			return (int) (o1.getSize() - o2.getSize());
 		}
 	}
 
@@ -163,19 +151,19 @@ public class FileNode {
 		this.view = view;
 	}
 
-	public long getSize() {
+	public double getSize() {
 		return size;
 	}
 
-	public void setSize(long size) {
+	public void setSize(double size) {
 		this.size = size;
 	}
 
-	public long getLastUpdate() {
+	public double getLastUpdate() {
 		return lastUpdate;
 	}
 
-	public void setLastUpdate(long lastUpdate) {
+	public void setLastUpdate(double lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
 	
