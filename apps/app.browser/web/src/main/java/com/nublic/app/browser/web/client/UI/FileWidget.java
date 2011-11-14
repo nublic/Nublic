@@ -1,6 +1,11 @@
 package com.nublic.app.browser.web.client.UI;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -13,6 +18,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.model.FileNode;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.PushButton;
 
 public class FileWidget extends Composite {
 
@@ -30,6 +37,7 @@ public class FileWidget extends Composite {
 	
 	FileNode node;
 	String path;
+	boolean mouseOver = false;
 	Hyperlink fileThumbnail;
 	Image altThumbnail;
 	Hyperlink fileName;
@@ -37,6 +45,8 @@ public class FileWidget extends Composite {
 	@UiField VerticalPanel imagePanel;
 	@UiField VerticalPanel textPanel;
 	@UiField FileStyle style;
+	@UiField CheckBox selectedBox;
+	@UiField PushButton downloadButton;
 
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
@@ -95,6 +105,11 @@ public class FileWidget extends Composite {
 			imagePanel.add(altThumbnail);
 			textPanel.add(altName);
 		}
+		
+		addMouseOverHandler(new MyMouseEventHandler());
+		addMouseOutHandler(new MyMouseEventHandler());
+		selectedBox.setVisible(false);
+		downloadButton.setVisible(false);
 	}
 
 	private void setURL(String viewType) {
@@ -116,5 +131,42 @@ public class FileWidget extends Composite {
 			fileThumbnail.setTargetHistoryToken(target);
 			fileName.setTargetHistoryToken(target);
 		}
+	}
+	
+	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		return addDomHandler(handler, MouseOverEvent.getType());
+	}
+
+	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		return addDomHandler(handler, MouseOutEvent.getType());
+	}
+
+	public class MyMouseEventHandler implements MouseOverHandler, MouseOutHandler {
+		public void onMouseOver(final MouseOverEvent moe) {
+			selectedBox.setVisible(true);
+			downloadButton.setVisible(true);
+			mouseOver = true;
+//			widget.addStyleName("my-mouse-over");
+		}
+
+		public void onMouseOut(final MouseOutEvent moe) {
+			downloadButton.setVisible(false);
+			if (!selectedBox.getValue()) {
+				selectedBox.setVisible(false);
+			}
+			mouseOver = false;
+//			widget.removeStyleName("my-mouse-over");
+		}
+	}
+	
+	public boolean isChecked() {
+		return selectedBox.getValue();
+	}
+	
+	public void setChecked(boolean checked) {
+		if (!mouseOver) {
+			selectedBox.setVisible(checked);
+		}
+		selectedBox.setValue(checked);
 	}
 }

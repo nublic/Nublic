@@ -12,4 +12,7 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/down.png")
 	ImageResource down();
+	
+	@Source("images/download.png")
+	ImageResource download();
 }
