@@ -1,25 +1,30 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.model.FileNode;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.PushButton;
 
 public class FileWidget extends Composite {
 
@@ -48,6 +53,16 @@ public class FileWidget extends Composite {
 	@UiField CheckBox selectedBox;
 	@UiField PushButton downloadButton;
 
+	List<CheckedChangeHandler> chekedChangeHandlers = new ArrayList<CheckedChangeHandler>();
+	
+	public void addCheckedChangeHandler(CheckedChangeHandler handler) {	 	
+		chekedChangeHandlers.add(handler);
+	}
+	
+	public List<CheckedChangeHandler> getCheckedChangeHandlers() {
+		return chekedChangeHandlers;
+	}
+	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -110,6 +125,15 @@ public class FileWidget extends Composite {
 		addMouseOutHandler(new MyMouseEventHandler());
 		selectedBox.setVisible(false);
 		downloadButton.setVisible(false);
+		
+		selectedBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				for (CheckedChangeHandler handler : chekedChangeHandlers) {
+					handler.onChekedChange(FileWidget.this);
+				}
+			}
+		});
 	}
 
 	private void setURL(String viewType) {
@@ -168,5 +192,24 @@ public class FileWidget extends Composite {
 			selectedBox.setVisible(checked);
 		}
 		selectedBox.setValue(checked);
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	// To proper handling of FileWidgets lists
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof FileWidget) {
+			return ((FileWidget)o).getPath().equals(path);
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return getPath().hashCode();
 	}
 }

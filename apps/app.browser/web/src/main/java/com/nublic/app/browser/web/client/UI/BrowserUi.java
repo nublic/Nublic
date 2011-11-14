@@ -2,13 +2,16 @@ package com.nublic.app.browser.web.client.UI;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
@@ -58,7 +61,7 @@ import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
 
-public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer, CheckedChangeHandler {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 	
@@ -68,6 +71,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	String showingPath = "";
 	String lastFilter = "";
 	boolean descOrderCurrently = true;
+	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
+//	Set<FileWidget> selectedFiles = Sets.<FileWidget>newHashSet();
 	
 	@UiField FlowPanel centralPanel;
 //	@UiField HorizontalPanel orderPanel;
@@ -95,7 +100,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// To handle updates on files list
 		model.addUpdateHandler(this);
 		treeAdapter = new TreeAdapter(treeView, model);
-
+		
 		// Init the current order mode
 		downButton.setEnabled(false);
 		orderList.addItem("by name");
@@ -136,7 +141,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler fired when a new update of the file list is available
 	@Override
 	public void onFilesUpdate(BrowserModel m, String path) {
-//		setWindowTitle(path);
+		selectedFiles.clear();
 		showingPath = path;
 		updateCentralPanel(path);
 
@@ -168,7 +173,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 	}
 	
-	// Convert strings to lowercases without diacritical marks
+	// Converts strings to lowercases without diacritical marks
 	String toComparable(String s) {
 		return s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
 	}
@@ -227,8 +232,20 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Update the information shown in the central panel
 		centralPanel.clear();
 		for (FileNode n : fileList) {
-			centralPanel.add(new FileWidget(n, path));
+			FileWidget newFileWidget = new FileWidget(n, path);
+			// To handle changes in selections of files
+			newFileWidget.addCheckedChangeHandler(this);
+			// Add it to central panel
+			centralPanel.add(newFileWidget);
 		}
+		
+		// Select the new widgets marked as selected by the user before
+		// newSelectedFiles will always be Set<FileWidget> but it comes from the intersection of Set<Widget> and we must maintain the type
+		Set<Widget> newSelectedFiles = Sets.intersection(Sets.newHashSet(centralPanel), selectedFiles);
+		for (Widget fw : newSelectedFiles) {
+			((FileWidget)fw).setChecked(true);
+		}
+		selectedFiles = Sets.newHashSet(newSelectedFiles);
 	}
 
 	// Handler of the pop-up close event
@@ -275,6 +292,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void onFoldersUpdate(BrowserModel m, FolderNode node) {
 		treeAdapter.updateView(node);
+	}
+	
+	// Handler for dealing with selections by the user on files
+	@Override
+	public void onChekedChange(FileWidget w) {
+		if (w.isChecked()) {
+			selectedFiles.add(w);
+		} else {
+			selectedFiles.remove(w);
+		}
 	}
 
 	public void showImage(String path) {
