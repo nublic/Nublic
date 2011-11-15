@@ -1,0 +1,8 @@
+Format: http://dep.debian.net/deps/dep5
+Upstream-Name: nublic-app-music
+Source: http://nublic.com
+
+Files: *
+Copyright: (c) 2011, Nublic
+License: All rights reserved
+
