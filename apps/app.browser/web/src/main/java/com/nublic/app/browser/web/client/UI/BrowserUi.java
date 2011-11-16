@@ -68,11 +68,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	BrowserModel model = null;
 	TreeAdapter treeAdapter = null;
 	LazyLoader loader = new LazyLoader();
-	String showingPath = "";
 	String lastFilter = "";
 	boolean descOrderCurrently = true;
 	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
-//	Set<FileWidget> selectedFiles = Sets.<FileWidget>newHashSet();
+//	Object selectedStateLock = new Object();
 	
 	@UiField FlowPanel centralPanel;
 //	@UiField HorizontalPanel orderPanel;
@@ -110,7 +109,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		orderList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				updateCentralPanel(showingPath);
+				updateCentralPanel();
 			}
 		});
 		
@@ -121,6 +120,19 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
 	}
+	
+	// To allow BrowserUi to work as a stateProvider
+	public Set<Widget> getSelectedFiles() {
+		return selectedFiles;
+	}
+	
+	public String getPath() {
+		return model.getShowingPath();
+	}
+	
+	public List<FileNode> getShowingFiles() {
+		return model.getFileList();
+	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -129,6 +141,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		model.updateFolders(node, Constants.DEFAULT_DEPTH);
 	}
 	
+
 	// Handler of the selection (click) action on the tree
 	@Override
 	public void onSelection(SelectionEvent<TreeItem> event) {
@@ -140,13 +153,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onFilesUpdate(BrowserModel m, String path) {
+	public void onFilesUpdate(BrowserModel m) {
 		selectedFiles.clear();
-		showingPath = path;
-		updateCentralPanel(path);
+		updateCentralPanel();
 
-		FolderNode node = model.createBranch(path);
+		// We proceed to update the navigation tree
+		FolderNode node = model.createBranch(model.getShowingPath());
 		// If the given node has no children we try to update its info
+		// TODO: I think this should be done at the same time as the request to the files, not in the response
 		if (node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
@@ -178,11 +192,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		return s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
 	}
 	
-	private void updateCentralPanel(String path) {
+	private void updateCentralPanel() {
 		// We cancel any popup which could be hiding the central panel
 		popUpBox.hide();
 
 		List <FileNode> fileList = model.getFileList();
+		String path = model.getShowingPath();
 		
 		// Filter the list
 		if (!filterBox.getText().equals("")) {
@@ -245,7 +260,24 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		for (Widget fw : newSelectedFiles) {
 			((FileWidget)fw).setChecked(true);
 		}
+
 		selectedFiles = Sets.newHashSet(newSelectedFiles);
+	}
+	
+	// Checks the checkboxes of all the file widgets showing
+	public void selectAllFiles() {
+		selectedFiles = Sets.newHashSet(centralPanel);
+		for (Widget w : centralPanel) {
+			((FileWidget)w).setChecked(true);
+		}
+	}
+	
+	// Unchecks the checkboxes of all the file widgets showing
+	public void unselectAllFiles() {
+		selectedFiles.clear();
+		for (Widget w : centralPanel) {
+			((FileWidget)w).setChecked(false);
+		}
 	}
 
 	// Handler of the pop-up close event
@@ -276,7 +308,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			upButton.setEnabled(false);
 			downButton.setEnabled(true);
 		}
-		updateCentralPanel(showingPath);
+		updateCentralPanel();
 	}
 	
 	// Handler for filter text change
@@ -284,7 +316,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	void onFilterBoxKeyUp(KeyUpEvent event) {
 		if (!filterBox.getText().equals(lastFilter)) {
 			lastFilter = filterBox.getText();
-			updateCentralPanel(showingPath);
+			updateCentralPanel();
 		}
 	}
 

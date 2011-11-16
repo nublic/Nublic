@@ -12,8 +12,11 @@ public class BrowserModel {
 	SequenceWaiter<FolderMessage> foldersMessageHelper;
 	SequenceIgnorer<FileMessage> filesMessageHelper;
 	FolderNode folderTree;
+	// "State" dependent part
 	List<FileNode> fileList;
 	String showingURL;
+	String showingPath;
+	// TODO: synchronize updateFileList over an object to allow synchronized reading
 
 	ArrayList<ModelUpdateHandler> updateHandlers;
 
@@ -42,6 +45,10 @@ public class BrowserModel {
 
 	public List<FileNode> getFileList() {
 		return fileList;
+	}
+	
+	public String getShowingPath() {
+		return showingPath;
 	}
 	
 	// Server request methods
@@ -81,13 +88,13 @@ public class BrowserModel {
 		}
 	}
 	
-	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url) {
+	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url, String path) {
 		showingURL = url;
+		showingPath = path;
 		if (fileContentList.length() != 0) {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				// TODO: arreglar lo de pillar longs
 				FileNode file = new FileNode(fileContent.getName(),
 											 fileContent.getMime(),
 											 fileContent.getView(),

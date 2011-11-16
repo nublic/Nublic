@@ -49,18 +49,19 @@ public class FileMessage extends Message {
 			if (fileContentList == null) {
 				ErrorPopup.showError("Folder not found");
 			} else {
-				model.updateFileList(fileContentList, getURL());
-
+				if (path == null) {
+					path = new String("");
+				}
+				// Trim the possible firsts '/'
+				while (path.length() != 0 && path.charAt(0) == '/') {
+					path = path.substring(1);
+				}
+				
+				model.updateFileList(fileContentList, getURL(), path);
 				// Call every handler looking at the file list
 				for (ModelUpdateHandler handler : model.getUpdateHandlers()) {
-					if (path == null) {
-						path = new String("");
-					}
-					// Trim the possible firsts '/'
-					while (path.length() != 0 && path.charAt(0) == '/') {
-						path = path.substring(1);
-					}
-					handler.onFilesUpdate(model, path);
+//					handler.onFilesUpdate(model, path);
+					handler.onFilesUpdate(model);
 				}
 			}
 		} else {

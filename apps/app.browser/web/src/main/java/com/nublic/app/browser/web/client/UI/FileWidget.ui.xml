@@ -26,8 +26,7 @@
 		} */
 	</ui:style>
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
-	
-<!-- 			<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}"> -->
+
 	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}">
 		<g:AbsolutePanel width="96px" height="96px">
 			<g:at left='0' top='0'>
@@ -41,7 +40,7 @@
 				</g:CheckBox>
 			</g:at>
 			<g:at left='68' top='68'> <!-- 96px of the thumbnail minus 16px of the download image -->
-<!-- 				<g:PushButton addStyleNames="{style.nobackground}" ui:field="downloadButton"> -->
+<!-- 				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}"> -->
 				<g:PushButton ui:field="downloadButton">
 					<g:upFace image="{res.download}"/>
 				</g:PushButton>
