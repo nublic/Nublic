@@ -4,11 +4,11 @@ import com.google.gwt.http.client.Response;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 
-public class TestMessage extends Message {
+public class MessageForTesting extends Message {
 	private int branch;
 	private String url;
 	
-	public TestMessage(int branch, String url) {
+	public MessageForTesting(int branch, String url) {
 		this.branch = branch;
 		this.url = url;
 	}
@@ -21,9 +21,9 @@ public class TestMessage extends Message {
 		this.branch = branch;
 	}
 
-	public static class Comparator implements PartialComparator<TestMessage> {
+	public static class Comparator implements PartialComparator<MessageForTesting> {
 		@Override
-		public Ordering compare(TestMessage a, TestMessage b) {
+		public Ordering compare(MessageForTesting a, MessageForTesting b) {
 			if (a.getBranch() != b.getBranch()) {
 				return Ordering.INCOMPARABLE;
 			} else {
