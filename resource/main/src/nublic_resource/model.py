@@ -28,7 +28,8 @@ class App(Entity):
     '''
     name = Field(String(256), primary_key=True)
     using_options(tablename='app')
-
+    keys = OneToMany('Key')
+    
 
 class Key(Entity):
     '''
