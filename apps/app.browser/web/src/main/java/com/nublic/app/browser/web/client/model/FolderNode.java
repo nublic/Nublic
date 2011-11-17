@@ -8,8 +8,7 @@ public class FolderNode {
 	String name;
 	FolderNode parent;
 	List<FolderNode> children;
-	
-	
+
 	// Constructors
 	FolderNode() {
 		parent = null;

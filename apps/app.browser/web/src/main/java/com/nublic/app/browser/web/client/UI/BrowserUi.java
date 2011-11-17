@@ -1,5 +1,6 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -47,6 +48,8 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.ActionWidget;
+import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
@@ -71,15 +74,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	String lastFilter = "";
 	boolean descOrderCurrently = true;
 	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
+	List<ContextChangeHandler> contextHandlers = new ArrayList<ContextChangeHandler>();
 //	Object selectedStateLock = new Object();
 	
 	@UiField FlowPanel centralPanel;
-//	@UiField HorizontalPanel orderPanel;
 	@UiField Tree treeView;
 	@UiField PushButton upButton;
 	@UiField PushButton downButton;
 	@UiField ListBox orderList;
 	@UiField TextBox filterBox;
+	@UiField FlowPanel actionsPanel;
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -119,7 +123,31 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.hide();
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
+		
+		initActions();
 	}
+	
+	private void initActions() {
+		ActionWidget action = new SingleDownloadAction(this);
+		actionsPanel.add(action);
+	}
+
+	// ContextChangeHandler
+	public void addContextChangeHandler(ContextChangeHandler handler) {	 	
+	    contextHandlers.add(handler);
+	}
+	
+	public List<ContextChangeHandler> getContextChangeHandler() {
+		return contextHandlers;
+	}
+	
+	private void notifyContextHandlers() {
+		// Notify to handlers of context change
+		for (ContextChangeHandler handler : contextHandlers) {
+			handler.onContextChange();
+		}
+	}
+	
 	
 	// To allow BrowserUi to work as a stateProvider
 	public Set<Widget> getSelectedFiles() {
@@ -262,14 +290,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 
 		selectedFiles = Sets.newHashSet(newSelectedFiles);
+		
+		notifyContextHandlers();
 	}
-	
+
 	// Checks the checkboxes of all the file widgets showing
 	public void selectAllFiles() {
 		selectedFiles = Sets.newHashSet(centralPanel);
 		for (Widget w : centralPanel) {
 			((FileWidget)w).setChecked(true);
 		}
+		notifyContextHandlers();
 	}
 	
 	// Unchecks the checkboxes of all the file widgets showing
@@ -278,6 +309,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		for (Widget w : centralPanel) {
 			((FileWidget)w).setChecked(false);
 		}
+		notifyContextHandlers();
 	}
 
 	// Handler of the pop-up close event
@@ -334,6 +366,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		} else {
 			selectedFiles.remove(w);
 		}
+		notifyContextHandlers();
 	}
 
 	public void showImage(String path) {

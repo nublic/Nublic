@@ -9,11 +9,13 @@ import com.nublic.app.browser.web.client.UI.FileWidget;
 public class SingleDownloadAction extends ActionWidget {
 
 	public static void download(String path) {
+		// TODO: make the browser show download dialog. Server or client issue?
 		Window.open(GWT.getHostPageBaseURL() + "server/raw/" + path, "_self", "");
+		//Window.Location.assign(GWT.getHostPageBaseURL() + "server/raw/" + path);
 	}
 	
-	public SingleDownloadAction(String imageURL, String actionText, BrowserUi stateProvider) {
-		super(imageURL, actionText, stateProvider);
+	public SingleDownloadAction(BrowserUi stateProvider) {
+		super("images/download.png", "Download this file", stateProvider);
 	}
 
 	@Override

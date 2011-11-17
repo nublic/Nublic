@@ -31,11 +31,8 @@
 	   	
 	   	<!-- Actions panel -->
 	   	<g:east size="150">
-	   		<g:FlowPanel>
-	   			<g:Label text="Actions">
-	   			</g:Label>
-	   			<g:Button>
-	   			</g:Button>
+	   		<g:FlowPanel ui:field="actionsPanel">
+	   			<g:Label text="Actions"></g:Label>
 	   		</g:FlowPanel>
 	   	</g:east>
 	   	

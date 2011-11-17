@@ -4,7 +4,7 @@
 	<ui:style>
 	</ui:style>
 
-	<g:HorizontalPanel>
+	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="ALIGN_MIDDLE" spacing="5">
 <!-- 		<g:PushButton ui:field="imageButton"/> -->
 <!-- 		<g:Anchor ui:field="actionLink"/> -->
 	</g:HorizontalPanel>
