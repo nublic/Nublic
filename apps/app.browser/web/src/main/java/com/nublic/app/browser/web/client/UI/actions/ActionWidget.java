@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI.actions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -18,7 +19,13 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	private static ActionWidgetUiBinder uiBinder = GWT.create(ActionWidgetUiBinder.class);
 	interface ActionWidgetUiBinder extends UiBinder<Widget, ActionWidget> { }
 
+	// CSS Styles defined in the .xml file
+	interface ActionStyle extends CssResource {
+		String margin();
+	}
+	
 	@UiField HorizontalPanel rootPanel;
+	@UiField ActionStyle style;
 	
 	String extraInfo = "";
 	String actionText;
@@ -88,6 +95,13 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		actionLink.setVisible(visible);
 		imageButton.setEnabled(enabled);
 		actionLink.setEnabled(enabled);
+		if (visible) {
+			imageButton.getElement().addClassName(style.margin());
+			actionLink.getElement().addClassName(style.margin());
+		} else {
+			imageButton.getElement().removeClassName(style.margin());
+			actionLink.getElement().removeClassName(style.margin());
+		}
 	}
 
 	// Warning, the implementation of this methods should use "global" variables selectionSet and currentPath

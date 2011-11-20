@@ -49,7 +49,10 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.ActionWidget;
+import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
@@ -78,12 +81,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //	Object selectedStateLock = new Object();
 	
 	@UiField FlowPanel centralPanel;
+	@UiField FlowPanel actionsPanel;
 	@UiField Tree treeView;
 	@UiField PushButton upButton;
 	@UiField PushButton downButton;
 	@UiField ListBox orderList;
 	@UiField TextBox filterBox;
-	@UiField FlowPanel actionsPanel;
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -128,7 +131,13 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	private void initActions() {
-		ActionWidget action = new SingleDownloadAction(this);
+		ActionWidget action = new SelectAllAction(this);
+		actionsPanel.add(action);
+		action = new UnselectAllAction(this);
+		actionsPanel.add(action);
+		action = new SingleDownloadAction(this);
+		actionsPanel.add(action);
+		action = new FolderDownloadAction(this);
 		actionsPanel.add(action);
 	}
 
@@ -147,17 +156,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			handler.onContextChange();
 		}
 	}
-	
-	
+
 	// To allow BrowserUi to work as a stateProvider
 	public Set<Widget> getSelectedFiles() {
 		return selectedFiles;
 	}
-	
+
 	public String getPath() {
 		return model.getShowingPath();
 	}
-	
+
 	public List<FileNode> getShowingFiles() {
 		return model.getFileList();
 	}
@@ -168,7 +176,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		FolderNode node = (FolderNode) event.getTarget().getUserObject();
 		model.updateFolders(node, Constants.DEFAULT_DEPTH);
 	}
-	
 
 	// Handler of the selection (click) action on the tree
 	@Override
@@ -311,7 +318,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 		notifyContextHandlers();
 	}
-
+	
 	// Handler of the pop-up close event
 	@Override
 	public void onClose(CloseEvent<PopupPanel> event) {

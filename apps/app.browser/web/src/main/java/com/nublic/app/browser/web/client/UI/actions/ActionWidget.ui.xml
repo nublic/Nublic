@@ -1,10 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
+	<ui:style type='com.nublic.app.browser.web.client.UI.actions.ActionWidget.ActionStyle'>
+		.margin {
+			margin: 5px;
+		}
 	</ui:style>
 
-	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="ALIGN_MIDDLE" spacing="5">
+	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="ALIGN_MIDDLE">
 <!-- 		<g:PushButton ui:field="imageButton"/> -->
 <!-- 		<g:Anchor ui:field="actionLink"/> -->
 	</g:HorizontalPanel>
