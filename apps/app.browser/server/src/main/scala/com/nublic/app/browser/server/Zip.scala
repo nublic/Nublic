@@ -39,8 +39,19 @@ object Zip {
     bytes
   }
   
-  private def add_folder_contents(folder_to_add: File, base_path: String, zip_stream: ZipOutputStream): Unit = {
-    for(file <- folder_to_add.listFiles()) {
+  def zipFileSeq(files_to_add: Seq[File], base_path: String): ByteArrayOutputStream = {
+    val bytes = new ByteArrayOutputStream()
+    val zip_stream = new ZipOutputStream(bytes)
+    add_files(files_to_add, base_path, zip_stream)
+    zip_stream.close()
+    bytes
+  }
+  
+  private def add_folder_contents(folder_to_add: File, base_path: String, zip_stream: ZipOutputStream): Unit =
+    add_files(folder_to_add.listFiles(), base_path, zip_stream)
+  
+  private def add_files(files_to_add: Seq[File], base_path: String, zip_stream: ZipOutputStream): Unit = {
+    for(file <- files_to_add) {
       if(!is_hidden(file.getName())) {
         if(file.isDirectory()) {
           add_folder_contents(file, base_path, zip_stream)
