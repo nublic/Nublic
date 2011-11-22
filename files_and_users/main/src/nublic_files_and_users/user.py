@@ -5,12 +5,13 @@ import pwd
 import spwd
 
 from elixir import *
-from model import User
+from model import *
 
 # Needs a group 'nublic' in the system
 
 # APACHE_PASSWD_FILE = "/var/nublic/conf/apache.passwd"
 APACHE_PASSWD_FILE = "apache.passwd" # for debugging purposes
+USER_SEPARATOR = ':'
 
 class User(dbus.service.Object):
     def __init__(self, loop = None):
@@ -29,7 +30,7 @@ class User(dbus.service.Object):
     def user_shown_name_changed(self, username, name):
         print "User %s changed shown name to %s" % (username, name)
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='')
+    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='b')
     def user_exists(self, username):
         try:
             spwd.getspnam(username)
@@ -37,13 +38,23 @@ class User(dbus.service.Object):
         except KeyError:
             return False
     
+    @dbus.service.method('com.nublic.users', in_signature = '', out_signature='s')
+    def get_all_users(self):
+        ''' Gets all users separated by :'''
+        r = ""
+        for u in User.query.all():
+            if r != "":
+                r = r + ":"
+            r = r + u.username
+        return r
+    
     def get_user_uid(self, username):
         user = pwd.getpwnam(username)
         return user[2] # Corresponds to uid
     
     @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature='')
     def create_user(self, username, password, name):
-        if ' ' in username or self.user_exists(username):
+        if ' ' in username or self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # passwd
         pexpect.run('useradd -M -G nublic -N ' + username)
@@ -72,7 +83,7 @@ class User(dbus.service.Object):
         print("Added in htpasswd")
         # database
         uid = self.get_user_id(username)
-        user = User(username, uid, name)
+        user = User(usernam=username, uid=uid, name=name)
         user.save()
         session.commit()
         # Notify
@@ -116,7 +127,7 @@ class User(dbus.service.Object):
     
     @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature='')
     def change_user_shown_name(self, username, name):
-        if ' ' in username or not self.user_exists(username):
+        if ' ' in username or not self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # change in database
         user = User.get_by(username=username)
