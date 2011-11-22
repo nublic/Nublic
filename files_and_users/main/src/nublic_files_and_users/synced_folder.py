@@ -9,7 +9,7 @@ from model import *
 
 SYNCED_ROOT = '/var/nublic/data/synced/'
 
-class User(dbus.service.Object):
+class SyncedFolderDBus(dbus.service.Object):
     def __init__(self, user_dbus, loop = None):
         self.user_dbus = user_dbus
         bus_name = dbus.service.BusName('com.nublic.files', bus=dbus.SystemBus())

@@ -7,7 +7,7 @@ from model import *
 
 MIRROR_ROOT = '/var/nublic/data/mirror/'
 
-class User(dbus.service.Object):
+class MirrorDBus(dbus.service.Object):
     def __init__(self, user_dbus, loop = None):
         self.user_dbus = user_dbus
         bus_name = dbus.service.BusName('com.nublic.files', bus=dbus.SystemBus())
