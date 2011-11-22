@@ -99,11 +99,23 @@ create_repo() {
     cd ${INITIAL_DIR}
 }
 
+download_serviio() {
+    cd 3rd-party-libs
+    rm -rf serviio
+    wget http://download.serviio.org/releases/serviio-$1-linux.tar.gz
+    tar -xzvf serviio-$1-linux.tar.gz
+    mv serviio-$1 serviio
+    rm serviio-$1-linux.tar.gz
+    cd ${INITIAL_DIR}
+}
+
 initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+download_serviio 0.6.0.1
+build_submodule_lib serviio
 # Base modules
 build_deb_package notification/main/src
 package_and_install notification/java
