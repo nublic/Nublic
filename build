@@ -130,6 +130,7 @@ build_deb_package apps/app.music/fs/src
 # build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Extra configuration packages
+build_deb_package conf/samba
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
 build_deb_package conf/nublic
