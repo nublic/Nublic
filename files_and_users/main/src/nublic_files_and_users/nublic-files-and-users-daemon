@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 from elixir import *
-from model import *
-from user import *
-from mirror import *
-from synced_folder import *
+from nublic_files_and_users.model import *
+from nublic_files_and_users.user import *
+from nublic_files_and_users.mirror import *
+from nublic_files_and_users.synced_folder import *
 
 from dbus.mainloop.glib import DBusGMainLoop
 from gobject import MainLoop, threads_init
