@@ -55,81 +55,106 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			token = token.substring(0, question);
 		}
 		
-		// Initial or browser page
+		ParamsHashMap hmap = new ParamsHashMap(args);
 		if (token.isEmpty() || token.equals(Constants.BROWSER_VIEW)) {
-			// Necessary to distinct whether the user wants the browser below or is accessing a raw content
-			if (model == null) {
-				initBrowser();
-			}
-			// show the initial screen (empties the file list of the model)
-			model.updateFiles(new ParamsHashMap(args));
-			
-		// An image visualization
+			// Initial or browser page
+			showBrowser(hmap);
 		} else if (token.equals(Constants.IMAGE_VIEW)) {
-			ParamsHashMap hmap = new ParamsHashMap(args);
-			if (model == null) {
-				String path = hmap.get(Constants.PATH_PARAMETER);
-				if (path != null) {
-					// Redirect navigation to raw resource in server
-					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
-				} else {
-					ErrorPopup.showError("No path to the resource found");
-				}
-			} else {
-				// show the image lightbox
-				theUi.showImage(hmap);
-			}
-		// A document visualization
+			// An image visualization
+			showImage(hmap);
 		} else if (token.equals(Constants.DOCUMENT_VIEW)) {
-			ParamsHashMap hmap = new ParamsHashMap(args);
-			if (model == null) {
-				String path = hmap.get(Constants.PATH_PARAMETER);
-				if (path != null) {
-					// Redirect navigation to raw resource in server
-					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
-				} else {
-					ErrorPopup.showError("No path to the resource found");
-				}
-			} else {
-				// show the PDF lightbox
-				theUi.showPDF(hmap);
-			}
-		// Plain text visualization
+			// A document visualization
+			showDocument(hmap);
 		} else if (token.equals(Constants.TEXT_VIEW)) {
-			ParamsHashMap hmap = new ParamsHashMap(args);
-			if (model == null) {
-				String path = hmap.get(Constants.PATH_PARAMETER);
-				if (path != null) {
-					// Redirect navigation to raw resource in server
-					Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE, "_self", "");
-				} else {
-					ErrorPopup.showError("No path to the resource found");
-				}
-			} else {
-				// show the Ace lightbox
-				theUi.showText(hmap);
-			}
-		// A music visualization	
+			// Plain text visualization
+			showText(hmap);
 		} else if (token.equals(Constants.MUSIC_VIEW) || token.equals(Constants.VIDEO_VIEW)) {
-			ParamsHashMap hmap = new ParamsHashMap(args);
-			if (model == null) {
-				String path = hmap.get(Constants.PATH_PARAMETER);
-				if (path != null) {
-					// Create a new "empty" windows with the player
-					EmptyUI empty = new EmptyUI();
-					RootLayoutPanel rp = RootLayoutPanel.get();
-				    rp.add(empty);
-				    UIUtils.showPlayer(empty, hmap, false, token);
-				} else {
-					ErrorPopup.showError("No path to the resource found");
-				}
-			} else {
-				// show the music player (false will try to look first for the flash player)
-				UIUtils.showPlayer(theUi, hmap, false, token);
-			}
+			// A music or video visualization	
+			showPlayer(hmap, token);
 		} else {
 			ErrorPopup.showError("Unrecognized token");
 		}
 	}
+
+	private void showBrowser(ParamsHashMap hmap) {
+		// Necessary to distinct whether the user wants the browser below or is accessing a raw content
+		if (model == null) {
+			initBrowser();
+		}
+		String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			theUi.setWindowTitle(path);
+		} else {
+			path = "";
+			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
+		}
+		// show the initial screen (empties the file list of the model)
+		model.updateFiles(path);
+	}
 	
+	private void showImage(ParamsHashMap hmap) {
+		String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			if (model == null) {
+				// Redirect navigation to raw resource in server
+				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
+			} else {
+				theUi.setWindowTitle(path);
+				// show the image lightbox
+				theUi.showImage(path);
+			}
+		} else {
+			ErrorPopup.showError("Image file not found");
+		}
+	}
+	
+	private void showDocument(ParamsHashMap hmap) {
+		String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			if (model == null) {
+				// Redirect navigation to raw resource in server
+				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
+			} else {
+				theUi.setWindowTitle(path);
+				// show the PDF lightbox
+				theUi.showPDF(path);
+			}
+		} else {
+			ErrorPopup.showError("No path to the resource found");
+		}
+	}
+	
+	private void showText(ParamsHashMap hmap) {
+		String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			if (model == null) {
+				// Redirect navigation to raw resource in server
+				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE, "_self", "");
+			} else {
+				theUi.setWindowTitle(path);
+				// show the Ace lightbox
+				theUi.showText(path);
+			}
+		} else {
+			ErrorPopup.showError("No path to the resource found");
+		}
+	}
+	
+	private void showPlayer(ParamsHashMap hmap, String type) {
+		String path = hmap.get(Constants.PATH_PARAMETER);
+		if (path != null) {
+			if (model == null) {
+				// Create a new "empty" windows with the player
+				EmptyUI empty = new EmptyUI();
+				RootLayoutPanel rp = RootLayoutPanel.get();
+			    rp.add(empty);
+			    UIUtils.showPlayer(empty, path, false, type);
+			} else {
+				theUi.setWindowTitle(path);
+				UIUtils.showPlayer(theUi, path, false, type);
+			}
+		} else {
+			ErrorPopup.showError("No path to the resource found");
+		}
+	}
 }

@@ -10,6 +10,6 @@
     "32" : "/home/serras/nublic/code/apps/app.browser/icon.png"
   }
 , "web" : {
-    "path" : ""
+    "path" : "#"
   }
 }

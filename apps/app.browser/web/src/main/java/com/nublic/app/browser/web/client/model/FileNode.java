@@ -10,41 +10,66 @@ public class FileNode {
 	String name;
 	String mime;
 	String view;
+	double size;
+	double lastUpdate;
 
 	// Static Comparators
 	@SuppressWarnings("unchecked")
 	public static final Comparator<FileNode> NAME_COMPARATOR =
 			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
 												new SimpleNameComparator());
+	public static final Comparator<FileNode> INVERSE_NAME_COMPARATOR =
+			new CompoundComparator<FileNode>(new SimpleFolderComparator(),
+											 new InverseComparator<FileNode>(new SimpleNameComparator()));
+	
 	@SuppressWarnings("unchecked")
 	public static final Comparator<FileNode> TYPE_COMPARATOR =
 			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
 												new SimpleViewComparator(),
 												new SimpleTypeComparator(),
 												new SimpleNameComparator());
-	public static final Comparator<FileNode> DATE_COMPARATOR = new SimpleDateComparator();
-	public static final Comparator<FileNode> INVERSE_NAME_COMPARATOR =
-			new CompoundComparator<FileNode>(new SimpleFolderComparator(),
-											 new InverseComparator<FileNode>(new SimpleNameComparator()));
 	@SuppressWarnings("unchecked")
 	public static final Comparator<FileNode> INVERSE_TYPE_COMPARATOR =
 			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
 					new InverseComparator<FileNode>(new SimpleViewComparator()),
 					new InverseComparator<FileNode>(new SimpleTypeComparator()),
 					new InverseComparator<FileNode>(new SimpleNameComparator()));
-	public static final Comparator<FileNode> INVERSE_DATE_COMPARATOR = new InverseComparator<FileNode>(DATE_COMPARATOR);
+	
+	@SuppressWarnings("unchecked")
+	public static final Comparator<FileNode> DATE_COMPARATOR =
+			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
+												new SimpleDateComparator(),
+												new SimpleNameComparator());
+	@SuppressWarnings("unchecked")
+	public static final Comparator<FileNode> INVERSE_DATE_COMPARATOR =
+			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
+												new InverseComparator<FileNode>(new SimpleDateComparator()),
+												new SimpleNameComparator());
+	
+	@SuppressWarnings("unchecked")
+	public static final Comparator<FileNode> SIZE_COMPARATOR =
+			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
+												new SimpleSizeComparator());
+	@SuppressWarnings("unchecked")
+	public static final Comparator<FileNode> INVERSE_SIZE_COMPARATOR =
+			CompoundComparator.<FileNode>create(new SimpleFolderComparator(),
+												new InverseComparator<FileNode>(new SimpleSizeComparator()));
 
 	// Constructors
 	public FileNode() {
 		name = null;
 		mime = null;
 		view = null;
+		size = 0;
+		lastUpdate = 0;
 	}
 
-	public FileNode(String name, String mime, String view) {
+	public FileNode(String name, String mime, String view, double size, double lastUpdate) {
 		this.name = name;
 		this.mime = mime;
 		this.view = view;
+		this.size = size;
+		this.lastUpdate = lastUpdate;
 	}
 	
 	// Comparators
@@ -86,13 +111,20 @@ public class FileNode {
 		}
 	}
 
-	// TODO: Incomplete
 	private static class SimpleDateComparator implements Comparator<FileNode> {
 		@Override
 		public int compare(FileNode o1, FileNode o2) {
-			return o1.getName().compareTo(o2.getName());
+			return (int) (o1.getLastUpdate() - o2.getLastUpdate());
 		}
 	}
+	
+	private static class SimpleSizeComparator implements Comparator<FileNode> {
+		@Override
+		public int compare(FileNode o1, FileNode o2) {
+			return (int) (o1.getSize() - o2.getSize());
+		}
+	}
+
 
 	// Getters and Setters
 	public String getName() {
@@ -117,6 +149,22 @@ public class FileNode {
 	
 	public void setView(String view) {
 		this.view = view;
+	}
+
+	public double getSize() {
+		return size;
+	}
+
+	public void setSize(double size) {
+		this.size = size;
+	}
+
+	public double getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(double lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 	
 }

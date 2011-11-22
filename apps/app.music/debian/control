@@ -1,0 +1,13 @@
+Source: nublic-app-music
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-music
+Architecture: all
+Depends: ${misc:Depends}, nublic-app-music-server, nublic-app-browser-fs
+Description: Nublic Music app
+ Music app for the Nublic platform - metapackage

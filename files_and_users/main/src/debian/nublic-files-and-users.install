@@ -1,0 +1,4 @@
+nublic_files_and_users/nublic-files-and-users-daemon /usr/sbin
+com.nublic.files.conf /etc/dbus-1/system.d
+com.nublic.users.conf /etc/dbus-1/system.d
+nublic-files-and-users.conf /etc/init
