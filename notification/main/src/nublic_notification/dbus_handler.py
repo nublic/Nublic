@@ -12,22 +12,31 @@ import dbus.service
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
-import notification
-from elixir import *
+from elixir import metadata, setup_all
+import dbus
+
+def __get_bind_uri(dbus_loop):
+    # Get conexion values 
+    bus = dbus.SystemBus(mainloop = dbus_loop)
+    valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/nublic_notification/db')
+    return valueService.value("uri", dbus_interface= 'com.nublic.resource')
+    '''return message_sender("uri")''' 
 
 
 def initial_program_setup():
-    setup_all(create_tables = True)
+    pass
 
 def do_main_program():
     dbus_loop = DBusGMainLoop(set_as_default=True)
-    dbus = DBusValue(loop = dbus_loop)
+    metadata.bind = __get_bind_uri(dbus_loop)
+    setup_all(create_tables = True)
+    dbus_value = DBusValue(loop = dbus_loop)
     
     loop = gobject.MainLoop()
+    
     gobject.threads_init()
     loop.run()
     
-
 def program_cleanup():
     pass
 
@@ -42,7 +51,7 @@ class DBusValue(dbus.service.Object):
         # Init DBus object
         self.object_path = "/com/nublic/notification/Messages"
         bus_name = dbus.service.BusName('com.nublic.notification', bus = dbus.SystemBus(mainloop = loop))
-        dbus.service.Object.__init__(self, bus_name, self.object_path)
+        dbus.service.Object.__init__(self, bus_name, object_path = self.object_path)
 
     @dbus.service.method('com.nublic.notification', in_signature = 'ssss', out_signature='s')
     def new_message(self, app, user, level, text):
