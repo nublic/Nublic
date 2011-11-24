@@ -7,10 +7,14 @@ import com.google.gwt.junit.client.GWTTestCase;
  */
 public class MusicAppTest extends GWTTestCase {
 
-  /**
-   * Must refer to a valid module that sources this class.
-   */
-  public String getModuleName() {
-    return "com.nublic.app.music.MusicAppJUnit";
-  }
+	/**
+	 * Must refer to a valid module that sources this class.
+	 */
+	public String getModuleName() {
+		return "com.nublic.app.music.MusicAppJUnit";
+	}
+
+	public void testNothing() {
+		assertTrue(true);
+	}
 }

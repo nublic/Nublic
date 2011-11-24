@@ -14,9 +14,6 @@ public class ManagerAppTest extends GWTTestCase {
     return "com.nublic.app.manager.web.ManagerAppJUnit";
   }
 
-  /**
-   * Tests the FieldVerifier.
-   */
   public void testNothing() {
     assertTrue(true);
   }

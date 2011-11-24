@@ -114,8 +114,8 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
-download_serviio 0.6.0.1
-build_submodule_lib serviio
+# download_serviio 0.6.0.1
+# build_submodule_lib serviio
 # Base modules
 build_deb_package notification/main/src
 package_and_install notification/java
