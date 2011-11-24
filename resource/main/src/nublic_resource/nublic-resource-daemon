@@ -14,22 +14,26 @@ import dbus.service
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 from nublic_resource.select_provider import get_provider 
+from nublic_resource.provider import get_all_apps
 
 class DBusValue(dbus.service.Object):
-    bus_path = 'com.nublic.resource'
     _base_object_path = '/com/nublic/resource'
     
-    def __init__(self, app_name, key):
+    def __init__(self, app_name, key, loop = None):
+        bus_path = 'com.nublic.resource'
         self.app = app_name
         self.key = key
         provider = get_provider(app_name, key)
         self.provider = provider
-        self.object_path = self._base_object_path + '/' + app_name + '/' + key 
+        self.object_path = self._base_object_path + '/' + app_name + '/' + key
+        
         # Init DBus object
-        bus_name = dbus.service.BusName(bus_path, bus = dbus.SystemBus())
+        bus_name = dbus.service.BusName(bus_path, 
+                                        bus = dbus.SystemBus(mainloop = loop))
         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-    @dbus.service.method('com.nublic.resource')
+    @dbus.service.method('com.nublic.resource', 
+                         in_signature='s', out_signature='s')
     def value(self, subkey):
         return self.provider.value(self.app, self.key, subkey)
 
@@ -37,9 +41,14 @@ if __name__ == '__main__':
     if not os.geteuid() == 0:
         sys.exit('Script must be run as root')
 
-    DBusGMainLoop(set_as_default=True)
-    
-    dbus = DBusValue("app","key")
-    
+    dbus_loop = DBusGMainLoop(set_as_default=True)
+    dbus_objects = []
+    apps = get_all_apps()
+    '''for a in apps:
+        for k in a.keys:
+            dbus_objects.append(DBusValue(a.name,k.name, dbus_loop))
+    '''
+    dbus_object = DBusValue('app1', 'db1', dbus_loop)
     loop = gobject.MainLoop()
+    gobject.threads_init()
     loop.run()

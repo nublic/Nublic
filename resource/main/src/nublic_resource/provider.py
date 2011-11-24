@@ -4,7 +4,9 @@ Created on 10/08/2010
 @author: David Navarro Estruch
 @copyright: 2011 Nublic
 '''
+from elixir import setup_all, session
 
+from model import App, Key
 class Provider(object):
     '''
     classdocs
@@ -91,6 +93,12 @@ class Provider(object):
         @return: List of string with the available subkeys
         '''
         raise NotImplementedError()
+
+def get_all_apps():
+    return App.query.all()
+    
+def get_all_keys():
+    return Key.query.all()
             
 class ReapeatedKeyError(Exception):
     def __init__(self, key):
