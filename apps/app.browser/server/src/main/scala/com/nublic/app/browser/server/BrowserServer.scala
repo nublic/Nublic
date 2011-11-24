@@ -75,6 +75,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           case None       => { }
           case Some(mime) => response.setContentType(mime)
         }
+        response.setHeader("Content-Disposition", "attachment; filename=" + file.getName())
         file
       }
     }
