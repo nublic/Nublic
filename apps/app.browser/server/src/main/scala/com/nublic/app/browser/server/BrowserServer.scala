@@ -75,6 +75,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           case None       => { }
           case Some(mime) => response.setContentType(mime)
         }
+        response.setHeader("Content-Disposition", "attachment; filename=" + file.getName())
         file
       }
     }
@@ -109,25 +110,6 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
             file
           }
         }
-      }
-    }
-  }
-  
-  get("/zip/*") {
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..")) {
-      // We don't want paths going upwards
-      halt(403)
-    } else {
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val file = new File(nublic_path)
-      if (!file.exists()) {
-        halt(404)
-      } else {
-        val zip_name = FilenameUtils.getBaseName(path) + ".zip"
-        response.setContentType("application/zip")
-        response.setHeader("Content-Disposition", "attachment; filename=" + zip_name)
-        Zip.zip(nublic_path).toByteArray()
       }
     }
   }
@@ -232,6 +214,53 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
         }
       )
       halt(200)
+    }
+  }
+  
+  get("/zip/*") {
+    val path = URIUtil.decode(params(THE_REST))
+    if (path.contains("..")) {
+      // We don't want paths going upwards
+      halt(403)
+    } else {
+      val nublic_path = NUBLIC_DATA_ROOT + path
+      val file = new File(nublic_path)
+      if (!file.exists()) {
+        halt(404)
+      } else {
+        val zip_name = FilenameUtils.getBaseName(path) + ".zip"
+        response.setContentType("application/zip")
+        response.setHeader("Content-Disposition", "attachment; filename=" + zip_name)
+        Zip.zip(nublic_path).toByteArray()
+      }
+    }
+  }
+  
+  post("/zip-set") {
+    val files = params("files").split(":").toList
+    val filename = params("filename")
+    files match {
+      case initial :: rest => { 
+        if (files.exists(_.contains(".."))) {
+          halt(403)
+        } else {
+          val range = 0 until (initial.length() + 1)
+          val prefix_length = range.lastIndexWhere(n => {
+            val prefix = initial.substring(0, n)
+            if (!prefix.endsWith("/")) {
+              false
+            } else {
+              rest.forall(_.startsWith(prefix))
+            }
+          })
+          val base_path = NUBLIC_DATA_ROOT + initial.substring(0, prefix_length)
+          val files_to_add = files.map(s => new File(NUBLIC_DATA_ROOT + s))
+          response.setContentType("application/zip")
+          response.setHeader("Content-Disposition", "attachment; filename=" + filename )
+          Zip.zipFileSeq(files_to_add, base_path).toByteArray()
+        }
+      }
+      case Nil => halt(403)
     }
   }
   

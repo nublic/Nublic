@@ -1,0 +1,31 @@
+#!/usr/bin/python
+
+from elixir import *
+from nublic_files_and_users.model import *
+from nublic_files_and_users.user import *
+from nublic_files_and_users.mirror import *
+from nublic_files_and_users.synced_folder import *
+
+from dbus.mainloop.glib import DBusGMainLoop
+from gobject import MainLoop, threads_init
+
+metadata.bind = 'mysql://nublic:nublic@localhost:3306/nublic_files_and_users'
+metadata.bind.echo = True
+
+NOTIFICATION_LEVEL_LOG = 'LOG'
+NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
+NOTIFICATION_LEVEL_DEFAULT_PERFORMED = 'DEFAULT_PERFORMED'
+NOTIFICATION_LEVEL_BLOCKER = 'BLOCKER'
+
+if __name__ == '__main__':
+    # Initialize D-Bus loop
+    setup_all(create_tables=True)
+    dbus_loop = DBusGMainLoop(set_as_default=True)
+    # Initialize D-Bus objects
+    user = UserDBus(dbus_loop)
+    mirror = MirrorDBus(user, dbus_loop)
+    synced = SyncedFolderDbus(user, dbus_loop)
+    # Start GObject loop
+    loop = gobject.MainLoop()
+    gobject.threads_init()
+    loop.run()

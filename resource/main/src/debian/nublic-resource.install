@@ -3,4 +3,5 @@ nublic-resource-postgres-db-uninstall /usr/sbin
 nublic_resource/nublic-resource /usr/bin
 nublic_resource/nublic-resource-daemon /usr/sbin
 nublic_resource/nublic-resource-setup /usr/sbin
-
+com.nublic.resource.conf /etc/dbus-1/system.d
+nublic-resource.conf /etc/init
