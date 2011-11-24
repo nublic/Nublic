@@ -1,5 +1,7 @@
 package com.nublic.util.messages;
 
+import java.util.HashMap;
+
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestBuilder.Method;
@@ -15,7 +17,6 @@ public abstract class SequenceHelper <M extends Message> {
 	protected Object lock;
 	private long lastSequenceNumber;
 	protected GraphLattice<M> messageLattice;
-//	protected ArrayList<M> messageList = new ArrayList<M>();
 
 	SequenceHelper(PartialComparator<M> comparator) {
 		lock = new Object();
@@ -33,30 +34,6 @@ public abstract class SequenceHelper <M extends Message> {
 		}
 
 		performSend(message, method);
-		
-//		String url = URL.encode(message.getURL());
-//		RequestBuilder builder = new RequestBuilder(method, url);
-//		
-//		try {
-//			@SuppressWarnings("unused")
-//			// It is not unused, we maintain callbacks
-//			Request request = builder.sendRequest(null, new RequestCallback() {
-//				public void onError(Request request, Throwable exception) {
-//					if (messageLattice.contains(message)) {
-//						// Otherwise the message has been ignored
-//						actionOnError(message);
-//					}
-//				}
-//				public void onResponseReceived(Request request, Response response) {
-//					if (messageLattice.contains(message)) {
-//						// Otherwise the message has been ignored
-//						actionOnSuccess(message, response);
-//					}
-//				}
-//			});
-//		} catch (RequestException e) {
-//			message.onError();
-//		}
 	}
 
 	protected void performSend(final M message, Method method) {
@@ -64,9 +41,20 @@ public abstract class SequenceHelper <M extends Message> {
 		RequestBuilder builder = new RequestBuilder(method, url);
 
 		try {
+			HashMap<String, String> params = message.getParams();
+			StringBuilder postData = new StringBuilder();
+			for (String key : params.keySet()) {
+				if (postData.length() != 0) {
+					postData.append("&");
+				}
+				postData.append(key);
+				postData.append("=");
+				postData.append(params.get(key));
+			}
+
 			@SuppressWarnings("unused")
 			// It is not unused, we maintain callbacks
-			Request request = builder.sendRequest(null, new RequestCallback() {
+			Request request = builder.sendRequest(postData.toString(), new RequestCallback() {
 				public void onError(Request request, Throwable exception) {
 					if (messageLattice.contains(message)) {
 						// Otherwise the message has been ignored

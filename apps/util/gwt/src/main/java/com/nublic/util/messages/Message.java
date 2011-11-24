@@ -1,10 +1,13 @@
 package com.nublic.util.messages;
+import java.util.HashMap;
+
 import com.google.gwt.http.client.Response;
 
 public abstract class Message {
 	boolean error = false;
 	private long sequenceNumber;
 	Response savedResponse;
+	HashMap<String, String> params = new HashMap<String, String>();
 	
 	public abstract String getURL();
 	public abstract void onSuccess(Response response);
@@ -14,6 +17,14 @@ public abstract class Message {
 		// Override this function to take actions when the message is ignored
 	}
 
+	public void addParam(String key, String value) {
+		params.put(key, value);
+	}
+	
+	public HashMap<String, String> getParams() {
+		return params;
+	}
+	
 	public void setSequenceNumber(long sequenceNumber) {
 		this.sequenceNumber = sequenceNumber;
 	}
