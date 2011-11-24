@@ -30,7 +30,7 @@ public class PreviewTextAction extends ActionWidget {
 			return Availability.HIDDEN;
 		} else {
 			for (Widget w : selectedFiles) {
-				if (((FileWidget)w).getViewType().equals(Constants.TEXT_TYPE)) {
+				if (Constants.TEXT_TYPE.equals(((FileWidget)w).getViewType())) {
 					textToShow = (FileWidget) w;
 					return Availability.AVAILABLE;
 				}

@@ -30,7 +30,7 @@ public class PreviewVideoAction extends ActionWidget {
 			return Availability.HIDDEN;
 		} else {
 			for (Widget w : selectedFiles) {
-				if (((FileWidget)w).getViewType().equals(Constants.VIDEO_TYPE)) {
+				if (Constants.VIDEO_TYPE.equals(((FileWidget)w).getViewType())) {
 					videoToShow = (FileWidget) w;
 					return Availability.AVAILABLE;
 				}

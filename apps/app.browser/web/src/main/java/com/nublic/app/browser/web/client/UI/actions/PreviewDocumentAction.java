@@ -30,7 +30,7 @@ public class PreviewDocumentAction extends ActionWidget {
 			return Availability.HIDDEN;
 		} else {
 			for (Widget w : selectedFiles) {
-				if (((FileWidget)w).getViewType().equals(Constants.DOCUMENT_TYPE)) {
+				if (Constants.DOCUMENT_TYPE.equals(((FileWidget)w).getViewType())) {
 					docToShow = (FileWidget) w;
 					return Availability.AVAILABLE;
 				}

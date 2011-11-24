@@ -30,7 +30,7 @@ public class PreviewImageAction extends ActionWidget {
 			return Availability.HIDDEN;
 		} else {
 			for (Widget w : selectedFiles) {
-				if (((FileWidget)w).getViewType().equals(Constants.IMAGE_TYPE)) {
+				if (Constants.IMAGE_TYPE.equals(((FileWidget)w).getViewType())) {
 					imageToShow = (FileWidget) w;
 					return Availability.AVAILABLE;
 				}

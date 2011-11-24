@@ -24,7 +24,10 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.model.FileNode;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class FileWidget extends Composite {
 
@@ -135,7 +138,7 @@ public class FileWidget extends Composite {
 			}
 		});
 	}
-	
+
 	public String getViewType() {
 		return node.getView();
 	}
@@ -161,6 +164,12 @@ public class FileWidget extends Composite {
 		}
 	}
 	
+	@UiHandler("downloadButton")
+	void onDownloadButtonClick(ClickEvent event) {
+		SingleDownloadAction.download(path);
+	}
+	
+	// To handle mouse over events (TODO: better handling of mouse-out to detect lost of focus with popups)
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
 	}
@@ -216,4 +225,5 @@ public class FileWidget extends Composite {
 	public int hashCode() {
 		return getPath().hashCode();
 	}
+
 }

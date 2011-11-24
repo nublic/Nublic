@@ -30,7 +30,7 @@ public class PreviewMusicAction extends ActionWidget {
 			return Availability.HIDDEN;
 		} else {
 			for (Widget w : selectedFiles) {
-				if (((FileWidget)w).getViewType().equals(Constants.MUSIC_TYPE)) {
+				if (Constants.MUSIC_TYPE.equals(((FileWidget)w).getViewType())) {
 					musicToShow = (FileWidget) w;
 					return Availability.AVAILABLE;
 				}
