@@ -1,5 +1,5 @@
 all:
-	${MAVEN} package
+	echo "Make nothing"
 
 install:
 	mkdir -p ${DESTDIR}/var/lib/nublic/apps
