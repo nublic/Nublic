@@ -135,6 +135,10 @@ public class FileWidget extends Composite {
 			}
 		});
 	}
+	
+	public String getViewType() {
+		return node.getView();
+	}
 
 	private void setURL(String viewType) {
 		String target = null;

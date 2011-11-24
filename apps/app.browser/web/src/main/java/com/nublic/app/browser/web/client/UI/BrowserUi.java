@@ -48,8 +48,12 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
-import com.nublic.app.browser.web.client.UI.actions.ActionWidget;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.PreviewDocumentAction;
+import com.nublic.app.browser.web.client.UI.actions.PreviewImageAction;
+import com.nublic.app.browser.web.client.UI.actions.PreviewMusicAction;
+import com.nublic.app.browser.web.client.UI.actions.PreviewTextAction;
+import com.nublic.app.browser.web.client.UI.actions.PreviewVideoAction;
 import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
@@ -131,14 +135,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	private void initActions() {
-		ActionWidget action = new SelectAllAction(this);
-		actionsPanel.add(action);
-		action = new UnselectAllAction(this);
-		actionsPanel.add(action);
-		action = new SingleDownloadAction(this);
-		actionsPanel.add(action);
-		action = new FolderDownloadAction(this);
-		actionsPanel.add(action);
+		actionsPanel.add(new PreviewImageAction(this));
+		actionsPanel.add(new PreviewTextAction(this));
+		actionsPanel.add(new PreviewDocumentAction(this));
+		actionsPanel.add(new PreviewMusicAction(this));
+		actionsPanel.add(new PreviewVideoAction(this));
+		actionsPanel.add(new SelectAllAction(this));
+		actionsPanel.add(new UnselectAllAction(this));
+		actionsPanel.add(new SingleDownloadAction(this));
+		actionsPanel.add(new FolderDownloadAction(this));
 	}
 
 	// ContextChangeHandler
