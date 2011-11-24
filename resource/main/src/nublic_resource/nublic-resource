@@ -37,7 +37,7 @@ def main():
         
         bus = dbus.SystemBus()
         valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/'+app+'/'+ key)
-        value = valueService.get_dbus_method("value", 'com.nublic.resource')
+        value = valueService.get_dbus_method("value", 'com.nublic.resource.value')
         
         if separator != "/": # Doesn't have a subkey value
             print value('None')

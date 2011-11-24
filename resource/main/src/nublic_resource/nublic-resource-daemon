@@ -16,7 +16,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 from nublic_resource.select_provider import get_provider 
 from nublic_resource.provider import get_all_apps
 
-class DBusValue(dbus.service.Object):
+class DBusResourceValue(dbus.service.Object):
     _base_object_path = '/com/nublic/resource'
     
     def __init__(self, app_name, key, loop = None):
@@ -29,26 +29,60 @@ class DBusValue(dbus.service.Object):
         
         # Init DBus object
         bus_name = dbus.service.BusName(bus_path, 
-                                        bus = dbus.SystemBus(mainloop = loop))
+                                        dbus.SystemBus(mainloop = loop))
         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-    @dbus.service.method('com.nublic.resource', 
+    @dbus.service.method('com.nublic.resource.value', 
                          in_signature='s', out_signature='s')
     def value(self, subkey):
         return self.provider.value(self.app, self.key, subkey)
+
+class DBusResourceManager(dbus.service.Object):
+    _object_path = '/com/nublic/resource'
+    
+    def __init__(self, resourceValues, loop = None):
+        self.resourceValues = resourceValues
+        self.loop = loop
+        bus_path = 'com.nublic.resource'
+        # Init DBus object
+        bus_name = dbus.service.BusName(bus_path, 
+                                        dbus.SystemBus(mainloop = loop))
+        dbus.service.Object.__init__(self, bus_name, self._object_path)
+
+    @dbus.service.method('com.nublic.resource.manager', 
+                         in_signature='ss')
+    def load(self, app, key):
+        a = app + ""
+        k = key + ""
+        if not self.resourceValues.has_key(a):
+            self.resourceValues[a] = dict()
+        self.resourceValues[a][k] = DBusResourceValue(a, k, self.loop)
+
+    @dbus.service.method('com.nublic.resource.manager', 
+                         in_signature='ss')
+    def unload(self, app, key):
+        a = app + ""
+        k = key + ""
+        if not self.resourceValues.has_key(a):
+            self.resourceValues[a] = dict()
+        self.resourceValues[a][k].remove_from_connection()
+        del self.resourceValues[a][k]
 
 if __name__ == '__main__':
     if not os.geteuid() == 0:
         sys.exit('Script must be run as root')
 
     dbus_loop = DBusGMainLoop(set_as_default=True)
-    dbus_objects = []
     apps = get_all_apps()
-    '''for a in apps:
+    dbus_objects = dict()
+    for a in apps:
+        if not dbus_objects.has_key(a.name):
+            dbus_objects[a.name] = dict()
         for k in a.keys:
-            dbus_objects.append(DBusValue(a.name,k.name, dbus_loop))
-    '''
-    dbus_object = DBusValue('app1', 'db1', dbus_loop)
+            if not dbus_objects[a.name].has_key(k.name):
+                dbus_objects[a.name][k.name] = dict()
+            dbus_objects[a.name][k.name] = DBusResourceValue(a.name,k.name, dbus_loop)
+    dbusManager = DBusResourceManager(dbus_objects, dbus_loop)
     loop = gobject.MainLoop()
     gobject.threads_init()
     loop.run()

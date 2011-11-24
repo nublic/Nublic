@@ -10,6 +10,7 @@ It works for usage during the install of applications.
 import os
 import sys
 from optparse import OptionParser
+import dbus
 
 from nublic_resource.select_provider import generate_provider, get_provider
 
@@ -37,11 +38,18 @@ def main():
             parser.error("Invalid number of parameters")
         app = args[1]
         key = args[2]
+        # TODO Chech if the app + key are already used
         resource_id = args[3]
         provider = generate_provider(resource_id)
         if provider == None:
             parser.error("Invalid resource")
-        provider.install(app, key)        
+        provider.install(app, key)
+        # Notify the daemon to load the values into dbus        
+        bus = dbus.SystemBus()
+        valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource')
+        load = valueService.get_dbus_method("load", 'com.nublic.resource.manager')
+        load(app,key)
+
     elif args[0] == 'uninstall':
         if len(args) != 3:
             parser.error("Invalid number of parameters")
@@ -51,6 +59,12 @@ def main():
         if provider == None:
             parser.error("Invalid resource")
         provider.uninstall(app, key)
+        # Notify the daemon to unload the values into dbus        
+        bus = dbus.SystemBus()
+        valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource')
+        unload = valueService.get_dbus_method("unload", 'com.nublic.resource.manager')
+        unload(app,key)
+
     elif args[0] == 'request':
         if len(args) != 4:
             parser.error("Invalid number of parameters")
