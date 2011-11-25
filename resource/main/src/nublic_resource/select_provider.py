@@ -6,7 +6,7 @@ Created on 11/08/2010
 @author: David Navarro Estruch
 @copyright: 2011 Nublic
 '''
-from database_stored import DatabaseStored
+from model import Key
 from mysql_db import MysqlDB
 from postgresql_db import PostgresqlDB
 
@@ -21,8 +21,7 @@ def get_provider_name(app, key):
     '''
     Gets the Provider id from an app key
     '''
-    database = DatabaseStored(app)
-    key_stored = database.get_key(app, key)
+    key_stored = Key.get_by(app_name = app, name = key)
     if key_stored == None:
         raise NotExistingProviderError()
     return key_stored.type_name

@@ -33,6 +33,7 @@ class PostgresqlDB(DatabaseStored):
     __root_password = model.postgres_root_password
     __root_user = model.postgres_root_user
     __connection_protocol = "postgresql"
+    providerType = "postgresql-db"
 
     def __init__(self):
         DatabaseStored.__init__(self, "postgresql-db")
@@ -45,6 +46,9 @@ class PostgresqlDB(DatabaseStored):
         self.save_value(app, key, 'user', user_name)
         self.save_value(app, key, 'pass', password)
         self.save_value(app, key, 'database', database_name)
+        '''self.save_value(app, key, 'uri', 
+                        self.__generate_connection_uri(user_name, password, 
+                                                       database_name))'''
 
     def uninstall(self, app, key):
         if not self.__is_key(app, key):
