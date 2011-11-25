@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 8.0.0)
 Standards-Version: 3.9.2
 Homepage: http://nublic.com
 
-Package: nublic-solr-config
+Package: nublic-samba-config
 Architecture: all
 Depends: ${misc:Depends}, samba
 Description: Nublic Samba configuration files

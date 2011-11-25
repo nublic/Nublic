@@ -34,6 +34,7 @@ class MysqlDB(DatabaseStored):
     __root_user = 'root'
     __port = '3306'
     __connection_protocol = "mysql"
+    providerType = "postgresql-db"
 
     def __init__(self):
         DatabaseStored.__init__(self, "mysql-db")
