@@ -10,7 +10,7 @@ from sqlalchemy.types import Integer, UnicodeText, String, Boolean, Unicode, Tex
 from elixir.relationships import ManyToOne, OneToMany, OneToOne
 from elixir.options import using_options
 
-metadata.bind = 'mysql://nublic_notif:ScamUp@localhost:3306/nublic_notification'
+#metadata.bind = 'mysql://nublic_notif:ScamUp@localhost:3306/nublic_notification'
 metadata.bind.echo = True
 
 NOTIFICATION_LEVEL_LOG = 'LOG'

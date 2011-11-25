@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
-import com.nublic.app.browser.web.client.Constants;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.messages.SequenceWaiter;
 
@@ -13,8 +12,11 @@ public class BrowserModel {
 	SequenceWaiter<FolderMessage> foldersMessageHelper;
 	SequenceIgnorer<FileMessage> filesMessageHelper;
 	FolderNode folderTree;
+	// "State" dependent part
 	List<FileNode> fileList;
 	String showingURL;
+	String showingPath;
+	// TODO: synchronize updateFileList over an object to allow synchronized reading
 
 	ArrayList<ModelUpdateHandler> updateHandlers;
 
@@ -45,17 +47,17 @@ public class BrowserModel {
 		return fileList;
 	}
 	
+	public String getShowingPath() {
+		return showingPath;
+	}
+	
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		FolderMessage message = new FolderMessage(n, depth, this);
 		foldersMessageHelper.send(message, RequestBuilder.GET);
 	}
 	
-	public void updateFiles(final ParamsHashMap params) {
-		String path = params.get(Constants.PATH_PARAMETER);
-		if (path == null) {
-			path = new String("");
-		}
+	public void updateFiles(String path) {
 		FileMessage message = new FileMessage(path, this);
 		
 		if (!showingURL.equals(message.getURL())) {
@@ -86,13 +88,18 @@ public class BrowserModel {
 		}
 	}
 	
-	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url) {
+	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url, String path) {
 		showingURL = url;
+		showingPath = path;
 		if (fileContentList.length() != 0) {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent.getName(), fileContent.getMime(), fileContent.getView());
+				FileNode file = new FileNode(fileContent.getName(),
+											 fileContent.getMime(),
+											 fileContent.getView(),
+											 fileContent.getSize(),
+											 fileContent.getLastUpdate());
 				fileList.add(file);
 			}
 		} else {

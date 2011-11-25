@@ -1,18 +1,33 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.model.FileNode;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class FileWidget extends Composite {
 
@@ -30,6 +45,7 @@ public class FileWidget extends Composite {
 	
 	FileNode node;
 	String path;
+	boolean mouseOver = false;
 	Hyperlink fileThumbnail;
 	Image altThumbnail;
 	Hyperlink fileName;
@@ -37,14 +53,30 @@ public class FileWidget extends Composite {
 	@UiField VerticalPanel imagePanel;
 	@UiField VerticalPanel textPanel;
 	@UiField FileStyle style;
+	@UiField CheckBox selectedBox;
+	@UiField PushButton downloadButton;
 
+	List<CheckedChangeHandler> chekedChangeHandlers = new ArrayList<CheckedChangeHandler>();
+	
+	public void addCheckedChangeHandler(CheckedChangeHandler handler) {	 	
+		chekedChangeHandlers.add(handler);
+	}
+	
+	public List<CheckedChangeHandler> getCheckedChangeHandlers() {
+		return chekedChangeHandlers;
+	}
+	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		// init internal variables
 		this.node = n;
-		this.path = path + "/" + n.getName();
+		if (path.equals("")) {
+			this.path = n.getName();
+		} else {
+			this.path = path + "/" + n.getName();
+		}
 		
 		// Gets the thumbnail of the file
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
@@ -91,6 +123,24 @@ public class FileWidget extends Composite {
 			imagePanel.add(altThumbnail);
 			textPanel.add(altName);
 		}
+		
+		addMouseOverHandler(new MyMouseEventHandler());
+		addMouseOutHandler(new MyMouseEventHandler());
+		selectedBox.setVisible(false);
+		downloadButton.setVisible(false);
+		
+		selectedBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				for (CheckedChangeHandler handler : chekedChangeHandlers) {
+					handler.onChekedChange(FileWidget.this);
+				}
+			}
+		});
+	}
+
+	public String getViewType() {
+		return node.getView();
 	}
 
 	private void setURL(String viewType) {
@@ -113,4 +163,67 @@ public class FileWidget extends Composite {
 			fileName.setTargetHistoryToken(target);
 		}
 	}
+	
+	@UiHandler("downloadButton")
+	void onDownloadButtonClick(ClickEvent event) {
+		SingleDownloadAction.download(path);
+	}
+	
+	// To handle mouse over events (TODO: better handling of mouse-out to detect lost of focus with popups)
+	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+		return addDomHandler(handler, MouseOverEvent.getType());
+	}
+
+	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+		return addDomHandler(handler, MouseOutEvent.getType());
+	}
+
+	public class MyMouseEventHandler implements MouseOverHandler, MouseOutHandler {
+		public void onMouseOver(final MouseOverEvent moe) {
+			selectedBox.setVisible(true);
+			downloadButton.setVisible(true);
+			mouseOver = true;
+//			widget.addStyleName("my-mouse-over");
+		}
+
+		public void onMouseOut(final MouseOutEvent moe) {
+			downloadButton.setVisible(false);
+			if (!selectedBox.getValue()) {
+				selectedBox.setVisible(false);
+			}
+			mouseOver = false;
+//			widget.removeStyleName("my-mouse-over");
+		}
+	}
+	
+	public boolean isChecked() {
+		return selectedBox.getValue();
+	}
+	
+	public void setChecked(boolean checked) {
+		if (!mouseOver) {
+			selectedBox.setVisible(checked);
+		}
+		selectedBox.setValue(checked);
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	// To proper handling of FileWidgets lists
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof FileWidget) {
+			return ((FileWidget)o).getPath().equals(path);
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public int hashCode() {
+		return getPath().hashCode();
+	}
+
 }

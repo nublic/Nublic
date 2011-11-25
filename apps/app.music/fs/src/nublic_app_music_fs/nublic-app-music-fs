@@ -1,0 +1,16 @@
+#!/usr/bin/python
+
+# Runs in the foreground. It is suited for use with the Upstart manager
+
+# Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
+# Second version from: https://gist.github.com/339430
+#
+# @author: David Navarro Estruch
+# @author: Alejandro Serrano Mena
+# @copyright: 2011 Nublic
+
+from fuse import FUSE
+from nublic_app_music_fs.filesystem import *
+
+if __name__ == '__main__':
+    fuse = FUSE(Filesystem(), "/var/nublic/fs/music", foreground=True)

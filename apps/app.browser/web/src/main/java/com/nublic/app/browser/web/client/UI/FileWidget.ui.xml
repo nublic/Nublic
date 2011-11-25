@@ -19,14 +19,35 @@
 			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
 			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
 		}
+/*		.nobackground {
+			background: transparent;
+			padding: 0px;
+			border: none;
+		} */
 	</ui:style>
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
+
 	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}">
-		<g:VerticalPanel ui:field="imagePanel" verticalAlignment="middle" horizontalAlignment="center" width="96px" height="96px">
-<!-- 			<g:Hyperlink ui:field="fileThumbnail" styleName="{style.maxheight}"/> -->
-<!-- 			<g:Image ui:field="altThumbnail" styleName="{style.maxheight}"/>      -->
-		</g:VerticalPanel>
+		<g:AbsolutePanel width="96px" height="96px">
+			<g:at left='0' top='0'>
+				<g:VerticalPanel ui:field="imagePanel" verticalAlignment="middle" horizontalAlignment="center" width="96px" height="96px">
+		<!-- 			<g:Hyperlink ui:field="fileThumbnail" styleName="{style.maxheight}"/> -->
+		<!-- 			<g:Image ui:field="altThumbnail" styleName="{style.maxheight}"/>      -->
+				</g:VerticalPanel>
+			</g:at>
+			<g:at left='0' top='0'>
+				<g:CheckBox ui:field="selectedBox">
+				</g:CheckBox>
+			</g:at>
+			<g:at left='68' top='68'> <!-- 96px of the thumbnail minus 16px of the download image -->
+<!-- 				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}"> -->
+				<g:PushButton ui:field="downloadButton">
+					<g:upFace image="{res.download}"/>
+				</g:PushButton>
+			</g:at>
+		</g:AbsolutePanel>
 		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
-<!--			<g:Hyperlink ui:field="fileName" styleName="{style.ellipcenter}"/>	--> <!-- To place the name (which use to be a link) -->
+<!--			<g:Hyperlink ui:field="fileName" styleName="{style.ellipcenter}"/>	--> <!-- To place the name -->
 <!--			<g:Label ui:field="altName" styleName="{style.ellipcenter}"/>		--> <!-- An alternative name label in case it is not a link -->
 		</g:VerticalPanel>
 	</g:VerticalPanel>

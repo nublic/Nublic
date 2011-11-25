@@ -8,7 +8,7 @@ public class IgnoreTest {
 
 	@Test
 	public void test() {
-		
+		assertTrue(true);
 	}
 
 }

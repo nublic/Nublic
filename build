@@ -21,7 +21,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools
     # Create build folders, if non existant
     mkdir -p ${TARGET_DIR}
     mkdir -p ${REPO_DIR}
@@ -49,6 +49,11 @@ build_deb_package() {
     echo "BUILDING .DEB FOR " $1
     cd $1
     ${DEBUILD} -i -us -uc -b
+    if [ $exit != 0 ]
+    then
+        echo "Error building package " $1
+        exit 1
+    fi
     ${DEBUILD} clean
     cd ..
     mv *.deb *.build *.changes ${TARGET_DIR}
@@ -64,6 +69,12 @@ build_submodule_lib() {
     cp -R $1-debian/* $1/debian
     cd $1
     ${DEBUILD} -i -us -uc -b
+    exit=$?
+    if [ $exit != 0 ]
+    then
+        echo "Error building submodule " $1
+        exit 1
+    fi
     ${DEBUILD} clean
     cd ..
     mv *.deb *.build *.changes *.dsc *.tar.gz ${TARGET_DIR}
@@ -88,26 +99,55 @@ create_repo() {
     cd ${INITIAL_DIR}
 }
 
+download_serviio() {
+    cd 3rd-party-libs
+    rm -rf serviio
+    wget http://download.serviio.org/releases/serviio-$1-linux.tar.gz
+    tar -xzvf serviio-$1-linux.tar.gz
+    mv serviio-$1 serviio
+    rm serviio-$1-linux.tar.gz
+    cd ${INITIAL_DIR}
+}
+
 initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+# download_serviio 0.6.0.1
+# build_submodule_lib serviio
 # Base modules
 build_deb_package notification/main/src
 package_and_install notification/java
+build_deb_package files_and_users/main/src
 build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 build_deb_package resource/main/src
 #package_and_install resource/java
+# Utilities
+build_deb_package apps/util/gwt
+install_in_maven_repo apps/util/gwt/target/*.jar com.nublic util.gwt 0.0.1-SNAPSHOT
+# Manager App
+build_deb_package apps/app.manager/server
+build_deb_package apps/app.manager/web
+build_deb_package apps/app.manager
 # Browser App
 build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
+# Music App
+build_deb_package apps/app.music/server
+build_deb_package apps/app.music/fs/src
+# build_deb_package apps/app.music/web
+build_deb_package apps/app.music
 # Extra configuration packages
+build_deb_package conf/samba
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
 build_deb_package conf/nublic
+build_deb_package conf/minidlna
 create_repo
+
+exit 0
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nublic-resource-setup uninstall nublic_notification db 
+

@@ -25,17 +25,14 @@
 
 	<g:SplitLayoutPanel>
 		<!-- Panel for the navigator tree -->
-	   	<g:west size="150">
+	   	<g:west size="180">
 	   		<g:Tree ui:field="treeView"/>
 	   	</g:west>
 	   	
 	   	<!-- Actions panel -->
-	   	<g:east size="150">
-	   		<g:FlowPanel>
-	   			<g:Label text="Actions">
-	   			</g:Label>
-	   			<g:Button>
-	   			</g:Button>
+	   	<g:east size="180">
+	   		<g:FlowPanel ui:field="actionsPanel">
+	   			<g:Label text="Actions"></g:Label>
 	   		</g:FlowPanel>
 	   	</g:east>
 	   	

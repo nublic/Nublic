@@ -1,5 +1,7 @@
 #!/bin/bash
-nublic-resource-postgres-db-install
-
-
+CONFIG_FILE=/etc/nublic/resource.conf
+if [ ! -e $CONFIG_FILE ]
+then
+    nublic-resource-postgres-db-install
+fi
 #DEBHELPER#
