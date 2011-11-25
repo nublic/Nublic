@@ -109,6 +109,9 @@ download_serviio() {
     cd ${INITIAL_DIR}
 }
 
+build_deb_package notification/main/src
+exit 0
+
 initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile

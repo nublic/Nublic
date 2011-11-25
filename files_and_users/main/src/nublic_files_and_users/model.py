@@ -4,14 +4,6 @@ from sqlalchemy.types import Integer, UnicodeText, String, Boolean, Unicode, Tex
 from elixir.relationships import ManyToOne, OneToMany, OneToOne, ManyToMany
 from elixir.options import using_options
 
-metadata.bind = 'postgresql://nublic:nublic@localhost:5432/files_and_users'
-metadata.bind.echo = True
-
-NOTIFICATION_LEVEL_LOG = 'LOG'
-NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
-NOTIFICATION_LEVEL_DEFAULT_PERFORMED = 'DEFAULT_PERFORMED'
-NOTIFICATION_LEVEL_BLOCKER = 'BLOCKER'
-
 class User(Entity):
     using_options(tablename='users')
     username = Field(String(255), primary_key=True)
