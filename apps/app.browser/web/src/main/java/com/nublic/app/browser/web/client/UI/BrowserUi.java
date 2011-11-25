@@ -48,6 +48,10 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.ClearClipboardAction;
+import com.nublic.app.browser.web.client.UI.actions.CopyAction;
+import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
+import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewDocumentAction;
@@ -83,7 +87,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	boolean descOrderCurrently = true;
 	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
 	List<ContextChangeHandler> contextHandlers = new ArrayList<ContextChangeHandler>();
-	Set<FileWidget> clipboard = new HashSet<FileWidget>();
+	Set<Widget> clipboard = new HashSet<Widget>();
 	boolean clipboardModeCut = false;
 //	Object selectedStateLock = new Object();
 	
@@ -148,22 +152,33 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		actionsPanel.add(new SingleDownloadAction(this));
 		actionsPanel.add(new SetDownloadAction(this));
 		actionsPanel.add(new FolderDownloadAction(this));
+		actionsPanel.add(new CopyAction(this));
+		actionsPanel.add(new PasteAction(this));
+		actionsPanel.add(new DeleteAction(this));
+		actionsPanel.add(new ClearClipboardAction(this));
 	}
 	
 	// Clipboard methods
-	public void copy(Set<FileWidget> listToCopy) {
+	public void copy(Set<Widget> listToCopy) {
 		clipboardModeCut = false;
 		clipboard.clear();
 		clipboard.addAll(listToCopy);
+		notifyContextHandlers();
 	}
 	
-	public void cut(Set<FileWidget> listToCopy) {
+	public void cut(Set<Widget> listToCopy) {
 		clipboardModeCut = true;
 		clipboard.clear();
 		clipboard.addAll(listToCopy);
+		notifyContextHandlers();
+	}
+	
+	public void clearClipboard() {
+		clipboard.clear();
+		notifyContextHandlers();
 	}
 
-	public Set<FileWidget> getClipboard() {
+	public Set<Widget> getClipboard() {
 		return clipboard;
 	}
 
