@@ -1,4 +1,7 @@
 #!/bin/bash
 service nublic-resource stop
-nublic-resource-postgres-db-uninstall
+if [ $1 =="remove" ]
+then
+    nublic-resource-postgres-db-uninstall
+fi
 #DEBHELPER#
