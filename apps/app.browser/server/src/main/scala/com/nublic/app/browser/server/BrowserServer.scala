@@ -290,7 +290,11 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	      case None       => {
 	        // We need to get the mime type correctly
 	        // Tell filewatcher
-	        FileUtils.touch(file)
+	        try {
+	          FileUtils.touch(file)
+	        } catch {
+	          case _ => { /* Nothing in special */ }
+	        }
 	        // Return unknown as mimetype
 	        BrowserFile(file.getName(), "unknown", null,
 	            file.length(), file.lastModified())
