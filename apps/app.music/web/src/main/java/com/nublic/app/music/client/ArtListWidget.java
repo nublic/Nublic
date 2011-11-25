@@ -2,49 +2,40 @@ package com.nublic.app.music.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DockLayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.CellList;
-import com.google.gwt.cell.client.AbstractCell;
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.view.client.SelectionChangeEvent;
 import com.nublic.app.music.client.ArtistCell.Images;
 
+public class ArtListWidget extends Composite {
 
+	private static ArtListWidgetUiBinder uiBinder = GWT
+			.create(ArtListWidgetUiBinder.class);
+	@UiField(provided=true) CellList<Artist> cellList = null;
 
-public class MusicUi extends Composite {
-
-	private static MusicUiUiBinder uiBinder = GWT.create(MusicUiUiBinder.class);
-	@UiField DockLayoutPanel dock;
-	//@UiField ArtListWidget widgetList;
-	@UiField(provided=true) CellList<Artist> cellList;
-
-	interface MusicUiUiBinder extends UiBinder<Widget, MusicUi> {
+	interface ArtListWidgetUiBinder extends UiBinder<Widget, ArtListWidget> {
 	}
 
-	public MusicUi() {
-		
-		//widgetList = new ArtListWidget();	
-		
-		Images images = GWT.create(Images.class); 
+	public ArtListWidget() {
+		Images images = GWT.create(Images.class);  
+		 // Create a CellList.
 		ArtistCell artcell = new ArtistCell(images.contact());
 		cellList = new CellList<Artist>(artcell);
 		
 		// Set the total row count. You might send an RPC request to determine the
 	    // total row count.
-	    cellList.setRowCount(9, true);	    
+	    cellList.setRowCount(4, true);	    
 	    // Set the range to display. In this case, our visible range is smaller than
 	    // the data set.
-	    cellList.setVisibleRange(0, 8);
+	    cellList.setVisibleRange(0, 3);
    
 	    DataProvider dataProvider = new DataProvider(); 
 
 	    // Connect the list to the data provider.
-	    dataProvider.addDataDisplay(cellList);
+	    dataProvider.addDataDisplay(cellList);	    
 		initWidget(uiBinder.createAndBindUi(this));
-		
 	}
-
 }

@@ -94,7 +94,7 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		imageButton.setVisible(visible);
 		actionLink.setVisible(visible);
 		imageButton.setEnabled(enabled);
-		actionLink.setEnabled(enabled);
+		actionLink.setEnabled(enabled); // TODO: the link doesn't fade out when disabled
 		if (visible) {
 			imageButton.getElement().addClassName(style.margin());
 			actionLink.getElement().addClassName(style.margin());
@@ -104,7 +104,7 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		}
 	}
 
-	// Warning, the implementation of this methods should use "global" variables selectionSet and currentPath
+	// Warning, the implementation of this methods should use selectionSet and path from stateProvider
 	public abstract void executeAction();
 	public abstract Availability getAvailability();
 }
