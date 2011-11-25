@@ -6,21 +6,21 @@ import org.squeryl.Session
 import org.squeryl.SessionFactory
 import org.squeryl.adapters.PostgreSqlAdapter
 import com.nublic.app.music.server.model.Database
+import com.nublic.resource.java.App
 
 class MusicActor extends FileWatcherActor("Music") {  
-  // To create the database
-  // # sudo -u postgres createuser nublic
-  // # sudo -u postgres psql
-  // postgre> \password nublic (insert "nublic" as password)
-  // postgre> CREATE DATABASE music OWNER nublic;
-  val postgreDb = "jdbc:postgresql://localhost:5432/music"
-  val user = "nublic"
-  val password = "nublic"
+
   loadMusicDb()
   
   val processors = Map("music" -> new MusicProcessor(this))
   
   def loadMusicDb(): Unit = {
+    // Get information from nublic-resource
+    val app = new App("nublic_app_music")
+    val key = app.getKey("db")
+    val postgreDb = "jdbc:postgresql://localhost:5432/" + key.getValue("database")
+    val user = key.getValue("user")
+    val password = key.getValue("password")
     // Load PostgreSQL driver and create connection
     Class.forName("org.postgresql.Driver").newInstance();
     SessionFactory.concreteFactory = Some(() => Session.create(
