@@ -2,3 +2,4 @@
 
 nublic-resource-setup install nublic_notification db postgresql-db
 
+#DEBHELPER#

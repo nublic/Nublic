@@ -49,6 +49,7 @@ build_deb_package() {
     echo "BUILDING .DEB FOR " $1
     cd $1
     ${DEBUILD} -i -us -uc -b
+    exit=$?
     if [ $exit != 0 ]
     then
         echo "Error building package " $1
@@ -117,14 +118,14 @@ build_submodule_lib sunburnt
 # download_serviio 0.6.0.1
 # build_submodule_lib serviio
 # Base modules
+build_deb_package resource/main/src
+package_and_install resource/java
 build_deb_package notification/main/src
 package_and_install notification/java
 build_deb_package files_and_users/main/src
 build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
-build_deb_package resource/main/src
-#package_and_install resource/java
 # Utilities
 build_deb_package apps/util/gwt
 install_in_maven_repo apps/util/gwt/target/*.jar com.nublic util.gwt 0.0.1-SNAPSHOT

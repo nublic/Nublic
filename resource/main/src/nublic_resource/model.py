@@ -37,7 +37,7 @@ class Key(Entity):
     '''
     name = Field(Unicode(256), primary_key=True)
     type_name = Field(Unicode(256), primary_key=True)
-    app = ManyToOne('App')
+    app = ManyToOne('App', primary_key=True)
     values = OneToMany('Value')
     using_options(tablename='key')
     

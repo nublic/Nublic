@@ -1,13 +1,22 @@
+// Copyright (c) 2011, Nublic
+
+/** 
+ * @author Alejandro Serrano Mena
+ */
 package com.nublic.resource.java;
 
-/**
- * Hello world!
- *
- */
-public class App 
-{
-    public static void main( String[] args )
-    {
-        System.out.println( "Hello World!" );
-    }
+public class App {
+	String name;
+	
+	public App(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+	
+	public Key getKey(String name) {
+		return new Key(this, name);
+	}
 }

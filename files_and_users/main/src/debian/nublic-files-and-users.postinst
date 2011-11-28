@@ -1,0 +1,5 @@
+#!/bin/bash
+
+nublic-resource-setup install nublic_files_and_users db postgresql-db
+
+#DEBHELPER#

@@ -9,18 +9,26 @@ from nublic_files_and_users.synced_folder import *
 from dbus.mainloop.glib import DBusGMainLoop
 from gobject import MainLoop, threads_init
 
-metadata.bind = 'mysql://nublic:nublic@localhost:3306/nublic_files_and_users'
-metadata.bind.echo = True
+import dbus
 
 NOTIFICATION_LEVEL_LOG = 'LOG'
 NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
 NOTIFICATION_LEVEL_DEFAULT_PERFORMED = 'DEFAULT_PERFORMED'
 NOTIFICATION_LEVEL_BLOCKER = 'BLOCKER'
 
+def __get_bind_uri(dbus_loop):
+    # Get conexion values 
+    bus = dbus.SystemBus(mainloop = dbus_loop)
+    valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/nublic_files_and_users/db')
+    return valueService.value("uri", dbus_interface= 'com.nublic.resource')
+    '''return message_sender("uri")''' 
+
 if __name__ == '__main__':
     # Initialize D-Bus loop
-    setup_all(create_tables=True)
     dbus_loop = DBusGMainLoop(set_as_default=True)
+    # Initialize connection to database
+    metadata.bind = __get_bind_uri(dbus_loop)
+    setup_all(create_tables=True)
     # Initialize D-Bus objects
     user = UserDBus(dbus_loop)
     mirror = MirrorDBus(user, dbus_loop)
