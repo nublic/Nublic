@@ -4,4 +4,5 @@ if [ ! -e $CONFIG_FILE ]
 then
     nublic-resource-postgres-db-install
 fi
+service nublic-resource start
 #DEBHELPER#

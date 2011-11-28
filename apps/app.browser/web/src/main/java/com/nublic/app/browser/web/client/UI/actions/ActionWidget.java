@@ -38,9 +38,9 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		this.actionText = actionText;
 		this.stateProvider = stateProvider;
 		
-		imageButton = new PushButton(new Image(imageURL));
+		imageButton = new PushButton(new Image(imageURL)); // TODO: use ImageResource
 		actionLink = new Anchor(actionText);
-		
+
 		actionLink.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {

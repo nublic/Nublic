@@ -41,11 +41,13 @@ public class FileWidget extends Composite {
 		String inLine();
 	    String maxheight();
 	    String ellipcenter();
+	    String shadowed();
 	}
-	
+
 	FileNode node;
 	String path;
 	boolean mouseOver = false;
+	boolean hasPreview = false;
 	Hyperlink fileThumbnail;
 	Image altThumbnail;
 	Hyperlink fileName;
@@ -87,6 +89,11 @@ public class FileWidget extends Composite {
 		}
 		// Check whether the file has a view or not (to files with views and to folders we'll show links)
 		if (viewType != null) {
+			hasPreview = true;
+		}
+
+		// To fileWidgets with previews we'll create hyperlinks
+		if (hasPreview) {
 			// Create the widgets
 			fileThumbnail = new Hyperlink();
 			fileName = new Hyperlink();
@@ -169,6 +176,22 @@ public class FileWidget extends Composite {
 		SingleDownloadAction.download(path);
 	}
 	
+	public void setCut() {
+		if (hasPreview) {
+			fileThumbnail.addStyleName(style.shadowed());
+		} else {
+			altThumbnail.addStyleName(style.shadowed());
+		}
+	}
+	
+	public void setUncut() {
+		if (hasPreview) {
+			fileThumbnail.removeStyleName(style.shadowed());
+		} else {
+			altThumbnail.addStyleName(style.shadowed());
+		}
+	}
+	
 	// To handle mouse over events (TODO: better handling of mouse-out to detect lost of focus with popups)
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
@@ -189,6 +212,7 @@ public class FileWidget extends Composite {
 		public void onMouseOut(final MouseOutEvent moe) {
 			downloadButton.setVisible(false);
 			if (!selectedBox.getValue()) {
+				// To maintain visible the boxes 
 				selectedBox.setVisible(false);
 			}
 			mouseOver = false;

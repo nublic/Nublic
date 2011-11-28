@@ -40,6 +40,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -50,6 +51,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.ClearClipboardAction;
 import com.nublic.app.browser.web.client.UI.actions.CopyAction;
+import com.nublic.app.browser.web.client.UI.actions.CutAction;
 import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
@@ -98,6 +100,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField PushButton downButton;
 	@UiField ListBox orderList;
 	@UiField TextBox filterBox;
+	Label selectionCount = new Label();
+	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -142,6 +146,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	private void initActions() {
+		actionsPanel.add(new FolderDownloadAction(this));
+		actionsPanel.add(selectionCount);
 		actionsPanel.add(new SelectAllAction(this));
 		actionsPanel.add(new UnselectAllAction(this));
 		actionsPanel.add(new PreviewImageAction(this));
@@ -151,15 +157,34 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		actionsPanel.add(new PreviewVideoAction(this));
 		actionsPanel.add(new SingleDownloadAction(this));
 		actionsPanel.add(new SetDownloadAction(this));
-		actionsPanel.add(new FolderDownloadAction(this));
 		actionsPanel.add(new CopyAction(this));
-		actionsPanel.add(new PasteAction(this));
+		actionsPanel.add(new CutAction(this));
 		actionsPanel.add(new DeleteAction(this));
+		actionsPanel.add(clipboardCount);
+		actionsPanel.add(new PasteAction(this));
 		actionsPanel.add(new ClearClipboardAction(this));
+		
+		// To give feedback to the user about what is the state of the browser
+		addContextChangeHandler(new ContextChangeHandler() {
+			@Override
+			public void onContextChange() {
+				if (selectedFiles.isEmpty()) {
+					selectionCount.setText("No files selected");
+				} else {
+					selectionCount.setText("" + selectedFiles.size() + " files selected");
+				}
+				if (clipboard.isEmpty()) {
+					clipboardCount.setText("");
+				} else {
+					clipboardCount.setText("" + clipboard.size() + " files in the clipboard");
+				}
+			}
+		});
 	}
 	
 	// Clipboard methods
 	public void copy(Set<Widget> listToCopy) {
+		unmarkCutFiles();
 		clipboardModeCut = false;
 		clipboard.clear();
 		clipboard.addAll(listToCopy);
@@ -167,13 +192,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void cut(Set<Widget> listToCopy) {
+		unmarkCutFiles();
 		clipboardModeCut = true;
 		clipboard.clear();
 		clipboard.addAll(listToCopy);
+		markCutFiles();
 		notifyContextHandlers();
 	}
 	
 	public void clearClipboard() {
+		unmarkCutFiles();
+		clipboardModeCut = false;
 		clipboard.clear();
 		notifyContextHandlers();
 	}
@@ -321,7 +350,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					Collections.sort(fileList, FileNode.INVERSE_SIZE_COMPARATOR);
 				}
 				break;
-				
 		}
 		
 		// Update the information shown in the central panel
@@ -340,10 +368,30 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		for (Widget fw : newSelectedFiles) {
 			((FileWidget)fw).setChecked(true);
 		}
-
 		selectedFiles = Sets.newHashSet(newSelectedFiles);
 		
+		// Change the appearance of the cut filewidgets
+		markCutFiles();
+
 		notifyContextHandlers();
+	}
+
+	public void markCutFiles() {
+		if (clipboardModeCut) {
+			Set<Widget> cutFiles = Sets.intersection(Sets.newHashSet(centralPanel), clipboard);
+			for (Widget w : cutFiles) {
+				((FileWidget)w).setCut();
+			}
+		}
+	}
+	
+	public void unmarkCutFiles() {
+		if (clipboardModeCut) {
+			Set<Widget> cutFiles = Sets.intersection(Sets.newHashSet(centralPanel), clipboard);
+			for (Widget w : cutFiles) {
+				((FileWidget)w).setUncut();
+			}
+		}
 	}
 
 	// Checks the checkboxes of all the file widgets showing

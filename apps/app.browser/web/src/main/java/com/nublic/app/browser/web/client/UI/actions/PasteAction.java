@@ -20,6 +20,7 @@ public class PasteAction extends ActionWidget {
 
 	@Override
 	public void executeAction() {
+		final String mode = stateProvider.getModeCut() ? "move" : "copy";
 		Message m = new Message() {
 			@Override
 			public void onSuccess(Response response) {} // TODO: feedback
@@ -27,7 +28,7 @@ public class PasteAction extends ActionWidget {
 			public void onError() {} // TODO: feedback
 			@Override
 			public String getURL() {
-				return URL.encode(GWT.getHostPageBaseURL() + "server/copy");
+				return URL.encode(GWT.getHostPageBaseURL() + "server/" + mode);
 			}
 		};
 		StringBuilder setOfFiles = new StringBuilder();
@@ -40,6 +41,8 @@ public class PasteAction extends ActionWidget {
 		m.addParam("files", setOfFiles.toString());
 		m.addParam("target", stateProvider.getPath());
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
+		
+		// TODO: if mode cut remove filewidgets from view
 	}
 
 	@Override

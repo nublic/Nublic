@@ -1,0 +1,15 @@
+{ "id" : "music"
+, "name" : {
+    "default"   : "Music"
+  , "localized" : {
+      "es": "Música"
+    }
+  }
+, "developer" : "Nublic"
+, "icon" : {
+    "32" : "/home/serras/nublic/code/apps/app.browser/icon.png"
+  }
+, "web" : {
+    "path" : "#"
+  }
+}

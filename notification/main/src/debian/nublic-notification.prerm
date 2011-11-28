@@ -1,4 +1,7 @@
 #!/bin/bash
-
-nublic-resource-setup uninstall nublic_notification db 
-
+service nublic-notification stop
+if [ $1 = "remove" ]
+then
+    nublic-resource-setup uninstall nublic_notification db
+fi
+#DEBHELPER#
