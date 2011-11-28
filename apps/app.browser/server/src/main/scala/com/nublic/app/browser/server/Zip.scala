@@ -34,7 +34,7 @@ object Zip {
   def zipFolder(folder_to_add: File): ByteArrayOutputStream = {
     val bytes = new ByteArrayOutputStream()
     val zip_stream = new ZipOutputStream(bytes)
-    add_folder_contents(folder_to_add, folder_to_add.getAbsolutePath(), zip_stream)
+    add_folder_contents(folder_to_add, folder_to_add.getAbsolutePath() + "/", zip_stream)
     zip_stream.close()
     bytes
   }

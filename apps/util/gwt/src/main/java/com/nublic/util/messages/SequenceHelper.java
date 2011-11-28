@@ -41,17 +41,22 @@ public abstract class SequenceHelper <M extends Message> {
 		RequestBuilder builder = new RequestBuilder(method, url);
 
 		try {
-			HashMap<String, String> params = message.getParams();
 			StringBuilder postData = new StringBuilder();
-			for (String key : params.keySet()) {
-				if (postData.length() != 0) {
-					postData.append("&");
-				}
-				postData.append(key);
-				postData.append("=");
-				postData.append(params.get(key));
+			
+			if (method.equals(RequestBuilder.POST)) {
+				builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+				
+				HashMap<String, String> params = message.getParams();
+				for (String key : params.keySet()) {
+					if (postData.length() != 0) {
+						postData.append("&");
+					}
+					postData.append(key);
+					postData.append("=");
+					postData.append(params.get(key));
+				}				
 			}
-
+			
 			@SuppressWarnings("unused")
 			// It is not unused, we maintain callbacks
 			Request request = builder.sendRequest(postData.toString(), new RequestCallback() {

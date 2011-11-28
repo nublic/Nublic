@@ -19,6 +19,14 @@
 			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
 			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
 		}
+		/*.shadowed {
+			-webkit-box-shadow: 0 0 10px rgba(100,100,100,.5);  
+  			-moz-box-shadow: 0 0 10px rgba(100,100,100,.5);  
+  			box-shadow: 0 0 10px rgba(100,100,100,.5);  
+		}*/ /* nice exterior shadow */
+		.shadowed {
+	    	opacity: 0.5;
+		}
 /*		.nobackground {
 			background: transparent;
 			padding: 0px;
