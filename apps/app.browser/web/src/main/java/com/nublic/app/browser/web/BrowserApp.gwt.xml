@@ -10,6 +10,7 @@
   <!-- <inherits name="com.bramosystems.oss.player.youtube.YouTube"/>  --> <!-- To use if YouTubePlayer is used -->
   <inherits name='edu.ycp.cs.dh.acegwt.AceGWT'/>
   <inherits name="com.google.common.collect.Collect"/>
+  <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->
