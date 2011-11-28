@@ -90,5 +90,4 @@ public abstract class SequenceHelper <M extends Message> {
 		});
 		queue.send(message, method);
 	}
-
 }
