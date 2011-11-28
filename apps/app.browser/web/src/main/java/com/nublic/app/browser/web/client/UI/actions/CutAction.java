@@ -18,7 +18,7 @@ public class CutAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		// TODO: not permit copy depending on the place.. ? (ex: don't allow to copy a whole computer)
+		// TODO: not permit cut depending on the place.. ? (ex: don't allow to cut a whole computer)
 		Set<Widget> selected = stateProvider.getSelectedFiles();
 		if (selected.isEmpty()) {
 			setExtraInfo(null);

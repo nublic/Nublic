@@ -18,6 +18,7 @@ public class Constants {
 	public final static String TEXT_TYPE = "txt";
 	public final static String FOLDER_MIME = "application/x-directory";
 	public final static String FOLDER_TYPE = "folder";
+	public final static String COMPRESSED_TYPE = "zip";
 	public final static String WINDOW_PRETITLE = "Browser - ";
 	public final static String WINDOW_HOME_TITLE = "Home";
 }
