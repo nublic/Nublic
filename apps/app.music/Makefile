@@ -3,4 +3,4 @@ all:
 
 install:
 	mkdir -p ${DESTDIR}/var/lib/nublic/apps
-	cp browser.json ${DESTDIR}/var/lib/nublic/apps
+	cp music.json ${DESTDIR}/var/lib/nublic/apps

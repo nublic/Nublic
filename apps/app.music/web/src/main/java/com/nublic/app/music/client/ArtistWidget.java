@@ -38,7 +38,7 @@ public class ArtistWidget extends Composite {
 				
 		initWidget(uiBinder.createAndBindUi(this)); 
 		
-		for (int i=0; i<10; i++ ){
+		for (int i=0; i<7; i++ ){
 			Album album = new Album(" Genial ");
 		  	album.setAlbumImage(images.contact());
 		  	album.setImageHtml(AbstractImagePrototype.create(images.contact()).getHTML());

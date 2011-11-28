@@ -5,6 +5,9 @@
   <inherits name='com.google.gwt.http.HTTP'/>
   <!-- To prevent "required inherited module" error               -->
   <inherits name="com.google.gwt.junit.JUnit"/>
+  
+  <!-- Inherit from the utils library -->
+  <inherits name='com.nublic.util.GwtUtil'/> 
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->

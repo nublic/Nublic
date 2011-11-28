@@ -1,5 +1,4 @@
 #!/bin/bash
-
 nublic-resource-setup install nublic_notification db postgresql-db
-
+service nublic-notification start
 #DEBHELPER#

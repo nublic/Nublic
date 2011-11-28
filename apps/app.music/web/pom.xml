@@ -56,6 +56,11 @@
 			<classifier>sources</classifier>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.nublic</groupId>
+			<artifactId>util.gwt</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

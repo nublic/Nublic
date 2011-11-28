@@ -7,11 +7,12 @@
        }
 	</ui:style>
 	<g:VerticalPanel styleName="{style.inlinecell}" width="96">
-	   <g:VerticalPanel styleName="{style.inlinecell}" width="96" spacing="5">
-	   	<g:Cell horizontalAlignment="ALIGN_CENTER">
-	   		<g:Image width="96px" height="96px" ui:field="albumIm"/>
-	   	</g:Cell>
-	       <g:HorizontalPanel width="100%" height="100%">
+	   <g:VerticalPanel styleName="{style.inlinecell}" width="" spacing="5" height="">
+	   	<g:VerticalPanel ui:field="imageArtistPanel" width="" height="">
+	   		<g:Image width="" height="" ui:field="imageAlbum"/>
+	   		<!-- <g:PushButton text="New PushButton"/> -->
+	   	</g:VerticalPanel>
+	       <g:HorizontalPanel width="127px" height="17px">
 	           <g:Label text="Nombre" ui:field="albumTitle"/>
 	       </g:HorizontalPanel>
        </g:VerticalPanel>
