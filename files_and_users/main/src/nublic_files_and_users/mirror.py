@@ -26,6 +26,16 @@ class MirrorDBus(dbus.service.Object):
         m = Mirror.get_by(id=mid)
         return not m is None
     
+    @dbus.service.method('com.nublic.files', in_signature = '', out_signature='s')
+    def get_all_mirrors(self):
+        ''' Gets all mirrors separated by :'''
+        r = ""
+        for m in Mirror.query.all():
+            if r != "":
+                r = r + ":"
+            r = r + str(m.id)
+        return r
+    
     @dbus.service.method('com.nublic.files', in_signature = 'i', out_signature='s')
     def get_mirror_name(self, mid):
         m = Mirror.get_by(id=mid)
