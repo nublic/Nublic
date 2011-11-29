@@ -16,7 +16,9 @@ interface UsersInterface extends DBusInterface {
 	public boolean user_exists(String username);
 	public String get_all_users();
 	public void create_user(String username, String password, String name);
-	public void get_user_shown_name(String username, String old_password, String new_password);
+	public void change_user_password(String username, String old_password, String new_password);
+	public int get_user_uid(String username);
+	public String get_user_shown_name(String username);
 	public void change_user_shown_name(String username, String name);
 	public void delete_user(String username);
 	

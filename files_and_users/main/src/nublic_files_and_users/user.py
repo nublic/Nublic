@@ -48,6 +48,7 @@ class UserDBus(dbus.service.Object):
             r = r + u.username
         return r
     
+    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='i')
     def get_user_uid(self, username):
         user = pwd.getpwnam(username)
         return user[2] # Corresponds to uid
