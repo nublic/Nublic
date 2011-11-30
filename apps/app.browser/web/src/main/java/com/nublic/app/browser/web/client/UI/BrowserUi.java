@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -44,6 +45,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -82,17 +84,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 	
-	BrowserModel model = null;
+	// Internal variables
 	TreeAdapter treeAdapter = null;
 	LazyLoader loader = new LazyLoader();
+	BrowserModel model = null;
+
 	String lastFilter = "";
 	boolean descOrderCurrently = true;
-	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
-	List<ContextChangeHandler> contextHandlers = new ArrayList<ContextChangeHandler>();
-	Set<Widget> clipboard = new HashSet<Widget>();
 	boolean clipboardModeCut = false;
-//	Object selectedStateLock = new Object();
+	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
+	Set<Widget> clipboard = new HashSet<Widget>();
+	List<ContextChangeHandler> contextHandlers = new ArrayList<ContextChangeHandler>();
+
+	// To manage drag and drop
+	PickupDragController dragController = null;
 	
+	// UI variables
 	@UiField FlowPanel centralPanel;
 	@UiField FlowPanel actionsPanel;
 	@UiField Tree treeView;
@@ -141,7 +148,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.hide();
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
-
+		
+		// Drag and drop support
+		dragController = new PickupDragController(RootPanel.get(), false);
+		dragController.setBehaviorDragProxy(true);
+		dragController.setBehaviorDragStartSensitivity(Constants.DRAG_START_SENSITIVIY);
+		
+		TreeDropController treeDropController = new TreeDropController(treeView, treeAdapter);
+		dragController.registerDropController(treeDropController);
+		
 		initActions();
 	}
 	
@@ -358,6 +373,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			FileWidget newFileWidget = new FileWidget(n, path);
 			// To handle changes in selections of files
 			newFileWidget.addCheckedChangeHandler(this);
+			// To make the filewidgets draggable
+			dragController.makeDraggable(newFileWidget);
 			// Add it to central panel
 			centralPanel.add(newFileWidget);
 		}
@@ -376,6 +393,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		notifyContextHandlers();
 	}
 
+	// To "shadow" them
 	public void markCutFiles() {
 		if (clipboardModeCut) {
 			Set<Widget> cutFiles = Sets.intersection(Sets.newHashSet(centralPanel), clipboard);

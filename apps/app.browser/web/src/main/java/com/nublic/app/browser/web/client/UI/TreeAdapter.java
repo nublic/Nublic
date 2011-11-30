@@ -2,6 +2,9 @@ package com.nublic.app.browser.web.client.UI;
 
 import java.util.Stack;
 
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.nublic.app.browser.web.client.model.BrowserModel;
@@ -10,12 +13,62 @@ import com.nublic.app.browser.web.client.model.FolderNode;
 public class TreeAdapter {
 	BrowserModel model;
 	Tree treeView;
-
+	TreeItem mouseOver;
+	
 	public TreeAdapter(Tree treeView, BrowserModel model) {
 		this.treeView = treeView;
 		this.model = model;
 	}
 
+	public TreeItem getMouseOver() {
+		
+		return mouseOver;
+	}
+	
+	public void setMouseOver(TreeItem t) {
+		mouseOver = t; 
+	}
+	
+	private void addOverHandler(final TreeItem newNode) {
+		if (newNode != null) {
+			newNode.sinkEvents(Event.ONMOUSEOVER);
+			DOM.setEventListener(newNode.getElement(), new EventListener() {
+				@Override
+				public void onBrowserEvent(Event event) {
+					switch (event.getTypeInt()) {
+					case Event.ONMOUSEOVER:
+						mouseOver = newNode;
+						break;
+					}
+				}
+			});
+			DOM.sinkEvents(newNode.getElement(), Event.ONMOUSEOVER);
+//			Widget w = newNode.getWidget();
+//			if (w != null) {
+//				w.addDomHandler(new MouseOverHandler() {
+//					@Override
+//					public void onMouseOver(MouseOverEvent event) {
+//						mouseOver = newNode;
+//					}
+//				}, MouseOverEvent.getType());
+//			}
+		}
+	}
+
+	private TreeItem createNewNode(TreeItem from, FolderNode node) {
+		TreeItem newNode = from.addItem(node.getName());
+		newNode.setUserObject(node);
+		addOverHandler(newNode);
+		return newNode;
+	}
+	
+	private TreeItem createNewNode(Tree from, FolderNode node) {
+		TreeItem newNode = from.addItem(node.getName());
+		newNode.setUserObject(node);
+		addOverHandler(newNode);
+		return newNode;
+	}
+	
 	public synchronized void updateView(FolderNode node) {
 		// Searches and/or creates the node on the tree
 		TreeItem nodeView = search(node);
@@ -33,12 +86,13 @@ public class TreeAdapter {
 				updateNodeView(nodeView, child);
 			}
 		}
-
 	}
 
 	private void updateRootView(FolderNode node) {
-		TreeItem newNode = treeView.addItem(node.getName());
-		newNode.setUserObject(node);
+//		TreeItem newNode = treeView.addItem(node.getName());
+//		newNode.setUserObject(node);
+//		addOverHandler(newNode);
+		TreeItem newNode = createNewNode(treeView, node);
 
 		for (FolderNode child : node.getChildren()) {
 			updateNodeView(newNode, child);
@@ -46,8 +100,10 @@ public class TreeAdapter {
 	}
 
 	private void updateNodeView(TreeItem nodeView, FolderNode node) {
-		TreeItem newNode = nodeView.addItem(node.getName());
-		newNode.setUserObject(node);
+//		TreeItem newNode = nodeView.addItem(node.getName());
+//		newNode.setUserObject(node);
+//		addOverHandler(newNode);
+		TreeItem newNode = createNewNode(nodeView, node);
 
 		for (FolderNode child : node.getChildren()) {
 			updateNodeView(newNode, child);
@@ -78,8 +134,10 @@ public class TreeAdapter {
 		
 		// If it hasn't been found we have to create the complete path stack in the tree view 
 		if  (!found) {
-			nodeView = treeView.addItem(firstInStack.getName());
-			nodeView.setUserObject(firstInStack);
+//			nodeView = treeView.addItem(firstInStack.getName());
+//			nodeView.setUserObject(firstInStack);
+//			addOverHandler(nodeView);
+			nodeView = createNewNode(treeView, firstInStack);
 			return createNewBranch(nodeView, pathStack);
 		}
 		
@@ -94,8 +152,10 @@ public class TreeAdapter {
 				found = childNode.getHTML().equals(nodeInStack.getName());
 			}
 			if  (!found) {
-				childNode = nodeView.addItem(nodeInStack.getName());
-				childNode.setUserObject(nodeInStack);
+//				childNode = nodeView.addItem(nodeInStack.getName());
+//				childNode.setUserObject(nodeInStack);
+//				addOverHandler(childNode);
+				childNode = createNewNode(nodeView, nodeInStack);
 				return createNewBranch(childNode, pathStack);
 			}
 			nodeView = childNode;
@@ -112,8 +172,10 @@ public class TreeAdapter {
 		FolderNode node = null;
 		while (!pathStack.isEmpty()) {
 			node = pathStack.pop();
-			createdNode = createdNode.addItem(node.getName());
-			createdNode.setUserObject(node);
+//			createdNode = createdNode.addItem(node.getName());
+//			createdNode.setUserObject(node);
+//			addOverHandler(createdNode);
+			createdNode = createNewNode(createdNode, node);
 		}
 
 		return createdNode;
