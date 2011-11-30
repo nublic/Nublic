@@ -11,9 +11,11 @@ import com.google.common.collect.Collections2;
 
 public class User {
 	String username;
+	Integer uid;
 	
 	public User(String username) {
 		this.username = username;
+		this.uid = null;
 	}
 	
 	public static List<User> getAll() throws UserQueryException {
@@ -58,11 +60,14 @@ public class User {
 	}
 	
 	public int getUserId() throws UserQueryException {
-		try {
-			return Singletons.getUsers().get_user_uid(username);
-		} catch(DBusException e) {
-			throw new UserQueryException();
+		if (this.uid == null) {
+			try {
+				uid = Singletons.getUsers().get_user_uid(username);
+			} catch(DBusException e) {
+				throw new UserQueryException();
+			}
 		}
+		return uid;
 	}
 	
 	public String getShownName() throws UserQueryException {

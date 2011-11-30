@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: libnublic-notification-java
 Architecture: all
-Depends: ${misc:Depends}, libdbus-java, default-jre, nublic-notification
+Depends: ${misc:Depends}, libdbus-java, nublic-notification
 Description: Nublic Notification Java libraries
  Nublic Notification Java libraries
