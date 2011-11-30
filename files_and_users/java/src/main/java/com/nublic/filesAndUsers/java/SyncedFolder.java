@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 
-public class SyncedFolder {
+public class SyncedFolder extends Folder {
+	static String DATA_ROOT = "/var/nublic/data/synced/";
 	int id;
 	
 	public SyncedFolder(int id) {
@@ -71,5 +72,9 @@ public class SyncedFolder {
 		} catch(DBusException e) {
 			throw new FileQueryException();
 		}
+	}
+	
+	public String getPath() {
+		return DATA_ROOT + id;
 	}
 }

@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 
-public class Mirror {
+public class Mirror extends Folder {
+	static String DATA_ROOT = "/var/nublic/data/mirrors/";
 	int id;
 	
 	public Mirror(int id) {
@@ -71,5 +72,9 @@ public class Mirror {
 		} catch(DBusException e) {
 			throw new FileQueryException();
 		}
+	}
+	
+	public String getPath() {
+		return DATA_ROOT + id;
 	}
 }

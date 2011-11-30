@@ -1,8 +1,14 @@
 package com.nublic.filesAndUsers.java;
 
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 
@@ -94,27 +100,76 @@ public class User {
 		}
 	}
 	
-	public Collection<Mirror> getMirrors() throws FileQueryException {
-		return Collections2.filter(Mirror.getAll(), new Predicate<Mirror>() {
-			public boolean apply(Mirror m) {
+	public boolean isOwner(String path) throws IOException {
+		Path p = FileSystems.getDefault().getPath(path);
+		return Files.getOwner(p).getName().equals(username);
+	}
+	
+	public boolean canRead(Folder folder) throws FileQueryException, IOException {
+		return canRead(folder.getPath());
+	}
+	
+	public boolean canRead(String path) throws IOException {
+		if (isOwner(path))
+			return true;
+		
+		Path p = FileSystems.getDefault().getPath(path);
+		Set<PosixFilePermission> perms = Files.getPosixFilePermissions(p);
+		return perms.contains(PosixFilePermission.GROUP_READ)
+				|| perms.contains(PosixFilePermission.OTHERS_READ);
+	}
+	
+	public boolean canWrite(Folder folder) throws FileQueryException, IOException {
+		return canWrite(folder.getPath());
+	}
+	
+	public boolean canWrite(String path) throws IOException {
+		if (isOwner(path))
+			return true;
+		
+		Path p = FileSystems.getDefault().getPath(path);
+		Set<PosixFilePermission> perms = Files.getPosixFilePermissions(p);
+		return perms.contains(PosixFilePermission.GROUP_WRITE)
+				|| perms.contains(PosixFilePermission.OTHERS_WRITE);
+	}
+	
+	<T extends Folder> Collection<T> getOwned(Collection<T> elements) {
+		return Collections2.filter(elements, new Predicate<T>() {
+			public boolean apply(T m) {
 				try {
 					return m.getOwner().getUsername().equals(username);
-				} catch (FileQueryException e) {
+				} catch (Exception e) {
 					return false;
 				}
 			}
 		});
 	}
 	
-	public Collection<SyncedFolder> getSyncedFolders() throws FileQueryException {
-		return Collections2.filter(SyncedFolder.getAll(), new Predicate<SyncedFolder>() {
-			public boolean apply(SyncedFolder f) {
+	<T extends Folder> Collection<T> getAccessible(Collection<T> elements) {
+		return Collections2.filter(elements, new Predicate<T>() {
+			public boolean apply(T m) {
 				try {
-					return f.getOwner().getUsername().equals(username);
-				} catch (FileQueryException e) {
+					return canRead(m.getPath());
+				} catch (Exception e) {
 					return false;
 				}
 			}
 		});
+	}
+	
+	public Collection<Mirror> getOwnedMirrors() throws FileQueryException {
+		return getOwned(Mirror.getAll());
+	}
+	
+	public Collection<Mirror> getAccessibleMirrors() throws FileQueryException {
+		return getAccessible(Mirror.getAll());
+	}
+	
+	public Collection<SyncedFolder> getOwnedSyncedFolders() throws FileQueryException {
+		return getOwned(SyncedFolder.getAll());
+	}
+	
+	public Collection<SyncedFolder> getAccessibleSyncedFolders() throws FileQueryException {
+		return getAccessible(SyncedFolder.getAll());
 	}
 }
