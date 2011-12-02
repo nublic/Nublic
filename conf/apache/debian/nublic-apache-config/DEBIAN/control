@@ -1,0 +1,13 @@
+Package: nublic-apache-config
+Version: 0.0.1-1
+Architecture: all
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Installed-Size: 56
+Depends: apache2, libapache2-mod-python
+Section: nublic
+Priority: extra
+Homepage: http://nublic.com
+Description: Nublic Apache2 configuration files
+ Required Apache2 configuration files for Nublic.
+ Includes files to load configuration for apache2 included in applications and
+ the instalation and configuration of apache2 modules.

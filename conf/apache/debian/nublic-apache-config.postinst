@@ -1,0 +1,5 @@
+#!/bin/bash -e
+a2enmod rewrite
+a2dissite default
+service apache2 restart
+
