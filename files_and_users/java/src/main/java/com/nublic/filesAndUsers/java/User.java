@@ -110,13 +110,15 @@ public class User {
 	}
 	
 	public boolean canRead(String path) throws IOException {
-		if (isOwner(path))
+		return true;
+		
+		/*if (isOwner(path))
 			return true;
 		
 		Path p = FileSystems.getDefault().getPath(path);
 		Set<PosixFilePermission> perms = Files.getPosixFilePermissions(p);
 		return perms.contains(PosixFilePermission.GROUP_READ)
-				|| perms.contains(PosixFilePermission.OTHERS_READ);
+				|| perms.contains(PosixFilePermission.OTHERS_READ);*/
 	}
 	
 	public boolean canWrite(Folder folder) throws FileQueryException, IOException {
@@ -124,13 +126,15 @@ public class User {
 	}
 	
 	public boolean canWrite(String path) throws IOException {
-		if (isOwner(path))
+		return true;
+		
+		/*if (isOwner(path))
 			return true;
 		
 		Path p = FileSystems.getDefault().getPath(path);
 		Set<PosixFilePermission> perms = Files.getPosixFilePermissions(p);
 		return perms.contains(PosixFilePermission.GROUP_WRITE)
-				|| perms.contains(PosixFilePermission.OTHERS_WRITE);
+				|| perms.contains(PosixFilePermission.OTHERS_WRITE);*/
 	}
 	
 	<T extends Folder> Collection<T> getOwned(Collection<T> elements) {
