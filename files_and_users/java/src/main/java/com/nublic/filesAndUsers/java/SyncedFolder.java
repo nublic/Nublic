@@ -34,6 +34,10 @@ public class SyncedFolder extends Folder {
 		}
 	}
 	
+	public int getId() {
+		return this.id;
+	}
+	
 	public String getName() throws FileQueryException {
 		try {
 			return Singletons.getSyncedFolders().get_synced_folder_name(id);

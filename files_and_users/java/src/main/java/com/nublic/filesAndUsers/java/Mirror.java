@@ -34,6 +34,10 @@ public class Mirror extends Folder {
 		}
 	}
 	
+	public int getId() {
+		return this.id;
+	}
+	
 	public String getName() throws FileQueryException {
 		try {
 			return Singletons.getMirrors().get_mirror_name(id);

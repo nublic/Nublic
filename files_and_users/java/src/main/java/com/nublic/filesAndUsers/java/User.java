@@ -104,6 +104,10 @@ public class User {
 		return Files.getOwner(p).getName().equals(username);
 	}
 	
+	public boolean isOwner(Folder folder) throws FileQueryException, IOException {
+		return folder.getOwner().getUsername().equals(username);
+	}
+	
 	public boolean canRead(Folder folder) throws FileQueryException, IOException {
 		return canRead(folder.getPath());
 	}

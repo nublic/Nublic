@@ -3,6 +3,7 @@ package com.nublic.filesAndUsers.java;
 import java.io.IOException;
 
 public abstract class Folder {
+	public abstract int getId();
 	public abstract String getPath() throws FileQueryException, IOException;
 	public abstract String getName() throws FileQueryException, IOException;
 	public abstract User getOwner() throws FileQueryException, IOException;

@@ -67,7 +67,13 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   get("/devices") {
     withUser { user =>
-      halt(200)
+      val mirrors = user.getAccessibleMirrors().toArray().asInstanceOf[Array[Mirror]].map {
+        m: Mirror => BrowserDevice(m.getId(), BrowserDevice.MIRROR, m.getName(), user.isOwner(m))
+      }
+      val synceds = user.getAccessibleSyncedFolders().toArray().asInstanceOf[Array[SyncedFolder]].map {
+        m: SyncedFolder => BrowserDevice(m.getId(), BrowserDevice.SYNCED_FOLDER, m.getName(), user.isOwner(m))
+      }
+      mirrors ++ synceds
     }
   }
   
@@ -337,9 +343,10 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	for (file <- folder.listFiles()) {
 	  if (!is_hidden(file.getName()) && file.isDirectory() && user.canRead(file)) {
 	    if (depth == 1) {
-	      subfolders ::= BrowserFolder(file.getName(), Nil)
+	      subfolders ::= BrowserFolder(file.getName(), Nil, user.canWrite(file))
 	    } else {
-	      subfolders ::= BrowserFolder(file.getName(), get_subfolders(file, depth-1, user))
+	      subfolders ::= BrowserFolder(file.getName(),
+	          get_subfolders(file, depth-1, user),user.canWrite(file))
 	    }
 	  }
 	}
@@ -361,12 +368,12 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	        }
 	        // Return unknown as mimetype
 	        files ::= BrowserFile(file.getName(), "unknown", null,
-	            file.length(), file.lastModified())
+	            file.length(), file.lastModified(), user.canWrite(file))
 	      }
 	      case Some(mime) => 
 	        files ::= BrowserFile(file.getName(), mime,
 	            find_view(file.getAbsolutePath(), mime),
-	            file.length(), file.lastModified())
+	            file.length(), file.lastModified(), user.canWrite(file))
 	    }
 	  }
 	}
