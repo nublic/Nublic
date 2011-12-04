@@ -200,8 +200,27 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     withUser { user =>
       withMultiplePaths("files") { from_paths =>
         withPath("target") { to_path =>
-          from_paths.map(f => FileUtils.moveToDirectory(f, to_path, true))
+          from_paths.map(f => do_move(f, to_path, user))
           halt(200)
+        }
+      }
+    }
+  }
+  
+  def do_move(file: File, target: File, user: User): Unit = {
+    val final_file = new File(target, file.getName())
+    if (!final_file.exists() && user.canRead(file) && user.canWrite(target)) {
+      if (!file.isDirectory) {
+        FileUtils.moveToDirectory(file, target, true)
+        // do_chown(final_file, user)
+      } else {
+        final_file.mkdir()
+        // do_chown(final_file, user)
+        for (child <- file.listFiles) {
+          do_move(child, final_file, user)
+        }
+        if (file.listFiles.length == 0) {
+          file.delete()
         }
       }
     }

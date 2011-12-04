@@ -115,6 +115,8 @@ public class User {
 	public boolean canRead(String path) throws IOException {
 		return true;
 		
+		// TODO: Take care of special for mirrors and synced folders: can read but not write
+		
 		/*if (isOwner(path))
 			return true;
 		
