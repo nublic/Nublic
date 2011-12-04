@@ -15,6 +15,8 @@ import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.commons.io.CopyUtils
 import org.apache.commons.io.FileUtils
 import com.nublic.filesAndUsers.java._
+import java.nio.file.FileSystems
+import java.nio.file.Files
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -75,10 +77,10 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
       if (depth <= 0) {
         halt(500)
       } else {
-        if (!folder.exists()) {
+        if (!folder.exists() || !user.canRead(folder)) {
           JNull
         } else {
-          write(get_subfolders(folder, depth))
+          write(get_subfolders(folder, depth, user))
         }
       }
     }
@@ -86,17 +88,17 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   get("/files/*") {
     withUserAndRestPath { user => folder =>
-      if (!folder.exists()) {
+      if (!folder.exists() || !user.canRead(folder)) {
         JNull
       } else {
-        write(get_files(folder))
+        write(get_files(folder, user))
       }
     }
   }
   
   get("/raw/*") {
     withUserAndRestPath { user => file =>
-      if (!file.exists() || file.isDirectory()) {
+      if (!file.exists() || file.isDirectory() || !user.canRead(file)) {
         halt(403)
       } else {
         Solr.getMimeType(file.getPath()) match {
@@ -123,7 +125,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
         // Find in file system
         val nublic_path = NUBLIC_DATA_ROOT + path
         val file = new File(nublic_path)
-        if (!file.exists() || file.isDirectory()) {
+        if (!file.exists() || file.isDirectory() || !user.canRead(file)) {
           halt(403)
         } else {
           var found: Option[Tuple2[File, String]] = None
@@ -146,7 +148,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   get("/thumbnail/*") {
     withUserAndRestPath { user => file =>
-      if (!file.exists()) {
+      if (!file.exists() || !user.canRead(file)) {
         halt(404)
       } else {
         val thumb_file = FileFolder.getThumbnail(file.getPath())
@@ -179,12 +181,16 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     withUser { user =>
       withPath("from") { from_path =>
         withPath("to") { to_path =>
-          if (from_path.isDirectory()) {
-            FileUtils.moveDirectory(from_path, to_path)
+          if (to_path.exists() || !user.canWrite(from_path)) {
+            halt(403)
           } else {
-    	    FileUtils.moveFile(from_path, to_path)
+            if (from_path.isDirectory()) {
+              FileUtils.moveDirectory(from_path, to_path)
+            } else {
+    	      FileUtils.moveFile(from_path, to_path)
+            }
+            halt(200)
           }
-          halt(200)
         }
       }
     }
@@ -205,43 +211,70 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     withUser { user =>
       withMultiplePaths("files") { from_paths =>
         withPath("target") { to_path =>
-          from_paths.map(f => 
-            if (f.isDirectory) {
-              FileUtils.copyDirectoryToDirectory(f, to_path)
-            } else {
-              FileUtils.copyFileToDirectory(f, to_path)
-            }
-          )
+          from_paths.map(f => do_copy(f, to_path, user))
           halt(200)
         }
       }
     }
   }
   
+  def do_copy(file: File, target: File, user: User): Unit = {
+    val final_file = new File(target, file.getName())
+    if (!final_file.exists() && user.canRead(file) && user.canWrite(target)) {
+      if (!file.isDirectory) {
+        FileUtils.copyFileToDirectory(file, target)
+        do_chown(final_file, user)
+      } else {
+        final_file.mkdir()
+        do_chown(final_file, user)
+        for (child <- file.listFiles) {
+          do_copy(child, final_file, user)
+        }
+      }
+    }
+  }
+  
+  def do_chown(file: File, user: User) = {
+    val p = FileSystems.getDefault().getPath(file.getAbsolutePath())
+    val u = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByName(user.getUsername())
+    Files.setOwner(p, u)
+  }
+  
   post("/delete") {
     withUser { user =>
       withMultiplePaths("files") { files_paths =>
-        files_paths.map(f => 
-          if (f.isDirectory) {
-            FileUtils.deleteDirectory(f)
-          } else {
-            FileUtils.deleteQuietly(f)
-          }
-        )
+        files_paths.map(f => do_delete(f, user))
         halt(200)
+      }
+    }
+  }
+  
+  def do_delete(file: File, user: User): Unit = {
+    if (user.canWrite(file)) {
+      if (!file.isDirectory) {
+        FileUtils.deleteQuietly(file)
+      } else {
+        // Delete everything recursively
+        for (child <- file.listFiles) {
+          do_delete(child, user)
+        }
+        // If empty, remove directory
+        if (file.listFiles.length == 0) {
+          file.delete()
+        }
       }
     }
   }
   
   get("/zip/*") {
     withUserAndRestPath { user => file =>
-      if (!file.exists()) {
+      if (!file.exists() || !user.canRead(file)) {
         halt(404)
       } else {
         val zip_name = FilenameUtils.getBaseName(file.getPath()) + ".zip"
         response.setContentType("application/zip")
         response.setHeader("Content-Disposition", "attachment; filename=" + zip_name)
-        Zip.zip(file).toByteArray()
+        Zip.zip(file, user).toByteArray()
       }
     }
   }
@@ -268,7 +301,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
             val files_to_add = files.map(s => new File(NUBLIC_DATA_ROOT + s))
             response.setContentType("application/zip")
             response.setHeader("Content-Disposition", "attachment; filename=" + filename )
-            Zip.zipFileSeq(files_to_add, base_path).toByteArray()
+            Zip.zipFileSeq(files_to_add, base_path, user).toByteArray()
           }
         }
         case Nil => halt(403)
@@ -280,24 +313,24 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     JNull
   }
   
-  def get_subfolders(folder: File, depth: Int): List[BrowserFolder] = {    
+  def get_subfolders(folder: File, depth: Int, user: User): List[BrowserFolder] = {    
 	var subfolders = List[BrowserFolder]()
 	for (file <- folder.listFiles()) {
-	  if (!is_hidden(file.getName()) && file.isDirectory()) {
+	  if (!is_hidden(file.getName()) && file.isDirectory() && user.canRead(file)) {
 	    if (depth == 1) {
 	      subfolders ::= BrowserFolder(file.getName(), Nil)
 	    } else {
-	      subfolders ::= BrowserFolder(file.getName(), get_subfolders(file, depth-1))
+	      subfolders ::= BrowserFolder(file.getName(), get_subfolders(file, depth-1, user))
 	    }
 	  }
 	}
 	subfolders.sort((a, b) => a.name.compareToIgnoreCase(b.name) < 0)
   }
   
-  def get_files(folder: File): List[BrowserFile] = {
+  def get_files(folder: File, user: User): List[BrowserFile] = {
     var files = List[BrowserFile]()
 	for (file <- folder.listFiles()) {
-	  if (!is_hidden(file.getName())) {
+	  if (!is_hidden(file.getName()) && user.canRead(file)) {
 	    Solr.getMimeType(file.getPath()) match {
 	      case None       => {
 	        // We need to get the mime type correctly
@@ -308,7 +341,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	          case _ => { /* Nothing in special */ }
 	        }
 	        // Return unknown as mimetype
-	        BrowserFile(file.getName(), "unknown", null,
+	        files ::= BrowserFile(file.getName(), "unknown", null,
 	            file.length(), file.lastModified())
 	      }
 	      case Some(mime) => 
