@@ -10,7 +10,7 @@ from model import *
 # Needs a group 'nublic' in the system
 
 # APACHE_PASSWD_FILE = "/var/nublic/conf/apache.passwd"
-APACHE_PASSWD_FILE = "apache.passwd" # for debugging purposes
+APACHE_PASSWD_FILE = "/var/nublic/secure/.htpasswd" # for debugging purposes
 USER_SEPARATOR = ':'
 
 class UserDBus(dbus.service.Object):
