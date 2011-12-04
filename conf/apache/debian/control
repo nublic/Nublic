@@ -8,7 +8,7 @@ Homepage: http://nublic.com
 
 Package: nublic-apache-config
 Architecture: all
-Depends: ${misc:Depends}, apache2, libapache2-mod-python
+Depends: ${misc:Depends}, apache2, libapache2-mod-python, libapache2-mod-proxy-html
 Replaces: 
 Description: Nublic Apache2 configuration files
  Required Apache2 configuration files for Nublic.
