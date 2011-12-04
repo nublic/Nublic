@@ -9,8 +9,9 @@ import java.io.FileInputStream
 
 object Zip {
   
-  def zip(filename: String): ByteArrayOutputStream = {
-    val file = new File(filename)
+  def zip(filename: String): ByteArrayOutputStream = zip(new File(filename))
+  
+  def zip(file: File): ByteArrayOutputStream = {
     if (file.isDirectory()) {
       zipFolder(file)
     } else {

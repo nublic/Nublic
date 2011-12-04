@@ -21,45 +21,71 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
   val THE_REST = "splat"
+  val SEPARATOR = ":"
   
   val watcher = new FileActor()
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
   
-  before("/*") {
-    val user = new User("a")
+  def withUser(action: User => Any) : Any = {
+    val user = new User("example")
+    action(user)
+  }
+  
+  def withRestPath(action: File => Any) : Any = withPath(THE_REST)(action)
+  
+  def withUserAndRestPath(action: User => File => Any) : Any = withUser {
+    user => withRestPath {
+      path => action(user)(path)
+    }
+  }
+  
+  def withPath(param_name: String)(action: File => Any) : Any = {
+    val path = URIUtil.decode(params(param_name))
+    if (path.contains("..")) {
+      halt(403)
+    } else {
+      val nublic_path = NUBLIC_DATA_ROOT + path
+      action(new File(nublic_path))
+    }
+  }
+  
+  def withRestMultiplePaths(action: List[File] => Any) : Any = withMultiplePaths(THE_REST)(action)
+  
+  def withMultiplePaths(param_name: String)(action: List[File] => Any) : Any = {
+    val paths = params(param_name).split(SEPARATOR).toList
+    if (paths.exists(_.contains(".."))) {
+      halt(403)
+    } else {
+      val file_paths = paths.map(s => new File(NUBLIC_DATA_ROOT + s))
+      action(file_paths)
+    }
   }
   
   get("/devices") {
+    withUser { user =>
+      halt(200)
+    }
   }
   
   get("/folders/:depth/*") {
-    val depth = Integer.valueOf(params("depth"))
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..") || depth <= 0) {
-      // We don't want paths going upwards
-      // or depths of less than 1
-      JNull
-    } else {
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val folder = new File(nublic_path)
-      if (!folder.exists()) {
-        JNull
+    withUserAndRestPath { user => folder =>
+      val depth = Integer.valueOf(params("depth"))
+      if (depth <= 0) {
+        halt(500)
       } else {
-        write(get_subfolders(folder, depth))
+        if (!folder.exists()) {
+          JNull
+        } else {
+          write(get_subfolders(folder, depth))
+        }
       }
     }
   }
   
   get("/files/*") {
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..")) {
-      // We don't want paths going upwards
-      JNull
-    } else {
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val folder = new File(nublic_path)
+    withUserAndRestPath { user => folder =>
       if (!folder.exists()) {
         JNull
       } else {
@@ -69,17 +95,11 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/raw/*") {
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..")) {
-      // We don't want paths going upwards
-      halt(403)
-    } else {
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val file = new File(nublic_path)
+    withUserAndRestPath { user => file =>
       if (!file.exists() || file.isDirectory()) {
         halt(403)
       } else {
-        Solr.getMimeType(nublic_path) match {
+        Solr.getMimeType(file.getPath()) match {
           case None       => { }
           case Some(mime) => response.setContentType(mime)
         }
@@ -90,32 +110,34 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/view/*") { // Where * = :file.:type
-    val rest = URIUtil.decode(params(THE_REST))
-    if (rest.contains("..") || !rest.contains(".")) {
-      // We don't want paths going upwards
-      halt(403)
-    } else {
-      // Separate view from rest of file name
-      val index_of_point = rest.lastIndexOf('.')
-      val path = rest.substring(0, index_of_point)
-      val viewName = rest.substring(index_of_point + 1)
-      // Find in file system
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val file = new File(nublic_path)
-      if (!file.exists() || file.isDirectory()) {
+    withUser { user =>
+      val rest = URIUtil.decode(params(THE_REST))
+      if (rest.contains("..") || !rest.contains(".")) {
+        // We don't want paths going upwards
         halt(403)
       } else {
-        var found: Option[Tuple2[File, String]] = None
-        for (worker <- Workers.byViewName.getOrElse(viewName, Nil)) {
-          if (worker.hasView(viewName, nublic_path, Solr.getMimeType(nublic_path).getOrElse("unknown"))) {
-            found = Some((worker.getView(viewName, nublic_path), worker.getMimeTypeForView(viewName)))
+        // Separate view from rest of file name
+        val index_of_point = rest.lastIndexOf('.')
+        val path = rest.substring(0, index_of_point)
+        val viewName = rest.substring(index_of_point + 1)
+        // Find in file system
+        val nublic_path = NUBLIC_DATA_ROOT + path
+        val file = new File(nublic_path)
+        if (!file.exists() || file.isDirectory()) {
+          halt(403)
+        } else {
+          var found: Option[Tuple2[File, String]] = None
+          for (worker <- Workers.byViewName.getOrElse(viewName, Nil)) {
+            if (worker.hasView(viewName, nublic_path, Solr.getMimeType(nublic_path).getOrElse("unknown"))) {
+              found = Some((worker.getView(viewName, nublic_path), worker.getMimeTypeForView(viewName)))
+            }
           }
-        }
-        found match {
-          case None    => halt(404)
-          case Some((file, mime)) => {
-            response.setContentType(mime)
-            file
+          found match {
+            case None    => halt(404)
+            case Some((file, mime)) => {
+              response.setContentType(mime)
+              file
+            }
           }
         }
       }
@@ -123,22 +145,16 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/thumbnail/*") {
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..")) {
-      // We don't want paths going upwards
-      halt(403)
-    } else {
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val file = new File(nublic_path)
+    withUserAndRestPath { user => file =>
       if (!file.exists()) {
         halt(404)
       } else {
-        val thumb_file = FileFolder.getThumbnail(nublic_path)
+        val thumb_file = FileFolder.getThumbnail(file.getPath())
         if (thumb_file.exists()) {
           response.setContentType("image/png")
           thumb_file
         } else {
-          Solr.getMimeType(nublic_path) match {
+          Solr.getMimeType(file.getPath()) match {
             case None => {
               response.setContentType("image/png")
               ImageDatabase.getImageBytes("unknown")
@@ -160,115 +176,103 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   post("/rename") {
-    val from = params("from")
-    val to = params("to")
-    if (from.contains("..") || to.contains("..")) {
-      halt(403)
-    } else {
-      val from_path = new File(NUBLIC_DATA_ROOT + from)
-      val to_path = new File(NUBLIC_DATA_ROOT + to)
-      if (from_path.isDirectory()) {
-        FileUtils.moveDirectory(from_path, to_path)
-      } else {
-    	FileUtils.moveFile(from_path, to_path)
+    withUser { user =>
+      withPath("from") { from_path =>
+        withPath("to") { to_path =>
+          if (from_path.isDirectory()) {
+            FileUtils.moveDirectory(from_path, to_path)
+          } else {
+    	    FileUtils.moveFile(from_path, to_path)
+          }
+          halt(200)
+        }
       }
-      halt(200)
     }
   }
   
   post("/move") {
-    val from = params("files").split(":")
-    val to = params("target")
-    if ( from.exists(_.contains("..")) || to.contains("..") ) {
-      halt(403)
-    } else {
-      val from_paths = from.map(s => new File(NUBLIC_DATA_ROOT + s))
-      val to_path = new File(NUBLIC_DATA_ROOT + to)
-      from_paths.map(f => FileUtils.moveToDirectory(f, to_path, true))
-      halt(200)
+    withUser { user =>
+      withMultiplePaths("files") { from_paths =>
+        withPath("target") { to_path =>
+          from_paths.map(f => FileUtils.moveToDirectory(f, to_path, true))
+          halt(200)
+        }
+      }
     }
   }
   
   post("/copy") {
-    val from = params("files").split(":")
-    val to = params("target")
-    if ( from.exists(_.contains("..")) || to.contains("..") ) {
-      halt(403)
-    } else {
-      val from_paths = from.map(s => new File(NUBLIC_DATA_ROOT + s))
-      val to_path = new File(NUBLIC_DATA_ROOT + to)
-      from_paths.map(f => 
-        if (f.isDirectory) {
-          FileUtils.copyDirectoryToDirectory(f, to_path)
-        } else {
-          FileUtils.copyFileToDirectory(f, to_path)
+    withUser { user =>
+      withMultiplePaths("files") { from_paths =>
+        withPath("target") { to_path =>
+          from_paths.map(f => 
+            if (f.isDirectory) {
+              FileUtils.copyDirectoryToDirectory(f, to_path)
+            } else {
+              FileUtils.copyFileToDirectory(f, to_path)
+            }
+          )
+          halt(200)
         }
-      )
-      halt(200)
+      }
     }
   }
   
   post("/delete") {
-    val files = params("files").split(":")
-    if (files.exists(_.contains(".."))) {
-      halt(403)
-    } else {
-      val files_paths = files.map(s => new File(NUBLIC_DATA_ROOT + s))
-      files_paths.map(f => 
-        if (f.isDirectory) {
-          FileUtils.deleteDirectory(f)
-        } else {
-          FileUtils.deleteQuietly(f)
-        }
-      )
-      halt(200)
+    withUser { user =>
+      withMultiplePaths("files") { files_paths =>
+        files_paths.map(f => 
+          if (f.isDirectory) {
+            FileUtils.deleteDirectory(f)
+          } else {
+            FileUtils.deleteQuietly(f)
+          }
+        )
+        halt(200)
+      }
     }
   }
   
   get("/zip/*") {
-    val path = URIUtil.decode(params(THE_REST))
-    if (path.contains("..")) {
-      // We don't want paths going upwards
-      halt(403)
-    } else {
-      val nublic_path = NUBLIC_DATA_ROOT + path
-      val file = new File(nublic_path)
+    withUserAndRestPath { user => file =>
       if (!file.exists()) {
         halt(404)
       } else {
-        val zip_name = FilenameUtils.getBaseName(path) + ".zip"
+        val zip_name = FilenameUtils.getBaseName(file.getPath()) + ".zip"
         response.setContentType("application/zip")
         response.setHeader("Content-Disposition", "attachment; filename=" + zip_name)
-        Zip.zip(nublic_path).toByteArray()
+        Zip.zip(file).toByteArray()
       }
     }
   }
   
   post("/zip-set") {
-    val files = params("files").split(":").toList
-    val filename = params("filename")
-    files match {
-      case initial :: rest => { 
-        if (files.exists(_.contains(".."))) {
-          halt(403)
-        } else {
-          val range = 0 until (initial.length() + 1)
-          val prefix_length = range.lastIndexWhere(n => {
-            val prefix = initial.substring(0, n)
-            if (!prefix.endsWith("/")) {
-              false
-            } else {
-              rest.forall(_.startsWith(prefix))
-            }
-          })
-          val base_path = NUBLIC_DATA_ROOT + initial.substring(0, prefix_length)
-          val files_to_add = files.map(s => new File(NUBLIC_DATA_ROOT + s))
-          response.setContentType("application/zip")
-          response.setHeader("Content-Disposition", "attachment; filename=" + filename )
-          Zip.zipFileSeq(files_to_add, base_path).toByteArray()
+    withUser { user =>
+      val files = params("files").split(":").toList
+      val filename = params("filename")
+      files match {
+        case initial :: rest => { 
+          if (files.exists(_.contains(".."))) {
+            halt(403)
+          } else {
+            val range = 0 until (initial.length() + 1)
+            val prefix_length = range.lastIndexWhere(n => {
+              val prefix = initial.substring(0, n)
+              if (!prefix.endsWith("/")) {
+                false
+              } else {
+                rest.forall(_.startsWith(prefix))
+              }
+            })
+            val base_path = NUBLIC_DATA_ROOT + initial.substring(0, prefix_length)
+            val files_to_add = files.map(s => new File(NUBLIC_DATA_ROOT + s))
+            response.setContentType("application/zip")
+            response.setHeader("Content-Disposition", "attachment; filename=" + filename )
+            Zip.zipFileSeq(files_to_add, base_path).toByteArray()
+          }
         }
+        case Nil => halt(403)
       }
-      case Nil => halt(403)
     }
   }
   

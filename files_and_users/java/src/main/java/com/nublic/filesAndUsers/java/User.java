@@ -1,14 +1,13 @@
 package com.nublic.filesAndUsers.java;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 
@@ -109,6 +108,10 @@ public class User {
 		return canRead(folder.getPath());
 	}
 	
+	public boolean canRead(File file) throws FileQueryException, IOException {
+		return canRead(file.getPath());
+	}
+	
 	public boolean canRead(String path) throws IOException {
 		return true;
 		
@@ -123,6 +126,10 @@ public class User {
 	
 	public boolean canWrite(Folder folder) throws FileQueryException, IOException {
 		return canWrite(folder.getPath());
+	}
+	
+	public boolean canWrite(File file) throws FileQueryException, IOException {
+		return canWrite(file.getPath());
 	}
 	
 	public boolean canWrite(String path) throws IOException {
