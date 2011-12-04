@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic
 Architecture: all
-Depends: ${misc:Depends}, libdbus-java, nublic-samba-config, nublic-solr-config, nublic-tomcat6-config, nublic-minidlna-config, nublic-file-watcher, nublic-notification, nublic-app-browser, nublic-app-manager, nublic-files-and-users, acl, python-fstab, openjdk-7-jre
+Depends: ${misc:Depends}, libdbus-java, nublic-samba-config, nublic-solr-config, nublic-tomcat6-config, nublic-minidlna-config, nublic-apache-config, nublic-file-watcher, nublic-notification, nublic-app-browser, nublic-app-manager, nublic-files-and-users, acl, python-fstab, openjdk-7-jre, openjdk-7-jdk
 Description: Nublic metapackage
  Nublic metapackage

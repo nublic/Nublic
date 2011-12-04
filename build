@@ -120,7 +120,7 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
-cp 3rd-party-libs/*.deb ${TARGET_DIR}
+cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 # download_serviio 0.6.0.1
 # build_submodule_lib serviio
 # Base modules
@@ -150,6 +150,7 @@ build_deb_package apps/app.music/fs/src
 # build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Extra configuration packages
+build_deb_package conf/apache
 build_deb_package conf/samba
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
