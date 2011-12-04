@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.commons.io.CopyUtils
 import org.apache.commons.io.FileUtils
+import com.nublic.filesAndUsers.java._
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -25,6 +26,13 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
+  
+  before("/*") {
+    val user = new User("a")
+  }
+  
+  get("/devices") {
+  }
   
   get("/folders/:depth/*") {
     val depth = Integer.valueOf(params("depth"))

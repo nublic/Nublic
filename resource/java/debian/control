@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: libnublic-resource-java
 Architecture: all
-Depends: ${misc:Depends}, libdbus-java, default-jre, nublic-resource
+Depends: ${misc:Depends}, libdbus-java, nublic-resource
 Description: Nublic Resource Java bindings
  Nublic Resource Java bindings
