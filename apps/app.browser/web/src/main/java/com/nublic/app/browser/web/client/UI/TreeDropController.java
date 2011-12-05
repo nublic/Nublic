@@ -9,13 +9,16 @@ import com.allen_sauer.gwt.dnd.client.util.CoordinateArea;
 import com.allen_sauer.gwt.dnd.client.util.CoordinateLocation;
 import com.allen_sauer.gwt.dnd.client.util.Location;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.nublic.app.browser.web.client.Constants;
 
 public class TreeDropController extends AbstractDropController {
 	Tree dropTarget;
 	TreeAdapter adapter;
 	TreeItem originalySelected;
+	Timer timer;
 	
 	public TreeDropController(Tree dropTarget, TreeAdapter adapter) {
 		super(dropTarget);
@@ -40,6 +43,29 @@ public class TreeDropController extends AbstractDropController {
 		}
 		return null;
 	}
+	
+	private void setNewOverItem(final TreeItem mouseOverItem) {
+		// To avoid errors when we don't achieve to find the item the mouse is over
+		// and, to avoid setting selected something which is already selected
+		if (mouseOverItem != null && !mouseOverItem.equals(dropTarget.getSelectedItem())) {
+			// Set it selected without firing events
+			dropTarget.setSelectedItem(mouseOverItem, false);
+			// Cancel previous timers
+			if (timer != null) {
+				timer.cancel();
+			}
+			// If has children, start a timer to open the node
+			if (mouseOverItem.getChildCount() > 0) {
+				timer = new Timer() {
+					@Override
+					public void run() {
+						mouseOverItem.setState(true, true); // open, firing events
+					}
+				};
+				timer.schedule(Constants.TIME_TO_OPEN);
+			}
+		}
+	}
 
 	@Override
 	public void onDrop(DragContext context) {
@@ -47,37 +73,19 @@ public class TreeDropController extends AbstractDropController {
 
 	@Override
 	public void onEnter(DragContext context) {
-//		TreeItem mouseOver = adapter.getMouseOver();
-//		if (mouseOver != null) {
-//			mouseOver.addStyleName(DragClientBundle.INSTANCE.css()
-//					.dropTargetEngage());
-//		}
 		originalySelected = dropTarget.getSelectedItem();
-		TreeItem newSelected = getMouseOverItem(context);
-		if (newSelected != null) {
-			dropTarget.setSelectedItem(newSelected);
-		}
-		
+		setNewOverItem(getMouseOverItem(context));
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
-//		dropTarget.removeStyleName(DragClientBundle.INSTANCE.css()
-//				.dropTargetEngage());
-//		TreeItem mouseOver = adapter.getMouseOver();
-//		if (mouseOver != null) {
-//			mouseOver.removeStyleName(DragClientBundle.INSTANCE.css()
-//					.dropTargetEngage());
-//		}
-		dropTarget.setSelectedItem(originalySelected);
+		dropTarget.setSelectedItem(originalySelected, false);
+		timer.cancel();
 	}
 
 	@Override
 	public void onMove(DragContext context) {
-		TreeItem newSelected = getMouseOverItem(context);
-		if (newSelected != null) {
-			dropTarget.setSelectedItem(newSelected);
-		}
+		setNewOverItem(getMouseOverItem(context));
 	}
 
 	@Override
