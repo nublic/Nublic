@@ -11,7 +11,7 @@ export TARGET_DIR=${INITIAL_DIR}/target
 export REPO_DIR=${TARGET_DIR}/repo
 export MAVEN_REPO_DIR=${TARGET_DIR}/temp/maven
 export MAVEN_CONFIG_FILE=${INITIAL_DIR}/conf/maven/settings.xml
-export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE}"
+export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE} -Dmaven.test.skip"
 export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR"
 
 install_in_maven_repo() {
@@ -35,6 +35,7 @@ initialize() {
     install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2.jar com.allen_sauer gwt-dnd 3.1.2
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
+    gpg --import conf/keys/packaging.private.key
 }
 
 package_and_install() {

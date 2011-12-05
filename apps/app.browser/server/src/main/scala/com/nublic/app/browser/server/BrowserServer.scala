@@ -45,7 +45,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   def withPath(param_name: String)(action: File => Any) : Any = {
     val path = URIUtil.decode(params(param_name))
-    if (path.contains("..")) {
+    if (path.isEmpty || path.contains("..")) {
       halt(403)
     } else {
       val nublic_path = NUBLIC_DATA_ROOT + path
@@ -57,7 +57,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   def withMultiplePaths(param_name: String)(action: List[File] => Any) : Any = {
     val paths = params(param_name).split(SEPARATOR).toList
-    if (paths.exists(_.contains(".."))) {
+    if (paths.exists(p => p.isEmpty || p.contains(".."))) {
       halt(403)
     } else {
       val file_paths = paths.map(s => new File(NUBLIC_DATA_ROOT + s))
