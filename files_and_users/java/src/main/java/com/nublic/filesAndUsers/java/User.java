@@ -7,20 +7,26 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 public class User {
 	String username;
 	Integer uid;
+	List<String> readablePaths;
+	List<String> writablePaths;
 	
 	public User(String username) {
 		this.username = username;
 		this.uid = null;
+		this.readablePaths = Lists.newArrayList("/var/nublic/data");
+		this.writablePaths = Lists.newArrayList("/var/nublic/data/nublic-only");
 	}
 	
 	public static List<User> getAll() throws UserQueryException {
@@ -116,7 +122,17 @@ public class User {
 		return canRead(file.getPath());
 	}
 	
-	public boolean canRead(String path) throws IOException {
+	public boolean canRead(final String path) throws IOException {
+		// Check if it is in one of the allowed paths
+		Collection<String> filtered = Collections2.filter(this.readablePaths, new Predicate<String>() {
+			@Override
+			public boolean apply(String x) {
+				return path.startsWith(x + "/") || path.equals(x);
+			}
+		});
+		if (filtered.isEmpty())
+			return false;
+		
 		return true;
 		
 		// TODO: Take care of special for mirrors and synced folders: can read but not write
@@ -138,7 +154,17 @@ public class User {
 		return canWrite(file.getPath());
 	}
 	
-	public boolean canWrite(String path) throws IOException {
+	public boolean canWrite(final String path) throws IOException {
+		// Check if it is in one of the allowed paths
+		Collection<String> filtered = Collections2.filter(this.writablePaths, new Predicate<String>() {
+			@Override
+			public boolean apply(String x) {
+				return path.startsWith(x + "/") || path.equals(x);
+			}
+		});
+		if (filtered.isEmpty())
+			return false;
+				
 		return true;
 		
 		/*if (isOwner(path))
