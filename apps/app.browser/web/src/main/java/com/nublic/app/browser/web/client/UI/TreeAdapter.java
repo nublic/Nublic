@@ -1,10 +1,10 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Stack;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.nublic.app.browser.web.client.model.BrowserModel;
@@ -13,59 +13,85 @@ import com.nublic.app.browser.web.client.model.FolderNode;
 public class TreeAdapter {
 	BrowserModel model;
 	Tree treeView;
-	TreeItem mouseOver;
+//	TreeItem mouseOver;
 	
 	public TreeAdapter(Tree treeView, BrowserModel model) {
 		this.treeView = treeView;
 		this.model = model;
 	}
 
-	public TreeItem getMouseOver() {
-		
-		return mouseOver;
-	}
+//	public TreeItem getMouseOver() {
+//		
+//		return mouseOver;
+//	}
+//	
+//	public void setMouseOver(TreeItem t) {
+//		mouseOver = t; 
+//	}
 	
-	public void setMouseOver(TreeItem t) {
-		mouseOver = t; 
-	}
-	
-	private void addOverHandler(final TreeItem newNode) {
-		if (newNode != null) {
-			newNode.sinkEvents(Event.ONMOUSEOVER);
-			DOM.setEventListener(newNode.getElement(), new EventListener() {
-				@Override
-				public void onBrowserEvent(Event event) {
-					switch (event.getTypeInt()) {
-					case Event.ONMOUSEOVER:
-						mouseOver = newNode;
-						break;
-					}
-				}
-			});
-			DOM.sinkEvents(newNode.getElement(), Event.ONMOUSEOVER);
-//			Widget w = newNode.getWidget();
-//			if (w != null) {
-//				w.addDomHandler(new MouseOverHandler() {
-//					@Override
-//					public void onMouseOver(MouseOverEvent event) {
+//	private void addOverHandler(final TreeItem newNode) {
+//		if (newNode != null) {
+//			newNode.sinkEvents(Event.ONMOUSEOVER);
+//			DOM.setEventListener(newNode.getElement(), new EventListener() {
+//				@Override
+//				public void onBrowserEvent(Event event) {
+//					switch (event.getTypeInt()) {
+//					case Event.ONMOUSEOVER:
 //						mouseOver = newNode;
+//						break;
 //					}
-//				}, MouseOverEvent.getType());
-//			}
+//				}
+//			});
+//			DOM.sinkEvents(newNode.getElement(), Event.ONMOUSEOVER);
+////			Widget w = newNode.getWidget();
+////			if (w != null) {
+////				w.addDomHandler(new MouseOverHandler() {
+////					@Override
+////					public void onMouseOver(MouseOverEvent event) {
+////						mouseOver = newNode;
+////					}
+////				}, MouseOverEvent.getType());
+////			}
+//		}
+//	}
+	
+	public Iterator<TreeItem> getVisibleIterator() {
+		return getVisibleList().iterator();
+	}
+	
+	public ArrayList<TreeItem> getVisibleList() {
+		ArrayList<TreeItem> iterableList = new ArrayList<TreeItem>();
+		for (int i = 0; i < treeView.getItemCount(); i++) {
+			TreeItem node = treeView.getItem(i);
+			iterableList.add(node);
+			if (node.getState()) {
+				addVisibleChildren(iterableList, node);
+			}
+		}
+		return iterableList;
+	}
+
+	private void addVisibleChildren(List<TreeItem> iterableList, TreeItem node) {
+		for (int i = 0; i < node.getChildCount(); i++) {
+			TreeItem child = node.getChild(i);
+			iterableList.add(child);
+			if (child.getState()) {
+				addVisibleChildren(iterableList, child);
+			}
 		}
 	}
 
 	private TreeItem createNewNode(TreeItem from, FolderNode node) {
 		TreeItem newNode = from.addItem(node.getName());
 		newNode.setUserObject(node);
-		addOverHandler(newNode);
+//		addOverHandler(newNode);
 		return newNode;
 	}
 	
 	private TreeItem createNewNode(Tree from, FolderNode node) {
 		TreeItem newNode = from.addItem(node.getName());
 		newNode.setUserObject(node);
-		addOverHandler(newNode);
+//		addOverHandler(newNode);
 		return newNode;
 	}
 	

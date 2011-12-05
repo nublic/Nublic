@@ -192,7 +192,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
-		// TODO: Regression. this is not called anymore, try onmousedown 
+		// TODO: Regression. this is not called anymore, try onmousedown (reported to library developer)
 		SingleDownloadAction.download(path);
 	}
 	
@@ -216,8 +216,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			altThumbnail.addStyleName(style.shadowed());
 		}
 	}
-	
-	// To handle mouse over events (TODO: better handling of mouse-out to detect lost of focus with popups)
+
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
 	}
