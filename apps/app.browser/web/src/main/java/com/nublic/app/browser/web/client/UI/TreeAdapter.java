@@ -115,9 +115,6 @@ public class TreeAdapter {
 	}
 
 	private void updateRootView(FolderNode node) {
-//		TreeItem newNode = treeView.addItem(node.getName());
-//		newNode.setUserObject(node);
-//		addOverHandler(newNode);
 		TreeItem newNode = createNewNode(treeView, node);
 
 		for (FolderNode child : node.getChildren()) {
@@ -126,9 +123,6 @@ public class TreeAdapter {
 	}
 
 	private void updateNodeView(TreeItem nodeView, FolderNode node) {
-//		TreeItem newNode = nodeView.addItem(node.getName());
-//		newNode.setUserObject(node);
-//		addOverHandler(newNode);
 		TreeItem newNode = createNewNode(nodeView, node);
 
 		for (FolderNode child : node.getChildren()) {
@@ -160,9 +154,6 @@ public class TreeAdapter {
 		
 		// If it hasn't been found we have to create the complete path stack in the tree view 
 		if  (!found) {
-//			nodeView = treeView.addItem(firstInStack.getName());
-//			nodeView.setUserObject(firstInStack);
-//			addOverHandler(nodeView);
 			nodeView = createNewNode(treeView, firstInStack);
 			return createNewBranch(nodeView, pathStack);
 		}
@@ -178,9 +169,6 @@ public class TreeAdapter {
 				found = childNode.getHTML().equals(nodeInStack.getName());
 			}
 			if  (!found) {
-//				childNode = nodeView.addItem(nodeInStack.getName());
-//				childNode.setUserObject(nodeInStack);
-//				addOverHandler(childNode);
 				childNode = createNewNode(nodeView, nodeInStack);
 				return createNewBranch(childNode, pathStack);
 			}
@@ -198,9 +186,6 @@ public class TreeAdapter {
 		FolderNode node = null;
 		while (!pathStack.isEmpty()) {
 			node = pathStack.pop();
-//			createdNode = createdNode.addItem(node.getName());
-//			createdNode.setUserObject(node);
-//			addOverHandler(createdNode);
 			createdNode = createNewNode(createdNode, node);
 		}
 

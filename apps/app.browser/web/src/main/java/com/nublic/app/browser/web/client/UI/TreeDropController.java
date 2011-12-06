@@ -13,17 +13,21 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.PasteAction;
+import com.nublic.app.browser.web.client.model.FolderNode;
 
 public class TreeDropController extends AbstractDropController {
 	Tree dropTarget;
 	TreeAdapter adapter;
 	TreeItem originalySelected;
-	Timer timer;
+	Timer timer = null;
+	BrowserUi stateProvider;
 	
-	public TreeDropController(Tree dropTarget, TreeAdapter adapter) {
+	public TreeDropController(Tree dropTarget, TreeAdapter adapter, BrowserUi stateProvider) {
 		super(dropTarget);
 		this.dropTarget = dropTarget;
 		this.adapter = adapter;
+		this.stateProvider = stateProvider;
 	}
 
 	private TreeItem getMouseOverItem(DragContext context) {
@@ -69,6 +73,8 @@ public class TreeDropController extends AbstractDropController {
 
 	@Override
 	public void onDrop(DragContext context) {
+		FolderNode folder = (FolderNode) dropTarget.getSelectedItem().getUserObject();
+		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), folder.getPath());
 	}
 
 	@Override
@@ -80,7 +86,9 @@ public class TreeDropController extends AbstractDropController {
 	@Override
 	public void onLeave(DragContext context) {
 		dropTarget.setSelectedItem(originalySelected, false);
-		timer.cancel();
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 
 	@Override

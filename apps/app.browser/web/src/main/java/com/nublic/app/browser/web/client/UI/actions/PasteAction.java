@@ -13,14 +13,12 @@ import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 
 public class PasteAction extends ActionWidget {
-
+	
 	public PasteAction(BrowserUi stateProvider) {
 		super("images/edit_paste.png", "Paste", stateProvider);
 	}
-
-	@Override
-	public void executeAction() {
-		final String mode = stateProvider.getModeCut() ? "move" : "copy";
+	
+	public static void doPasteAction(final String mode, Set<Widget> setToCopy, String pathTo) {
 		Message m = new Message() {
 			@Override
 			public void onSuccess(Response response) {} // TODO: feedback
@@ -32,16 +30,22 @@ public class PasteAction extends ActionWidget {
 			}
 		};
 		StringBuilder setOfFiles = new StringBuilder();
-		for (Widget w : stateProvider.getClipboard()) {
+		for (Widget w : setToCopy) {
 			if (setOfFiles.length() != 0) {
 				setOfFiles.append(":");
 			}
 			setOfFiles.append(((FileWidget) w).getPath());
 		}
 		m.addParam("files", setOfFiles.toString());
-		m.addParam("target", stateProvider.getPath());
+		m.addParam("target", pathTo);
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
-		
+	}
+
+	@Override
+	public void executeAction() {
+		doPasteAction(stateProvider.getModeCut() ? "move" : "copy",
+				      stateProvider.getClipboard(),
+				      stateProvider.getPath());
 		// TODO: if mode cut remove filewidgets from view
 	}
 

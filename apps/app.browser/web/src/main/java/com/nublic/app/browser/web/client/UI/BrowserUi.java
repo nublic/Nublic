@@ -55,15 +55,15 @@ import com.nublic.app.browser.web.client.UI.actions.ClearClipboardAction;
 import com.nublic.app.browser.web.client.UI.actions.CopyAction;
 import com.nublic.app.browser.web.client.UI.actions.CutAction;
 import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
-import com.nublic.app.browser.web.client.UI.actions.PasteAction;
-import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewDocumentAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewImageAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewMusicAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewTextAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewVideoAction;
 import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
+import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
 import com.nublic.app.browser.web.client.model.BrowserModel;
@@ -154,8 +154,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		dragController.setBehaviorDragProxy(true);
 		dragController.setBehaviorDragStartSensitivity(Constants.DRAG_START_SENSITIVIY);
 		
-		TreeDropController treeDropController = new TreeDropController(treeView, treeAdapter);
+		TreeDropController treeDropController = new TreeDropController(treeView, treeAdapter, this);
 		dragController.registerDropController(treeDropController);
+		
+		dragController.addDragHandler(new FileDragHandler(this));
 		
 		initActions();
 	}
@@ -196,6 +198,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 		});
 	}
+
+	// ContextChangeHandler
+	public void addContextChangeHandler(ContextChangeHandler handler) {
+		contextHandlers.add(handler);
+	}
+
+	public List<ContextChangeHandler> getContextChangeHandler() {
+		return contextHandlers;
+	}
+
+	public void notifyContextHandlers() {
+		// Notify to handlers of context change
+		for (ContextChangeHandler handler : contextHandlers) {
+			handler.onContextChange();
+		}
+	}
 	
 	// Clipboard methods
 	public void copy(Set<Widget> listToCopy) {
@@ -228,22 +246,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 	public boolean getModeCut() {
 		return clipboardModeCut;
-	}
-
-	// ContextChangeHandler
-	public void addContextChangeHandler(ContextChangeHandler handler) {	 	
-	    contextHandlers.add(handler);
-	}
-	
-	public List<ContextChangeHandler> getContextChangeHandler() {
-		return contextHandlers;
-	}
-	
-	private void notifyContextHandlers() {
-		// Notify to handlers of context change
-		for (ContextChangeHandler handler : contextHandlers) {
-			handler.onContextChange();
-		}
 	}
 
 	// To allow BrowserUi to work as a stateProvider

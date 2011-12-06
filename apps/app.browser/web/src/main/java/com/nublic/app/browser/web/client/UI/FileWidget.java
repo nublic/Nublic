@@ -192,7 +192,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
-		// TODO: Regression. this is not called anymore, try onmousedown (reported to library developer)
+		// TODO: Regression. this is not called anymore, using onmousedown (reported to library developer)
 		SingleDownloadAction.download(path);
 	}
 	
