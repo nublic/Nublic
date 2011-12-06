@@ -4,6 +4,7 @@
 export DEBFULLNAME='Nublic Packaging Team'
 export DEBEMAIL='packaging@nublic.com'
 export DEBKEY=4EEA5986
+export DEBREVISION=`date +%F-%H-%M`
 
 # Used directories
 export INITIAL_DIR=`pwd`
@@ -50,8 +51,10 @@ build_deb_package() {
     echo
     echo "BUILDING .DEB FOR " $1
     cd $1
+    dch -p -v ${DEBREVISION} Building on `date`
     ${DEBUILD} -i -us -uc -b
     exit=$?
+    git checkout debian/changelog
     if [ $exit != 0 ]
     then
         echo "Error building package " $1
@@ -148,7 +151,7 @@ build_deb_package apps/app.browser
 # Music App
 build_deb_package apps/app.music/server
 build_deb_package apps/app.music/fs/src
-build_deb_package apps/app.music/web
+# build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Extra configuration packages
 build_deb_package conf/apache
