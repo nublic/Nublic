@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -98,6 +99,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 	// To manage drag and drop
 	PickupDragController dragController = null;
+	Set<AbstractDropController> activeDropControllers = new HashSet<AbstractDropController>();
 	
 	// UI variables
 	@UiField FlowPanel centralPanel;
@@ -370,13 +372,25 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 		
 		// Update the information shown in the central panel
+		// Clear the panel
+		for (AbstractDropController dc : activeDropControllers) {
+			dragController.registerDropController(dc);
+		}
+		activeDropControllers.clear();
 		centralPanel.clear();
+		// Fill the panel
 		for (FileNode n : fileList) {
 			FileWidget newFileWidget = new FileWidget(n, path);
 			// To handle changes in selections of files
 			newFileWidget.addCheckedChangeHandler(this);
 			// To make the filewidgets draggable
 			dragController.makeDraggable(newFileWidget);
+			// To make possible drop on folders
+			if (n.getMime().equals(Constants.FOLDER_MIME)) {
+				AbstractDropController folderDropController = new FolderDropController(newFileWidget, this);
+				activeDropControllers.add(folderDropController);
+				dragController.registerDropController(folderDropController);
+			}
 			// Add it to central panel
 			centralPanel.add(newFileWidget);
 		}
