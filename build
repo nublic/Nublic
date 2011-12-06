@@ -22,7 +22,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro
     # Create build folders, if non existant
     mkdir -p ${TARGET_DIR}
     mkdir -p ${REPO_DIR}
@@ -151,7 +151,7 @@ build_deb_package apps/app.browser
 # Music App
 build_deb_package apps/app.music/server
 build_deb_package apps/app.music/fs/src
-# build_deb_package apps/app.music/web
+build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Extra configuration packages
 build_deb_package conf/apache
