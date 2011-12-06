@@ -17,7 +17,8 @@ mkdir -p ${ISO_MOUNT}
 # Download and extract the Ubuntu iso
 echo "Extracting Ubuntu iso..."
 cd ${ISO_DIR}
-# axel --alternate --output=${ISO_FILE} ${ISO_WGET}
+#axel --alternate --output=${ISO_FILE} ${ISO_WGET}
+#wget -O ${ISO_FILE} ${ISO_WGET}
 sudo mount -o loop,uid=1000,gid=1000 ${ISO_FILE} ${ISO_MOUNT}
 cp -rT ${ISO_MOUNT}/ ${ISO_TEMP}
 sudo umount ${ISO_MOUNT}
