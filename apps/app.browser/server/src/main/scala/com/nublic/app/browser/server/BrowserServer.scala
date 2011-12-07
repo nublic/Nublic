@@ -35,17 +35,17 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     action(user)
   }
   
-  def withRestPath(action: File => Any) : Any = withPath(THE_REST)(action)
+  def withRestPath(allowBlank: Boolean)(action: File => Any) : Any = withPath(THE_REST, allowBlank)(action)
   
-  def withUserAndRestPath(action: User => File => Any) : Any = withUser {
-    user => withRestPath {
+  def withUserAndRestPath(allowBlank: Boolean)(action: User => File => Any) : Any = withUser {
+    user => withRestPath(allowBlank) {
       path => action(user)(path)
     }
   }
   
-  def withPath(param_name: String)(action: File => Any) : Any = {
+  def withPath(param_name: String, allowBlank: Boolean)(action: File => Any) : Any = {
     val path = URIUtil.decode(params(param_name))
-    if (path.isEmpty || path.contains("..")) {
+    if ((path.isEmpty && !allowBlank) || path.contains("..")) {
       halt(403)
     } else {
       val nublic_path = NUBLIC_DATA_ROOT + path
@@ -78,7 +78,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/folders/:depth/*") {
-    withUserAndRestPath { user => folder =>
+    withUserAndRestPath(true) { user => folder =>
       val depth = Integer.valueOf(params("depth"))
       if (depth <= 0) {
         halt(500)
@@ -93,7 +93,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/files/*") {
-    withUserAndRestPath { user => folder =>
+    withUserAndRestPath(true) { user => folder =>
       if (!folder.exists() || !user.canRead(folder)) {
         JNull
       } else {
@@ -103,7 +103,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/raw/*") {
-    withUserAndRestPath { user => file =>
+    withUserAndRestPath(false) { user => file =>
       if (!file.exists() || file.isDirectory() || !user.canRead(file)) {
         halt(403)
       } else {
@@ -153,7 +153,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/thumbnail/*") {
-    withUserAndRestPath { user => file =>
+    withUserAndRestPath(false) { user => file =>
       if (!file.exists() || !user.canRead(file)) {
         halt(404)
       } else {
@@ -185,8 +185,8 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   post("/rename") {
     withUser { user =>
-      withPath("from") { from_path =>
-        withPath("to") { to_path =>
+      withPath("from", false) { from_path =>
+        withPath("to", false) { to_path =>
           if (to_path.exists() || !user.canWrite(from_path)) {
             halt(403)
           } else {
@@ -205,7 +205,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   post("/move") {
     withUser { user =>
       withMultiplePaths("files") { from_paths =>
-        withPath("target") { to_path =>
+        withPath("target", false) { to_path =>
           from_paths.map(f => do_move(f, to_path, user))
           halt(200)
         }
@@ -235,7 +235,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   post("/copy") {
     withUser { user =>
       withMultiplePaths("files") { from_paths =>
-        withPath("target") { to_path =>
+        withPath("target", false) { to_path =>
           from_paths.map(f => do_copy(f, to_path, user))
           halt(200)
         }
@@ -292,7 +292,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/zip/*") {
-    withUserAndRestPath { user => file =>
+    withUserAndRestPath(false) { user => file =>
       if (!file.exists() || !user.canRead(file)) {
         halt(404)
       } else {
