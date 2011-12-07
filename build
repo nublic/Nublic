@@ -4,6 +4,7 @@
 export DEBFULLNAME='Nublic Packaging Team'
 export DEBEMAIL='packaging@nublic.com'
 export DEBKEY=4EEA5986
+export DEBREVISION=`date +%F-%H-%M`
 
 # Used directories
 export INITIAL_DIR=`pwd`
@@ -11,7 +12,7 @@ export TARGET_DIR=${INITIAL_DIR}/target
 export REPO_DIR=${TARGET_DIR}/repo
 export MAVEN_REPO_DIR=${TARGET_DIR}/temp/maven
 export MAVEN_CONFIG_FILE=${INITIAL_DIR}/conf/maven/settings.xml
-export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE}"
+export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE} -Dmaven.test.skip"
 export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR"
 
 install_in_maven_repo() {
@@ -21,7 +22,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro
     # Create build folders, if non existant
     mkdir -p ${TARGET_DIR}
     mkdir -p ${REPO_DIR}
@@ -35,6 +36,7 @@ initialize() {
     install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2.jar com.allen_sauer gwt-dnd 3.1.2
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
+    gpg --import conf/keys/packaging.private.key
 }
 
 package_and_install() {
@@ -49,8 +51,10 @@ build_deb_package() {
     echo
     echo "BUILDING .DEB FOR " $1
     cd $1
+    dch -p -v ${DEBREVISION} Building on `date`
     ${DEBUILD} -i -us -uc -b
     exit=$?
+    git checkout debian/changelog
     if [ $exit != 0 ]
     then
         echo "Error building package " $1
@@ -120,6 +124,7 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 # download_serviio 0.6.0.1
 # build_submodule_lib serviio
 # Base modules
@@ -128,6 +133,7 @@ package_and_install resource/java
 build_deb_package notification/main/src
 package_and_install notification/java
 build_deb_package files_and_users/main/src
+package_and_install files_and_users/java
 build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
@@ -148,11 +154,12 @@ build_deb_package apps/app.music/fs/src
 # build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Extra configuration packages
+build_deb_package conf/apache
 build_deb_package conf/samba
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
-build_deb_package conf/nublic
 build_deb_package conf/minidlna
+build_deb_package conf/nublic
 create_repo
 create_repo_cd
 

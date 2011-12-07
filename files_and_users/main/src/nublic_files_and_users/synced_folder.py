@@ -28,6 +28,16 @@ class SyncedFolderDBus(dbus.service.Object):
         m = SyncedFolder.get_by(id=mid)
         return not m is None
     
+    @dbus.service.method('com.nublic.files', in_signature = '', out_signature='s')
+    def get_all_synced_folders(self):
+        ''' Gets all synced folders separated by :'''
+        r = ""
+        for m in SyncedFolder.query.all():
+            if r != "":
+                r = r + ":"
+            r = r + str(m.id)
+        return r
+    
     @dbus.service.method('com.nublic.files', in_signature = 'i', out_signature='s')
     def get_synced_folder_name(self, mid):
         m = SyncedFolder.get_by(id=mid)

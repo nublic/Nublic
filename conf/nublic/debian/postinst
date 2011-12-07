@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Change fstab file
+set-acls.py
+# Remount the root
+mount -o remount /
+# Set tomcat6 to be able to write everywhere
+for dir in cache fs "data/nublic-only" "data/mirrors" "data/synced"
+do
+    CURRENT_DIR=/var/nublic/${dir}
+    setfacl -Rdm u:tomcat6:rwx ${CURRENT_DIR}
+done
+# Set tomcat6 to be able to read apps configurations
+setfacl -Rdm u:tomcat6:rx /var/lib/nublic/apps
+# Set OpenJDK 7 as default virtual machine
+update-java-alternatives -s java-1.7.0-openjdk-\*

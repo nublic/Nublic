@@ -1,0 +1,13 @@
+Source: libnublic-files-and-users-java
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>, maven2
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: libnublic-files-and-users-java
+Architecture: all
+Depends: ${misc:Depends}, libdbus-java, nublic-files-and-users
+Description: Nublic Files and Users Java bindings
+ Nublic Files and Users Java bindings

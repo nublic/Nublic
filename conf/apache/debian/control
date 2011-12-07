@@ -1,0 +1,16 @@
+Source: nublic-apache-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-apache-config
+Architecture: all
+Depends: ${misc:Depends}, apache2, libapache2-mod-python, libapache2-mod-proxy-html
+Replaces: 
+Description: Nublic Apache2 configuration files
+ Required Apache2 configuration files for Nublic.
+ Includes files to load configuration for apache2 included in applications and 
+ the instalation and configuration of apache2 modules.

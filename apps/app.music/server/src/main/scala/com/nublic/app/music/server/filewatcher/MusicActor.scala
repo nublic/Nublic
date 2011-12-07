@@ -20,7 +20,7 @@ class MusicActor extends FileWatcherActor("Music") {
     val key = app.getKey("db")
     val postgreDb = "jdbc:postgresql://localhost:5432/" + key.getValue("database")
     val user = key.getValue("user")
-    val password = key.getValue("password")
+    val password = key.getValue("pass")
     // Load PostgreSQL driver and create connection
     Class.forName("org.postgresql.Driver").newInstance();
     SessionFactory.concreteFactory = Some(() => Session.create(
