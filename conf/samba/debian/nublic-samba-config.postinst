@@ -1,0 +1,7 @@
+#!/bin/bash -e
+ufw enable netbios-ns
+ufw enable netbios-dgm
+ufw enable netbios-ssn
+ufw enable microsoft-ds
+# ufw enable ldap # Not needed right now
+# ufw enable swat # If we want to allow Samba Web Administration Tool
