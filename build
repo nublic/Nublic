@@ -8,11 +8,11 @@ export DEBREVISION=`date +%F-%H-%M`
 
 # Used directories
 export INITIAL_DIR=`pwd`
-export TARGET_DIR=${INITIAL_DIR}/target
-export REPO_DIR=${TARGET_DIR}/repo
-export MAVEN_REPO_DIR=${TARGET_DIR}/temp/maven
-export MAVEN_CONFIG_FILE=${INITIAL_DIR}/conf/maven/settings.xml
-export MAVEN="mvn --settings ${MAVEN_CONFIG_FILE} -Dmaven.test.skip"
+export TARGET_DIR="${INITIAL_DIR}/target"
+export REPO_DIR="${TARGET_DIR}/repo"
+export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
+export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
+export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
 export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR"
 
 install_in_maven_repo() {
@@ -24,16 +24,16 @@ initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
     # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro
     # Create build folders, if non existant
-    mkdir -p ${TARGET_DIR}
-    mkdir -p ${REPO_DIR}
-    mkdir -p ${MAVEN_REPO_DIR}
+    mkdir -p "${TARGET_DIR}"
+    mkdir -p "${REPO_DIR}"
+    mkdir -p "${MAVEN_REPO_DIR}"
     # Delete previous builds
-    rm -rf ${TARGET_DIR}/*.{deb,build,changes}
+    rm -rf "${TARGET_DIR}"/*.{deb,build,changes}
     # Install dbus in maven repo
     install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
-    install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar jEN json-simple 1.1
-    install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar jEN jEN 4.x.o
-    install_in_maven_repo ${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2.jar com.allen_sauer gwt-dnd 3.1.2
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2.jar" com.allen_sauer gwt-dnd 3.1.2
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
@@ -42,15 +42,15 @@ initialize() {
 package_and_install() {
     echo
     echo "PACKAGING AND INSTALLING IN MAVEN " $1
-    cd $1
+    cd "$1"
     ${MAVEN} install
-    cd ${INITIAL_DIR}
+    cd "${INITIAL_DIR}"
 }
 
 build_deb_package() {
     echo
     echo "BUILDING .DEB FOR " $1
-    cd $1
+    cd "$1"
     dch -p -v ${DEBREVISION} Building on `date`
     ${DEBUILD} -i -us -uc -b
     exit=$?
@@ -62,18 +62,18 @@ build_deb_package() {
     fi
     ${DEBUILD} clean
     cd ..
-    mv *.deb *.build *.changes ${TARGET_DIR}
-    cd ${INITIAL_DIR}
+    mv *.deb *.build *.changes "${TARGET_DIR}"
+    cd "${INITIAL_DIR}"
 }
 
 build_submodule_lib() {
     echo
     echo "BUILDING EXTERNAL LIBRARY " $1
     cd 3rd-party-libs
-    rm -rf $1/debian
-    mkdir $1/debian
-    cp -R $1-debian/* $1/debian
-    cd $1
+    rm -rf "$1"/debian
+    mkdir "$1"/debian
+    cp -R "$1-debian"/* "$1"/debian
+    cd "$1"
     ${DEBUILD} -i -us -uc -b
     exit=$?
     if [ $exit != 0 ]
@@ -83,26 +83,26 @@ build_submodule_lib() {
     fi
     ${DEBUILD} clean
     cd ..
-    mv *.deb *.build *.changes *.dsc *.tar.gz ${TARGET_DIR}
-    cd ${INITIAL_DIR}
+    mv *.deb *.build *.changes *.dsc *.tar.gz "${TARGET_DIR}"
+    cd "${INITIAL_DIR}"
 }
 
 create_repo() {
     echo
     echo "CREATING REPOSITORY"
     # Create repo structure
-    rm -rf ${REPO_DIR}
-    mkdir -p ${REPO_DIR}/conf
-    mkdir -p ${REPO_DIR}/incoming
-    cp conf/repo/conf/distributions ${REPO_DIR}/conf
-    cd ${TARGET_DIR}
+    rm -rf "${REPO_DIR}"
+    mkdir -p "${REPO_DIR}/conf"
+    mkdir -p "${REPO_DIR}/incoming"
+    cp conf/repo/conf/distributions "${REPO_DIR}/conf"
+    cd "${TARGET_DIR}"
     # Sign packages and add packages to repo
     for pkg in *.deb
     do
         dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
         reprepro --ignore=wrongdistribution -Vb repo includedeb oneiric $pkg
     done
-    cd ${INITIAL_DIR}
+    cd "${INITIAL_DIR}"
 }
 
 download_serviio() {
@@ -112,11 +112,7 @@ download_serviio() {
     tar -xzvf serviio-$1-linux.tar.gz
     mv serviio-$1 serviio
     rm serviio-$1-linux.tar.gz
-    cd ${INITIAL_DIR}
-}
-
-create_repo_cd() {
-    mkisofs -r -V "Nublic Repo CD" -cache-inodes -J -l -o ${TARGET_DIR}/iso/repo.iso ${TARGET_DIR}/repo
+    cd "${INITIAL_DIR}"
 }
 
 initialize
@@ -161,7 +157,7 @@ build_deb_package conf/tomcat6
 build_deb_package conf/minidlna
 build_deb_package conf/nublic
 create_repo
-create_repo_cd
+# create_repo_cd
 
 exit 0
 
