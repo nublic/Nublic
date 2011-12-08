@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -41,7 +43,7 @@ public class PostRedirectHelper {
 	}
 
 	public void send() {
-		FormPanel form = new FormPanel();
+		final FormPanel form = new FormPanel();
 		VerticalPanel formContent = new VerticalPanel();
 		form.add(formContent);
 
@@ -62,5 +64,13 @@ public class PostRedirectHelper {
 
 		// Make the request
 		form.submit();
+		
+		// Remove the hack-panel from the root
+		form.addSubmitHandler(new SubmitHandler() {
+			@Override
+			public void onSubmit(SubmitEvent event) {
+				RootPanel.get().remove(form);
+			}
+		});
 	}
 }

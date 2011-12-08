@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.HasMouseDownHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -15,6 +19,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -26,10 +31,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.model.FileNode;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 
-public class FileWidget extends Composite {
+public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	private static FileWidgetUiBinder uiBinder = GWT.create(FileWidgetUiBinder.class);
 	
@@ -116,6 +119,10 @@ public class FileWidget extends Composite {
 			// Add the widgets to the panels
 			imagePanel.add(fileThumbnail);
 			textPanel.add(fileName);
+			
+			// Add handlers
+			fileThumbnail.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
+			fileName.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
 		} else {
 			// Create the alternative widgets (which are not links)
 			altThumbnail = new Image(url);
@@ -129,10 +136,22 @@ public class FileWidget extends Composite {
 			// Add the widgets to the panels
 			imagePanel.add(altThumbnail);
 			textPanel.add(altName);
+			
+			// Add handlers
+			altThumbnail.addMouseDownHandler(new MyMouseEventHandler());
+			altName.addMouseDownHandler(new MyMouseEventHandler());
 		}
-		
 		addMouseOverHandler(new MyMouseEventHandler());
 		addMouseOutHandler(new MyMouseEventHandler());
+		// This doesn't work.. no reason
+		// (making widgets draggables makes their children to not receive onMouseUp events, nor onClick)
+//		addMouseUpHandler(new MouseUpHandler() {
+//			@Override
+//			public void onMouseUp(MouseUpEvent event) {
+//				System.out.println("mouse up");
+//				mouseOverActions();
+//			}
+//		});
 		selectedBox.setVisible(false);
 		downloadButton.setVisible(false);
 		
@@ -173,6 +192,12 @@ public class FileWidget extends Composite {
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
+		// TODO: Regression. this is not called anymore, using onmousedown (reported to library developer)
+		SingleDownloadAction.download(path);
+	}
+	
+	@UiHandler("downloadButton")
+	void onDownloadButtonMouseDown(MouseDownEvent event) {
 		SingleDownloadAction.download(path);
 	}
 	
@@ -191,33 +216,49 @@ public class FileWidget extends Composite {
 			altThumbnail.addStyleName(style.shadowed());
 		}
 	}
-	
-	// To handle mouse over events (TODO: better handling of mouse-out to detect lost of focus with popups)
+
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
 	}
 
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 		return addDomHandler(handler, MouseOutEvent.getType());
+//		return addDomHandler(handler, LoseCaptureEvent.getType());
 	}
 
-	public class MyMouseEventHandler implements MouseOverHandler, MouseOutHandler {
+	public class MyMouseEventHandler implements MouseOverHandler, MouseOutHandler, MouseDownHandler {
 		public void onMouseOver(final MouseOverEvent moe) {
-			selectedBox.setVisible(true);
-			downloadButton.setVisible(true);
-			mouseOver = true;
-//			widget.addStyleName("my-mouse-over");
+//			System.out.println("mouse over");
+			mouseOverActions();
 		}
 
 		public void onMouseOut(final MouseOutEvent moe) {
-			downloadButton.setVisible(false);
-			if (!selectedBox.getValue()) {
-				// To maintain visible the boxes 
-				selectedBox.setVisible(false);
-			}
-			mouseOver = false;
-//			widget.removeStyleName("my-mouse-over");
+//			System.out.println("mouse out");
+			mouseOutActions();
 		}
+		
+		@Override
+		public void onMouseDown(MouseDownEvent event) {
+//			System.out.println("mouse down");
+			mouseOutActions();
+		}
+	}
+	
+	public void mouseOverActions() {
+		selectedBox.setVisible(true);
+		downloadButton.setVisible(true);
+		mouseOver = true;
+//		widget.addStyleName("my-mouse-over");
+	}
+	
+	public void mouseOutActions() {
+		downloadButton.setVisible(false);
+		if (!selectedBox.getValue()) {
+			// To maintain visible the boxes 
+			selectedBox.setVisible(false);
+		}
+		mouseOver = false;
+//		widget.removeStyleName("my-mouse-over");
 	}
 	
 	public boolean isChecked() {
@@ -249,5 +290,20 @@ public class FileWidget extends Composite {
 	public int hashCode() {
 		return getPath().hashCode();
 	}
+
+	@Override
+	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+//		if (hasPreview) {
+//			return fileThumbnail.addDomHandler(handler, MouseDownEvent.getType());
+//		} else {
+//			return altThumbnail.addMouseDownHandler(handler);
+////			return altThumbnail.addDomHandler(handler, MouseDownEvent.getType());
+//		}
+		return addDomHandler(handler, MouseDownEvent.getType());
+	}
+	
+//	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
+//		return addDomHandler(handler, MouseUpEvent.getType());
+//	}
 
 }
