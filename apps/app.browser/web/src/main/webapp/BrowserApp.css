@@ -10,6 +10,10 @@ h1 {
   text-align: center;
 }
 
+body, html {
+	height: 100%;
+}
+
 .sendButton {
   display: block;
   font-size: 16pt;

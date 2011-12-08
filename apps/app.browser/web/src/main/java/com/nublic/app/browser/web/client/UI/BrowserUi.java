@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -44,6 +46,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -53,15 +56,15 @@ import com.nublic.app.browser.web.client.UI.actions.ClearClipboardAction;
 import com.nublic.app.browser.web.client.UI.actions.CopyAction;
 import com.nublic.app.browser.web.client.UI.actions.CutAction;
 import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
-import com.nublic.app.browser.web.client.UI.actions.PasteAction;
-import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewDocumentAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewImageAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewMusicAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewTextAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewVideoAction;
 import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
+import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
 import com.nublic.app.browser.web.client.model.BrowserModel;
@@ -82,17 +85,23 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 	
-	BrowserModel model = null;
+	// Internal variables
 	TreeAdapter treeAdapter = null;
 	LazyLoader loader = new LazyLoader();
+	BrowserModel model = null;
+
 	String lastFilter = "";
 	boolean descOrderCurrently = true;
-	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
-	List<ContextChangeHandler> contextHandlers = new ArrayList<ContextChangeHandler>();
-	Set<Widget> clipboard = new HashSet<Widget>();
 	boolean clipboardModeCut = false;
-//	Object selectedStateLock = new Object();
+	Set<Widget> selectedFiles = new HashSet<Widget>(); // See newSelectedFiles to better understand the typing
+	Set<Widget> clipboard = new HashSet<Widget>();
+	List<ContextChangeHandler> contextHandlers = new ArrayList<ContextChangeHandler>();
+
+	// To manage drag and drop
+	PickupDragController dragController = null;
+	Set<AbstractDropController> activeDropControllers = new HashSet<AbstractDropController>();
 	
+	// UI variables
 	@UiField FlowPanel centralPanel;
 	@UiField FlowPanel actionsPanel;
 	@UiField Tree treeView;
@@ -141,7 +150,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.hide();
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
-
+		
+		// Drag and drop support
+		dragController = new PickupDragController(RootPanel.get(), false);
+		dragController.setBehaviorDragProxy(true);
+		dragController.setBehaviorDragStartSensitivity(Constants.DRAG_START_SENSITIVIY);
+		
+		TreeDropController treeDropController = new TreeDropController(treeView, treeAdapter, this);
+		dragController.registerDropController(treeDropController);
+		
+		dragController.addDragHandler(new FileDragHandler(this));
+		
 		initActions();
 	}
 	
@@ -181,6 +200,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 		});
 	}
+
+	// ContextChangeHandler
+	public void addContextChangeHandler(ContextChangeHandler handler) {
+		contextHandlers.add(handler);
+	}
+
+	public List<ContextChangeHandler> getContextChangeHandler() {
+		return contextHandlers;
+	}
+
+	public void notifyContextHandlers() {
+		// Notify to handlers of context change
+		for (ContextChangeHandler handler : contextHandlers) {
+			handler.onContextChange();
+		}
+	}
 	
 	// Clipboard methods
 	public void copy(Set<Widget> listToCopy) {
@@ -213,22 +248,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 	public boolean getModeCut() {
 		return clipboardModeCut;
-	}
-
-	// ContextChangeHandler
-	public void addContextChangeHandler(ContextChangeHandler handler) {	 	
-	    contextHandlers.add(handler);
-	}
-	
-	public List<ContextChangeHandler> getContextChangeHandler() {
-		return contextHandlers;
-	}
-	
-	private void notifyContextHandlers() {
-		// Notify to handlers of context change
-		for (ContextChangeHandler handler : contextHandlers) {
-			handler.onContextChange();
-		}
 	}
 
 	// To allow BrowserUi to work as a stateProvider
@@ -353,11 +372,25 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		}
 		
 		// Update the information shown in the central panel
+		// Clear the panel
+		for (AbstractDropController dc : activeDropControllers) {
+			dragController.registerDropController(dc);
+		}
+		activeDropControllers.clear();
 		centralPanel.clear();
+		// Fill the panel
 		for (FileNode n : fileList) {
 			FileWidget newFileWidget = new FileWidget(n, path);
 			// To handle changes in selections of files
 			newFileWidget.addCheckedChangeHandler(this);
+			// To make the filewidgets draggable
+			dragController.makeDraggable(newFileWidget);
+			// To make possible drop on folders
+			if (n.getMime().equals(Constants.FOLDER_MIME)) {
+				AbstractDropController folderDropController = new FolderDropController(newFileWidget, this);
+				activeDropControllers.add(folderDropController);
+				dragController.registerDropController(folderDropController);
+			}
 			// Add it to central panel
 			centralPanel.add(newFileWidget);
 		}
@@ -376,6 +409,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		notifyContextHandlers();
 	}
 
+	// To "shadow" them
 	public void markCutFiles() {
 		if (clipboardModeCut) {
 			Set<Widget> cutFiles = Sets.intersection(Sets.newHashSet(centralPanel), clipboard);
