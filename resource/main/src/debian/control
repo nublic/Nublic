@@ -9,7 +9,7 @@ Homepage: http://nublic.com
 
 Package: nublic-resource
 Architecture: all
-Depends: ${misc:Depends}, ${python:Depends}, postgresql, dbus, python-dbus, python-elixir, python-sqlalchemy, python-psycopg2
+Depends: ${misc:Depends}, ${python:Depends}, postgresql, dbus, python-dbus, python-elixir, python-sqlalchemy, python-psycopg2, nublic-upstart
 Description: Nublic Resource System
  This system provides a common and easy way to access to different resources
  managing the creation, security issues and access to private values.
