@@ -9,16 +9,16 @@ Created on 06/09/2011
 import gobject
 import os
 import pyinotify
-from dbus_signals import DbusSignaler
+import apps
+# from dbus_signals import DbusSignaler
 from handler import EventHandler
 from manager import WatchManager2
 
-def create_signalers():
-    return [ DbusSignaler('Browser', ''), DbusSignaler('Music', 'music') ]
-
 def start_watching(folder):
+    apps_info = apps.load_all_apps()
+    config = apps.load_app_config()
     wm = WatchManager2()
-    handler = EventHandler(create_signalers(), wm)
+    handler = EventHandler(wm, config, apps_info)
     notifier = pyinotify.Notifier(wm, handler, timeout=10)
     gobject.timeout_add(500, quick_check, notifier)
     # Exclude files beginning with . or ending in ~
@@ -34,7 +34,10 @@ def quick_check(notifier):
     return True
 
 def scan_folder(folder):
-    handler = EventHandler(create_signalers())
+    apps_info = apps.load_all_apps()
+    config = apps.load_app_config()
+    wm = WatchManager2()
+    handler = EventHandler(wm, apps_info, config)
     for element, isdir in walk_folder(folder):
         handler.send_repeated_creation(element, isdir)
     
