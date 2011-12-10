@@ -169,4 +169,8 @@ public class FileNode {
 		this.lastUpdate = lastUpdate;
 	}
 	
+	public boolean isWritable() {
+		return writable;
+	}
+	
 }

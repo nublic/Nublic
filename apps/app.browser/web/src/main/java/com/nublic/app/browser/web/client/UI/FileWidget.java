@@ -168,6 +168,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	public String getViewType() {
 		return node.getView();
 	}
+	
+	public boolean isWritable() {
+		return node.isWritable();
+	}
 
 	private void setURL(String viewType) {
 		String target = null;

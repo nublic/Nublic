@@ -292,7 +292,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// We proceed to update the navigation tree
 		FolderNode node = model.createBranch(model.getShowingPath());
 		// If the given node has no children we try to update its info
-		// TODO: I think this should be done at the same time as the request to the files, not in the response
+		// TODO: (not sure if possible) I think this should be done at the same time as the request to the files, not in the response
 		if (node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}

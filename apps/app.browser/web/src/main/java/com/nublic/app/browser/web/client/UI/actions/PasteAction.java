@@ -51,7 +51,6 @@ public class PasteAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		// TODO: not allow to paste in certain locations
 		if (stateProvider.getShowingFolder().isWritable()) {
 			Set<Widget> clipboard = stateProvider.getClipboard();
 			if (clipboard.isEmpty()) {
