@@ -8,6 +8,7 @@ public class FolderNode {
 	String name;
 	FolderNode parent;
 	List<FolderNode> children;
+	boolean writable;
 
 	// Constructors
 	FolderNode() {
@@ -16,9 +17,10 @@ public class FolderNode {
 		children = new ArrayList<FolderNode>();
 	}
 	
-	FolderNode(FolderNode parent, String name) {
+	FolderNode(FolderNode parent, String name, boolean writable) {
 		this.parent = parent;
 		this.name = name;
+		this.writable = writable;
 		children = new ArrayList<FolderNode>();
 	}
 
@@ -49,6 +51,10 @@ public class FolderNode {
 	
 	public void clear() {
 		children.clear();
+	}
+
+	public boolean isWritable() {
+		return writable;
 	}
 
 	// Calculates and returns the path to this node

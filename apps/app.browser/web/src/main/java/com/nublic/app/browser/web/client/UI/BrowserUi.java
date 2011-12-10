@@ -262,6 +262,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public List<FileNode> getShowingFiles() {
 		return model.getFileList();
 	}
+	
+	public FolderNode getShowingFolder() {
+		return model.getShowingFolder();
+	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -374,7 +378,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Update the information shown in the central panel
 		// Clear the panel
 		for (AbstractDropController dc : activeDropControllers) {
-			dragController.registerDropController(dc);
+			dragController.unregisterDropController(dc);
 		}
 		activeDropControllers.clear();
 		centralPanel.clear();
