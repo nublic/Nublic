@@ -19,7 +19,7 @@ def __get_bind_uri(dbus_loop):
     # Get conexion values 
     bus = dbus.SystemBus(mainloop = dbus_loop)
     valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/nublic_notification/db')
-    return valueService.value("uri", dbus_interface= 'com.nublic.resource')
+    return valueService.value("uri", dbus_interface= 'com.nublic.resource.value')
     '''return message_sender("uri")''' 
 
 

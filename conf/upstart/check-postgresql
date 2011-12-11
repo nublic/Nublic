@@ -1,7 +1,7 @@
 #!/bin/bash
 
 OUTPUT=`service postgresql status`
-while [ "$OUTPUT" = `Running clusters: " ]
+while [ "$OUTPUT" = "Running clusters: " ]
 do
     sleep 2
     OUTPUT=`service postgresql status`

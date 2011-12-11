@@ -21,7 +21,7 @@ class EventHandler(pyinotify.ProcessEvent):
     '''
     Listens the inotify events
     '''
-    def __init__(self, signalers, manager, config, apps_info):
+    def __init__(self, manager, config, apps_info):
         pyinotify.ProcessEvent.__init__(self)
         self.signalers = apps.create_initial_signalers(config, apps_info)
         self.manager = manager

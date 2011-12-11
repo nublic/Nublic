@@ -12,4 +12,8 @@
 , "web" : {
     "path" : "#"
   }
+, "filewatcher" : {
+    "supported" : true
+  , "paths"     : [ "__all__" ]
+  }
 }
