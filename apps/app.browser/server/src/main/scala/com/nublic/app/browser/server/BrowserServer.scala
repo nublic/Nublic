@@ -165,7 +165,11 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           Solr.getMimeType(file.getPath()) match {
             case None => {
               response.setContentType("image/png")
-              ImageDatabase.getImageBytes("unknown")
+              if (file.isDirectory()) {
+                ImageDatabase.getImageBytes(ImageDatabase.DIRECTORY_MIME)
+              } else {
+                ImageDatabase.getImageBytes("unknown")
+              }
             }
             case Some(mime) => {
               response.setContentType("image/png")
@@ -366,9 +370,14 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
 	        } catch {
 	          case _ => { /* Nothing in special */ }
 	        }
-	        // Return unknown as mimetype
-	        files ::= BrowserFile(file.getName(), "unknown", null,
+	        if (file.isDirectory()) {
+	          files ::= BrowserFile(file.getName(), "application/x-directory", null,
 	            file.length(), file.lastModified(), user.canWrite(file))
+	        } else {
+	          // Return unknown as mimetype
+	          files ::= BrowserFile(file.getName(), "unknown", null,
+	            file.length(), file.lastModified(), user.canWrite(file))
+	        }
 	      }
 	      case Some(mime) => 
 	        files ::= BrowserFile(file.getName(), mime,

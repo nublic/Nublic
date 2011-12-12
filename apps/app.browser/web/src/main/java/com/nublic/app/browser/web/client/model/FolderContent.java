@@ -15,4 +15,8 @@ public class FolderContent extends JavaScriptObject {
 	 	return this.subfolders;
     }-*/;
 
+	public final native boolean getWritable() /*-{
+		return this.writable;
+	}-*/;
+
 }

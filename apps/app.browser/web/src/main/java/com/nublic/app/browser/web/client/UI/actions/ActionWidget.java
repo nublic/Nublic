@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI.actions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Anchor;
@@ -15,13 +16,14 @@ import com.nublic.app.browser.web.client.UI.ContextChangeHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-public abstract class ActionWidget extends Composite implements ContextChangeHandler{
+public abstract class ActionWidget extends Composite implements ContextChangeHandler {
 	private static ActionWidgetUiBinder uiBinder = GWT.create(ActionWidgetUiBinder.class);
 	interface ActionWidgetUiBinder extends UiBinder<Widget, ActionWidget> { }
 
 	// CSS Styles defined in the .xml file
 	interface ActionStyle extends CssResource {
 		String margin();
+		String fadeout();
 	}
 	
 	@UiField HorizontalPanel rootPanel;
@@ -32,6 +34,8 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	PushButton imageButton;
 	Anchor actionLink;
 	BrowserUi stateProvider;
+	HandlerRegistration clickHandlerReg;
+	boolean hasHandler;
 	
 	public ActionWidget(String imageURL, String actionText, BrowserUi stateProvider) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -41,18 +45,9 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		imageButton = new PushButton(new Image(imageURL)); // TODO: use ImageResource
 		actionLink = new Anchor(actionText);
 
-		actionLink.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				executeAction();
-			}
-		});
-		imageButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				executeAction();
-			}
-		});
+		imageButton.addClickHandler(new MyClickHandler());
+		clickHandlerReg = actionLink.addClickHandler(new MyClickHandler());
+		hasHandler = true;
 		
 		imageButton.setVisible(false);
 		actionLink.setVisible(false);
@@ -61,6 +56,13 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		rootPanel.add(actionLink);
 		
 		stateProvider.addContextChangeHandler(this);
+	}
+	
+	private class MyClickHandler implements ClickHandler {
+		@Override
+		public void onClick(ClickEvent event) {
+			executeAction();
+		}
 	}
 
 	public void setExtraInfo(String info) {
@@ -76,7 +78,6 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	@Override
 	public void onContextChange() {
 		Availability av = getAvailability();
-		
 		switch (av) {
 			case AVAILABLE:
 				setAvailability(true, true);
@@ -93,18 +94,31 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	private void setAvailability(boolean visible, boolean enabled) {
 		imageButton.setVisible(visible);
 		actionLink.setVisible(visible);
-		imageButton.setEnabled(enabled);
-		actionLink.setEnabled(enabled); // TODO: the link doesn't fade out when disabled
 		if (visible) {
 			imageButton.getElement().addClassName(style.margin());
 			actionLink.getElement().addClassName(style.margin());
+			imageButton.setEnabled(enabled);
+			actionLink.setEnabled(enabled);
+			if (enabled) {
+				if (!hasHandler) {
+					clickHandlerReg = actionLink.addClickHandler(new MyClickHandler());
+					hasHandler = true;
+					actionLink.getElement().removeClassName(style.fadeout());
+				}
+			} else {
+				if (hasHandler) {
+					clickHandlerReg.removeHandler();
+					actionLink.getElement().addClassName(style.fadeout());
+					hasHandler = false;
+				}
+			}
 		} else {
 			imageButton.getElement().removeClassName(style.margin());
 			actionLink.getElement().removeClassName(style.margin());
 		}
 	}
 
-	// Warning, the implementation of this methods should use selectionSet and path from stateProvider
+	// Warning, the implementation of this methods should use selectedFiles and path from stateProvider
 	public abstract void executeAction();
 	public abstract Availability getAvailability();
 }

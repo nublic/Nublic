@@ -43,8 +43,15 @@ public class DeleteAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		// TODO: not permit delete depending on the place.. ? (ex: don't allow to delete a whole computer)
 		Set<Widget> selected = stateProvider.getSelectedFiles();
+		
+		// Check if any of the selected files is not writable (we won't allow cut in that case)
+		for (Widget w : selected) {
+			if (!((FileWidget) w).isWritable()) {
+				return Availability.HIDDEN;
+			}
+		}
+
 		if (selected.isEmpty()) {
 			setExtraInfo(null);
 			return Availability.UNCLICKABLE;
