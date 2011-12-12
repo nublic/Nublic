@@ -74,7 +74,9 @@ public class TreeDropController extends AbstractDropController {
 	@Override
 	public void onDrop(DragContext context) {
 		FolderNode folder = (FolderNode) dropTarget.getSelectedItem().getUserObject();
-		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), folder.getPath());
+		if (folder.isWritable()) {
+			PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), folder.getPath());
+		}
 	}
 
 	@Override

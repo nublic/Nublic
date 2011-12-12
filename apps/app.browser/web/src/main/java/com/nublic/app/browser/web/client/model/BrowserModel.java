@@ -50,6 +50,21 @@ public class BrowserModel {
 	public String getShowingPath() {
 		return showingPath;
 	}
+
+	public FolderNode getShowingFolder() {
+		String pathTokens[] = showingPath.split("/");
+		if (pathTokens[0].equals("")) {
+			return folderTree;
+		} else {
+			FolderNode returnFolder = folderTree.getChild(pathTokens[0]);
+			int i = 1;
+			while (i < pathTokens.length) {
+				returnFolder = returnFolder.getChild(pathTokens[i]);
+				i++;
+			}
+			return returnFolder;
+		}
+	}
 	
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
@@ -77,7 +92,7 @@ public class BrowserModel {
 			// add new received data
 			for (int i = 0; i < folderList.length(); i++) {
 				FolderContent f = folderList.get(i);
-				FolderNode child = new FolderNode(n, f.getName());
+				FolderNode child = new FolderNode(n, f.getName(), f.getWritable());
 				n.addChild(child);
 				// Recursive call to update child
 				updateTreeNoSync(child, f.getSubfolders());
@@ -99,7 +114,8 @@ public class BrowserModel {
 											 fileContent.getMime(),
 											 fileContent.getView(),
 											 fileContent.getSize(),
-											 fileContent.getLastUpdate());
+											 fileContent.getLastUpdate(),
+											 fileContent.getWritable());
 				fileList.add(file);
 			}
 		} else {
@@ -119,8 +135,11 @@ public class BrowserModel {
 		FolderNode currentNode = folderTree;
 		for (int i = 0; i < splited.length ; i++) {
 			FolderNode newNode = currentNode.getChild(splited[i]);
+			// If the node is still not created in the tree, we create it
 			if (newNode == null) {
-				newNode = new FolderNode(currentNode, splited[i]);
+				// We define created nodes as writable (we don't have the information and the server will not let write it them if they are not)
+				// If the user enters the folder the information will be reloaded properly, it's made this way only to enable drag and drop in all the cases
+				newNode = new FolderNode(currentNode, splited[i], true);
 				currentNode.addChild(newNode);
 			}
 			currentNode = newNode;

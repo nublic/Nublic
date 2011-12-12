@@ -1,0 +1,10 @@
+#!/bin/bash
+
+wget http://localhost:8080/solr -O - > /dev/null
+EXIT=$?
+while [ $EXIT ne 0 ]
+do
+    sleep 5
+    wget http://localhost:8080/solr -O - > /dev/null
+    EXIT=$?
+done

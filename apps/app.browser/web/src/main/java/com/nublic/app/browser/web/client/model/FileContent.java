@@ -26,4 +26,8 @@ public class FileContent extends JavaScriptObject {
 	  return this.last_update;
 	}-*/;
 
+	public final native boolean getWritable() /*-{
+		return this.writable;
+	}-*/;
+
 }

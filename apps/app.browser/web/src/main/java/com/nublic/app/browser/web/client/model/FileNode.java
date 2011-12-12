@@ -12,6 +12,7 @@ public class FileNode {
 	String view;
 	double size;
 	double lastUpdate;
+	boolean writable;
 
 	// Static Comparators
 	@SuppressWarnings("unchecked")
@@ -64,12 +65,13 @@ public class FileNode {
 		lastUpdate = 0;
 	}
 
-	public FileNode(String name, String mime, String view, double size, double lastUpdate) {
+	public FileNode(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
 		this.name = name;
 		this.mime = mime;
 		this.view = view;
 		this.size = size;
 		this.lastUpdate = lastUpdate;
+		this.writable = writable;
 	}
 	
 	// Comparators
@@ -165,6 +167,10 @@ public class FileNode {
 
 	public void setLastUpdate(double lastUpdate) {
 		this.lastUpdate = lastUpdate;
+	}
+	
+	public boolean isWritable() {
+		return writable;
 	}
 	
 }

@@ -262,6 +262,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public List<FileNode> getShowingFiles() {
 		return model.getFileList();
 	}
+	
+	public FolderNode getShowingFolder() {
+		return model.getShowingFolder();
+	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -288,7 +292,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// We proceed to update the navigation tree
 		FolderNode node = model.createBranch(model.getShowingPath());
 		// If the given node has no children we try to update its info
-		// TODO: I think this should be done at the same time as the request to the files, not in the response
+		// TODO: (not sure if possible) I think this should be done at the same time as the request to the files, not in the response
 		if (node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
@@ -374,7 +378,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Update the information shown in the central panel
 		// Clear the panel
 		for (AbstractDropController dc : activeDropControllers) {
-			dragController.registerDropController(dc);
+			dragController.unregisterDropController(dc);
 		}
 		activeDropControllers.clear();
 		centralPanel.clear();

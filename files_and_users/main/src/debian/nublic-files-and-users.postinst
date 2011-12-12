@@ -1,7 +1,8 @@
 #!/bin/bash
-nublic-resource-setup install nublic_files_and_users db postgresql-db
-service nublic-files-and-users start
-# Create storage for 
+# Create storage for Apache configuration files
 mkdir -p /var/nublic/secure
 setfacl -Rdm u:tomcat6:rwx /var/nublic/secure
+# Add database
+nublic-resource-setup install nublic_files_and_users db postgresql-db
+service nublic-files-and-users start
 #DEBHELPER#

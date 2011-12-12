@@ -51,15 +51,18 @@ public class PasteAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		// TODO: not allow to paste in certain locations
-		Set<Widget> clipboard = stateProvider.getClipboard();
-		if (clipboard.isEmpty()) {
-			setExtraInfo(null);
-			return Availability.UNCLICKABLE;
+		if (stateProvider.getShowingFolder().isWritable()) {
+			Set<Widget> clipboard = stateProvider.getClipboard();
+			if (clipboard.isEmpty()) {
+				setExtraInfo(null);
+				return Availability.UNCLICKABLE;
+			} else {
+				// To give feedback on the number of selected files to paste
+				setExtraInfo(String.valueOf(clipboard.size()));
+				return Availability.AVAILABLE;
+			}
 		} else {
-			// To give feedback on the number of selected files to paste
-			setExtraInfo(String.valueOf(clipboard.size()));
-			return Availability.AVAILABLE;
+			return Availability.HIDDEN;
 		}
 	}
 
