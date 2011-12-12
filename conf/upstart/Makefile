@@ -6,3 +6,5 @@ install:
 	cp check-postgresql ${DESTDIR}/usr/sbin
 	cp check-tomcat6 ${DESTDIR}/usr/sbin
 	cp check-solr ${DESTDIR}/usr/sbin
+	mkdir -p ${DESTDIR}/etc/init
+	cp xvfb.conf ${DESTDIR}/etc/init

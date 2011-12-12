@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-upstart
 Architecture: all
-Depends: ${misc:Depends}
+Depends: ${misc:Depends}, xvfb
 Description: Nublic Upstart workaround files
  Nublic Upstart workaround files
