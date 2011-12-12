@@ -7,9 +7,10 @@ from nublic_files_and_users.mirror import *
 from nublic_files_and_users.synced_folder import *
 
 from dbus.mainloop.glib import DBusGMainLoop
-from gobject import MainLoop, threads_init
+# from gobject import MainLoop, threads_init
 
 import dbus
+import gobject
 
 NOTIFICATION_LEVEL_LOG = 'LOG'
 NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
@@ -23,16 +24,29 @@ def __get_bind_uri(dbus_loop):
     return valueService.value("uri", dbus_interface= 'com.nublic.resource.value')
     '''return message_sender("uri")''' 
 
+def __check_nublic_resource_is_on(dbus_loop):
+    WAITING_MAX = 200
+    waited = 0
+    should_exit = False
+    while waited < WAITING_MAX and not should_exit:
+        # Just do the thing below, but waiting for errors
+        try:
+            __get_bind_uri(dbus_loop)
+            should_exit = True
+        except dbus.exceptions.DBusException:
+            waited = waited + 1
+
 if __name__ == '__main__':
     # Initialize D-Bus loop
     dbus_loop = DBusGMainLoop(set_as_default=True)
+    __check_nublic_resource_is_on(dbus_loop)
     # Initialize connection to database
     metadata.bind = __get_bind_uri(dbus_loop)
     setup_all(create_tables=True)
     # Initialize D-Bus objects
     user = UserDBus(dbus_loop)
     mirror = MirrorDBus(user, dbus_loop)
-    synced = SyncedFolderDbus(user, dbus_loop)
+    synced = SyncedFolderDBus(user, dbus_loop)
     # Start GObject loop
     loop = gobject.MainLoop()
     gobject.threads_init()

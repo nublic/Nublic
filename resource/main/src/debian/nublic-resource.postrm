@@ -1,6 +1,0 @@
-#!/bin/bash
-if [ $1 = "purge" ]
-then
-    rm /etc/nublic/resource.conf
-fi
-#DEBHELPER#

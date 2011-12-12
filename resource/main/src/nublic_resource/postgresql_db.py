@@ -92,12 +92,12 @@ class PostgresqlDB(DatabaseStored):
         rand_gen = Random()
         database_name = "".join(rand_gen.sample(string.letters, 1) + 
                                 rand_gen.sample(self.__random_characters,
-                                        self.__lenght_of_database_sufix - 1))
+                                        self.__lenght_of_database_sufix - 1)).lower()
         user_name = "".join(rand_gen.sample(string.letters, 1) +
                             rand_gen.sample(self.__random_characters,
-                                    self.__lenght_of_user_name - 1))
+                                    self.__lenght_of_user_name - 1)).lower()
         password = "".join(rand_gen.sample(self.__random_characters,
-                                  self.__lenght_of_password))
+                                  self.__lenght_of_password)).lower()
         return database_name, user_name, password
 
     def __generate_connection_uri(self, user, password, database=None):
@@ -121,8 +121,6 @@ class PostgresqlDB(DatabaseStored):
         metadata.bind.engine.connect().\
             connection.connection.set_isolation_level(0)
         
-        
-
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data()
         
@@ -137,11 +135,11 @@ class PostgresqlDB(DatabaseStored):
                 "CREATE DATABASE " + database_name + \
                 " WITH OWNER " + user_name + \
                 " ENCODING 'UTF8';" # @TODO: Check if it is correct 
-
+        # Show the queries
+        print("LOG: " + sql_create_user)
+        print("LOG: " + sql_create_database)
         # Perform the queries
-        text(sql_create_user, metadata.bind).execute(
-                                    user=user_name, password=password)
-        
+        text(sql_create_user, metadata.bind).execute(user=user_name, password=password)
         text(sql_create_database, metadata.bind).execute(database=database_name)
         #text(sql_revoke_permissions, metadata.bind).execute(user = user_name)
         # Restores the old database
