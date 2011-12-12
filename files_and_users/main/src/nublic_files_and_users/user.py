@@ -83,9 +83,9 @@ class UserDBus(dbus.service.Object):
         htpasswd_child.sendline(password)
         print("Added in htpasswd")
         # database
-        uid = self.get_user_id(username)
-        user = User(usernam=username, uid=uid, name=name)
-        user.save()
+        uid = self.get_user_uid(username)
+        usr = User(username=username, uid=uid, name=name)
+        session.add(usr)
         session.commit()
         # Notify
         self.user_created(username, name)
@@ -133,7 +133,7 @@ class UserDBus(dbus.service.Object):
         # change in database
         user = User.get_by(username=username)
         user.name = name
-        user.save_or_update()
+        # user.save_or_update()
         session.commit()
         # notify
         self.user_shown_name_changed(username, name)

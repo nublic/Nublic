@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from nublic_files_and_users_client.dbus import *
+from nublic_files_and_users_client.dbus_client import *
 import sys
 
 if __name__ == '__main__':
@@ -14,7 +14,7 @@ if __name__ == '__main__':
         sys.stdout.write("Rewrite password: ")
         password2 = sys.stdin.readline().strip()
         if password1 == password2:
-            create_user(user, name, password)
+            create_user(user, name, password1)
             sys.stdout.write("User created\n")
         else:
             sys.stdout.write("Passwords do not match\n")

@@ -55,7 +55,7 @@ class SyncedFolderDBus(dbus.service.Object):
         # create in database
         user = User.get(username=owner)
         m = SyncedFolder(name=name, user=user)
-        m.save()
+        session.add(m)
         session.commit()
         # create in filesystem
         path = SYNCED_ROOT + str(m.id)
@@ -80,7 +80,7 @@ class SyncedFolderDBus(dbus.service.Object):
             raise NameError()
         # change name
         m.name = new_name
-        m.save_or_update()
+        # m.save_or_update()
         session.commit()
     
     @dbus.service.method('com.nublic.files', in_signature = 'ib', out_signature='')

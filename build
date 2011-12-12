@@ -122,6 +122,7 @@ cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-p
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
+cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
 # download_serviio 0.6.0.1
 # build_submodule_lib serviio
 # Base modules
