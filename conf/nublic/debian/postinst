@@ -14,3 +14,6 @@ done
 setfacl -Rdm u:tomcat6:rx /var/lib/nublic/apps
 # Set OpenJDK 7 as default virtual machine
 update-java-alternatives -s java-1.7.0-openjdk-\*
+# Set ubuntu firewall
+ufw default deny
+ufw enable

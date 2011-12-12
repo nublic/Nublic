@@ -1,2 +1,3 @@
 #!/bin/bash -e
+ufw allow 8200
 ufw enable 8200

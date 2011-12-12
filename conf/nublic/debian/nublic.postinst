@@ -1,3 +1,0 @@
-#!/bin/bash -e
-ufw default deny
-ufw enable
