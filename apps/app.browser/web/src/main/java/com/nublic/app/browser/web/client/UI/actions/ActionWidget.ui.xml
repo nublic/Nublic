@@ -5,6 +5,14 @@
 		.margin {
 			margin: 5px;
 		}
+		.fadeout {	
+			color: gray;
+			cursor: default;
+		}
+		/* .fadeout A:hover {
+			color: gray;
+			text-decoration: none;
+		} */
 	</ui:style>
 
 	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="ALIGN_MIDDLE">
