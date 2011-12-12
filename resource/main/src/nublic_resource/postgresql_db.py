@@ -29,7 +29,8 @@ class PostgresqlDB(DatabaseStored):
     __lenght_of_database_sufix = 16
     __lenght_of_user_name = 14 # Max of 16 in database
     __lenght_of_password = 32
-    __random_characters = string.letters + string.digits + ""
+    __random_characters = string.ascii_letters + string.digits + ""
+    __random_lowercase = string.ascii_lowercase + string.digits + ""
     __root_password = model.postgres_root_password
     __root_user = model.postgres_root_user
     __connection_protocol = "postgresql"
@@ -90,11 +91,11 @@ class PostgresqlDB(DatabaseStored):
         with randomized data
         '''
         rand_gen = Random()
-        database_name = "".join(rand_gen.sample(string.letters, 1) + 
-                                rand_gen.sample(self.__random_characters,
+        database_name = "".join(rand_gen.sample(string.ascii_lowercase, 1) + 
+                                rand_gen.sample(self.__random_lowercase,
                                         self.__lenght_of_database_sufix - 1))
-        user_name = "".join(rand_gen.sample(string.letters, 1) +
-                            rand_gen.sample(self.__random_characters,
+        user_name = "".join(rand_gen.sample(string.ascii_lowercase, 1) +
+                            rand_gen.sample(self.__random_lowercase,
                                     self.__lenght_of_user_name - 1))
         password = "".join(rand_gen.sample(self.__random_characters,
                                   self.__lenght_of_password))
