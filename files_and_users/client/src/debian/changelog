@@ -1,0 +1,11 @@
+nublic-files-and-users-client (2011-12-12-16-42) oneiric; urgency=low
+
+  * Building on lun dic 12 16:44:33 CET 2011
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Mon, 12 Dec 2011 16:44:33 +0100
+
+nublic-files-and-users-client (0.01) unstable; urgency=low
+
+  * Initial release
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Mon, 12 Dic 2011 16:12:00 +0200

@@ -130,6 +130,7 @@ package_and_install resource/java
 build_deb_package notification/main/src
 package_and_install notification/java
 build_deb_package files_and_users/main/src
+build_deb_package files_and_users/client/src
 package_and_install files_and_users/java
 build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
