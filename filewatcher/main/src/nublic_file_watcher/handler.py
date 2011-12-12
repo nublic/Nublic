@@ -9,6 +9,8 @@ import os
 import os.path #IGNORE:W0404
 import pyinotify
 import solr
+import re
+import apps
 
 class FakeCreationEvent:
     def __init__(self, pathname, isdir):
@@ -19,10 +21,12 @@ class EventHandler(pyinotify.ProcessEvent):
     '''
     Listens the inotify events
     '''
-    def __init__(self, signalers, manager):
+    def __init__(self, manager, config, apps_info):
         pyinotify.ProcessEvent.__init__(self)
-        self.signalers = signalers
+        self.signalers = apps.create_initial_signalers(config, apps_info)
         self.manager = manager
+        self.config = config
+        self.apps_info = apps_info
     
     def mask(self):
         return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW #IGNORE:E1101
@@ -36,6 +40,24 @@ class EventHandler(pyinotify.ProcessEvent):
         # If dir, we have to simulate file creation
         # because pyinotify only works well with inner dirs
         if event.dir:
+            # Try to see if there is a signaler to add
+            for app in self.apps_info:
+                if app.supports_filewatcher:
+                    fw_folders = self.apps_info[app].filewatcher.paths
+                    for expr in fw_folders:
+                        regex = re.compile(expr, re.IGNORECASE)
+                        if re.match(event.pathname):
+                            # We found a matching path
+                            to_add = True
+                            for already_path in self.config['apps'][app]:
+                                if already_path.startswith(event.pathname):
+                                    self.config['apps'][app].delete(already_path)
+                                elif event.pathname.startwith(already_path):
+                                    to_add = False
+                            if to_add:
+                                self.config['apps'][app].append(event.pathname)
+                                
+            # Touch all files
             for inner_file in os.listdir(event.pathname):
                 file_name = os.path.join(event.pathname, inner_file)
                 if os.path.isfile(file_name):
@@ -52,7 +74,13 @@ class EventHandler(pyinotify.ProcessEvent):
         self.handle_process("delete", event)
     
     def process_IN_ATTRIB(self, event):
-        # No changes in Solr
+        # Check it's there
+        if event.dir:
+            file_info = solr.retrieve_doc(event.pathname)
+            if file_info == None:
+                file_info = solr.new_doc(event.pathname, event.dir)
+                file_info.save()
+                self.handle_process("modify", event)
         # Notify via D-Bus
         self.handle_process("attrib", event)
     

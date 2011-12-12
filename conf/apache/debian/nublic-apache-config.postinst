@@ -7,4 +7,5 @@ a2enmod python
 a2dissite default
 a2ensite nublic
 service apache2 restart
-
+ufw allow http
+ufw allow https

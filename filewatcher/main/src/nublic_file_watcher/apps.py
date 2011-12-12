@@ -8,15 +8,21 @@ Created on 05/12/2011
 import os
 import os.path
 import json
+from dbus_signals import *
 
 NUBLIC_APP_DATA_ROOT = "/var/lib/nublic/apps"
 FILE_WATCHER_DIRS = "/var/nublic/cache/filewatcher.dirs"
 
 def load_app_config():
-    fp = open(FILE_WATCHER_DIRS, 'r')
-    o = json.load(fp)
-    fp.close()
-    return o
+    if os.path.exists(FILE_WATCHER_DIRS):
+        fp = open(FILE_WATCHER_DIRS, 'r')
+        o = json.load(fp)
+        fp.close()
+        return o
+    else:
+        r = dict()
+        r[u'apps'] = dict()
+        return r
 
 def write_app_config(config):
     fp = open(FILE_WATCHER_DIRS, 'w')
@@ -24,8 +30,28 @@ def write_app_config(config):
     fp.close()
     return o
 
+def create_initial_signalers(config, apps):
+    signalers = []
+    for app in apps:
+        if app in config[u'apps']:
+            signalers.append(DbusSignaler(app.title(), config[u'apps'][app]))
+        else:
+            the_app = apps[app]
+            if the_app.supports_filewatcher:
+                fw_folders = the_app.filewatcher.paths
+                if u'__all__' in fw_folders:
+                    # Add watcher upon everything
+                    config[u'apps'][app] = [ u'' ]
+                    signalers.append(DbusSignaler(app.title(), [ u'' ]))
+                else:
+                    # Add a watcher with no contexts
+                    config[u'apps'][app] = []
+                    signalers.append(DbusSignaler(app.title(), []))
+    write_app_config(config)
+    return signalers
+
 def load_all_apps():
-    r = dict
+    r = dict()
     for (dirpath, _, filenames) in os.walk(NUBLIC_APP_DATA_ROOT):
         for filename in filenames:
             if filename.endswith(".json"):
@@ -36,9 +62,10 @@ def load_all_apps():
 
 def load_app_json(filename):
     fp = open(filename, 'r')
-    o = json.load(fp, object_hook = as_app_data)
+    o = json.load(fp)
     fp.close()
-    return o
+    k = as_app_data(o)
+    return k
 
 class AppData():
     def __init__(self, app_id, name, developer, icon, web, filewatcher):
@@ -53,16 +80,16 @@ class AppData():
         return not self.filewatcher is None and self.filewatcher.supported 
 
 def as_app_data(d):
-    app_id = d['id']
-    name = as_app_name(d['name'])
-    developer = d['developer']
-    icon = d['icon']
-    if 'web' in d:
-        web = as_app_web_info(d['web'])
+    app_id = d[u'id']
+    name = as_app_name(d[u'name'])
+    developer = d[u'developer']
+    icon = d[u'icon']
+    if u'web' in d:
+        web = as_app_web_info(d[u'web'])
     else:
         web = None
-    if 'filewatcher' in d:
-        filewatcher = as_app_filewatcher_info(d['filewatcher'])
+    if u'filewatcher' in d:
+        filewatcher = as_app_filewatcher_info(d[u'filewatcher'])
     else:
         filewatcher = None
     return AppData(app_id, name, developer, icon, web, filewatcher)
@@ -73,8 +100,8 @@ class AppName():
         self.localized = localized
 
 def as_app_name(d):
-    default = d['default']
-    localized = d['localized']
+    default = d[u'default']
+    localized = d[u'localized']
     return AppName(default, localized)
 
 class AppWebInfo():
@@ -82,7 +109,7 @@ class AppWebInfo():
         self.path = path
 
 def as_app_web_info(d):
-    path = d['path']
+    path = d[u'path']
     return AppWebInfo(path)
 
 class AppFilewatcherInfo():
@@ -91,6 +118,6 @@ class AppFilewatcherInfo():
         self.paths = paths
 
 def as_app_filewatcher_info(d):
-    supported = d['supported']
-    paths = d['paths']
+    supported = d[u'supported']
+    paths = d[u'paths']
     return AppFilewatcherInfo(supported, paths)
