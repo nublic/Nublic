@@ -94,12 +94,16 @@ object OfficeWorker extends DocumentWorker {
   def supportedViews: List[String] = List("pdf")
       
   val PDF_FILENAME = "doc.pdf"
+  val LOG_FILENAME = "unoconv.log"
   
   def process(file: String, folder: File): Unit = {
     // Run `unoconv --stdout -f pdf ${file} > ${folder}/doc.pdf`
     val cmd = new ProcessBuilder("unoconv", "--stdout", "-f", "pdf", file)
+    var env = cmd.environment()
+    env.put("HOME", "/tmp")
     val process = cmd.start()
     val pdfFile = new File(folder, PDF_FILENAME)
+    val logFile = new File(folder, LOG_FILENAME)
     actor {
       val pdfStream = new FileOutputStream(pdfFile)
       // Read file
@@ -113,6 +117,20 @@ object OfficeWorker extends DocumentWorker {
       // Close stream
       pdfStream.flush()
       pdfStream.close()
+    }.start
+    actor {
+      val logStream = new FileOutputStream(logFile)
+      // Read file
+      val buffer = new Array[Byte](1024)
+      val buffered_err_stream = new BufferedInputStream(process.getErrorStream())
+      var bytes_read = buffered_err_stream.read(buffer, 0, buffer.length)
+      while(bytes_read != -1) {
+        logStream.write(buffer, 0, bytes_read)
+        bytes_read = buffered_err_stream.read(buffer, 0, buffer.length)
+      }
+      // Close stream
+      logStream.flush()
+      logStream.close()
     }.start
     // Create the "pipe" to get the file
     process.waitFor()
