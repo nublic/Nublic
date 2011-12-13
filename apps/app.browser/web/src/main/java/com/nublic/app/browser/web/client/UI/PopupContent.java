@@ -2,13 +2,10 @@ package com.nublic.app.browser.web.client.UI;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,14 +19,14 @@ public class PopupContent extends Composite {
 	}
 
 	@UiField LayoutPanel contentTop;
-	@UiField Anchor nextLink;
-	@UiField Anchor previousLink;
+	@UiField Hyperlink nextLink;
+	@UiField Hyperlink previousLink;
 	Widget internalWidget;
 	// Used to proper resize images
 	int originalWidth;
 	int originalHeight;
-	FileWidget previous;
-	FileWidget next;
+//	FileWidget previous;
+//	FileWidget next;
 
 	public PopupContent() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -39,26 +36,32 @@ public class PopupContent extends Composite {
 	}
 	
 	public void setPrevious(FileWidget previous) {
-		this.previous = previous;
+		previousLink.setTargetHistoryToken(Constants.getView(previous.getViewType())
+					+ "?" + Constants.PATH_PARAMETER
+					+ "=" + previous.getPath());
+//		this.previous = previous;
 	}
 
 	public void setNext(FileWidget next) {
-		this.next = next;
+		nextLink.setTargetHistoryToken(Constants.getView(next.getViewType()) +
+				"?" + Constants.PATH_PARAMETER +
+				"=" + next.getPath());
+//		this.next = next;
 	}
 	
-	@UiHandler("nextLink")
-	void onNextLinkClick(ClickEvent event) {
-		if (next != null) {
-			History.newItem(Constants.getView(next.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + next.getPath());
-		}
-	}
-
-	@UiHandler("previousLink")
-	void onPreviousLinkClick(ClickEvent event) {
-		if (previous != null) {
-			History.newItem(Constants.getView(previous.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + previous.getPath());
-		}
-	}
+//	@UiHandler("nextLink")
+//	void onNextLinkClick(ClickEvent event) {
+//		if (next != null) {
+//			History.newItem(Constants.getView(next.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + next.getPath());
+//		}
+//	}
+//
+//	@UiHandler("previousLink")
+//	void onPreviousLinkClick(ClickEvent event) {
+//		if (previous != null) {
+//			History.newItem(Constants.getView(previous.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + previous.getPath());
+//		}
+//	}
 
 	public void setContent(Widget w) {
 		internalWidget = w;

@@ -13,14 +13,14 @@
 			<g:DockLayoutPanel>
 				<g:west size="100">
 					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
-						<g:Anchor text="previous" ui:field="previousLink">
-						</g:Anchor>
+						<g:Hyperlink ui:field="previousLink" text="previous">
+						</g:Hyperlink>
 					</g:VerticalPanel>
 				</g:west>
 				<g:east size="100">
 					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
-						<g:Anchor text="next" ui:field="nextLink">
-						</g:Anchor>
+						<g:Hyperlink ui:field="nextLink" text="next">
+						</g:Hyperlink>
 					</g:VerticalPanel>
 				</g:east>
 				<g:center>
