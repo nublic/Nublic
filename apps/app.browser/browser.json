@@ -7,7 +7,7 @@
   }
 , "developer" : "Nublic"
 , "icon" : {
-    "32" : "${DESTDIR}/var/lib/nublic/app-images/browser.png"
+    "32" : "/var/lib/nublic/app-images/browser.png"
   }
 , "web" : {
     "path" : "#"
