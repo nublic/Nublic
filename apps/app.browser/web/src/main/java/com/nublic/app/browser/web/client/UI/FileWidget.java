@@ -174,20 +174,21 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 
 	private void setURL(String viewType) {
-		String target = null;
-		if (viewType.equals(Constants.IMAGE_TYPE)) {
-			target = Constants.IMAGE_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
-			target = Constants.DOCUMENT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
-			target = Constants.MUSIC_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
-			target = Constants.VIDEO_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
-			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-		} else if (viewType.equals(Constants.TEXT_TYPE)) {
-			target = Constants.TEXT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-		} 
+//		String target = null;
+//		if (viewType.equals(Constants.IMAGE_TYPE)) {
+//			target = Constants.IMAGE_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+//		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
+//			target = Constants.DOCUMENT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+//		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
+//			target = Constants.MUSIC_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+//		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
+//			target = Constants.VIDEO_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+//		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
+//			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+//		} else if (viewType.equals(Constants.TEXT_TYPE)) {
+//			target = Constants.TEXT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
+//		}
+		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + path;
 		if (fileThumbnail != null && fileName != null) {
 			fileThumbnail.setTargetHistoryToken(target);
 			fileName.setTargetHistoryToken(target);

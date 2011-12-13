@@ -35,7 +35,7 @@ public class EmptyUI extends Composite implements ShowsPlayer {
 	}
 	
 	@Override
-	public void showPlayer(AbstractMediaPlayer player) {
+	public void showPlayer(AbstractMediaPlayer player, String path) {
 		rootPanel.add(player);
 	}
 

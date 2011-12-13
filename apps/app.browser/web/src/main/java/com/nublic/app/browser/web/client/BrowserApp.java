@@ -72,7 +72,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			// A music or video visualization	
 			showPlayer(hmap, token);
 		} else {
-			ErrorPopup.showError("Unrecognized token");
+			ErrorPopup.showError("Invalid URL");
 		}
 	}
 
@@ -88,8 +88,14 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			path = "";
 			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
 		}
-		// show the initial screen (empties the file list of the model)
-		model.updateFiles(path);
+		
+		if (path.equals(model.getShowingPath())) {
+			// If we're already showing the asked path we'll just uncover the browser view
+			theUi.showBrowser();
+		} else {
+			// show the browser screen (empties the file list of the model and fills it with the new one)
+			model.updateFiles(path);		
+		}
 	}
 	
 	private void showImage(ParamsHashMap hmap) {

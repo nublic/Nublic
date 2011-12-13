@@ -9,10 +9,10 @@ import com.nublic.app.browser.web.client.Constants;
 
 // A pop-up that occupy all the space except a margin at boundaries
 public class FixedPopup extends PopupPanel implements ResizeHandler {
-	private int width;
-	private int height;
+	private int width = 0;
+	private int height = 0;
 	int margin;
-	PopupContent content;
+	PopupContent content = null;
 
 	public FixedPopup(boolean autoHide, boolean modal) {
 		this(autoHide, modal, Constants.POPUP_MARGIN);
@@ -66,9 +66,11 @@ public class FixedPopup extends PopupPanel implements ResizeHandler {
 		content.fitSize(width, height - Constants.POPUP_BOTTOM);
 	}
 
-	public void setContentWidget(Widget w) {
+	public void setContentWidget(Widget w, FileWidget previous, FileWidget next) {
 		if (content != null) {
 			content.setContent(w);
+			content.setNext(next);
+			content.setPrevious(previous);
 			content.fitSize(width, height - Constants.POPUP_BOTTOM);
 		}
 	}

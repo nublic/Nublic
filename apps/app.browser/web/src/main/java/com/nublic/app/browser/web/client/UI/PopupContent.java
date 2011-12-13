@@ -2,12 +2,17 @@ package com.nublic.app.browser.web.client.UI;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
 
 public class PopupContent extends Composite {
 
@@ -17,10 +22,14 @@ public class PopupContent extends Composite {
 	}
 
 	@UiField LayoutPanel contentTop;
+	@UiField Anchor nextLink;
+	@UiField Anchor previousLink;
 	Widget internalWidget;
 	// Used to proper resize images
 	int originalWidth;
 	int originalHeight;
+	FileWidget previous;
+	FileWidget next;
 
 	public PopupContent() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -29,6 +38,28 @@ public class PopupContent extends Composite {
 		originalHeight = 0;
 	}
 	
+	public void setPrevious(FileWidget previous) {
+		this.previous = previous;
+	}
+
+	public void setNext(FileWidget next) {
+		this.next = next;
+	}
+	
+	@UiHandler("nextLink")
+	void onNextLinkClick(ClickEvent event) {
+		if (next != null) {
+			History.newItem(Constants.getView(next.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + next.getPath());
+		}
+	}
+
+	@UiHandler("previousLink")
+	void onPreviousLinkClick(ClickEvent event) {
+		if (previous != null) {
+			History.newItem(Constants.getView(previous.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + previous.getPath());
+		}
+	}
+
 	public void setContent(Widget w) {
 		internalWidget = w;
 		contentTop.clear();
@@ -93,7 +124,7 @@ public class PopupContent extends Composite {
 //			} else if (internalWidget instanceof AbstractMediaPlayer) {
 //				// Music and video
 			} else {
-				// If it's not an Image or a "player" (music/video) we'll fill the space we have for it
+				// If it's not an Image we'll fill the space we have for it
 				internalWidget.setPixelSize(width, height);
 			}
 		}
@@ -104,6 +135,5 @@ public class PopupContent extends Composite {
 		originalWidth = width;
 		originalHeight = height;
 	}
-	
 
 }
