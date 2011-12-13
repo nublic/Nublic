@@ -65,6 +65,19 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     }
   }
   
+  get("/user") {
+    request.getRemoteUser()
+  }
+  
+  get("/params") {
+    var lst = List[String]()
+    val e = request.getHeaderNames()
+    while (e.hasMoreElements()) {
+      lst ::= e.nextElement().asInstanceOf[String]
+    }
+    lst
+  }
+  
   get("/devices") {
     withUser { user =>
       val mirrors = user.getAccessibleMirrors().toArray().asInstanceOf[Array[Mirror]].map {
