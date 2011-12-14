@@ -1,0 +1,25 @@
+#!/usr/bin/python
+
+from nublic_files_and_users_client.dbus_client import *
+import sys
+
+if __name__ == '__main__':
+    # Add an user
+    if sys.argv[1] == 'create':
+        user = sys.argv[2]
+        sys.stdout.write("Name to be shown: ")
+        name = sys.stdin.readline().strip()
+        sys.stdout.write("Password: ")
+        password1 = sys.stdin.readline().strip()
+        sys.stdout.write("Rewrite password: ")
+        password2 = sys.stdin.readline().strip()
+        if password1 == password2:
+            create_user(user, name, password1)
+            sys.stdout.write("User created\n")
+        else:
+            sys.stdout.write("Passwords do not match\n")
+    # Delete an user
+    elif sys.argv[1] == 'delete':
+        user = sys.argv[2]
+        delete_user(user)
+        sys.stdout.write("User deleted\n")

@@ -1,9 +1,9 @@
 <VirtualHost *:80>
-        ServerAdmin webmaster@nublic.me
-        RewriteEngine On
+    ServerAdmin webmaster@nublic.me
+    RewriteEngine On
 	Include /var/lib/nublic/apache2/apps/*.conf
 
-        ErrorLog /var/log/apache2/error.log
+    ErrorLog /var/log/apache2/error.log
 
 	ProxyRequests Off
 	ProxyErrorOverride Off
@@ -13,9 +13,7 @@
 # In tomcat .conf files
         <Location  /app-tomcat>
                 # We use the mod_proxy way instead of mod_jk.
-                ProxyPass http://127.0.0.1:8080/app-tomcat
-                ProxyPassReverse http://127.0.0.1:8080/app-tomcat
-                ProxyHTMLURLMap http://127.0.0.1:8080/app-tomcat /app-tomcat
+                ProxyPass ajp://127.0.0.1:8009/app-tomcat
 
                 SetOutputFilter proxy-html
                 SetOutputFilter INFLATE;proxy-html;DEFLATE
@@ -27,7 +25,5 @@
                 Require valid-user
                 # We may want to configure a group for the users for extensibility reasons
         </Location>
-
-
 
 </Virtualhost>

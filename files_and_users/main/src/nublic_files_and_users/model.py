@@ -12,8 +12,8 @@ class User(Entity):
     mirrors = OneToMany('Mirror')
     synced_folders = OneToMany('SyncedFolder')
 
-    def __init__(self):
-        Entity.__init__(self)
+    # def __init__(self):
+    #     Entity.__init__(self)
 
 class Mirror(Entity):
     using_options(tablename='mirrors')
@@ -21,8 +21,8 @@ class Mirror(Entity):
     name = Field(String(255))
     user = ManyToOne('User', colname='username')
 
-    def __init__(self):
-        Entity.__init__(self)
+    # def __init__(self):
+    #     Entity.__init__(self)
 
 class SyncedFolder(Entity):
     using_options(tablename='synced')
@@ -30,5 +30,5 @@ class SyncedFolder(Entity):
     name = Field(String(255))
     user = ManyToOne('User', colname='username')
 
-    def __init__(self):
-        Entity.__init__(self)
+    # def __init__(self):
+    #     Entity.__init__(self)
