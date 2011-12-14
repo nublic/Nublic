@@ -65,6 +65,9 @@ class Filesystem(LoggingMixIn, Operations):
         else:
             raise FuseOSError(ENOENT)
     
+    def getxattr(self, path, name, position=0):
+        return ''
+    
     def open(self, path, flags):
         elements = path.split("/")
         if len(elements) == 5:
