@@ -5,10 +5,11 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.freedesktop.dbus.exceptions.DBusException;
 
@@ -133,17 +134,13 @@ public class User {
 		if (filtered.isEmpty())
 			return false;
 		
-		return true;
-		
-		// TODO: Take care of special for mirrors and synced folders: can read but not write
-		
-		/*if (isOwner(path))
+		if (isOwner(path))
 			return true;
 		
 		Path p = FileSystems.getDefault().getPath(path);
 		Set<PosixFilePermission> perms = Files.getPosixFilePermissions(p);
 		return perms.contains(PosixFilePermission.GROUP_READ)
-				|| perms.contains(PosixFilePermission.OTHERS_READ);*/
+				|| perms.contains(PosixFilePermission.OTHERS_READ);
 	}
 	
 	public boolean canWrite(Folder folder) throws FileQueryException, IOException {
@@ -164,16 +161,14 @@ public class User {
 		});
 		if (filtered.isEmpty())
 			return false;
-				
-		return true;
 		
-		/*if (isOwner(path))
+		if (isOwner(path))
 			return true;
 		
 		Path p = FileSystems.getDefault().getPath(path);
 		Set<PosixFilePermission> perms = Files.getPosixFilePermissions(p);
 		return perms.contains(PosixFilePermission.GROUP_WRITE)
-				|| perms.contains(PosixFilePermission.OTHERS_WRITE);*/
+				|| perms.contains(PosixFilePermission.OTHERS_WRITE);
 	}
 	
 	<T extends Folder> Collection<T> getOwned(Collection<T> elements) {

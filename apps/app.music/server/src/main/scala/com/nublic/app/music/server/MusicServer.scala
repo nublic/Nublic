@@ -27,7 +27,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   val THE_REST = "splat"
   val ALL_OF_SOMETHING = "all"
   
-  val watcher = new MusicActor()
+  val watcher = new MusicActor(servletContext)
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)

@@ -1,5 +1,6 @@
 #!/bin/bash
 
 nublic-resource-setup install nublic_app_music db postgresql-db
+echo "Hello"
 
 #DEBHELPER#
