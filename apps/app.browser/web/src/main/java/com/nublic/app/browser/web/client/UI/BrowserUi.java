@@ -156,10 +156,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		dragController = new PickupDragController(RootPanel.get(), false);
 		dragController.setBehaviorDragProxy(true);
 		dragController.setBehaviorDragStartSensitivity(Constants.DRAG_START_SENSITIVIY);
-		
 		TreeDropController treeDropController = new TreeDropController(treeView, treeAdapter, this);
 		dragController.registerDropController(treeDropController);
-		
 		dragController.addDragHandler(new FileDragHandler(this));
 		
 		initActions();
@@ -528,23 +526,28 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 		});
 		
+		
+		setContentOfPopUp(newImage, path);
 		// Find previous and next to show in the popup
-		int index = findWidgetIndexFromPath(path);
-		FileWidget next = findNextTo(index);
-		FileWidget previous = findPreviousTo(index);
+//		int index = findWidgetIndexFromPath(path);
+////		FileWidget current = centralPanel.getWidget(index)
+//		FileWidget next = findNextTo(index);
+//		FileWidget previous = findPreviousTo(index);
 
-		popUpBox.setContentWidget(newImage, previous, next);
+//		popUpBox.setContentWidget(newImage, previous, next);
 		popUpBox.show();
 	}
 
+
 	public void showPDF(String path) {
 		// Find previous and next to show in the popup
-		int index = findWidgetIndexFromPath(path);
-		FileWidget next = findNextTo(index);
-		FileWidget previous = findPreviousTo(index);
+//		int index = findWidgetIndexFromPath(path);
+//		FileWidget next = findNextTo(index);
+//		FileWidget previous = findPreviousTo(index);
 				
 		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
-		popUpBox.setContentWidget(frame, previous, next);
+		setContentOfPopUp(frame, path);
+//		popUpBox.setContentWidget(frame, previous, next);
 		popUpBox.show();
 	}
 	
@@ -568,12 +571,13 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		SequenceHelper.sendJustOne(m, RequestBuilder.GET);
 
 		// Find previous and next to show in the popup
-		int index = findWidgetIndexFromPath(path);
-		FileWidget next = findNextTo(index);
-		FileWidget previous = findPreviousTo(index);
+//		int index = findWidgetIndexFromPath(path);
+//		FileWidget next = findNextTo(index);
+//		FileWidget previous = findPreviousTo(index);
 		
 		// Show the widget
-		popUpBox.setContentWidget(editor, previous, next);
+		setContentOfPopUp(editor, path);
+//		popUpBox.setContentWidget(editor, previous, next);
 		popUpBox.show();
 		editor.startEditor();
 		editor.setTheme(AceEditorTheme.ECLIPSE);
@@ -595,13 +599,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void showPlayer(AbstractMediaPlayer player, String path) {
 		// Find previous and next to show in the popup
-		int index = findWidgetIndexFromPath(path);
-		FileWidget next = findNextTo(index);
-		FileWidget previous = findPreviousTo(index);
-	
-		// Show the widget
-		popUpBox.setContentWidget(player, previous, next);
+//		int index = findWidgetIndexFromPath(path);
+//		FileWidget next = findNextTo(index);
+//		FileWidget previous = findPreviousTo(index);
+//	
+//		// Show the widget
+//		popUpBox.setContentWidget(player, previous, next);
 //		popUpBox.setContentWidget(player, null, null);
+		setContentOfPopUp(player, path);
 		popUpBox.show();
 	}
 	
@@ -613,13 +618,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		Window.setTitle(Constants.WINDOW_PRETITLE + title);
 	}
 	
-	private int findWidgetIndexFromPath(String path) {
+//	private int findWidgetIndexFromPath(String path) {
+//		for (Widget w : centralPanel) {
+//			if (((FileWidget)w).getPath().equals(path)) {
+//				return centralPanel.getWidgetIndex(w);
+//			}
+//		}
+//		return -1;
+//	}
+	
+	private FileWidget findWidgetFromPath(String path) {
 		for (Widget w : centralPanel) {
 			if (((FileWidget)w).getPath().equals(path)) {
-				return centralPanel.getWidgetIndex(w);
+				return (FileWidget)w;
 			}
 		}
-		return -1;
+		return null;
 	}
 	
 	private FileWidget findPreviousTo(int index) {
@@ -648,6 +662,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			possibleNext = (FileWidget) centralPanel.getWidget(searchingIndex);
 		} while (possibleNext.getViewType() == null);
 		return possibleNext;
+	}
+	
+	private void setContentOfPopUp(Widget newContent, String path) {
+		// Find previous and next widgets to show in the popup
+		FileWidget current = findWidgetFromPath(path);
+		int index = centralPanel.getWidgetIndex(current);
+		FileWidget next = findNextTo(index);
+		FileWidget previous = findPreviousTo(index);
+
+		popUpBox.setContentWidget(newContent, current, previous, next);
 	}
 
 }

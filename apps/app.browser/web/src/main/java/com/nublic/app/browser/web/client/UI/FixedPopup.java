@@ -66,9 +66,10 @@ public class FixedPopup extends PopupPanel implements ResizeHandler {
 		content.fitSize(width, height - Constants.POPUP_BOTTOM);
 	}
 
-	public void setContentWidget(Widget w, FileWidget previous, FileWidget next) {
+	public void setContentWidget(Widget w, FileWidget current, FileWidget previous, FileWidget next) {
 		if (content != null) {
 			content.setContent(w);
+			content.setCurrentFile(current);
 			content.setNext(next);
 			content.setPrevious(previous);
 			content.fitSize(width, height - Constants.POPUP_BOTTOM);

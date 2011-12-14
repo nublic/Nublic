@@ -4,12 +4,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class PopupContent extends Composite {
 
@@ -22,11 +26,10 @@ public class PopupContent extends Composite {
 	@UiField Hyperlink nextLink;
 	@UiField Hyperlink previousLink;
 	Widget internalWidget;
+	FileWidget internalFile;
 	// Used to proper resize images
 	int originalWidth;
 	int originalHeight;
-//	FileWidget previous;
-//	FileWidget next;
 
 	public PopupContent() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -39,29 +42,17 @@ public class PopupContent extends Composite {
 		previousLink.setTargetHistoryToken(Constants.getView(previous.getViewType())
 					+ "?" + Constants.PATH_PARAMETER
 					+ "=" + previous.getPath());
-//		this.previous = previous;
 	}
 
 	public void setNext(FileWidget next) {
 		nextLink.setTargetHistoryToken(Constants.getView(next.getViewType()) +
 				"?" + Constants.PATH_PARAMETER +
 				"=" + next.getPath());
-//		this.next = next;
 	}
 	
-//	@UiHandler("nextLink")
-//	void onNextLinkClick(ClickEvent event) {
-//		if (next != null) {
-//			History.newItem(Constants.getView(next.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + next.getPath());
-//		}
-//	}
-//
-//	@UiHandler("previousLink")
-//	void onPreviousLinkClick(ClickEvent event) {
-//		if (previous != null) {
-//			History.newItem(Constants.getView(previous.getViewType()) + "?" + Constants.PATH_PARAMETER + "=" + previous.getPath());
-//		}
-//	}
+	public void setCurrentFile(FileWidget current) {
+		internalFile = current;
+	}
 
 	public void setContent(Widget w) {
 		internalWidget = w;
@@ -131,7 +122,6 @@ public class PopupContent extends Composite {
 				internalWidget.setPixelSize(width, height);
 			}
 		}
-		
 	}
 
 	public void setOriginalSize(int width, int height) {
@@ -139,4 +129,17 @@ public class PopupContent extends Composite {
 		originalHeight = height;
 	}
 
+	@UiHandler("downloadButton")
+	void onDownloadButtonClick(ClickEvent event) {
+		if (internalFile != null) {
+			SingleDownloadAction.download(internalFile.getPath());
+		}
+	}
+	
+	@UiHandler("viewButton")
+	void onViewButtonClick(ClickEvent event) {
+		if (internalFile != null) {
+			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getPath() + "." + internalFile.getViewType(), "_blank", "");
+		}
+	}
 }
