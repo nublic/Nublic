@@ -34,7 +34,7 @@ public class UIUtils {
 			}
 
 			// TODO: if anyplayer quit lists controls
-			destination.showPlayer(player);
+			destination.showPlayer(player, path);
 		} catch(LoadException e) {
 		     // catch loading exception and alert user
 			ErrorPopup.showError("Error loading file");

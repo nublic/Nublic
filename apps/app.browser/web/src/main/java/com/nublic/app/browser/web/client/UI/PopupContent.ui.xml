@@ -2,34 +2,42 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-<!-- 		.center { -->
-<!-- 			vertical-align: middle; -->
-<!-- 			text-align: center; -->
-<!-- 			height: 100%; -->
-<!-- 			width: 100%; -->
-<!-- 			left: auto; -->
-<!-- 			right: auto; -->
-<!-- 			top: auto; -->
-<!-- 			bottom: auto; -->
-<!-- 			display: block; -->
-<!-- 		} -->
 	</ui:style>
-<!-- 	<ui:with field='res' type='com.nublic.app.browser.web.client.Constants'/>	 -->
+	
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
-<!-- 	<g:VerticalPanel width="100%" height="100%"> -->
-<!-- 		<g:VerticalPanel ui:field="contentTop" width="100%" height="100%" horizontalAlignment="center" verticalAlignment="middle"> -->
-<!-- 		</g:VerticalPanel> -->
-<!--  		<g:HorizontalPanel ui:field="bottom" width="100%" height="50px"> also defined in Constants.java -->
-<!-- 		</g:HorizontalPanel> -->
-<!-- 	</g:VerticalPanel> -->
 	<g:DockLayoutPanel>
 		<g:center>
 			<g:LayoutPanel ui:field="contentTop">
 			</g:LayoutPanel>
 		</g:center>
-		<g:south size="50"> <!-- also defined in Constants.java -->
-			<g:HorizontalPanel ui:field="bottom" width="100%" height="100%"> 
-			</g:HorizontalPanel>
+		<g:south size="30"> <!-- also defined in Constants.java -->
+			<g:DockLayoutPanel>
+				<g:west size="100">
+					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
+						<g:Hyperlink ui:field="previousLink" text="previous">
+						</g:Hyperlink>
+					</g:VerticalPanel>
+				</g:west>
+				<g:east size="100">
+					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
+						<g:Hyperlink ui:field="nextLink" text="next">
+						</g:Hyperlink>
+					</g:VerticalPanel>
+				</g:east>
+				<g:center>
+					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
+						<g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="center">
+							<g:PushButton ui:field="downloadButton" title="download file">
+								<g:upFace image="{res.download}"/>
+							</g:PushButton>
+							<g:PushButton ui:field="viewButton" title="preview in different window">
+								<g:upFace image="{res.view}"/>
+							</g:PushButton>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</g:center>
+			</g:DockLayoutPanel>
 		</g:south>
 	</g:DockLayoutPanel>
 </ui:UiBinder>

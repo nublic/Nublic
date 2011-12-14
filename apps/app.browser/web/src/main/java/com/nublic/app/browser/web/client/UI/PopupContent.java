@@ -4,10 +4,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class PopupContent extends Composite {
 
@@ -17,7 +23,10 @@ public class PopupContent extends Composite {
 	}
 
 	@UiField LayoutPanel contentTop;
+	@UiField Hyperlink nextLink;
+	@UiField Hyperlink previousLink;
 	Widget internalWidget;
+	FileWidget internalFile;
 	// Used to proper resize images
 	int originalWidth;
 	int originalHeight;
@@ -29,6 +38,22 @@ public class PopupContent extends Composite {
 		originalHeight = 0;
 	}
 	
+	public void setPrevious(FileWidget previous) {
+		previousLink.setTargetHistoryToken(Constants.getView(previous.getViewType())
+					+ "?" + Constants.PATH_PARAMETER
+					+ "=" + previous.getPath());
+	}
+
+	public void setNext(FileWidget next) {
+		nextLink.setTargetHistoryToken(Constants.getView(next.getViewType()) +
+				"?" + Constants.PATH_PARAMETER +
+				"=" + next.getPath());
+	}
+	
+	public void setCurrentFile(FileWidget current) {
+		internalFile = current;
+	}
+
 	public void setContent(Widget w) {
 		internalWidget = w;
 		contentTop.clear();
@@ -93,17 +118,28 @@ public class PopupContent extends Composite {
 //			} else if (internalWidget instanceof AbstractMediaPlayer) {
 //				// Music and video
 			} else {
-				// If it's not an Image or a "player" (music/video) we'll fill the space we have for it
+				// If it's not an Image we'll fill the space we have for it
 				internalWidget.setPixelSize(width, height);
 			}
 		}
-		
 	}
 
 	public void setOriginalSize(int width, int height) {
 		originalWidth = width;
 		originalHeight = height;
 	}
-	
 
+	@UiHandler("downloadButton")
+	void onDownloadButtonClick(ClickEvent event) {
+		if (internalFile != null) {
+			SingleDownloadAction.download(internalFile.getPath());
+		}
+	}
+	
+	@UiHandler("viewButton")
+	void onViewButtonClick(ClickEvent event) {
+		if (internalFile != null) {
+			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getPath() + "." + internalFile.getViewType(), "_blank", "");
+		}
+	}
 }
