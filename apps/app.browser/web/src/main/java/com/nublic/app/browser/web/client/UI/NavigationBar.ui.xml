@@ -1,0 +1,11 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style  type='com.nublic.app.browser.web.client.UI.NavigationBar.NavStyle'>
+		.padding {
+			padding: 5px;
+		}
+	</ui:style>
+	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="middle" addStyleNames="{style.padding}">
+	</g:HorizontalPanel>
+</ui:UiBinder> 

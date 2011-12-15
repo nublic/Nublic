@@ -58,7 +58,7 @@ public class BrowserModel {
 		} else {
 			FolderNode returnFolder = folderTree.getChild(pathTokens[0]);
 			int i = 1;
-			while (i < pathTokens.length) {
+			while (i < pathTokens.length && returnFolder != null) {
 				returnFolder = returnFolder.getChild(pathTokens[i]);
 				i++;
 			}

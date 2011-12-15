@@ -101,6 +101,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	PickupDragController dragController = null;
 	Set<AbstractDropController> activeDropControllers = new HashSet<AbstractDropController>();
 	
+	// For navigation bar update
+	String lastPath = "";
+	
 	// UI variables
 	@UiField FlowPanel centralPanel;
 	@UiField FlowPanel actionsPanel;
@@ -109,6 +112,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField PushButton downButton;
 	@UiField ListBox orderList;
 	@UiField TextBox filterBox;
+	@UiField NavigationBar navigationBar;
 	Label selectionCount = new Label();
 	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
@@ -151,6 +155,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
 		popUpBox.setAutoHideOnHistoryEventsEnabled(false);
+		
+		// Navigation Bar
+		addContextChangeHandler(new ContextChangeHandler() {
+			@Override
+			public void onContextChange() {
+				if (!lastPath.equals(getPath())) {
+					updateNavigationBar();
+				}
+			}
+		});
 		
 		// Drag and drop support
 		dragController = new PickupDragController(RootPanel.get(), false);
@@ -480,6 +494,23 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		updateCentralPanel();
 	}
 	
+	private void updateNavigationBar() {
+		lastPath = getPath();
+		navigationBar.reset();
+		StringBuilder builder = new StringBuilder();
+		String tokenList[] = lastPath.split("/");
+		for (int i = 0; i < tokenList.length ; i++) {
+			if (builder.length() != 0) {
+				builder.append("/");
+			}
+			builder.append(tokenList[i]);
+			navigationBar.addItem(tokenList[i],
+					Constants.BROWSER_VIEW + "?" +
+					Constants.PATH_PARAMETER + "=" +
+					builder.toString());
+		}
+	}
+	
 	// Handler for filter text change
 	@UiHandler("filterBox")
 	void onFilterBoxKeyUp(KeyUpEvent event) {
@@ -528,26 +559,13 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		
 		
 		setContentOfPopUp(newImage, path);
-		// Find previous and next to show in the popup
-//		int index = findWidgetIndexFromPath(path);
-////		FileWidget current = centralPanel.getWidget(index)
-//		FileWidget next = findNextTo(index);
-//		FileWidget previous = findPreviousTo(index);
-
-//		popUpBox.setContentWidget(newImage, previous, next);
 		popUpBox.show();
 	}
 
 
 	public void showPDF(String path) {
-		// Find previous and next to show in the popup
-//		int index = findWidgetIndexFromPath(path);
-//		FileWidget next = findNextTo(index);
-//		FileWidget previous = findPreviousTo(index);
-				
 		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
 		setContentOfPopUp(frame, path);
-//		popUpBox.setContentWidget(frame, previous, next);
 		popUpBox.show();
 	}
 	
@@ -570,14 +588,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		};
 		SequenceHelper.sendJustOne(m, RequestBuilder.GET);
 
-		// Find previous and next to show in the popup
-//		int index = findWidgetIndexFromPath(path);
-//		FileWidget next = findNextTo(index);
-//		FileWidget previous = findPreviousTo(index);
-		
 		// Show the widget
 		setContentOfPopUp(editor, path);
-//		popUpBox.setContentWidget(editor, previous, next);
 		popUpBox.show();
 		editor.startEditor();
 		editor.setTheme(AceEditorTheme.ECLIPSE);
@@ -598,14 +610,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 	@Override
 	public void showPlayer(AbstractMediaPlayer player, String path) {
-		// Find previous and next to show in the popup
-//		int index = findWidgetIndexFromPath(path);
-//		FileWidget next = findNextTo(index);
-//		FileWidget previous = findPreviousTo(index);
-//	
-//		// Show the widget
-//		popUpBox.setContentWidget(player, previous, next);
-//		popUpBox.setContentWidget(player, null, null);
 		setContentOfPopUp(player, path);
 		popUpBox.show();
 	}
@@ -617,16 +621,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public void setWindowTitle(String title) {
 		Window.setTitle(Constants.WINDOW_PRETITLE + title);
 	}
-	
-//	private int findWidgetIndexFromPath(String path) {
-//		for (Widget w : centralPanel) {
-//			if (((FileWidget)w).getPath().equals(path)) {
-//				return centralPanel.getWidgetIndex(w);
-//			}
-//		}
-//		return -1;
-//	}
-	
+
 	private FileWidget findWidgetFromPath(String path) {
 		for (Widget w : centralPanel) {
 			if (((FileWidget)w).getPath().equals(path)) {

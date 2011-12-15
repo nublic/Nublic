@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:p1="urn:import:com.google.gwt.user.cellview.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:p1="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:my="urn:import:com.nublic.app.browser.web.client.UI">
 	<ui:style>
 		.aligntop {
 			vertical-align: top;
@@ -40,8 +42,12 @@
 	   	<g:center>
 	   		<g:DockLayoutPanel>
 	   			<!-- Panel to show order and filter controls -->
-	   			<g:north size="40">
+	   			<g:north size="80">
 	   				<g:DockLayoutPanel>
+	   					<g:north size="40">
+							<my:NavigationBar ui:field="navigationBar">
+							</my:NavigationBar>
+	   					</g:north>
 	   					<g:east size="226"> <!-- 20 margin + 36 image + 150 textbox + 20 scrol size-->
 	   						<g:HorizontalPanel verticalAlignment="middle">
 		   						<g:Image url="images/filter.png" styleName="{style.margin}"/>
