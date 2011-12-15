@@ -21,6 +21,7 @@ update-python-modules nublic-app-music-fs.public
 
 case "$1" in
     configure)
+        service nublic-app-music-fs stop
         mkdir -p /var/nublic/fs/music
         chmod 777 /var/nublic/fs/music
         chown nublic /var/nublic/fs/music
