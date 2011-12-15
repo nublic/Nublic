@@ -5,6 +5,9 @@
 		.padding {
 			padding: 5px;
 		}
+		.verticalalignmiddle {
+			vertical-align: middle;
+		}
 	</ui:style>
 	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="middle" addStyleNames="{style.padding}">
 	</g:HorizontalPanel>

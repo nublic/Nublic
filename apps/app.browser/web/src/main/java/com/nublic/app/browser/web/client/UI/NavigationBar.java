@@ -24,6 +24,7 @@ public class NavigationBar extends Composite {
 	// CSS Styles defined in the .xml file
 	interface NavStyle extends CssResource {
 		String padding();
+		String verticalalignmiddle();
 	}
 	
 	public void addItem(String name, String link) {
@@ -31,8 +32,11 @@ public class NavigationBar extends Composite {
 			Label greater = new Label(">");
 			rootPanel.add(greater);
 			greater.getElement().addClassName(style.padding());
+			greater.getElement().addClassName(style.verticalalignmiddle());
 		}
-		rootPanel.add(new Hyperlink(name, link));
+		Hyperlink hyperL = new Hyperlink(name, link);
+		rootPanel.add(hyperL);
+		hyperL.getElement().addClassName(style.verticalalignmiddle());
 	}
 	
 	public void removeLastItem() {
