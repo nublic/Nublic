@@ -41,12 +41,12 @@ class EventHandler(pyinotify.ProcessEvent):
         # because pyinotify only works well with inner dirs
         if event.dir:
             # Try to see if there is a signaler to add
-            for app in self.apps_info:
-                if app.supports_filewatcher:
-                    fw_folders = self.apps_info[app].filewatcher.paths
+            for _, app in self.apps_info.iteritems():
+                if app.supports_filewatcher():
+                    fw_folders = app.filewatcher.paths
                     for expr in fw_folders:
                         regex = re.compile(expr, re.IGNORECASE)
-                        if re.match(event.pathname):
+                        if regex.match(event.pathname):
                             # We found a matching path
                             to_add = True
                             for already_path in self.config['apps'][app]:

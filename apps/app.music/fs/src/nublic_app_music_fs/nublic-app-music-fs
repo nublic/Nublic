@@ -10,23 +10,38 @@
 # @copyright: 2011 Nublic
 
 from elixir import *
-from fuse import FUSE
+from nublic_app_music_fs.fuse import FUSE
 from nublic_app_music_fs.filesystem import *
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 from gobject import MainLoop, threads_init
+import time
 
 def __get_bind_uri(dbus_loop):
     # Get conexion values 
     bus = dbus.SystemBus(mainloop = dbus_loop)
     valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/nublic_app_music/db')
-    return valueService.value("uri", dbus_interface= 'com.nublic.resource')
+    return valueService.value("uri", dbus_interface= 'com.nublic.resource.value')
     '''return message_sender("uri")''' 
+
+def __check_nublic_resource_is_on(dbus_loop):
+    WAITING_MAX = 200
+    waited = 0
+    should_exit = False
+    while waited < WAITING_MAX and not should_exit:
+        # Just do the thing below, but waiting for errors
+        try:
+            __get_bind_uri(dbus_loop)
+            should_exit = True
+        except dbus.exceptions.DBusException:
+            time.sleep(2)
+            waited = waited + 1
 
 if __name__ == '__main__':
     # Initialize D-Bus loop
     dbus_loop = DBusGMainLoop(set_as_default=True)
     # Initialize connection to database
+    __check_nublic_resource_is_on(dbus_loop)
     metadata.bind = __get_bind_uri(dbus_loop)
     # Initialize FUSE filesystem
-    fuse = FUSE(Filesystem(), "/var/nublic/fs/music", foreground=True)
+    fuse = FUSE(Filesystem(), "/var/nublic/fs/music", foreground=True, allow_other=True)

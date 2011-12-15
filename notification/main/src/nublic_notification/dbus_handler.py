@@ -15,6 +15,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 
 from elixir import metadata, setup_all
 import dbus
+import time
 
 def __get_bind_uri(dbus_loop):
     # Get conexion values 
@@ -33,6 +34,7 @@ def __check_nublic_resource_is_on(dbus_loop):
             __get_bind_uri(dbus_loop)
             should_exit = True
         except dbus.exceptions.DBusException:
+            time.sleep(2)
             waited = waited + 1
 
 def initial_program_setup():

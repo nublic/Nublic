@@ -1,1 +1,3 @@
 nublic_files_and_users_client/nublic-user-manage /usr/sbin
+nublic_files_and_users_client/nublic-mirror-manage /usr/sbin
+nublic_files_and_users_client/nublic-synced-manage /usr/sbin

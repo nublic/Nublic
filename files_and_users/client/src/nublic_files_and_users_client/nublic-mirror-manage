@@ -1,0 +1,26 @@
+#!/usr/bin/python
+
+from nublic_files_and_users_client.dbus_client import *
+import sys
+
+if __name__ == '__main__':
+    # Add a mirror
+    if sys.argv[1] == 'create':
+        sys.stdout.write("Name to be shown: ")
+        name = sys.stdin.readline().strip()
+        sys.stdout.write("Owner: ")
+        owner = sys.stdin.readline().strip()
+        mid = create_mirror(name, owner)
+        sys.stdout.write("Mirror created with id ")
+        sys.stdout.write(str(mid))
+        sys.stdout.write("\n")
+    # Delete a mirror
+    elif sys.argv[1] == 'delete':
+        mid = sys.argv[2]
+        delete_mirror(mid)
+        sys.stdout.write("Mirror deleted\n")
+    # List mirror
+    elif sys.argv[1] == 'list':
+        for mirror in list_mirrors():
+            sys.stdout.write(str(mirror))
+            sys.stdout.write("\n")

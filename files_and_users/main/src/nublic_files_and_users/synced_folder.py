@@ -53,7 +53,7 @@ class SyncedFolderDBus(dbus.service.Object):
         if not self.user_dbus.user_exists(owner):
             return -1
         # create in database
-        user = User.get(username=owner)
+        user = User.get_by(username=owner)
         m = SyncedFolder(name=name, user=user)
         session.add(m)
         session.commit()

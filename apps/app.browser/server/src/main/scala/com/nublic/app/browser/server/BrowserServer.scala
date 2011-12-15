@@ -31,7 +31,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   implicit val formats = Serialization.formats(NoTypeHints)
   
   def withUser(action: User => Any) : Any = {
-    val user = new User("example")
+    val user = new User(request.getRemoteUser())
     action(user)
   }
   
@@ -63,19 +63,6 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
       val file_paths = paths.map(s => new File(NUBLIC_DATA_ROOT + s))
       action(file_paths)
     }
-  }
-  
-  get("/user") {
-    request.getRemoteUser()
-  }
-  
-  get("/params") {
-    var lst = List[String]()
-    val e = request.getHeaderNames()
-    while (e.hasMoreElements()) {
-      lst ::= e.nextElement().asInstanceOf[String]
-    }
-    lst
   }
   
   get("/devices") {

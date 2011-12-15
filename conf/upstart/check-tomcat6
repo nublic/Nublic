@@ -4,7 +4,7 @@ service tomcat6 status
 EXIT=$?
 while [ $EXIT ne 0 ]
 do
-    sleep 2
+    sleep 5
     service tomcat6 status
     EXIT=$?
 done
