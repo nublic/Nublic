@@ -9,6 +9,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
+import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 
@@ -51,7 +52,8 @@ public class PasteAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		if (stateProvider.getShowingFolder().isWritable()) {
+		FolderNode n = stateProvider.getShowingFolder();
+		if (n != null && n.isWritable()) {
 			Set<Widget> clipboard = stateProvider.getClipboard();
 			if (clipboard.isEmpty()) {
 				setExtraInfo(null);
