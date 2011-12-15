@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet
 import java.io.FilenameFilter
 import java.io.FileReader
 import java.io.FileWriter
+import com.nublic.filesAndUsers.java._
+import scala.collection.JavaConversions._
 
 class ManagerServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -27,16 +29,21 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     session.put(FAVS, load_favourites)
   }
   
-  get("/apps") {
+  def withUser(action: User => Any) : Any = {
+    val user = new User(request.getRemoteUser())
+    action(user)
+  }
+  
+  get("/apps") { withUser { user =>
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
-    val favs = session.get(FAVS).get.asInstanceOf[List[String]]
+    val favs = get_favourites_for(user.getUsername())
     val apps_json = apps.values.filter(a => a.web != None).map(
       a => a.toWeb(favs.contains(a.id))
     )
     write(apps_json)
-  }
+  } }
   
-  get("/app-image/:id/:size") {
+  get("/app-image/:id/:size") { withUser { _ =>
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
     val id = params("id")
     val size = params("size")
@@ -51,25 +58,116 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     } else {
       halt(404)
     }
-  }
+  } }
   
-  put("/favourite/:id") {
+  put("/favourite/:id") { withUser { user =>
     val id = params("id")
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
-    val favs = session.get(FAVS).get.asInstanceOf[List[String]]
-    if (apps.contains(id) && !favs.contains(id)) {
-      save_favourites(id :: favs)
+    val username = user.getUsername()
+    val user_favs = get_favourites_for(username)
+    if (apps.contains(id) && !user_favs.contains(id)) {
+      set_favourites_for(username, id :: user_favs)
     }
-  }
+  } }
   
-  delete("/favourite/:id") {
+  delete("/favourite/:id") { withUser { user =>
     val id = params("id")
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
-    val favs = session.get(FAVS).get.asInstanceOf[List[String]]
-    if (apps.contains(id) && favs.contains(id)) {
-      save_favourites(favs.remove(_ == id))
+    val username = user.getUsername()
+    val user_favs = get_favourites_for(username)
+    if (apps.contains(id) && user_favs.contains(id)) {
+      set_favourites_for(username, user_favs.remove(_ == id))
     }
+  } }
+  
+  get("/mirrors") { withUser { user =>
+    user.getOwnedMirrors().toList.map(mirror =>
+      ReturnMirror(mirror.getId(), mirror.getName())
+    )
+  } }
+  
+  put("/mirror/*") { withUser { user =>
+    val name = params(THE_REST)
+    val m = Mirror.create(name, user.getUsername())
+    m.getId()
+  } }
+  
+  delete("/mirror/:mid") { withUser { user =>
+    val mid = Integer.parseInt(params("mid"))
+    val m = new Mirror(mid)
+    if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
+      m.delete(false)
+      halt(200)
+    } else {
+      halt(403)
+    }
+  } }
+  
+  put("/mirror-name/:mid/*") { withUser { user =>
+    val mid = Integer.parseInt(params("mid"))
+    val name = params(THE_REST)
+    val m = new Mirror(mid)
+    if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
+      m.setName(name)
+      halt(200)
+    } else {
+      halt(403)
+    }
+  } }
+  
+  get("/synceds") { withUser { user =>
+    user.getOwnedSyncedFolders().toList.map(mirror =>
+      ReturnSyncedFolder(mirror.getId(), mirror.getName())
+    )
+  } }
+  
+  put("/synced/*") {  withUser { user =>
+    val name = params(THE_REST)
+    val m = SyncedFolder.create(name, user.getUsername())
+    m.getId()
+  } }
+  
+  delete("/synced/:mid") { withUser { user =>
+    val mid = Integer.parseInt(params("mid"))
+    val m = new SyncedFolder(mid)
+    if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
+      m.delete(false)
+      halt(200)
+    } else {
+      halt(403)
+    }
+  } }
+  
+  put("/synced-name/:mid") { withUser { user =>
+    val mid = Integer.parseInt(params("mid"))
+    val name = params(THE_REST)
+    val m = new SyncedFolder(mid)
+    if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
+      m.setName(name)
+      halt(200)
+    } else {
+      halt(403)
+    }
+  } }
+  
+  get("/users") { withUser { _ =>
+    User.getAll().toList.map(user =>
+      ReturnUser(user.getUsername(), user.getUserId(), user.getShownName())
+    )
+  } }
+  
+  put("/user/:username") {
+    
   }
+  
+  delete("/user/:username") {
+    halt(500)
+  }
+  
+  put("/user-name/*") { withUser { user =>
+  	user.setShownName(params(THE_REST))
+  	halt(200)
+  } }
   
   notFound {  // Executed when no other route succeeds
     JNull
@@ -93,26 +191,54 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     return_map
   }
   
-  def load_favourites : List[String] = {
+  def load_favourites : Map[String,List[String]] = {
     val f = new File(FAVOURITES_PATH)
     if (f.exists()) {
       try {
     	val reader = new FileReader(f)
-    	read[List[String]](reader)  
+    	read[Map[String, List[String]]](reader)  
       } catch {
         case e => {
           Console.println(e.getMessage())
-          Nil
+          Map()
         }
       }
     } else {
-      val initial_favs = List("browser", "music", "photos")
+      val initial_favs = Map[String, List[String]]()
       save_favourites(initial_favs)
       initial_favs
     }
   }
   
-  def save_favourites(favs: List[String]) : Unit = {
+  def get_favourites_for(user: String) : List[String] = {
+    val favs = session.get(FAVS).get.asInstanceOf[Map[String, List[String]]]
+    if (favs.contains(user)) {
+      favs.get(user).get
+    } else {
+      val new_favs = favs + (user -> get_initial_favs)
+      save_favourites(new_favs)
+      session.put(FAVS, new_favs)
+      get_initial_favs
+    }
+  }
+  
+  def set_favourites_for(user: String, new_fav_list: List[String]) : Unit = {
+    val favs = session.get(FAVS).get.asInstanceOf[Map[String, List[String]]]
+    if (favs.contains(user)) {
+      val no_user_favs = favs - user
+      val new_favs = no_user_favs + (user -> new_fav_list)
+      save_favourites(new_favs)
+      session.put(FAVS, new_favs)
+    } else {
+      val new_favs = favs + (user -> new_fav_list)
+      save_favourites(new_favs)
+      session.put(FAVS, new_favs)
+    }
+  }
+  
+  def get_initial_favs: List[String] = List("browser", "music", "photos")
+  
+  def save_favourites(favs: Map[String, List[String]]) : Unit = {
     val f = new File(FAVOURITES_PATH)
     val writer = new FileWriter(f)
     write(favs, writer)

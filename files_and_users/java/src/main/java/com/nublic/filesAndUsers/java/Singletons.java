@@ -26,21 +26,21 @@ class Singletons {
 	
 	static UsersInterface getUsers() throws DBusException {
 		if (users == null) {
-			users = (UsersInterface) conn.getRemoteObject(UsersBusName, UsersObjectPath, UsersInterface.class);
+			users = (UsersInterface) getConnection().getRemoteObject(UsersBusName, UsersObjectPath, UsersInterface.class);
 		}
 		return users;
 	}
 	
 	static MirrorsInterface getMirrors() throws DBusException {
 		if (mirrors == null) {
-			mirrors = (MirrorsInterface) conn.getRemoteObject(FilesBusName, MirrorsObjectPath, MirrorsInterface.class);
+			mirrors = (MirrorsInterface) getConnection().getRemoteObject(FilesBusName, MirrorsObjectPath, MirrorsInterface.class);
 		}
 		return mirrors;
 	}
 	
 	static SyncedFoldersInterface getSyncedFolders() throws DBusException {
 		if (synced == null) {
-			synced = (SyncedFoldersInterface) conn.getRemoteObject(FilesBusName, SyncedObjectPath, SyncedFoldersInterface.class);
+			synced = (SyncedFoldersInterface) getConnection().getRemoteObject(FilesBusName, SyncedObjectPath, SyncedFoldersInterface.class);
 		}
 		return synced;
 	}
