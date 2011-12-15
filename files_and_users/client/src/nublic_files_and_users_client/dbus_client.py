@@ -31,11 +31,14 @@ def delete_mirror(mid):
     mirrorService = bus.get_object('com.nublic.files', '/com/nublic/Mirrors')
     mirrorService.delete_mirror(mid, dbus_interface= 'com.nublic.files')
 
-def list_mirrors(mid):
+def list_mirrors():
     dbus_loop = DBusGMainLoop()
     bus = dbus.SystemBus(mainloop = dbus_loop)
     mirrorService = bus.get_object('com.nublic.files', '/com/nublic/Mirrors')
     notSplitted = mirrorService.get_all_mirrors(dbus_interface= 'com.nublic.files')
+    if notSplitted == '':
+        return []
+    # Take elements apart
     splitted = string.split(notSplitted, ':')
     mirrorList = []
     for midS in splitted:
@@ -57,11 +60,14 @@ def delete_synced_folder(mid):
     mirrorService = bus.get_object('com.nublic.files', '/com/nublic/SyncedFolders')
     mirrorService.delete_synced_folder(mid, dbus_interface= 'com.nublic.files')
 
-def list_synced_folders(mid):
+def list_synced_folders():
     dbus_loop = DBusGMainLoop()
     bus = dbus.SystemBus(mainloop = dbus_loop)
     mirrorService = bus.get_object('com.nublic.files', '/com/nublic/SyncedFolders')
     notSplitted = mirrorService.get_all_synced_folders(dbus_interface= 'com.nublic.files')
+    if notSplitted == '':
+        return []
+    # Take elements apart
     splitted = string.split(notSplitted, ':')
     mirrorList = []
     for midS in splitted:

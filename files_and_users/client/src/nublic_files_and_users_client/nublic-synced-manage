@@ -6,7 +6,6 @@ import sys
 if __name__ == '__main__':
     # Add a synced folder
     if sys.argv[1] == 'create':
-        user = sys.argv[2]
         sys.stdout.write("Name to be shown: ")
         name = sys.stdin.readline().strip()
         sys.stdout.write("Owner: ")
@@ -14,13 +13,14 @@ if __name__ == '__main__':
         mid = create_synced_folder(name, owner)
         sys.stdout.write("Synced folder created with id ")
         sys.stdout.write(str(mid))
+        sys.stdout.write("\n")
     # Delete a synced folder
     elif sys.argv[1] == 'delete':
         mid = sys.argv[2]
-        delete_mirror(mid)
+        delete_synced_folder(mid)
         sys.stdout.write("Synced folder deleted\n")
     # List symced folders
     elif sys.argv[1] == 'list':
-        for mirror in list_mirrors():
+        for mirror in list_synced_folders():
             sys.stdout.write(str(mirror))
             sys.stdout.write("\n")
