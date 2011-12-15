@@ -1,0 +1,26 @@
+#!/usr/bin/python
+
+from nublic_files_and_users_client.dbus_client import *
+import sys
+
+if __name__ == '__main__':
+    # Add a synced folder
+    if sys.argv[1] == 'create':
+        user = sys.argv[2]
+        sys.stdout.write("Name to be shown: ")
+        name = sys.stdin.readline().strip()
+        sys.stdout.write("Owner: ")
+        owner = sys.stdin.readline().strip()
+        mid = create_synced_folder(name, owner)
+        sys.stdout.write("Synced folder created with id ")
+        sys.stdout.write(str(mid))
+    # Delete a synced folder
+    elif sys.argv[1] == 'delete':
+        mid = sys.argv[2]
+        delete_mirror(mid)
+        sys.stdout.write("Synced folder deleted\n")
+    # List symced folders
+    elif sys.argv[1] == 'list':
+        for mirror in list_mirrors():
+            sys.stdout.write(str(mirror))
+            sys.stdout.write("\n")
