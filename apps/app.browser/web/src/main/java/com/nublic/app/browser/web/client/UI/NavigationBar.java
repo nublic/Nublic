@@ -1,6 +1,7 @@
 package com.nublic.app.browser.web.client.UI;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -14,14 +15,22 @@ public class NavigationBar extends Composite {
 	interface NavigationBarUiBinder extends UiBinder<Widget, NavigationBar> { }
 
 	@UiField HorizontalPanel rootPanel;
+	@UiField NavStyle style;
 	
 	public NavigationBar() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
 	
+	// CSS Styles defined in the .xml file
+	interface NavStyle extends CssResource {
+		String padding();
+	}
+	
 	public void addItem(String name, String link) {
 		if (rootPanel.getWidgetCount() != 0) {
-			rootPanel.add(new Label(">"));
+			Label greater = new Label(">");
+			rootPanel.add(greater);
+			greater.getElement().addClassName(style.padding());
 		}
 		rootPanel.add(new Hyperlink(name, link));
 	}
@@ -39,7 +48,7 @@ public class NavigationBar extends Composite {
 			rootPanel.remove(widgetCount -2);
 		}
 	}
-	
+
 	public void reset() {
 		rootPanel.clear();
 	}
