@@ -5,6 +5,10 @@
 		.padding {
 			padding: 5px;
 		}
+		.labelspadding {
+			padding-left: 5px;
+			padding-right: 5px;
+		}
 		.verticalalignmiddle {
 			vertical-align: middle;
 		}

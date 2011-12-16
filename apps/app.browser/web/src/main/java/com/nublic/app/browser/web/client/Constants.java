@@ -24,6 +24,14 @@ public class Constants {
 	public final static String WINDOW_PRETITLE = "Browser - ";
 	public final static String WINDOW_HOME_TITLE = "Home";
 	
+	public final static String KIND_MIRROR = "mirror";
+	public final static String KIND_SYNCED = "synced";
+	public final static String KIND_MEDIA  = "media";
+	public final static String NUBLIC_ONLY = "nublic-only";
+	public final static String KIND_MIRROR_FOLDER = "mirrors";
+	public final static String KIND_SYNCED_FOLDER = "synceds";
+	public final static String KIND_MEDIA_FOLDER  = "media";
+	
 	public final static String getView(String type) {
 		String retStr = null;
 		if (type.equals(Constants.IMAGE_TYPE)) {
