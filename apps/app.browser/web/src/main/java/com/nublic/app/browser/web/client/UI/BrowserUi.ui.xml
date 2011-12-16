@@ -42,9 +42,9 @@
 	   	<g:center>
 	   		<g:DockLayoutPanel>
 	   			<!-- Panel to show order and filter controls -->
-	   			<g:north size="80">
+	   			<g:north size="70">
 	   				<g:DockLayoutPanel>
-	   					<g:north size="40">
+	   					<g:north size="30">
 							<my:NavigationBar ui:field="navigationBar">
 							</my:NavigationBar>
 	   					</g:north>
