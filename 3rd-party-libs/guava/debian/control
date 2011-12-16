@@ -1,0 +1,12 @@
+Source: libguava10-java
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Section: python
+Priority: optional
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.9.1
+
+Package: libguava10-java
+Architecture: all
+Depends: ${misc:Depends}
+Description: Google Guava libraries
+

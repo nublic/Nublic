@@ -1,0 +1,5 @@
+libguava10-java (0.1) unstable; urgency=low
+
+  * Initial release based on Guava download pacge
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Fri, 16 Dec 2011 09:58:13 +0200

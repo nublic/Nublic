@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-manager-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat6, scala-library
+Depends: ${misc:Depends}, tomcat6, scala-library, libnublic-files-and-users-java
 Description: Nublic Manager app - server
  Manager app for the Nublic platform - server part
