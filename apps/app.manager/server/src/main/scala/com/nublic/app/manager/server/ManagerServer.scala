@@ -68,6 +68,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     if (apps.contains(id) && !user_favs.contains(id)) {
       set_favourites_for(username, id :: user_favs)
     }
+    halt(200)
   } }
   
   delete("/favourite/:id") { withUser { user =>
@@ -78,11 +79,12 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     if (apps.contains(id) && user_favs.contains(id)) {
       set_favourites_for(username, user_favs.remove(_ == id))
     }
+    halt(200)
   } }
   
   get("/mirrors") { withUser { user =>
     user.getOwnedMirrors().toList.map(mirror =>
-      ReturnMirror(mirror.getId(), mirror.getName())
+      write(ReturnMirror(mirror.getId(), mirror.getName()))
     )
   } }
   
@@ -117,7 +119,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   
   get("/synceds") { withUser { user =>
     user.getOwnedSyncedFolders().toList.map(mirror =>
-      ReturnSyncedFolder(mirror.getId(), mirror.getName())
+      write(ReturnSyncedFolder(mirror.getId(), mirror.getName()))
     )
   } }
   
@@ -152,7 +154,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   
   get("/users") { withUser { _ =>
     User.getAll().toList.map(user =>
-      ReturnUser(user.getUsername(), user.getUserId(), user.getShownName())
+      write(ReturnUser(user.getUsername(), user.getUserId(), user.getShownName()))
     )
   } }
   

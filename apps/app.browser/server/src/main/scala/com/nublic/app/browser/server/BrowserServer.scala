@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils
 import com.nublic.filesAndUsers.java._
 import java.nio.file.FileSystems
 import java.nio.file.Files
+import scala.collection.JavaConversions._
 
 class BrowserServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -67,13 +68,13 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   
   get("/devices") {
     withUser { user =>
-      val mirrors = user.getAccessibleMirrors().toArray().asInstanceOf[Array[Mirror]].map {
+      val mirrors = user.getAccessibleMirrors().toList.map {
         m: Mirror => BrowserDevice(m.getId(), BrowserDevice.MIRROR, m.getName(), user.isOwner(m))
       }
-      val synceds = user.getAccessibleSyncedFolders().toArray().asInstanceOf[Array[SyncedFolder]].map {
+      val synceds = user.getAccessibleSyncedFolders().toList.map {
         m: SyncedFolder => BrowserDevice(m.getId(), BrowserDevice.SYNCED_FOLDER, m.getName(), user.isOwner(m))
       }
-      mirrors ++ synceds
+      write(mirrors ++ synceds)
     }
   }
   
