@@ -5,7 +5,7 @@ import shutil
 from elixir import *
 from model import *
 
-MIRROR_ROOT = '/var/nublic/data/mirror/'
+MIRROR_ROOT = '/var/nublic/data/mirrors/'
 
 class MirrorDBus(dbus.service.Object):
     def __init__(self, user_dbus, loop = None):

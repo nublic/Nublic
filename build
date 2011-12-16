@@ -123,6 +123,7 @@ build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
+build_deb_package 3rd-party-libs/guava
 # download_serviio 0.6.0.1
 # build_submodule_lib serviio
 # Base modules
@@ -133,6 +134,7 @@ package_and_install notification/java
 build_deb_package files_and_users/main/src
 build_deb_package files_and_users/client/src
 package_and_install files_and_users/java
+build_deb_package files_and_users/java
 build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
