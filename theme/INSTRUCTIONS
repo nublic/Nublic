@@ -1,0 +1,5 @@
+You need the less compiler to build the CSS. To do so:
+- Install package "npm" if not installed
+- Run "npm install less"
+- Include ~/bin in your PATH (for example, changing ~/.bashrc)
+Then you can build the CSS running "make"
