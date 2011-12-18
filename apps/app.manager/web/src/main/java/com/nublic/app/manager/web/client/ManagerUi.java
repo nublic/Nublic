@@ -71,6 +71,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		// Add tab for welcome
 		addTab("welcome", "Home", "images/home.png", "welcome", -1);
+		addTab("settings", "Settings", "images/home.png", "settings", -1);
 	}
 	
 	void loadApps(final HashMap<String, AppData> apps) {
