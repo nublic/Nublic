@@ -3,9 +3,9 @@
 #
 # see: dh_installdeb(1)
 
-set -e
-
 service nublic-app-music-fs stop
+
+set -e
 
 #DEBHELPER#
 
