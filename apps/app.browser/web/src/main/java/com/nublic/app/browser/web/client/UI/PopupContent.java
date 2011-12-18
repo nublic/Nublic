@@ -41,13 +41,15 @@ public class PopupContent extends Composite {
 	public void setPrevious(FileWidget previous) {
 		previousLink.setTargetHistoryToken(Constants.getView(previous.getViewType())
 					+ "?" + Constants.PATH_PARAMETER
-					+ "=" + previous.getPath());
+					+ "=" + previous.getRealPath());
+//					+ "=" + previous.getPath());
 	}
 
 	public void setNext(FileWidget next) {
 		nextLink.setTargetHistoryToken(Constants.getView(next.getViewType()) +
 				"?" + Constants.PATH_PARAMETER +
-				"=" + next.getPath());
+				"=" + next.getRealPath());
+//				"=" + next.getPath());
 	}
 	
 	public void setCurrentFile(FileWidget current) {
@@ -139,7 +141,8 @@ public class PopupContent extends Composite {
 	@UiHandler("viewButton")
 	void onViewButtonClick(ClickEvent event) {
 		if (internalFile != null) {
-			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getPath() + "." + internalFile.getViewType(), "_blank", "");
+			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getRealPath() + "." + internalFile.getViewType(), "_blank", "");
+//			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getPath() + "." + internalFile.getViewType(), "_blank", "");
 		}
 	}
 }

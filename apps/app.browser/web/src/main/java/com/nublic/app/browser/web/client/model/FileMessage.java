@@ -34,7 +34,9 @@ public class FileMessage extends Message {
 
 	@Override
 	public String getURL() {
-		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
+		String realPath = model.getDevicesManager().getRealPath(path);
+		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + realPath);
+//		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
 	}
 
 	@Override
@@ -56,7 +58,7 @@ public class FileMessage extends Message {
 				while (path.length() != 0 && path.charAt(0) == '/') {
 					path = path.substring(1);
 				}
-				
+
 				model.updateFileList(fileContentList, getURL(), path);
 				// Call every handler looking at the file list
 				for (ModelUpdateHandler handler : model.getUpdateHandlers()) {

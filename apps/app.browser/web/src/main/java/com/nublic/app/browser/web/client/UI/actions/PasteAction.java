@@ -9,6 +9,7 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
+import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
@@ -19,7 +20,7 @@ public class PasteAction extends ActionWidget {
 		super("images/edit_paste.png", "Paste", stateProvider);
 	}
 	
-	public static void doPasteAction(final String mode, Set<Widget> setToCopy, String pathTo) {
+	public static void doPasteAction(final String mode, Set<Widget> setToCopy, String pathTo, DevicesManager pathConverter) {
 		Message m = new Message() {
 			@Override
 			public void onSuccess(Response response) {} // TODO: feedback
@@ -35,10 +36,14 @@ public class PasteAction extends ActionWidget {
 			if (setOfFiles.length() != 0) {
 				setOfFiles.append(":");
 			}
-			setOfFiles.append(((FileWidget) w).getPath());
+//			String realPath = pathConverter.getRealPath(((FileWidget) w).getPath());
+//			setOfFiles.append(realPath);
+			setOfFiles.append(((FileWidget) w).getRealPath());
+//			setOfFiles.append(((FileWidget) w).getPath());
 		}
 		m.addParam("files", setOfFiles.toString());
-		m.addParam("target", pathTo);
+		m.addParam("target", pathConverter.getRealPath(pathTo));
+//		m.addParam("target", pathTo);
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
 	}
 
@@ -46,7 +51,8 @@ public class PasteAction extends ActionWidget {
 	public void executeAction() {
 		doPasteAction(stateProvider.getModeCut() ? "move" : "copy",
 				      stateProvider.getClipboard(),
-				      stateProvider.getPath());
+				      stateProvider.getPath(),
+				      stateProvider.getDevicesManager());
 		// TODO: if mode cut remove filewidgets from view
 	}
 

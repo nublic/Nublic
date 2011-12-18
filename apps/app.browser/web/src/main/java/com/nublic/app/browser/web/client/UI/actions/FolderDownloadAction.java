@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI.actions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
+import com.nublic.app.browser.web.client.UI.FileWidget;
 
 public class FolderDownloadAction extends ActionWidget {
 
@@ -12,7 +13,9 @@ public class FolderDownloadAction extends ActionWidget {
 
 	@Override
 	public void executeAction() {
-		Window.open(GWT.getHostPageBaseURL() + "server/zip/" + stateProvider.getPath(), "_self", "");
+		String realPath = stateProvider.getDevicesManager().getRealPath(stateProvider.getPath());
+		Window.open(GWT.getHostPageBaseURL() + "server/zip/" + realPath, "_self", "");
+//		Window.open(GWT.getHostPageBaseURL() + "server/zip/" + stateProvider.getPath(), "_self", "");
 	}
 
 	@Override

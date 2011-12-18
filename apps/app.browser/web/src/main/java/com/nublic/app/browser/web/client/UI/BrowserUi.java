@@ -67,6 +67,7 @@ import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
+import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
@@ -279,6 +280,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public FolderNode getShowingFolder() {
 		return model.getShowingFolder();
 	}
+	
+	public DevicesManager getDevicesManager() {
+		return model.getDevicesManager();
+	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -397,7 +402,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		centralPanel.clear();
 		// Fill the panel
 		for (FileNode n : fileList) {
-			FileWidget newFileWidget = new FileWidget(n, path);
+//			FileWidget newFileWidget = new FileWidget(n, path);
+			FileWidget newFileWidget = new FileWidget(n, path, model.getDevicesManager());
 			// To handle changes in selections of files
 			newFileWidget.addCheckedChangeHandler(this);
 			// To make the filewidgets draggable
@@ -538,8 +544,11 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	public void showImage(String path) {
+		String realPath = model.getDevicesManager().getRealPath(path);
 		final Image newImage = new Image(GWT.getHostPageBaseURL()
-				+ "server/view/" + path + "." + Constants.IMAGE_TYPE);
+				+ "server/view/" + realPath + "." + Constants.IMAGE_TYPE);
+//		final Image newImage = new Image(GWT.getHostPageBaseURL()
+//				+ "server/view/" + path + "." + Constants.IMAGE_TYPE);
 		// Load handler
 		newImage.addLoadHandler(new LoadHandler() {
 			@Override
@@ -556,15 +565,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				ErrorPopup.showError("Image file not found");
 			}
 		});
-		
-		
+
 		setContentOfPopUp(newImage, path);
 		popUpBox.show();
 	}
 
 
 	public void showPDF(String path) {
-		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
+		String realPath = model.getDevicesManager().getRealPath(path);
+		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + realPath + "." + Constants.DOCUMENT_TYPE);
+//		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
 		setContentOfPopUp(frame, path);
 		popUpBox.show();
 	}
@@ -583,7 +593,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 			@Override
 			public String getURL() {
-				return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
+				String realPath = model.getDevicesManager().getRealPath(path);
+				return GWT.getHostPageBaseURL() + "server/view/" + realPath + "." + Constants.TEXT_TYPE;
+//				return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
 			}
 		};
 		SequenceHelper.sendJustOne(m, RequestBuilder.GET);
@@ -609,8 +621,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	@Override
-	public void showPlayer(AbstractMediaPlayer player, String path) {
-		setContentOfPopUp(player, path);
+	public void showPlayer(AbstractMediaPlayer player, String realPath) {
+//		setContentOfPopUp(player, path);
+		setContentOfPopUp(player, model.getDevicesManager().getMockPath(realPath));
 		popUpBox.show();
 	}
 	

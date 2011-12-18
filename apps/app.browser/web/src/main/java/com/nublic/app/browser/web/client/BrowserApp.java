@@ -82,6 +82,8 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			initBrowser();
 		}
 		String path = hmap.get(Constants.PATH_PARAMETER);
+		// TODO: a
+		path = model.getDevicesManager().getMockPath(path);
 		if (path != null) {
 			theUi.setWindowTitle(path);
 		} else {
@@ -105,9 +107,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// Redirect navigation to raw resource in server
 				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
 			} else {
-				theUi.setWindowTitle(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
-				theUi.showImage(path);
+				theUi.showImage(model.getDevicesManager().getMockPath(path));
+				
+//				theUi.setWindowTitle(path);
+//				// show the image lightbox
+//				theUi.showImage(path);
 			}
 		} else {
 			ErrorPopup.showError("Image file not found");
@@ -121,9 +127,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// Redirect navigation to raw resource in server
 				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
 			} else {
-				theUi.setWindowTitle(path);
-				// show the PDF lightbox
-				theUi.showPDF(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
+				// show the image lightbox
+				theUi.showPDF(model.getDevicesManager().getMockPath(path));
+				
+//				theUi.setWindowTitle(path);
+//				// show the PDF lightbox
+//				theUi.showPDF(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -137,9 +147,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// Redirect navigation to raw resource in server
 				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE, "_self", "");
 			} else {
-				theUi.setWindowTitle(path);
-				// show the Ace lightbox
-				theUi.showText(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
+				// show the image lightbox
+				theUi.showText(model.getDevicesManager().getMockPath(path));
+				
+//				theUi.setWindowTitle(path);
+//				// show the Ace lightbox
+//				theUi.showText(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -156,8 +170,11 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			    rp.add(empty);
 			    UIUtils.showPlayer(empty, path, false, type);
 			} else {
-				theUi.setWindowTitle(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				UIUtils.showPlayer(theUi, path, false, type);
+				
+//				theUi.setWindowTitle(path);
+//				UIUtils.showPlayer(theUi, path, false, type);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
+import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.messages.SequenceWaiter;
 
@@ -16,6 +17,8 @@ public class BrowserModel {
 	List<FileNode> fileList;
 	String showingURL;
 	String showingPath;
+	DevicesManager devManager = new DevicesManager();
+	
 	// TODO: synchronize updateFileList over an object to allow synchronized reading
 
 	ArrayList<ModelUpdateHandler> updateHandlers;
@@ -28,6 +31,9 @@ public class BrowserModel {
 	    showingURL = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
+	    
+	    // To get the devices and be able to translate real paths to users-style paths
+	    devManager.updateDevices();
 	}
 
 	public void addUpdateHandler(ModelUpdateHandler handler) {	 	
@@ -66,6 +72,10 @@ public class BrowserModel {
 		}
 	}
 	
+	public DevicesManager getDevicesManager() {
+		return devManager;
+	}
+	
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		FolderMessage message = new FolderMessage(n, depth, this);
@@ -82,7 +92,11 @@ public class BrowserModel {
 
 	// Update methods for responses
 	public synchronized void updateTree(FolderNode n, JsArray<FolderContent> folderList) {
-		updateTreeNoSync(n, folderList);
+		if (n.equals(folderTree)) {
+			devManager.createRootTree(this, folderTree, folderList);
+		} else {
+			updateTreeNoSync(n, folderList);
+		}
 	}
 	
 	public void updateTreeNoSync(FolderNode n, JsArray<FolderContent> folderList) {

@@ -17,7 +17,7 @@ public class FolderNode {
 		children = new ArrayList<FolderNode>();
 	}
 	
-	FolderNode(FolderNode parent, String name, boolean writable) {
+	public FolderNode(FolderNode parent, String name, boolean writable) {
 		this.parent = parent;
 		this.name = name;
 		this.writable = writable;
