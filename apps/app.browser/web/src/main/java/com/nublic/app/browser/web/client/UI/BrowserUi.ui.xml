@@ -13,8 +13,9 @@
 		.scroll {
 			overflow: scroll;
 		}
-		.topelementswith {
+		.topelements {
 			width: 150px;
+			height: 25px;
 		}
 		.nobackground {
 			background: transparent;
@@ -42,22 +43,22 @@
 	   	<g:center>
 	   		<g:DockLayoutPanel>
 	   			<!-- Panel to show order and filter controls -->
-	   			<g:north size="70">
+	   			<g:north size="80">
 	   				<g:DockLayoutPanel>
-	   					<g:north size="30">
+	   					<g:north size="40">
 							<my:NavigationBar ui:field="navigationBar">
 							</my:NavigationBar>
 	   					</g:north>
 	   					<g:east size="226"> <!-- 20 margin + 36 image + 150 textbox + 20 scrol size-->
 	   						<g:HorizontalPanel verticalAlignment="middle">
 		   						<g:Image url="images/filter.png" styleName="{style.margin}"/>
-		   						<g:TextBox ui:field="filterBox" styleName="{style.margin} {style.topelementswith}" title="filter"/>
+		   						<g:TextBox ui:field="filterBox" styleName="{style.margin} {style.topelements}" title="filter" />
 		   					</g:HorizontalPanel>
 		   				</g:east>
 		   				<g:center>
 		   					<g:HorizontalPanel verticalAlignment="middle">
 		   						<g:Label styleName="{style.margin}">Order:</g:Label>
-		   						<g:ListBox ui:field="orderList" addStyleNames="{style.margin} {style.topelementswith}" visibleItemCount='1'/>
+		   						<g:ListBox ui:field="orderList" addStyleNames="{style.margin} {style.topelements}" visibleItemCount='1' />
 								<g:PushButton ui:field="upButton" addStyleNames="{style.nobackground}">
 									<g:upFace image="{res.up}"/>
 								</g:PushButton>

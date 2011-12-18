@@ -13,6 +13,6 @@
 			vertical-align: middle;
 		}
 	</ui:style>
-	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="middle" addStyleNames="{style.padding}">
-	</g:HorizontalPanel>
+	<g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.padding}">
+	</g:HTMLPanel>
 </ui:UiBinder> 
