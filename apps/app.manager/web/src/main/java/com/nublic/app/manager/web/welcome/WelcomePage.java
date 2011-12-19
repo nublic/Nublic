@@ -2,6 +2,8 @@ package com.nublic.app.manager.web.welcome;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,6 +12,8 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.nublic.app.manager.web.client.AppData;
 import com.nublic.app.manager.web.client.ManagerUi;
+import com.nublic.util.messages.Message;
+import com.nublic.util.messages.SequenceHelper;
 
 public class WelcomePage extends Composite {
 
@@ -26,6 +30,21 @@ public class WelcomePage extends Composite {
 		this.theUi = ui;
 		this.showApps();
 		Document.get().setTitle("Nublic - Welcome");
+		// Get user name to welcome it better
+		SequenceHelper.sendJustOne(new Message() {
+			@Override
+			public String getURL() {
+				return GWT.getHostPageBaseURL() + "manager/server/user-name";
+			}
+			@Override
+			public void onSuccess(Response response) {
+				welcomeLabel.setText("Welcome, " + response.getText() + "!");
+			}
+			@Override
+			public void onError() {
+				// Do nothing
+			}
+		}, RequestBuilder.GET);
 	}
 
 	public void showApps() {

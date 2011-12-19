@@ -1,24 +1,34 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.Stack;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class NavigationBar extends Composite {
 	private static NavigationBarUiBinder uiBinder = GWT.create(NavigationBarUiBinder.class);
 	interface NavigationBarUiBinder extends UiBinder<Widget, NavigationBar> { }
 
-	@UiField HorizontalPanel rootPanel;
+	@UiField HTMLPanel rootPanel;
 	@UiField NavStyle style;
+	
+	Element listElement;
+	Stack<Element> elements;
 	
 	public NavigationBar() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		elements = new Stack<Element>();
+		listElement = DOM.createElement("ul");
+		listElement.setClassName("breadcrumb");
+		rootPanel.getElement().appendChild(listElement);
 	}
 	
 	// CSS Styles defined in the .xml file
@@ -29,7 +39,7 @@ public class NavigationBar extends Composite {
 	}
 	
 	public void addItem(String name, String link) {
-		if (rootPanel.getWidgetCount() != 0) {
+		/*if (rootPanel.getWidgetCount() != 0) {
 			Label greater = new Label(">");
 			rootPanel.add(greater);
 			greater.getElement().addClassName(style.labelspadding());
@@ -37,11 +47,24 @@ public class NavigationBar extends Composite {
 		}
 		Hyperlink hyperL = new Hyperlink(name, link);
 		rootPanel.add(hyperL);
-		hyperL.getElement().addClassName(style.verticalalignmiddle());
+		hyperL.getElement().addClassName(style.verticalalignmiddle());*/
+		
+		Element e = DOM.createElement("li");
+		Element anchor = DOM.createAnchor();
+		anchor.setAttribute("href", "#" + link);
+		anchor.setInnerText(name);
+		e.appendChild(anchor);
+		Element divider = DOM.createSpan();
+		divider.setClassName("divider");
+		divider.setInnerText("/");
+		e.appendChild(divider);
+		
+		elements.push(e);
+		listElement.appendChild(e);
 	}
 	
 	public void removeLastItem() {
-		int widgetCount = rootPanel.getWidgetCount();
+		/*int widgetCount = rootPanel.getWidgetCount();
 		switch (widgetCount) {
 		case 0:
 			break;
@@ -51,11 +74,17 @@ public class NavigationBar extends Composite {
 		default:
 			rootPanel.remove(widgetCount -1);
 			rootPanel.remove(widgetCount -2);
+		}*/
+		if (!elements.isEmpty()) {
+			Element e = elements.pop();
+			listElement.removeChild(e);
 		}
 	}
 
 	public void reset() {
-		rootPanel.clear();
+		while (!elements.isEmpty()) {
+			removeLastItem();
+		}
 	}
 
 }

@@ -28,6 +28,7 @@ import com.nublic.app.manager.web.frame.AppFrame;
 import com.nublic.app.manager.web.frame.AppUrlChangeEvent;
 import com.nublic.app.manager.web.frame.AppUrlChangeHandler;
 import com.nublic.app.manager.web.frame.Counter;
+import com.nublic.app.manager.web.settings.SettingsPage;
 import com.nublic.app.manager.web.welcome.WelcomePage;
 import com.nublic.util.messages.SequenceHelper;
 
@@ -38,8 +39,9 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	}
 	@UiField Styles style;
 	
-	private static final int EXTRA_TABS_AT_START = 1; // welcome page
+	private static final int EXTRA_TABS_AT_START = 2; // welcome page + settings page
 	private static final int WELCOME_PAGE_TAB = 0;
+	private static final int SETTINGS_PAGE_TAB = 1;
 
 	private static ManagerUiUiBinder uiBinder = GWT.create(ManagerUiUiBinder.class);
 	@UiField TabBar appBar;
@@ -69,6 +71,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		// Add tab for welcome
 		addTab("welcome", "Home", "images/home.png", "welcome", -1);
+		addTab("settings", "Settings", "images/home.png", "settings", -1);
 	}
 	
 	void loadApps(final HashMap<String, AppData> apps) {
@@ -257,6 +260,8 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 			return null;
 		case WELCOME:
 			return new WelcomePage(this);
+		case SETTINGS:
+			return new SettingsPage(this);
 		case FRAME:
 			AppFrame frame = new AppFrame("inner");
 			frame.addAppUrlChangedHandler(this);

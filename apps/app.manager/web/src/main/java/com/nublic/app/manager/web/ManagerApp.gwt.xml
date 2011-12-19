@@ -12,9 +12,10 @@
   <!-- the theme of your GWT application by uncommenting          -->
   <!-- any one of the following lines.                            -->
   <!-- <inherits name='com.google.gwt.user.theme.clean.Clean'/> -->
-  <inherits name='com.google.gwt.user.theme.standard.Standard'/>
+  <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
+  <inherits name='com.nublic.theme.NublicTheme'/>
 
   <!-- Other module inherits                                      -->
 
@@ -26,5 +27,6 @@
   <source path='shared'/>
   <source path='frame'/>
   <source path='welcome'/>
+  <source path='settings'/>
 
 </module>

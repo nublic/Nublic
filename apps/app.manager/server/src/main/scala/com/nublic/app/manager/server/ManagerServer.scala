@@ -166,6 +166,10 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     halt(500)
   }
   
+  get("/user-name") { withUser { user =>
+    write(user.getShownName())
+  } }
+  
   put("/user-name/*") { withUser { user =>
   	user.setShownName(params(THE_REST))
   	halt(200)
