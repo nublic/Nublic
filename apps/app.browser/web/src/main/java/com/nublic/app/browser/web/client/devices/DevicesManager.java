@@ -37,7 +37,6 @@ public class DevicesManager {
 		devicesList.clear();
 	}
 
-	// GWT
 	// To transform real paths to mock ones and viceversa
 	// TODO: maybe the devices are not updated yet when the query arrives
 //	public String getRealPath(String mockPath) {
@@ -79,8 +78,9 @@ public class DevicesManager {
 					return d.getName() + splitPath[2];
 				}
 			}
-			// This should never happen
-			return null;
+			// TODO: This should never happen
+//			return null;
+			return realPath;
 		}
 	}
 

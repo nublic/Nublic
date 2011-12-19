@@ -20,7 +20,9 @@ public class DeviceMessage extends Message {
 
 	@Override
 	public String getURL() {
-		return URL.encode(GWT.getHostPageBaseURL() + "server/devices");
+		// TODO: make Alex fix this
+//		return URL.encode(GWT.getHostPageBaseURL() + "server/devices");
+		return URL.encode(GWT.getHostPageBaseURL() + "server/device");
 	}
 
 	@Override
