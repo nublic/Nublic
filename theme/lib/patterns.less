@@ -339,7 +339,7 @@ a.menu:after,
 }
 
 // Tabs
-.tabs {
+.tabs, .gwt-TabBar, .gwt-DecoratedTabBar {
   border-color: #ddd;
   border-style: solid;
   border-width: 0 0 1px;
@@ -359,19 +359,39 @@ a.menu:after,
       }
     }
   }
+  .gwt-TabBarItem {
+    padding: 5px 15px;
+  }
   // Active state, and it's :hover to override normal :hover
-  .active > a,
-  .active > a:hover {
+  .active > a, .gwt-TabBarItem-selected
+  .active > a:hover, .gwt-TabBarItem-selected {
     color: @gray;
     background-color: @white;
     border: 1px solid #ddd;
     border-bottom-color: transparent;
     cursor: default;
   }
+  .gwt-TabBarItem-disabled {
+    cursor: default;
+    color: #999999;
+  }
+}
+
+.gwt-TabBar {
+  .gwt-TabBarItem {
+    padding: 5px 5px;
+    line-height: 15px;
+  }
+}
+
+.gwt-DecoratedTabBar {
+  .gwt-TabBarItem {
+    padding: 5px 15px;
+  }
 }
 
 // Dropdowns in tabs
-.tabs {
+.tabs, .gwt-TabBar, .gwt-DecoratedTabBar {
   // first one for backwards compatibility
   .menu-dropdown,
   .dropdown-menu {

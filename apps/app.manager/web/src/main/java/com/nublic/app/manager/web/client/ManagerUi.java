@@ -38,24 +38,16 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	    String inner();
 	}
 	@UiField Styles style;
-	
-	private static final int EXTRA_TABS_AT_START = 2; // welcome page + settings page
-	private static final int WELCOME_PAGE_TAB = 0;
-	private static final int SETTINGS_PAGE_TAB = 1;
 
 	private static ManagerUiUiBinder uiBinder = GWT.create(ManagerUiUiBinder.class);
-	@UiField TabBar appBar;
 	@UiField LayoutPanel layout;
-	@UiField Image image;
+	@UiField TopBar navBar;
 	Widget innerWidget = null;
 	// Model
 	ExtendedHistory history = null;
 	HashMap<String, AppData> apps = null;
-	ArrayList<String> appOrder = null;
 	ClientState state = null;
 	String path = null;
-	// Elements at tab bar
-	ArrayList<String> appsInBar = new ArrayList<String>();
 
 	interface ManagerUiUiBinder extends UiBinder<Widget, ManagerUi> {
 	}
@@ -70,28 +62,13 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		AppDataMessage msg = new AppDataMessage(this);
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		// Add tab for welcome
-		addTab("welcome", "Home", "images/home.png", "welcome", -1);
-		addTab("settings", "Settings", "images/home.png", "settings", -1);
+		navBar.addToSecondaryTab("settings", "Settings", "#settings");
 	}
 	
 	void loadApps(final HashMap<String, AppData> apps) {
 		this.apps = apps;
-		this.appOrder = new ArrayList<String>();
-		// Create alphabetical order
-		for (AppData data : apps.values()) {
-			appOrder.add(data.getId());
-		}
-		Collections.sort(this.appOrder, new Comparator<String>() {
-			@Override
-			public int compare(String a, String b) {
-				AppData aItem = apps.get(a);
-				AppData bItem = apps.get(b);
-				return aItem.getDefaultName().compareToIgnoreCase(bItem.getDefaultName());
-			}
-		});
 		// Initialize set of favourites
-		for (String app_id : appOrder) {
-			AppData data = this.apps.get(app_id);
+		for (AppData data : apps.values()) {
 			if (data.isFavourite()) {
 				addAppTab(data);
 			}
@@ -102,49 +79,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		}
 	}
 	
-	void addAppTab(AppData data) {
-		String id = data.getId();
-		if (!appsInBar.contains(id)) {
-			// Find place in
-			appsInBar.add(id);
-			Collections.sort(appsInBar, new Comparator<String>() {
-				@Override
-				public int compare(String a, String b) {
-					AppData aItem = apps.get(a);
-					AppData bItem = apps.get(b);
-					return aItem.getDefaultName().compareToIgnoreCase(bItem.getDefaultName());
-				}
-			});
-			int place = appsInBar.indexOf(id);
-			// Insert
-			addTab(data.getId(), data.getDefaultName(),
-				   GWT.getHostPageBaseURL() + "manager/server/app-image/" + data.getId() + "/32",
-				   data.getId() + "/" + data.getPath(), place + EXTRA_TABS_AT_START);
-		}
+	public void addAppTab(AppData data) {
+		navBar.addToPrimaryTab(data.getId(), data.getDefaultName(), "#" + data.getId() + "/" + data.getPath());
 	}
-	
-	void addTab(String id, String name, String imageUrl, String token, int place) {
-		HorizontalPanel panel = new HorizontalPanel();
-		panel.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		Image imageLabel = new Image(imageUrl);
-		panel.add(imageLabel);
-		Hyperlink nameLabel = new Hyperlink(name, token);
-		panel.add(nameLabel);
-		if (place == -1) {
-			appBar.addTab(panel);
-		} else {
-			appBar.insertTab(panel, place);
-		}
-	}
-	
-	void removeAppTab(String id) {
-		if (appsInBar.contains(id)) {
-			int place = appsInBar.indexOf(id);
-			int tab = place + EXTRA_TABS_AT_START;
-			appBar.removeTab(tab);
-			appsInBar.remove(id);
-		}
-	}
+
 	
 	public void setFavourite(String id, boolean favourite) {
 		AppData app = this.apps.get(id);
@@ -154,7 +92,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 				addAppTab(app);
 				SequenceHelper.sendJustOne(msg, RequestBuilder.PUT);
 			} else {
-				removeAppTab(id);
+				navBar.removeFromTabs(id);
 				SequenceHelper.sendJustOne(msg, RequestBuilder.DELETE);
 			}
 			app.setFavourite(favourite);
@@ -169,7 +107,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		innerWidget.setHeight("100%");
 		innerWidget.setWidth("100%");
 		layout.add(innerWidget);
-		layout.setWidgetTopBottom(innerWidget, 50, Unit.PX, 0, Unit.PX);
+		layout.setWidgetTopBottom(innerWidget, 40, Unit.PX, 0, Unit.PX);
 	}
 	
 	public void go(String token) {
@@ -215,30 +153,34 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	
 	public void tabChange(String token) {
 		if (state == ClientState.WELCOME) {
-			// Select "Home"
-			appBar.selectTab(WELCOME_PAGE_TAB, false);
 			// Remove elements which are not favourite
 			if (this.apps != null) {
 				ArrayList<String> toBeRemoved = new ArrayList<String>();
-				for (String appId : appsInBar) {
+				for (String appId : navBar.getElementsInPrimaryBar()) {
 					if (!this.apps.get(appId).isFavourite()) {
 						toBeRemoved.add(appId);
 					}
 				}
 				for (String appToRemove : toBeRemoved) {
-					this.removeAppTab(appToRemove);
+					navBar.removeFromTabs(appToRemove);
 				}
 			}
 		} else if (state == ClientState.FRAME) {
 			// Get app id
 			int slashPos = token.indexOf('/');
 			String appId = token.substring(0, slashPos);
-			if (!appsInBar.contains(appId)) {
+			if (!navBar.getElementsInPrimaryBar().contains(appId)) {
 				addAppTab(apps.get(appId));
 			}
-			int place = appsInBar.indexOf(appId);
-			int tab = place + EXTRA_TABS_AT_START;
-			appBar.selectTab(tab);
+		}
+		
+		if (state == ClientState.WELCOME) {
+			// Deselect every element
+			navBar.deselectAll();
+		} else {
+			int slashPos = token.indexOf('/');
+			String appId = token.substring(0, slashPos);
+			navBar.select(appId);
 		}
 	}
 	
@@ -273,10 +215,6 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	
 	public Map<String, AppData> getApps() {
 		return this.apps;
-	}
-	
-	public List<String> getAppOrder() {
-		return this.appOrder;
 	}
 
 	@Override
