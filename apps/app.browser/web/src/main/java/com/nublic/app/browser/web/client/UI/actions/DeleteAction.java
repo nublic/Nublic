@@ -37,8 +37,8 @@ public class DeleteAction extends ActionWidget {
 			}
 //			String realPath = stateProvider.getDevicesManager().getRealPath(((FileWidget) w).getPath());
 //			setOfFiles.append(realPath);
-			setOfFiles.append(((FileWidget) w).getRealPath());
-//			setOfFiles.append(((FileWidget) w).getPath());
+//			setOfFiles.append(((FileWidget) w).getRealPath());
+			setOfFiles.append(((FileWidget) w).getPath());
 		}
 		m.addParam("files", setOfFiles.toString());
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);

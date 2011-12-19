@@ -43,9 +43,10 @@ public class FolderMessage extends Message {
 
 	@Override
 	public String getURL() {
-		String realPath = model.getDevicesManager().getRealPath(node.getPath());
-		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + realPath);
-//		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getPath());
+//		String realPath = model.getDevicesManager().getRealPath(node.getPath());
+//		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + realPath);
+		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getRealPath());
+		//return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getPath());
 	}
 
 	@Override

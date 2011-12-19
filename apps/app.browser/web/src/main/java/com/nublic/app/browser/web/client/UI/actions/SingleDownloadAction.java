@@ -23,8 +23,8 @@ public class SingleDownloadAction extends ActionWidget {
 		for (Widget w : stateProvider.getSelectedFiles()) {
 //			String realPath = stateProvider.getDevicesManager().getRealPath(((FileWidget) w).getPath());
 //			download(realPath);
-			download(((FileWidget)w).getRealPath());
-//			download(((FileWidget)w).getPath());
+//			download(((FileWidget)w).getRealPath());
+			download(((FileWidget)w).getPath());
 		}
 	}
 

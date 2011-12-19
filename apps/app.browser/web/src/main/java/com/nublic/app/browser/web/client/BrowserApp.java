@@ -11,6 +11,7 @@ import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.EmptyUI;
 import com.nublic.app.browser.web.client.UI.UIUtils;
 import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
 import com.nublic.util.error.ErrorPopup;
 
@@ -81,22 +82,30 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		if (model == null) {
 			initBrowser();
 		}
-		String path = hmap.get(Constants.PATH_PARAMETER);
-		// TODO: a
-		path = model.getDevicesManager().getMockPath(path);
-		if (path != null) {
-			theUi.setWindowTitle(path);
-		} else {
-			path = "";
+		String path = hmap.get(Constants.PATH_PARAMETER) == null ? "" : hmap.get(Constants.PATH_PARAMETER);
+
+//		path = model.getDevicesManager().getMockPath(path);
+		if (path.equals("")) {
 			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
+		} else {
+			theUi.setWindowTitle(path);
 		}
 		
 		if (path.equals(model.getShowingPath())) {
 			// If we're already showing the asked path we'll just uncover the browser view
 			theUi.showBrowser();
 		} else {
+			boolean shouldUpdateFoldersOnSuccess = true;
+			// If the branch to the folderNode already exists and has no children we try to update its information now
+			// Otherwise it will be created when the answer of files confirms its a valid folder
+			FolderNode node = model.search(path);
+			if (node != null && node.getChildren().isEmpty()) {
+				model.updateFolders(node, Constants.DEFAULT_DEPTH);
+				shouldUpdateFoldersOnSuccess = false;
+			}
+			
 			// show the browser screen (empties the file list of the model and fills it with the new one)
-			model.updateFiles(path);		
+			model.updateFiles(path, shouldUpdateFoldersOnSuccess);
 		}
 	}
 	
