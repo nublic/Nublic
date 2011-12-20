@@ -629,13 +629,26 @@
   cursor: hand;
   cursor: pointer;
 }
+
+.gwt-Tree div {
+  padding-top: 3px !important;
+  padding-bottom: 0px !important;
+}
+
+.gwt-Tree table > tbody > tr > td .gwt-TreeItem {
+  padding-left: 7px !important;
+}
+
 .gwt-Tree .gwt-TreeItem-selected {
-  background: #ebeff9;
+  /* background: #ebeff9; */
+  font-weight: bold;
+  color: @blueDark;
 }
 .gwt-TreeItem .gwt-RadioButton input,
 .gwt-TreeItem .gwt-CheckBox input {
   margin-left: 0px;
 }
+
 * html .gwt-TreeItem .gwt-RadioButton input,
 * html .gwt-TreeItem .gwt-CheckBox input {
   margin-left: -4px;
