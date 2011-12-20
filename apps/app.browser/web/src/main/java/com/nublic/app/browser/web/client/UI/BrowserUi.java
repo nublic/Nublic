@@ -72,6 +72,7 @@ import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
+import com.nublic.theme.tree.GoogleLikeTreeResources;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.Callback;
 import com.nublic.util.gwt.LazyLoader;
@@ -108,7 +109,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// UI variables
 	@UiField FlowPanel centralPanel;
 	@UiField FlowPanel actionsPanel;
-	@UiField Tree treeView;
+	@UiField(provided=true) Tree treeView;
 	@UiField PushButton upButton;
 	@UiField PushButton downButton;
 	@UiField ListBox orderList;
@@ -119,6 +120,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
+		// Initialize tree
+		treeView = new Tree(new GoogleLikeTreeResources(), false);
+		
 		// Inits
 		initWidget(uiBinder.createAndBindUi(this));
 		this.model = model;

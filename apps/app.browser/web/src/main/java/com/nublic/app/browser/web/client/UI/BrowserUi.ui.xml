@@ -7,11 +7,15 @@
 		.aligntop {
 			vertical-align: top;
 		}
+		.horizontalmargin {
+	        margin: 10px;
+	    }
 		.margin {
 			margin: 5px;
 		}
 		.scroll {
-			overflow: scroll;
+	        overflow-x: hidden;
+			overflow-y: auto;
 		}
 		.topelements {
 			width: 150px;
@@ -26,16 +30,16 @@
 	
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
-	<g:SplitLayoutPanel>
+	<g:DockLayoutPanel>
 		<!-- Panel for the navigator tree -->
-	   	<g:west size="170">
-	   		<g:Tree ui:field="treeView"/>
+	   	<g:west size="176">
+	   		<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/>
 	   	</g:west>
 	   	
 	   	<!-- Actions panel -->
-	   	<g:east size="170">
-	   		<g:FlowPanel ui:field="actionsPanel">
-	   			<g:Label text="Actions"></g:Label>
+	   	<g:east size="176">
+	   		<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}">
+	   			<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Actions</h3></div></g:HTMLPanel>
 	   		</g:FlowPanel>
 	   	</g:east>
 	   	
@@ -77,6 +81,6 @@
 	   			</g:center>
 	   		</g:DockLayoutPanel>
 	   	</g:center>
-	</g:SplitLayoutPanel>
+	</g:DockLayoutPanel>
 
 </ui:UiBinder>

@@ -96,7 +96,7 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		actionLink.setVisible(visible);
 		if (visible) {
 			imageButton.getElement().addClassName(style.margin());
-			actionLink.getElement().addClassName(style.margin());
+			// actionLink.getElement().addClassName(style.margin());
 			imageButton.setEnabled(enabled);
 			actionLink.setEnabled(enabled);
 			if (enabled) {

@@ -1,4 +1,4 @@
-package com.nublic.theme;
+package com.nublic.theme.tree;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
@@ -19,7 +19,7 @@ public class GoogleLikeTreeResources implements Resources {
 
 	@Override
 	public ImageResource treeLeaf() {
-		return null;
+		return bundle.cleardot();
 	}
 
 	@Override
