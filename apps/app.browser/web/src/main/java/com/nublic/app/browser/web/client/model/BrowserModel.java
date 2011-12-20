@@ -83,6 +83,10 @@ public class BrowserModel {
 		return devManager;
 	}
 	
+	public SequenceWaiter<FolderMessage> getFoldersMessageHelper(){
+		return foldersMessageHelper;
+	}
+	
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		if (n.equals(folderTree)) {
