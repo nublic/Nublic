@@ -15,12 +15,15 @@ public class SyncedFolder extends Folder {
 	
 	public static List<SyncedFolder> getAll() throws FileQueryException {
 		try {
-			String[] ids = Singletons.getSyncedFolders().get_all_synced_folders().split(":");
-			ArrayList<SyncedFolder> mirrors = new ArrayList<SyncedFolder>();
+			ArrayList<SyncedFolder> synceds = new ArrayList<SyncedFolder>();
+			String m = Singletons.getSyncedFolders().get_all_synced_folders();
+			if (m.isEmpty())
+				return synceds;
+			String[] ids = m.split(":");
 			for (String mid : ids) {
-				mirrors.add(new SyncedFolder(Integer.parseInt(mid)));
+				synceds.add(new SyncedFolder(Integer.parseInt(mid)));
 			}
-			return mirrors;
+			return synceds;
 		} catch(DBusException e) {
 			throw new FileQueryException();
 		}
