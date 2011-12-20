@@ -506,13 +506,20 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		lastPath = getPath();
 		navigationBar.reset();
 		StringBuilder builder = new StringBuilder();
-		String tokenList[] = lastPath.split("/");
-		for (int i = 0; i < tokenList.length ; i++) {
+		String realTokenList[] = lastPath.split("/");
+		String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
+		for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
 			if (builder.length() != 0) {
 				builder.append("/");
 			}
-			builder.append(tokenList[i]);
-			navigationBar.addItem(tokenList[i],
+			// If we are adding the first element it could have a different URL than the name
+			if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
+				builder.append(realTokenList[j]);
+				builder.append("/");
+				j++;
+			}
+			builder.append(realTokenList[j]);
+			navigationBar.addItem(mockTokenList[i],
 					Constants.BROWSER_VIEW + "?" +
 					Constants.PATH_PARAMETER + "=" +
 					builder.toString());
