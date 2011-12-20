@@ -18,6 +18,7 @@ public class FolderDropController extends AbstractDropController {
 	public void onDrop(DragContext context) {
 //		super.onDrop(context);
 		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), dropTarget.getPath());
+//		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), dropTarget.getPath(), stateProvider.getDevicesManager());
 	}
 
 	// TODO: change style when mouse is over..

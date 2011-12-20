@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
+import com.nublic.app.browser.web.client.devices.DeviceMessage;
+import com.nublic.app.browser.web.client.devices.DevicesManager;
+import com.nublic.util.messages.SequenceHelper;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.messages.SequenceWaiter;
 
@@ -16,6 +19,8 @@ public class BrowserModel {
 	List<FileNode> fileList;
 	String showingURL;
 	String showingPath;
+	DevicesManager devManager = new DevicesManager();
+	
 	// TODO: synchronize updateFileList over an object to allow synchronized reading
 
 	ArrayList<ModelUpdateHandler> updateHandlers;
@@ -26,6 +31,7 @@ public class BrowserModel {
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
 	    showingURL = "";
+	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
 	}
@@ -36,6 +42,13 @@ public class BrowserModel {
 	
 	public List<ModelUpdateHandler> getUpdateHandlers() {
 		return updateHandlers;
+	}
+	
+	public void fireUpdateHandlers(FolderNode node) {
+		// Call every handler looking at the folder tree
+		for (ModelUpdateHandler handler : updateHandlers) {
+			handler.onFoldersUpdate(this, node);	
+		}
 	}
 	
 	// Getters
@@ -66,14 +79,24 @@ public class BrowserModel {
 		}
 	}
 	
-	// Server request methods
-	public void updateFolders(final FolderNode n, int depth) {
-		FolderMessage message = new FolderMessage(n, depth, this);
-		foldersMessageHelper.send(message, RequestBuilder.GET);
+	public DevicesManager getDevicesManager() {
+		return devManager;
 	}
 	
-	public void updateFiles(String path) {
-		FileMessage message = new FileMessage(path, this);
+	// Server request methods
+	public void updateFolders(final FolderNode n, int depth) {
+		if (n.equals(folderTree)) {
+//			devManager.updateDevices();
+			DeviceMessage m = new DeviceMessage(devManager, this);
+			SequenceHelper.sendJustOne(m, RequestBuilder.GET);
+		} else {
+			FolderMessage message = new FolderMessage(n, depth, this);
+			foldersMessageHelper.send(message, RequestBuilder.GET);
+		}
+	}
+	
+	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
+		FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
 		
 		if (!showingURL.equals(message.getURL())) {
 			filesMessageHelper.send(message, RequestBuilder.GET);
@@ -82,7 +105,11 @@ public class BrowserModel {
 
 	// Update methods for responses
 	public synchronized void updateTree(FolderNode n, JsArray<FolderContent> folderList) {
-		updateTreeNoSync(n, folderList);
+//		if (n.equals(folderTree)) {
+//			devManager.createRootTree(this, folderTree, folderList);
+//		} else {
+			updateTreeNoSync(n, folderList);
+//		}
 	}
 	
 	public void updateTreeNoSync(FolderNode n, JsArray<FolderContent> folderList) {
@@ -130,6 +157,7 @@ public class BrowserModel {
 			return folderTree;
 		}
 
+		path = devManager.getMockPath(path);
 		String splited[] = path.split("/");
 
 		FolderNode currentNode = folderTree;
@@ -143,6 +171,28 @@ public class BrowserModel {
 				currentNode.addChild(newNode);
 			}
 			currentNode = newNode;
+		}
+
+		return currentNode;
+	}
+	
+	public synchronized FolderNode search(String path) {
+		if (path.equals("")) {
+			return folderTree;
+		}
+
+		path = devManager.getMockPath(path);
+		String splited[] = path.split("/");
+
+		FolderNode currentNode = folderTree;
+		for (int i = 0; i < splited.length ; i++) {
+			FolderNode newNode = currentNode.getChild(splited[i]);
+			// If the node is created we go through it, else return null
+			if (newNode != null) {
+				currentNode = newNode;
+			} else {
+				return null;
+			}
 		}
 
 		return currentNode;

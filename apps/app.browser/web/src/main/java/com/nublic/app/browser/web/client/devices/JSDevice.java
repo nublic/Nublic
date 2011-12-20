@@ -10,7 +10,7 @@ public class JSDevice extends JavaScriptObject {
 		return this.id;
 	}-*/;
 	
-	public DeviceKind getKind() {
+	public final DeviceKind getKind() {
 		return DeviceKind.parse(_getKind());
 	}
 	

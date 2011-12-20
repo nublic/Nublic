@@ -15,8 +15,11 @@ public class Mirror extends Folder {
 	
 	public static List<Mirror> getAll() throws FileQueryException {
 		try {
-			String[] ids = Singletons.getMirrors().get_all_mirrors().split(":");
 			ArrayList<Mirror> mirrors = new ArrayList<Mirror>();
+			String m = Singletons.getMirrors().get_all_mirrors();
+			if (m.isEmpty())
+				return mirrors; 
+			String[] ids = m.split(":");
 			for (String mid : ids) {
 				mirrors.add(new Mirror(Integer.parseInt(mid)));
 			}

@@ -43,7 +43,10 @@ public class FolderMessage extends Message {
 
 	@Override
 	public String getURL() {
-		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getPath());
+//		String realPath = model.getDevicesManager().getRealPath(node.getPath());
+//		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + realPath);
+		return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getRealPath());
+		//return URL.encode(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getPath());
 	}
 
 	@Override
@@ -61,12 +64,8 @@ public class FolderMessage extends Message {
 			} else {
 				model.updateTree(node, folderList);
 			}
-
-			// Call every handler looking at the folder tree
-			for (ModelUpdateHandler handler : model.getUpdateHandlers()) {
-				handler.onFoldersUpdate(model, node);	
-			}
 			
+			model.fireUpdateHandlers(node);		
 		} else {
 			ErrorPopup.showError("The request could not be processed");
 		}

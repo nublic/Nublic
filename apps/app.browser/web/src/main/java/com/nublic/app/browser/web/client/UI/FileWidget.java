@@ -49,6 +49,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	FileNode node;
 	String path;
+//	String realPath;
 	boolean mouseOver = false;
 	boolean hasPreview = false;
 	Hyperlink fileThumbnail;
@@ -72,6 +73,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	// path is the path of the folder where the file is placed
+//	public FileWidget(FileNode n, String path, DevicesManager pathConverter) {
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -84,6 +86,8 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		// Gets the thumbnail of the file
+//		realPath = pathConverter.getRealPath(this.path);
+//		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + realPath);
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
 		
 		String viewType = node.getView();
@@ -174,20 +178,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 
 	private void setURL(String viewType) {
-//		String target = null;
-//		if (viewType.equals(Constants.IMAGE_TYPE)) {
-//			target = Constants.IMAGE_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-//		} else if (viewType.equals(Constants.DOCUMENT_TYPE)) {
-//			target = Constants.DOCUMENT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-//		} else if (viewType.equals(Constants.MUSIC_TYPE)) {
-//			target = Constants.MUSIC_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-//		} else if (viewType.equals(Constants.VIDEO_TYPE)) {
-//			target = Constants.VIDEO_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-//		} else if (viewType.equals(Constants.FOLDER_TYPE)) {
-//			target = Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-//		} else if (viewType.equals(Constants.TEXT_TYPE)) {
-//			target = Constants.TEXT_VIEW + "?" + Constants.PATH_PARAMETER + "=" + path;
-//		}
+//		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + realPath;
 		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + path;
 		if (fileThumbnail != null && fileName != null) {
 			fileThumbnail.setTargetHistoryToken(target);
@@ -198,11 +189,13 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
 		// TODO: Regression. this is not called anymore, using onmousedown (reported to library developer)
+//		SingleDownloadAction.download(realPath);
 		SingleDownloadAction.download(path);
 	}
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonMouseDown(MouseDownEvent event) {
+//		SingleDownloadAction.download(realPath);
 		SingleDownloadAction.download(path);
 	}
 	
@@ -280,6 +273,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	public String getPath() {
 		return path;
 	}
+	
+//	public String getRealPath() {
+//		return realPath;
+//	}
 	
 	// To proper handling of FileWidgets lists
 	@Override

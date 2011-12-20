@@ -11,6 +11,7 @@ import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.EmptyUI;
 import com.nublic.app.browser.web.client.UI.UIUtils;
 import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ParamsHashMap;
 import com.nublic.util.error.ErrorPopup;
 
@@ -81,20 +82,31 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		if (model == null) {
 			initBrowser();
 		}
-		String path = hmap.get(Constants.PATH_PARAMETER);
-		if (path != null) {
-			theUi.setWindowTitle(path);
-		} else {
-			path = "";
+		String path = hmap.get(Constants.PATH_PARAMETER) == null ? "" : hmap.get(Constants.PATH_PARAMETER);
+
+//		path = model.getDevicesManager().getMockPath(path);
+		if (path.equals("")) {
 			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
+			// TODO: initial screen
+		} else {
+			theUi.setWindowTitle(path);
 		}
 		
 		if (path.equals(model.getShowingPath())) {
 			// If we're already showing the asked path we'll just uncover the browser view
 			theUi.showBrowser();
 		} else {
+			boolean shouldUpdateFoldersOnSuccess = true;
+			// If the branch to the folderNode already exists and has no children we try to update its information now
+			// Otherwise it will be created when the answer of files confirms its a valid folder
+			FolderNode node = model.search(path);
+			if (node != null && node.getChildren().isEmpty()) {
+				model.updateFolders(node, Constants.DEFAULT_DEPTH);
+				shouldUpdateFoldersOnSuccess = false;
+			}
+			
 			// show the browser screen (empties the file list of the model and fills it with the new one)
-			model.updateFiles(path);		
+			model.updateFiles(path, shouldUpdateFoldersOnSuccess);
 		}
 	}
 	
@@ -105,9 +117,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// Redirect navigation to raw resource in server
 				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
 			} else {
-				theUi.setWindowTitle(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
-				theUi.showImage(path);
+				theUi.showImage(model.getDevicesManager().getMockPath(path));
+				
+//				theUi.setWindowTitle(path);
+//				// show the image lightbox
+//				theUi.showImage(path);
 			}
 		} else {
 			ErrorPopup.showError("Image file not found");
@@ -121,9 +137,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// Redirect navigation to raw resource in server
 				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE, "_self", "");
 			} else {
-				theUi.setWindowTitle(path);
-				// show the PDF lightbox
-				theUi.showPDF(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
+				// show the image lightbox
+				theUi.showPDF(model.getDevicesManager().getMockPath(path));
+				
+//				theUi.setWindowTitle(path);
+//				// show the PDF lightbox
+//				theUi.showPDF(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -137,9 +157,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				// Redirect navigation to raw resource in server
 				Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE, "_self", "");
 			} else {
-				theUi.setWindowTitle(path);
-				// show the Ace lightbox
-				theUi.showText(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
+				// show the image lightbox
+				theUi.showText(model.getDevicesManager().getMockPath(path));
+				
+//				theUi.setWindowTitle(path);
+//				// show the Ace lightbox
+//				theUi.showText(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -156,8 +180,11 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			    rp.add(empty);
 			    UIUtils.showPlayer(empty, path, false, type);
 			} else {
-				theUi.setWindowTitle(path);
+				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				UIUtils.showPlayer(theUi, path, false, type);
+				
+//				theUi.setWindowTitle(path);
+//				UIUtils.showPlayer(theUi, path, false, type);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");

@@ -5,14 +5,17 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 public class DeviceMessage extends Message {
 	DevicesManager manager;
+	BrowserModel model;
 
-	DeviceMessage(DevicesManager manager) {
+	public DeviceMessage(DevicesManager manager, BrowserModel model) {
 		this.manager = manager;
+		this.model = model;
 	}
 
 	@Override
@@ -40,6 +43,8 @@ public class DeviceMessage extends Message {
 												 jsDevice.getName(),
 												 jsDevice.getOwner()));
 				}
+				manager.createRootTree(model);
+				model.fireUpdateHandlers(model.getFolderTree());
 			}
 		} else {
 			ErrorPopup.showError("The request could not be processed");

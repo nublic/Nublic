@@ -20,9 +20,13 @@ public class SetDownloadAction extends ActionWidget {
 			if (setOfFiles.length() != 0) {
 				setOfFiles.append(":");
 			}
+//			String realPath = stateProvider.getDevicesManager().getRealPath(((FileWidget) w).getPath());
+//			setOfFiles.append(realPath);
+//			setOfFiles.append(((FileWidget) w).getRealPath());
 			setOfFiles.append(((FileWidget) w).getPath());
 		}
 		String path = stateProvider.getPath();
+//		String path = stateProvider.getDevicesManager().getRealPath(stateProvider.getPath());
 
 		PostRedirectHelper postSender = new PostRedirectHelper(GWT.getHostPageBaseURL() + "server/zip-set");
 		postSender.addParam("files", setOfFiles.toString());

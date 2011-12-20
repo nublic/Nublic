@@ -19,6 +19,7 @@ public class PasteAction extends ActionWidget {
 		super("images/edit_paste.png", "Paste", stateProvider);
 	}
 	
+//	public static void doPasteAction(final String mode, Set<Widget> setToCopy, String pathTo, DevicesManager pathConverter) {
 	public static void doPasteAction(final String mode, Set<Widget> setToCopy, String pathTo) {
 		Message m = new Message() {
 			@Override
@@ -35,9 +36,13 @@ public class PasteAction extends ActionWidget {
 			if (setOfFiles.length() != 0) {
 				setOfFiles.append(":");
 			}
+//			String realPath = pathConverter.getRealPath(((FileWidget) w).getPath());
+//			setOfFiles.append(realPath);
+//			setOfFiles.append(((FileWidget) w).getRealPath());
 			setOfFiles.append(((FileWidget) w).getPath());
 		}
 		m.addParam("files", setOfFiles.toString());
+//		m.addParam("target", pathConverter.getRealPath(pathTo));
 		m.addParam("target", pathTo);
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
 	}
@@ -47,6 +52,7 @@ public class PasteAction extends ActionWidget {
 		doPasteAction(stateProvider.getModeCut() ? "move" : "copy",
 				      stateProvider.getClipboard(),
 				      stateProvider.getPath());
+//				      stateProvider.getDevicesManager());
 		// TODO: if mode cut remove filewidgets from view
 	}
 

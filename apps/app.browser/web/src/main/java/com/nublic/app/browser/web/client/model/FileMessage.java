@@ -13,6 +13,7 @@ import com.nublic.util.messages.Message;
 public class FileMessage extends Message {
 	String path;
 	BrowserModel model;
+	boolean shouldUpdateFoldersOnSuccess = true;
 	
 	public static class Comparator implements PartialComparator<FileMessage> {
 		@Override
@@ -27,13 +28,16 @@ public class FileMessage extends Message {
 		}
 	}
 
-	public FileMessage(String path, BrowserModel model) {
+	public FileMessage(String path, BrowserModel model, boolean shouldUpdateFoldersOnSuccess) {
 		this.path = path;
 		this.model = model;
+		this.shouldUpdateFoldersOnSuccess = shouldUpdateFoldersOnSuccess;
 	}
 
 	@Override
 	public String getURL() {
+//		String realPath = model.getDevicesManager().getRealPath(path);
+//		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + realPath);
 		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
 	}
 
@@ -56,12 +60,12 @@ public class FileMessage extends Message {
 				while (path.length() != 0 && path.charAt(0) == '/') {
 					path = path.substring(1);
 				}
-				
+
 				model.updateFileList(fileContentList, getURL(), path);
 				// Call every handler looking at the file list
 				for (ModelUpdateHandler handler : model.getUpdateHandlers()) {
 //					handler.onFilesUpdate(model, path);
-					handler.onFilesUpdate(model);
+					handler.onFilesUpdate(model, shouldUpdateFoldersOnSuccess);
 				}
 			}
 		} else {

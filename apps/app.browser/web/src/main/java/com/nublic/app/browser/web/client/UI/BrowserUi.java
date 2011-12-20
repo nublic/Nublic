@@ -67,6 +67,7 @@ import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
+import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
@@ -279,6 +280,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public FolderNode getShowingFolder() {
 		return model.getShowingFolder();
 	}
+	
+	public DevicesManager getDevicesManager() {
+		return model.getDevicesManager();
+	}
 
 	// Handler of the open action for the browser tree
 	@Override
@@ -293,20 +298,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		TreeItem item = event.getSelectedItem();
 		History.newItem(Constants.BROWSER_VIEW
 				+ "?" + Constants.PATH_PARAMETER
-				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
+				+ "=" + ((FolderNode) item.getUserObject()).getRealPath(), true);
+//				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onFilesUpdate(BrowserModel m) {
+	public void onFilesUpdate(BrowserModel m, boolean shouldUpdateFoldersOnSuccess) {
 		selectedFiles.clear();
 		updateCentralPanel();
 
 		// We proceed to update the navigation tree
 		FolderNode node = model.createBranch(model.getShowingPath());
 		// If the given node has no children we try to update its info
-		// TODO: (not sure if possible) I think this should be done at the same time as the request to the files, not in the response
-		if (node.getChildren().isEmpty()) {
+		// DONE: it's been tried to update before, when the call to update the files was done
+		// but it hasn't been tried in the case the branch didn't exist before, so that's why it's also called now
+		if (shouldUpdateFoldersOnSuccess && node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
 
@@ -398,6 +405,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Fill the panel
 		for (FileNode n : fileList) {
 			FileWidget newFileWidget = new FileWidget(n, path);
+//			FileWidget newFileWidget = new FileWidget(n, path, model.getDevicesManager());
 			// To handle changes in selections of files
 			newFileWidget.addCheckedChangeHandler(this);
 			// To make the filewidgets draggable
@@ -498,13 +506,20 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		lastPath = getPath();
 		navigationBar.reset();
 		StringBuilder builder = new StringBuilder();
-		String tokenList[] = lastPath.split("/");
-		for (int i = 0; i < tokenList.length ; i++) {
+		String realTokenList[] = lastPath.split("/");
+		String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
+		for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
 			if (builder.length() != 0) {
 				builder.append("/");
 			}
-			builder.append(tokenList[i]);
-			navigationBar.addItem(tokenList[i],
+			// If we are adding the first element it could have a different URL than the name
+			if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
+				builder.append(realTokenList[j]);
+				builder.append("/");
+				j++;
+			}
+			builder.append(realTokenList[j]);
+			navigationBar.addItem(mockTokenList[i],
 					Constants.BROWSER_VIEW + "?" +
 					Constants.PATH_PARAMETER + "=" +
 					builder.toString());
@@ -538,6 +553,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	public void showImage(String path) {
+//		String realPath = model.getDevicesManager().getRealPath(path);
+//		final Image newImage = new Image(GWT.getHostPageBaseURL()
+//				+ "server/view/" + realPath + "." + Constants.IMAGE_TYPE);
 		final Image newImage = new Image(GWT.getHostPageBaseURL()
 				+ "server/view/" + path + "." + Constants.IMAGE_TYPE);
 		// Load handler
@@ -556,14 +574,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				ErrorPopup.showError("Image file not found");
 			}
 		});
-		
-		
+
 		setContentOfPopUp(newImage, path);
 		popUpBox.show();
 	}
 
 
 	public void showPDF(String path) {
+//		String realPath = model.getDevicesManager().getRealPath(path);
+//		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + realPath + "." + Constants.DOCUMENT_TYPE);
 		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
 		setContentOfPopUp(frame, path);
 		popUpBox.show();
@@ -583,6 +602,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 			@Override
 			public String getURL() {
+//				String realPath = model.getDevicesManager().getRealPath(path);
+//				return GWT.getHostPageBaseURL() + "server/view/" + realPath + "." + Constants.TEXT_TYPE;
 				return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
 			}
 		};
@@ -611,6 +632,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void showPlayer(AbstractMediaPlayer player, String path) {
 		setContentOfPopUp(player, path);
+//		setContentOfPopUp(player, model.getDevicesManager().getMockPath(realPath));
 		popUpBox.show();
 	}
 	
@@ -625,6 +647,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private FileWidget findWidgetFromPath(String path) {
 		for (Widget w : centralPanel) {
 			if (((FileWidget)w).getPath().equals(path)) {
+//			if (((FileWidget)w).getRealPath().equals(path)) {
 				return (FileWidget)w;
 			}
 		}

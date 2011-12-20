@@ -20,8 +20,10 @@ public class SingleDownloadAction extends ActionWidget {
 	@Override
 	public void executeAction() {
 		// Redirect navigation to raw resource in server
-		//Window.open(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.IMAGE_TYPE, "_self", "");
 		for (Widget w : stateProvider.getSelectedFiles()) {
+//			String realPath = stateProvider.getDevicesManager().getRealPath(((FileWidget) w).getPath());
+//			download(realPath);
+//			download(((FileWidget)w).getRealPath());
 			download(((FileWidget)w).getPath());
 		}
 	}
