@@ -20,9 +20,7 @@ public class DeviceMessage extends Message {
 
 	@Override
 	public String getURL() {
-		// TODO: make Alex fix this
-//		return URL.encode(GWT.getHostPageBaseURL() + "server/devices");
-		return URL.encode(GWT.getHostPageBaseURL() + "server/device");
+		return URL.encode(GWT.getHostPageBaseURL() + "server/devices");
 	}
 
 	@Override
@@ -46,6 +44,7 @@ public class DeviceMessage extends Message {
 												 jsDevice.getOwner()));
 				}
 				manager.createRootTree(model);
+				model.fireUpdateHandlers(model.getFolderTree());
 			}
 		} else {
 			ErrorPopup.showError("The request could not be processed");

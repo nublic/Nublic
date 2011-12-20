@@ -87,6 +87,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 //		path = model.getDevicesManager().getMockPath(path);
 		if (path.equals("")) {
 			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
+			// TODO: initial screen
 		} else {
 			theUi.setWindowTitle(path);
 		}

@@ -75,7 +75,8 @@ public class DevicesManager {
 			for (Device d : devicesList) {
 				if (d.getKind() == DeviceKind.parse(splitPath[0])
 						&& d.getId() == Integer.valueOf(splitPath[1])) {
-					return d.getName() + splitPath[2];
+					String rest = splitPath.length == 2 ? "" : splitPath[2]; 
+					return d.getName() + rest;
 				}
 			}
 			// TODO: This should never happen

@@ -31,6 +31,7 @@ public class BrowserModel {
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
 	    showingURL = "";
+	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
 	}
@@ -41,6 +42,13 @@ public class BrowserModel {
 	
 	public List<ModelUpdateHandler> getUpdateHandlers() {
 		return updateHandlers;
+	}
+	
+	public void fireUpdateHandlers(FolderNode node) {
+		// Call every handler looking at the folder tree
+		for (ModelUpdateHandler handler : updateHandlers) {
+			handler.onFoldersUpdate(this, node);	
+		}
 	}
 	
 	// Getters

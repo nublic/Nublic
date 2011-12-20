@@ -298,7 +298,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		TreeItem item = event.getSelectedItem();
 		History.newItem(Constants.BROWSER_VIEW
 				+ "?" + Constants.PATH_PARAMETER
-				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
+				+ "=" + ((FolderNode) item.getUserObject()).getRealPath(), true);
+//				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
 	}
 
 	// Handler fired when a new update of the file list is available
