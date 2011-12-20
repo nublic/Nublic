@@ -27,11 +27,11 @@
 		.shadowed {
 	    	opacity: 0.5;
 		}
-/*		.nobackground {
+		.nobackground {
 			background: transparent;
 			padding: 0px;
 			border: none;
-		} */
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
@@ -49,7 +49,7 @@
 			</g:at>
 			<g:at left='68' top='68'> <!-- 96px of the thumbnail minus 16px of the download image -->
 <!-- 				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}"> -->
-				<g:PushButton ui:field="downloadButton">
+				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}">
 					<g:upFace image="{res.download}"/>
 				</g:PushButton>
 			</g:at>

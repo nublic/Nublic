@@ -10,6 +10,12 @@
 		.horizontalmargin {
 	        margin: 10px;
 	    }
+	    .margintop {
+            margin-top: 5px;
+        }
+        .marginleft {
+            margin-left: 5px;
+        }
 		.margin {
 			margin: 5px;
 		}
@@ -19,13 +25,24 @@
 		}
 		.topelements {
 			width: 150px;
-			height: 25px;
+			height: 28px;
 		}
 		.nobackground {
 			background: transparent;
 			padding: 0px;
 			border: none;
 		}
+		.appended {
+	        border-radius: 0 3px 3px 0 !important;
+	        float: right !important;
+	        right: 4px;
+	    }
+	    .middle {
+	        border-radius: 0 0 0 0 !important;
+	    }
+	    .showinline {
+	        display: inline;
+	    }
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
@@ -53,26 +70,34 @@
 							<my:NavigationBar ui:field="navigationBar">
 							</my:NavigationBar>
 	   					</g:north>
-	   					<g:east size="226"> <!-- 20 margin + 36 image + 150 textbox + 20 scrol size-->
-	   						<g:HorizontalPanel verticalAlignment="middle">
-		   						<g:Image url="images/filter.png" styleName="{style.margin}"/>
-		   						<g:TextBox ui:field="filterBox" styleName="{style.margin} {style.topelements}" title="filter" />
-		   					</g:HorizontalPanel>
+	   					<g:east size="181">
+	   					    <g:HTMLPanel addStyleNames="{style.margintop}">
+	   					      <div class="input">
+	   					        <div class="input-prepend">
+	   					          <span class="add-on"><g:Image url="images/filter.png"/></span>
+	   					          <g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" />
+	   					        </div>
+	   					      </div>
+	   					    </g:HTMLPanel>
 		   				</g:east>
-		   				<g:center>
-		   					<g:HorizontalPanel verticalAlignment="middle">
-		   						<g:Label styleName="{style.margin}">Order:</g:Label>
-		   						<g:ListBox ui:field="orderList" addStyleNames="{style.margin} {style.topelements}" visibleItemCount='1' />
-								<g:PushButton ui:field="upButton" addStyleNames="{style.nobackground}">
-									<g:upFace image="{res.up}"/>
-								</g:PushButton>
-								<g:PushButton ui:field="downButton" addStyleNames="{style.nobackground}">
-									<g:upFace image="{res.down}"/>
-								</g:PushButton>
-<!-- 		   						<g:Image url="images/up.png"/> -->
-<!-- 		   						<g:Image url="images/down.png"/> -->
-		   					</g:HorizontalPanel>
-		   				</g:center>
+		   				<g:west size="250">
+		   					    <g:HTMLPanel addStyleNames="{style.margintop} {style.marginleft}">
+                                  <div class="input">
+                                    <div class="input-prepend">
+                                      <span class="add-on">Order:</span>
+                                      <g:ListBox ui:field="orderList" addStyleNames="{style.topelements} {style.middle}" visibleItemCount='1' />
+                                      <span class="add-on {style.appended}">
+                                        <g:PushButton ui:field="upButton" addStyleNames="{style.nobackground} {style.showinline}">
+                                          <g:upFace image="{res.up}"/>
+                                        </g:PushButton>
+                                        <g:PushButton ui:field="downButton" addStyleNames="{style.nobackground} {style.showinline}">
+                                          <g:upFace image="{res.down}"/>
+                                        </g:PushButton>
+                                      </span>
+                                    </div>
+                                  </div>
+                                </g:HTMLPanel>
+		   				</g:west>
 	   				</g:DockLayoutPanel>
 	   			</g:north>
 	   			<!-- Actual central panel -->
