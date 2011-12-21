@@ -65,6 +65,10 @@ public class FolderNode {
 		return writable;
 	}
 
+	public String getPathName() {
+		return pathName;
+	}
+
 	// Calculates and returns the real path to this node
 	public String getRealPath() {
 		if (parent == null) {
@@ -135,7 +139,7 @@ public class FolderNode {
 //			if (child.getName().equals(name)) {
 //				return child;
 //			}
-			if (child.getRealPath().equals(pathName)) {
+			if (child.getPathName().equals(name)) {
 				return child;
 			}
 		}

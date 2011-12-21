@@ -65,8 +65,6 @@ public class BrowserModel {
 	}
 
 	public FolderNode getShowingFolder() {
-//		String pathTokens[] = showingPath.split("/");
-//		String pathTokens[] = devManager.splitPath(showingPath);
 		List<String> pathTokens = devManager.splitPath(showingPath);
 		
 		if (pathTokens.get(0).equals("")) {
@@ -93,7 +91,6 @@ public class BrowserModel {
 	// Server request methods
 	public void updateFolders(final FolderNode n, int depth) {
 		if (n.equals(folderTree)) {
-//			devManager.updateDevices();
 			DeviceMessage m = new DeviceMessage(devManager, this);
 			SequenceHelper.sendJustOne(m, RequestBuilder.GET);
 		} else {
@@ -112,11 +109,7 @@ public class BrowserModel {
 
 	// Update methods for responses
 	public synchronized void updateTree(FolderNode n, JsArray<FolderContent> folderList) {
-//		if (n.equals(folderTree)) {
-//			devManager.createRootTree(this, folderTree, folderList);
-//		} else {
-			updateTreeNoSync(n, folderList);
-//		}
+		updateTreeNoSync(n, folderList);
 	}
 	
 	public void updateTreeNoSync(FolderNode n, JsArray<FolderContent> folderList) {
@@ -164,9 +157,6 @@ public class BrowserModel {
 			return folderTree;
 		}
 
-//		path = devManager.getMockPath(path);
-//		String splited[] = path.split("/");
-//		String splited[] = devManager.splitPath(path);
 		List<String> splited = devManager.splitPath(path);
 
 		FolderNode currentNode = folderTree;
@@ -190,9 +180,6 @@ public class BrowserModel {
 			return folderTree;
 		}
 
-//		path = devManager.getMockPath(path);
-//		String splited[] = path.split("/");
-//		String splited[] = devManager.splitPath(path);
 		List<String> splited = devManager.splitPath(path);
 
 		FolderNode currentNode = folderTree;

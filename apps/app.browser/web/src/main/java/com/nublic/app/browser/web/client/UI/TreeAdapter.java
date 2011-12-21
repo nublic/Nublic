@@ -149,10 +149,8 @@ public class TreeAdapter {
 		// Iterates through nodes in treeView until it finds the desired node  
 		for (int i = 0 ; i < treeView.getItemCount() && !found; i++){
 			nodeView = treeView.getItem(i);
-			String path1 = ((FolderNode)nodeView.getUserObject()).getRealPath();
-			String path2 = firstInStack.getRealPath();
-			found = ((FolderNode)nodeView.getUserObject()).getRealPath().equals(firstInStack.getRealPath());
-			//found = nodeView.getHTML().equals(firstInStack.getName());
+			found = firstInStack.equals(nodeView.getUserObject());
+//			found = ((FolderNode)nodeView.getUserObject()).getRealPath().equals(firstInStack.getRealPath());
 		}
 		
 		// If it hasn't been found we have to create the complete path stack in the tree view 
@@ -169,8 +167,8 @@ public class TreeAdapter {
 			found = false;
 			for (int i = 0 ; i < nodeView.getChildCount() && !found ; i++) {
 				childNode = nodeView.getChild(i);
-				found = ((FolderNode)nodeView.getUserObject()).getRealPath().equals(nodeInStack.getRealPath());
-				//found = childNode.getHTML().equals(nodeInStack.getName());
+				found = nodeInStack.equals(childNode.getUserObject());
+				//found = ((FolderNode)childNode.getUserObject()).getRealPath().equals(nodeInStack.getRealPath());
 			}
 			if  (!found) {
 				childNode = createNewNode(nodeView, nodeInStack);

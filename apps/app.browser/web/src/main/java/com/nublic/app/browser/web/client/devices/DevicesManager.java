@@ -94,8 +94,6 @@ public class DevicesManager {
 			newBegining.append(tokenList.remove(0));
 			tokenList.add(0, newBegining.toString());
 			return tokenList;
-//			String[] r = new String[tokenList.size()];
-//			return tokenList.toArray(r);
 		}
 	}
 
