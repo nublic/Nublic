@@ -14,6 +14,7 @@ export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
 export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
 export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
 export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR"
+export MAVEN_OPTS="-Xms1536m -Xmx1536m -XX:PermSize=1024m -XX:MaxPermSize=2048m"
 
 install_in_maven_repo() {
     ${MAVEN} install:install-file -Dfile=$1 -DgroupId=$2 \
@@ -58,8 +59,14 @@ build_deb_package() {
     git checkout debian/changelog
     if [ $exit != 0 ]
     then
-        echo "Error building package " $1
-        exit 1
+        dch -p -v ${DEBREVISION} Building on `date`
+        ${DEBUILD} -i -us -uc -b
+        exit=$?
+        git checkout debian/changelog
+        if [ $exit != 0 ]
+            echo "Error building package " $1
+            exit 1
+        fi
     fi
     ${DEBUILD} clean
     cd ..

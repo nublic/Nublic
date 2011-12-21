@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Used directories
+export INITIAL_DIR=`pwd`
+
+remove_folder() {
+    echo
+    echo "REMOVING " $1
+    cd "$1"
+    rm -rf target
+    cd "${INITIAL_DIR}"
+}
+
+remove_folder resource/java
+remove_folder notification/java
+remove_folder files_and_users/java
+remove_folder filewatcher/scala
+remove_folder apps/util/gwt
+remove_folder apps/app.manager/server
+remove_folder apps/app.manager/web
+remove_folder apps/app.browser/server
+remove_folder apps/app.browser/web
+remove_folder apps/app.music/server
+# remove_folder apps/app.music/web
+
+exit 0
+
