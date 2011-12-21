@@ -3,17 +3,16 @@ package com.nublic.app.browser.web.client.devices;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+import com.google.gwt.http.client.RequestBuilder;
+
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FolderMessage;
 import com.nublic.app.browser.web.client.model.FolderNode;
 
 public class DevicesManager {
 	List<Device> devicesList = new ArrayList<Device>();
-
-//	public void updateDevices() {
-//		DeviceMessage m = new DeviceMessage(this);
-//		SequenceHelper.sendJustOne(m, RequestBuilder.GET);
-//	}
 
 	public Device getDevice(DeviceKind kind, int id) {
 		for (Device d : devicesList) {
@@ -38,7 +37,6 @@ public class DevicesManager {
 	}
 
 	// To transform real paths to mock ones and viceversa
-	// TODO: maybe the devices are not updated yet when the query arrives
 //	public String getRealPath(String mockPath) {
 //		// Converts paths of the form "dispositive_name/..." to "dispositive_kind/id/.."
 //		if (mockPath.equals("")) {
@@ -84,44 +82,37 @@ public class DevicesManager {
 			return realPath;
 		}
 	}
+	
+	public List<String> splitPath(String path) {
+		String[] tokenArray = path.split("/");
+		if (tokenArray.length < 2 || tokenArray[0].equals(Constants.NUBLIC_ONLY)) {
+			return Lists.newArrayList(tokenArray);
+		} else {
+			List<String> tokenList = Lists.newArrayList(tokenArray);
+			StringBuilder newBegining = new StringBuilder(tokenList.remove(0));
+			newBegining.append("/");
+			newBegining.append(tokenList.remove(0));
+			tokenList.add(0, newBegining.toString());
+			return tokenList;
+		}
+	}
 
-//	public void createRootTree(BrowserModel model, FolderNode n, JsArray<FolderContent> folderList) {
-//		if (folderList.length() != 0) {
-//			n.clear();
-//			for (int i = 0; i < folderList.length(); i++) {
-//				FolderContent f = folderList.get(i);
-//				if (f.getName().equals(Constants.NUBLIC_ONLY)) {
-//					FolderNode child = new FolderNode(n, Constants.NUBLIC_ONLY, f.getWritable());
-//					n.addChild(child);
-//					// Recursive call to update child
-//					model.updateTreeNoSync(child, f.getSubfolders());
-//				} else {
-//					// Go through every id in each kind of device
-//					JsArray<FolderContent> subfolders = f.getSubfolders();
-//					for (int j = 0; j < subfolders.length(); j++) {
-//						FolderContent g = subfolders.get(j);
-//						Device dev = getDevice(DeviceKind.parse(f.getName()),
-//											   Integer.valueOf(g.getName()));
-//						FolderNode child = new FolderNode(n, dev.getName(), g.getWritable());
-//						n.addChild(child);
-//						// Recursive call to update child
-//						model.updateTreeNoSync(child, f.getSubfolders());
-//					}
-//				}
-//			}
-//		}
-	public void createRootTree(BrowserModel model) {
-		FolderNode root = model.getFolderTree();
-		
-		FolderNode nublicOnly = new FolderNode(root, Constants.NUBLIC_ONLY, true);
-		root.addChild(nublicOnly);
+	public void createRootTree(BrowserModel model) {		
+		createNodeOnRoot(Constants.NUBLIC_ONLY, Constants.NUBLIC_ONLY, true, model);
 
 		for (Device d : devicesList) {
-			FolderNode deviceFolder = new FolderNode(root,
-													 d.getName(),
-													 d.getKind().getPathName() + "/" + d.getId(),
-													 false);
-			root.addChild(deviceFolder);
+			createNodeOnRoot(d.getName(), d.getKind().getPathName() + "/" + d.getId(), false, model);
 		}
+	}
+
+	private void createNodeOnRoot(String name, String path, boolean writable, BrowserModel model) {
+		FolderNode root = model.getFolderTree();
+		
+		FolderNode newNode = new FolderNode(root, name, path, writable);
+		root.addChild(newNode);
+		
+		// Get the folders of the new Node created by devices
+		FolderMessage message = new FolderMessage(newNode, Constants.DEFAULT_DEPTH, model);
+		model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
 	}
 }
