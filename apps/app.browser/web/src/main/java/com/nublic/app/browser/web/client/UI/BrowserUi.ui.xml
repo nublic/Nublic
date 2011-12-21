@@ -35,7 +35,7 @@
 		.appended {
 	        border-radius: 0 3px 3px 0 !important;
 	        float: right !important;
-	        right: 4px;
+	        right: 5px;
 	    }
 	    .middle {
 	        border-radius: 0 0 0 0 !important;
@@ -80,7 +80,7 @@
 	   					      </div>
 	   					    </g:HTMLPanel>
 		   				</g:east>
-		   				<g:west size="250">
+		   				<g:west size="251">
 		   					    <g:HTMLPanel addStyleNames="{style.margintop} {style.marginleft}">
                                   <div class="input">
                                     <div class="input-prepend">

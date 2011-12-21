@@ -83,15 +83,15 @@ public class TopBar extends Composite {
 		return elementsInSecondaryTab.keySet();
 	}
 	
-	public void addToPrimaryTab(String id, String text, String link) {
+	public void addToPrimaryTab(String id, String image, String text, String link) {
 		if (!elementsInPrimaryTab.containsKey(id) && !elementsInSecondaryTab.containsKey(id)) {
-			addToTab(id, text, link, elementsInPrimaryTab, mapTextsInPrimaryTab, textsInPrimaryTab, primaryNav);
+			addToTab(id, image, text, link, elementsInPrimaryTab, mapTextsInPrimaryTab, textsInPrimaryTab, primaryNav);
 		}
 	}
 	
-	public void addToSecondaryTab(String id, String text, String link) {
+	public void addToSecondaryTab(String id, String image, String text, String link) {
 		if (!elementsInPrimaryTab.containsKey(id) && !elementsInSecondaryTab.containsKey(id)) {
-			addToTab(id, text, link, elementsInSecondaryTab, mapTextsInSecondaryTab, textsInSecondaryTab, secondaryNav);
+			addToTab(id, image, text, link, elementsInSecondaryTab, mapTextsInSecondaryTab, textsInSecondaryTab, secondaryNav);
 		}
 	}
 	
@@ -109,14 +109,14 @@ public class TopBar extends Composite {
 		}
 	}
 	
-	private void addToTab(String id, String text, String link, HashMap<String, Element> map, 
+	private void addToTab(String id, String image, String text, String link, HashMap<String, Element> map, 
 			HashMap<String, String> mapTexts, ArrayList<String> texts, Element nav) {
 		// Find position
 		texts.add(text);
 		Collections.sort(texts);
 		int index = texts.indexOf(text);
 		// Create element
-		Element e = createElement(text, link);
+		Element e = createElement(image, text, link);
 		// Insert element
 		if (index >= nav.getChildCount()) {
 			nav.appendChild(e);
@@ -129,11 +129,18 @@ public class TopBar extends Composite {
 		map.put(id, e);
 	}
 	
-	private Element createElement(String text, String link) {
+	private Element createElement(String image, String text, String link) {
 		Element e = DOM.createElement("li");
 		Element l = DOM.createAnchor();
 		l.setAttribute("href", link);
-		l.setInnerText(text);
+		if (image != null) {
+			Element i = DOM.createImg();
+			i.setAttribute("src", image);
+			l.appendChild(i);
+		}
+		Element lb = DOM.createLabel();
+		lb.setInnerText(text);
+		l.appendChild(lb);
 		e.appendChild(l);
 		return e;
 	}

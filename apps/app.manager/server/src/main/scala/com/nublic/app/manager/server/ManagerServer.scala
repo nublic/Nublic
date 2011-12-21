@@ -43,15 +43,21 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     write(apps_json)
   } }
   
-  get("/app-image/:id/:size") { withUser { _ =>
+  get("/app-image/:style/:id/:size") { withUser { _ =>
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
     val id = params("id")
     val size = params("size")
     if (apps.contains(id)) {
       val app = apps.get(id).get
-      if (app.icon.contains(size)) {
+      val icons = params.get("style") match {
+        case Some("dark")  => Some(app.getDarkIcon)
+        case Some("light") => Some(app.getLightIcon)
+        case Some("color") => Some(app.color_icon)
+        case _             => None
+      }
+      if (icons != None && icons.get.contains(size)) {
         response.setContentType("image")
-        new File(app.icon.get(size).get)
+        new File(icons.get.get(size).get)
       } else {
         halt(404)
       }
@@ -167,7 +173,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/user-name") { withUser { user =>
-    write(user.getShownName())
+    user.getShownName()
   } }
   
   put("/user-name/*") { withUser { user =>

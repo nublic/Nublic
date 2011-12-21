@@ -1,10 +1,7 @@
 package com.nublic.app.manager.web.client;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -17,12 +14,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
-import com.google.gwt.user.client.ui.TabBar;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.manager.web.frame.AppFrame;
 import com.nublic.app.manager.web.frame.AppUrlChangeEvent;
@@ -62,7 +54,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		AppDataMessage msg = new AppDataMessage(this);
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		// Add tab for welcome
-		navBar.addToSecondaryTab("settings", "Settings", "#settings");
+		navBar.addToSecondaryTab("settings", "images/settings.png", "Settings", "#settings");
 	}
 	
 	void loadApps(final HashMap<String, AppData> apps) {
@@ -80,7 +72,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	}
 	
 	public void addAppTab(AppData data) {
-		navBar.addToPrimaryTab(data.getId(), data.getDefaultName(), "#" + data.getId() + "/" + data.getPath());
+		navBar.addToPrimaryTab(data.getId(),
+				GWT.getHostPageBaseURL() + "manager/server/app-image/light/" + data.getId() + "/32",
+				data.getDefaultName(), 
+				"#" + data.getId() + "/" + data.getPath());
 	}
 
 	

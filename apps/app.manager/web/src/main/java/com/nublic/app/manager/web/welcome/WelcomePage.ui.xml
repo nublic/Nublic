@@ -4,12 +4,18 @@
 	<ui:style>
 		
 	</ui:style>
-	<g:VerticalPanel horizontalAlignment="ALIGN_CENTER">
-		<g:Cell height="20px">
-			<g:Label text="Welcome to Nublic!" horizontalAlignment="ALIGN_CENTER" styleName="h1" ui:field="welcomeLabel" height="20px"/>
-		</g:Cell>
-		<g:Cell width="100%" height="100%" horizontalAlignment="ALIGN_CENTER">
-			<g:Grid width="" height="" ui:field="appGrid" cellSpacing="10"/>
-		</g:Cell>
-	</g:VerticalPanel>
+	<g:HTMLPanel>
+		<div class="container">
+			<div class="row">
+				<div class="span8">
+				</div>
+				<div class="span8">
+				  <div class="page-header">
+				    <h3><g:Label text="Welcome to Nublic!" ui:field="welcomeLabel" /></h3>
+				  </div>
+				  <g:VerticalPanel width="100%" height="100%" ui:field="appGrid" />
+				</div>
+			</div>
+		</div>
+	</g:HTMLPanel>
 </ui:UiBinder> 

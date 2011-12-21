@@ -10,9 +10,9 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Label;
 import com.nublic.app.manager.web.client.AppData;
 import com.nublic.app.manager.web.client.ManagerUi;
@@ -22,7 +22,7 @@ import com.nublic.util.messages.SequenceHelper;
 public class WelcomePage extends Composite {
 
 	private static WelcomePageUiBinder uiBinder = GWT.create(WelcomePageUiBinder.class);
-	@UiField Grid appGrid;
+	@UiField VerticalPanel appGrid;
 	@UiField Label welcomeLabel;
 	ManagerUi theUi;
 
@@ -53,13 +53,6 @@ public class WelcomePage extends Composite {
 
 	public void showApps() {
 		if (theUi.getApps() != null) {
-			// Set number of necessary rows
-			int n = theUi.getApps().size();
-			int n_rows = (n / 2) + (n % 2);
-			appGrid.resize(n_rows, 2);
-			// Initialize placement
-			int col = 0;
-			int row = 0;
 			// Add apps
 			ArrayList<String> appOrder = new ArrayList<String>();
 			for(String appId : theUi.getApps().keySet()) {
@@ -76,12 +69,9 @@ public class WelcomePage extends Composite {
 			for(String appId : appOrder) {
 				AppData app = theUi.getApps().get(appId);
 				AppCell cell = new AppCell(theUi, appId, 
-						GWT.getHostPageBaseURL() + "manager/server/app-image/" + appId + "/32",
+						GWT.getHostPageBaseURL() + "manager/server/app-image/dark/" + appId + "/32",
 						app.getDefaultName(), appId + "/" + app.getPath(), app.isFavourite());
-				appGrid.setWidget(row, col, cell);
-				// Set new rows
-				row += col;
-				col = (col + 1) % 2;
+				appGrid.add(cell);
 			}
 		}
 	}
