@@ -64,6 +64,7 @@ build_deb_package() {
         exit=$?
         git checkout debian/changelog
         if [ $exit != 0 ]
+        then
             echo "Error building package " $1
             exit 1
         fi
