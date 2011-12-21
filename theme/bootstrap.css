@@ -3449,8 +3449,18 @@ input[type=submit].btn::-moz-focus-inner,
   cursor: hand;
   cursor: pointer;
 }
+.gwt-Tree div {
+  padding-top: 3px !important;
+  padding-bottom: 0px !important;
+}
+.gwt-Tree table > tbody > tr > td .gwt-TreeItem {
+  padding-left: 7px !important;
+}
 .gwt-Tree .gwt-TreeItem-selected {
-  background: #ebeff9;
+  /* background: #ebeff9; */
+
+  font-weight: bold;
+  color: #0064cd;
 }
 .gwt-TreeItem .gwt-RadioButton input, .gwt-TreeItem .gwt-CheckBox input {
   margin-left: 0px;

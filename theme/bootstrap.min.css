@@ -465,7 +465,9 @@ button.btn::-moz-focus-inner,input[type=submit].btn::-moz-focus-inner,.gwt-Butto
 .gwt-ToggleButton-down-hovering{background-position:0 -513px;border:1px inset;border-color:#9cf #69e #69e #7af;cursor:pointer;cursor:hand;}
 .gwt-ToggleButton-down-disabled{background-position:0 -513px;border:1px inset #ccc;cursor:default;opacity:.5;zoom:1;filter:alpha(opacity=45);}
 .gwt-Tree .gwt-TreeItem{padding:1px 0px;margin:0px;white-space:nowrap;cursor:hand;cursor:pointer;}
-.gwt-Tree .gwt-TreeItem-selected{background:#ebeff9;}
+.gwt-Tree div{padding-top:3px !important;padding-bottom:0px !important;}
+.gwt-Tree table>tbody>tr>td .gwt-TreeItem{padding-left:7px !important;}
+.gwt-Tree .gwt-TreeItem-selected{font-weight:bold;color:#0064cd;}
 .gwt-TreeItem .gwt-RadioButton input,.gwt-TreeItem .gwt-CheckBox input{margin-left:0px;}
 * html .gwt-TreeItem .gwt-RadioButton input,* html .gwt-TreeItem .gwt-CheckBox input{margin-left:-4px;}
 .gwt-HorizontalSplitPanel .hsplitter{cursor:move;border:0px;background:#e7e7e7;line-height:0px;}
