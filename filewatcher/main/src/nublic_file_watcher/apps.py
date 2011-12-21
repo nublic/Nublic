@@ -37,7 +37,7 @@ def create_initial_signalers(config, apps):
             signalers.append(DbusSignaler(app.title(), config[u'apps'][app]))
         else:
             the_app = apps[app]
-            if the_app.supports_filewatcher:
+            if the_app.supports_filewatcher():
                 fw_folders = the_app.filewatcher.paths
                 if u'__all__' in fw_folders:
                     # Add watcher upon everything
@@ -68,22 +68,30 @@ def load_app_json(filename):
     return k
 
 class AppData():
-    def __init__(self, app_id, name, developer, icon, web, filewatcher):
+    def __init__(self, app_id, name, developer, dark_icon, light_icon, color_icon, web, filewatcher):
         self.app_id = app_id
         self.name = name
         self.developer = developer
-        self.icon = icon
+        self.dark_icon = dark_icon
+        self.light_icon = light_icon
+        self.color_icon = color_icon
         self.web = web
         self.filewatcher = filewatcher
     
     def supports_filewatcher(self):
-        return not self.filewatcher is None and self.filewatcher.supported 
+        return (not (self.filewatcher is None)) and self.filewatcher.supported 
 
 def as_app_data(d):
     app_id = d[u'id']
     name = as_app_name(d[u'name'])
     developer = d[u'developer']
-    icon = d[u'icon']
+    color_icon = d[u'color_icon']
+    dark_icon = d[u'dark_icon']
+    if dark_icon is None:
+        dark_icon = color_icon
+    light_icon = d[u'light_icon']
+    if light_icon is None:
+        light_icon = color_icon
     if u'web' in d:
         web = as_app_web_info(d[u'web'])
     else:
@@ -92,7 +100,7 @@ def as_app_data(d):
         filewatcher = as_app_filewatcher_info(d[u'filewatcher'])
     else:
         filewatcher = None
-    return AppData(app_id, name, developer, icon, web, filewatcher)
+    return AppData(app_id, name, developer, dark_icon, light_icon, color_icon, web, filewatcher)
 
 class AppName():
     def __init__(self, default, localized):

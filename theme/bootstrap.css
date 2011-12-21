@@ -3454,7 +3454,7 @@ input[type=submit].btn::-moz-focus-inner,
   padding-bottom: 0px !important;
 }
 .gwt-Tree table > tbody > tr > td .gwt-TreeItem {
-  padding-left: 7px !important;
+  padding-left: 0px !important;
 }
 .gwt-Tree .gwt-TreeItem-selected {
   /* background: #ebeff9; */
