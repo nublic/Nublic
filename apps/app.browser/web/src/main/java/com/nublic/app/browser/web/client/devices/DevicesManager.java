@@ -3,7 +3,9 @@ package com.nublic.app.browser.web.client.devices;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.http.client.RequestBuilder;
+
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FolderMessage;
@@ -80,30 +82,28 @@ public class DevicesManager {
 			return realPath;
 		}
 	}
+	
+	public List<String> splitPath(String path) {
+		String[] tokenArray = path.split("/");
+		if (tokenArray.length < 2 || tokenArray[0].equals(Constants.NUBLIC_ONLY)) {
+			return Lists.newArrayList(tokenArray);
+		} else {
+			List<String> tokenList = Lists.newArrayList(tokenArray);
+			StringBuilder newBegining = new StringBuilder(tokenList.remove(0));
+			newBegining.append("/");
+			newBegining.append(tokenList.remove(0));
+			tokenList.add(0, newBegining.toString());
+			return tokenList;
+//			String[] r = new String[tokenList.size()];
+//			return tokenList.toArray(r);
+		}
+	}
 
-	public void createRootTree(BrowserModel model) {
-//		FolderNode root = model.getFolderTree();
-		
+	public void createRootTree(BrowserModel model) {		
 		createNodeOnRoot(Constants.NUBLIC_ONLY, Constants.NUBLIC_ONLY, true, model);
-		
-//		FolderNode nublicOnly = new FolderNode(root, Constants.NUBLIC_ONLY, true);
-//		root.addChild(nublicOnly);
-//		
-//		// Get the folders of the new Node created by devices
-//		FolderMessage message = new FolderMessage(nublicOnly, Constants.DEFAULT_DEPTH, model);
-//		model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
 
 		for (Device d : devicesList) {
 			createNodeOnRoot(d.getName(), d.getKind().getPathName() + "/" + d.getId(), false, model);
-//			FolderNode deviceFolder = new FolderNode(root,
-//													 d.getName(),
-//													 d.getKind().getPathName() + "/" + d.getId(),
-//													 false);
-//			root.addChild(deviceFolder);
-//			
-//			// Get the folders of the new Node created by devices
-//			message = new FolderMessage(deviceFolder, Constants.DEFAULT_DEPTH, model);
-//			model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
 		}
 	}
 

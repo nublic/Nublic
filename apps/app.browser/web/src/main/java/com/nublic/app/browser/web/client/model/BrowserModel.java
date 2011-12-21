@@ -65,14 +65,17 @@ public class BrowserModel {
 	}
 
 	public FolderNode getShowingFolder() {
-		String pathTokens[] = showingPath.split("/");
-		if (pathTokens[0].equals("")) {
+//		String pathTokens[] = showingPath.split("/");
+//		String pathTokens[] = devManager.splitPath(showingPath);
+		List<String> pathTokens = devManager.splitPath(showingPath);
+		
+		if (pathTokens.get(0).equals("")) {
 			return folderTree;
 		} else {
-			FolderNode returnFolder = folderTree.getChild(pathTokens[0]);
+			FolderNode returnFolder = folderTree.getChild(pathTokens.get(0));
 			int i = 1;
-			while (i < pathTokens.length && returnFolder != null) {
-				returnFolder = returnFolder.getChild(pathTokens[i]);
+			while (i < pathTokens.size() && returnFolder != null) {
+				returnFolder = returnFolder.getChild(pathTokens.get(i));
 				i++;
 			}
 			return returnFolder;
@@ -161,17 +164,19 @@ public class BrowserModel {
 			return folderTree;
 		}
 
-		path = devManager.getMockPath(path);
-		String splited[] = path.split("/");
+//		path = devManager.getMockPath(path);
+//		String splited[] = path.split("/");
+//		String splited[] = devManager.splitPath(path);
+		List<String> splited = devManager.splitPath(path);
 
 		FolderNode currentNode = folderTree;
-		for (int i = 0; i < splited.length ; i++) {
-			FolderNode newNode = currentNode.getChild(splited[i]);
+		for (String s : splited) {
+			FolderNode newNode = currentNode.getChild(s);
 			// If the node is still not created in the tree, we create it
 			if (newNode == null) {
 				// We define created nodes as writable (we don't have the information and the server will not let write it them if they are not)
 				// If the user enters the folder the information will be reloaded properly, it's made this way only to enable drag and drop in all the cases
-				newNode = new FolderNode(currentNode, splited[i], true);
+				newNode = new FolderNode(currentNode, s, true);
 				currentNode.addChild(newNode);
 			}
 			currentNode = newNode;
@@ -185,12 +190,14 @@ public class BrowserModel {
 			return folderTree;
 		}
 
-		path = devManager.getMockPath(path);
-		String splited[] = path.split("/");
+//		path = devManager.getMockPath(path);
+//		String splited[] = path.split("/");
+//		String splited[] = devManager.splitPath(path);
+		List<String> splited = devManager.splitPath(path);
 
 		FolderNode currentNode = folderTree;
-		for (int i = 0; i < splited.length ; i++) {
-			FolderNode newNode = currentNode.getChild(splited[i]);
+		for (String s : splited) {
+			FolderNode newNode = currentNode.getChild(s);
 			// If the node is created we go through it, else return null
 			if (newNode != null) {
 				currentNode = newNode;

@@ -131,8 +131,11 @@ public class FolderNode {
 //	}
 
 	public FolderNode getChild(String name) {
-		for (FolderNode child : children){
-			if (child.getName().equals(name)) {
+		for (FolderNode child : children) {
+//			if (child.getName().equals(name)) {
+//				return child;
+//			}
+			if (child.getRealPath().equals(pathName)) {
 				return child;
 			}
 		}

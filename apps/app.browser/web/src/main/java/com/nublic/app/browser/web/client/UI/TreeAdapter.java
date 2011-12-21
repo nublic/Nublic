@@ -145,11 +145,14 @@ public class TreeAdapter {
 		
 		firstInStack = pathStack.pop();
 
-		// This first step cannot be done with the rest because the first level is of a different type
+		// This first step cannot be done with the rest because the first level has a different type
 		// Iterates through nodes in treeView until it finds the desired node  
 		for (int i = 0 ; i < treeView.getItemCount() && !found; i++){
 			nodeView = treeView.getItem(i);
-			found = nodeView.getHTML().equals(firstInStack.getName());
+			String path1 = ((FolderNode)nodeView.getUserObject()).getRealPath();
+			String path2 = firstInStack.getRealPath();
+			found = ((FolderNode)nodeView.getUserObject()).getRealPath().equals(firstInStack.getRealPath());
+			//found = nodeView.getHTML().equals(firstInStack.getName());
 		}
 		
 		// If it hasn't been found we have to create the complete path stack in the tree view 
@@ -166,7 +169,8 @@ public class TreeAdapter {
 			found = false;
 			for (int i = 0 ; i < nodeView.getChildCount() && !found ; i++) {
 				childNode = nodeView.getChild(i);
-				found = childNode.getHTML().equals(nodeInStack.getName());
+				found = ((FolderNode)nodeView.getUserObject()).getRealPath().equals(nodeInStack.getRealPath());
+				//found = childNode.getHTML().equals(nodeInStack.getName());
 			}
 			if  (!found) {
 				childNode = createNewNode(nodeView, nodeInStack);
