@@ -8,12 +8,13 @@
 		<div class="container">
 			<div class="row">
 				<div class="span8">
+				   <h1 style="padding-top: 10px;"><g:Label text="Welcome to Nublic!" ui:field="welcomeLabel" /></h1>
 				</div>
 				<div class="span8">
 				  <div class="page-header">
-				    <h3><g:Label text="Welcome to Nublic!" ui:field="welcomeLabel" /></h3>
+				    <h3>Your apps</h3>
 				  </div>
-				  <g:VerticalPanel width="100%" height="100%" ui:field="appGrid" />
+				  <g:VerticalPanel width="100%" ui:field="appGrid" spacing="5" />
 				</div>
 			</div>
 		</div>

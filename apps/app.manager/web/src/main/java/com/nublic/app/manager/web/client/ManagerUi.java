@@ -73,7 +73,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	
 	public void addAppTab(AppData data) {
 		navBar.addToPrimaryTab(data.getId(),
-				GWT.getHostPageBaseURL() + "manager/server/app-image/light/" + data.getId() + "/32",
+				GWT.getHostPageBaseURL() + "manager/server/app-image/light/" + data.getId() + "/16",
 				data.getDefaultName(), 
 				"#" + data.getId() + "/" + data.getPath());
 	}

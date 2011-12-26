@@ -133,13 +133,15 @@ public class TopBar extends Composite {
 		Element e = DOM.createElement("li");
 		Element l = DOM.createAnchor();
 		l.setAttribute("href", link);
+		l.setAttribute("style", "padding-bottom: 8px; padding-top: 8px;");
 		if (image != null) {
 			Element i = DOM.createImg();
 			i.setAttribute("src", image);
 			l.appendChild(i);
 		}
-		Element lb = DOM.createLabel();
+		Element lb = DOM.createSpan();
 		lb.setInnerText(text);
+		lb.setAttribute("style", "margin-left: 5px;");
 		l.appendChild(lb);
 		e.appendChild(l);
 		return e;
