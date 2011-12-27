@@ -43,8 +43,8 @@
 		<!-- 			<g:Image ui:field="altThumbnail" styleName="{style.maxheight}"/>      -->
 				</g:VerticalPanel>
 			</g:at>
-			<g:at left='0' top='0'>
-				<g:CheckBox ui:field="selectedBox">
+			<g:at left='0' top='0' width="20px">
+				<g:CheckBox ui:field="selectedBox" width="20px">
 				</g:CheckBox>
 			</g:at>
 			<g:at left='68' top='68'> <!-- 96px of the thumbnail minus 16px of the download image -->

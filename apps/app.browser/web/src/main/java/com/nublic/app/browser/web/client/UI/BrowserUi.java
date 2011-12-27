@@ -509,24 +509,26 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private void updateNavigationBar() {
 		lastPath = getPath();
 		navigationBar.reset();
-		StringBuilder builder = new StringBuilder();
-		String realTokenList[] = lastPath.split("/");
-		String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
-		for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
-			if (builder.length() != 0) {
-				builder.append("/");
-			}
-			// If we are adding the first element it could have a different URL than the name
-			if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
+		if (!lastPath.isEmpty()) {
+			StringBuilder builder = new StringBuilder();
+			String realTokenList[] = lastPath.split("/");
+			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
+			for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
+				if (builder.length() != 0) {
+					builder.append("/");
+				}
+				// If we are adding the first element it could have a different URL than the name
+				if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
+					builder.append(realTokenList[j]);
+					builder.append("/");
+					j++;
+				}
 				builder.append(realTokenList[j]);
-				builder.append("/");
-				j++;
+				navigationBar.addItem(mockTokenList[i],
+						Constants.BROWSER_VIEW + "?" +
+						Constants.PATH_PARAMETER + "=" +
+						builder.toString());
 			}
-			builder.append(realTokenList[j]);
-			navigationBar.addItem(mockTokenList[i],
-					Constants.BROWSER_VIEW + "?" +
-					Constants.PATH_PARAMETER + "=" +
-					builder.toString());
 		}
 	}
 	

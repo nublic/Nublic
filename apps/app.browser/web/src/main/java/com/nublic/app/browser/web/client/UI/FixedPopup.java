@@ -1,5 +1,7 @@
 package com.nublic.app.browser.web.client.UI;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.Window;
@@ -8,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 
 // A pop-up that occupy all the space except a margin at boundaries
-public class FixedPopup extends PopupPanel implements ResizeHandler {
+public class FixedPopup extends PopupPanel implements ResizeHandler, ClickHandler {
 	private int width = 0;
 	private int height = 0;
 	int margin;
@@ -25,6 +27,7 @@ public class FixedPopup extends PopupPanel implements ResizeHandler {
 		Window.addResizeHandler(this);
 		content = new PopupContent();
 		this.add(content);
+		content.addCloseHandler(this);
 	}
 	
 	public int getMargin() {
@@ -83,5 +86,9 @@ public class FixedPopup extends PopupPanel implements ResizeHandler {
 			content.fitSize(this.width, this.height - Constants.POPUP_BOTTOM);
 		}
 	}
-	
+
+	@Override
+	public void onClick(ClickEvent event) {
+		this.hide(true);
+	}
 }

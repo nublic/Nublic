@@ -2,7 +2,7 @@ package com.nublic.app.browser.web.client;
 
 public class Constants {
 	public final static int POPUP_MARGIN = 50;
-	public final static int POPUP_BOTTOM = 30; // also defined in PopupContent.ui.xml
+	public final static int POPUP_BOTTOM = 72; // also defined in PopupContent.ui.xml
 	public final static int DEFAULT_DEPTH = 2; // Number of levels of the tree requested each time
 	public final static int DRAG_START_SENSITIVIY = 10;
 	public final static int TIME_TO_OPEN = 1000; // when mouse is over a tree item

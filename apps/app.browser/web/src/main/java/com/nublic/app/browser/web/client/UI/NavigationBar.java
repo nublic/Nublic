@@ -28,6 +28,14 @@ public class NavigationBar extends Composite {
 		elements = new Stack<Element>();
 		listElement = DOM.createElement("ul");
 		listElement.setClassName("breadcrumb");
+		// Add initial divider
+		Element e = DOM.createElement("li");
+		Element firstDivider = DOM.createSpan();
+		firstDivider.setClassName("divider");
+		firstDivider.setInnerText("/");
+		e.appendChild(firstDivider);
+		listElement.appendChild(e);
+		
 		rootPanel.getElement().appendChild(listElement);
 	}
 	

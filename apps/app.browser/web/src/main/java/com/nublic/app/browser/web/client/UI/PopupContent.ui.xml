@@ -2,17 +2,32 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
+	.withmargin {
+	   margin-left: 10px;
+	}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
 	<g:DockLayoutPanel>
+	    <g:north size="36">
+	      <g:DockLayoutPanel addStyleNames="modal-header">
+	        <g:east size="20">
+	          <g:Label styleName="close" ui:field="closeLabel">&times;</g:Label>
+	        </g:east>
+	        <g:center>
+	          <g:HTMLPanel>
+               <h5><g:Label addStyleNames="{style.withmargin}" ui:field="titleLabel">?</g:Label></h5>
+              </g:HTMLPanel>
+	        </g:center>
+	      </g:DockLayoutPanel>
+	    </g:north>
 		<g:center>
 			<g:LayoutPanel ui:field="contentTop">
 			</g:LayoutPanel>
 		</g:center>
-		<g:south size="30"> <!-- also defined in Constants.java -->
-			<g:DockLayoutPanel>
+		<g:south size="36"> <!-- also defined in Constants.java -->
+			<g:DockLayoutPanel addStyleNames="modal-footer">
 				<g:west size="100">
 					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
 						<g:Hyperlink ui:field="previousLink" text="previous">

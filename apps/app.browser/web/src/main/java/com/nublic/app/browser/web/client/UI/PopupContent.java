@@ -1,5 +1,7 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,6 +16,8 @@ import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Label;
 
 public class PopupContent extends Composite {
 
@@ -25,17 +29,21 @@ public class PopupContent extends Composite {
 	@UiField LayoutPanel contentTop;
 	@UiField Hyperlink nextLink;
 	@UiField Hyperlink previousLink;
+	@UiField Label closeLabel;
+	@UiField Label titleLabel;
 	Widget internalWidget;
 	FileWidget internalFile;
 	// Used to proper resize images
 	int originalWidth;
 	int originalHeight;
+	ArrayList<ClickHandler> closeHandlers;
 
 	public PopupContent() {
 		initWidget(uiBinder.createAndBindUi(this));
 		internalWidget = null;
 		originalWidth = 0;
 		originalHeight = 0;
+		closeHandlers = new ArrayList<ClickHandler>();
 	}
 	
 	public void setPrevious(FileWidget previous) {
@@ -54,6 +62,11 @@ public class PopupContent extends Composite {
 	
 	public void setCurrentFile(FileWidget current) {
 		internalFile = current;
+		if (current != null) {
+			titleLabel.setText(current.fileName.getText());
+		} else {
+			titleLabel.setText("?");
+		}
 	}
 
 	public void setContent(Widget w) {
@@ -143,6 +156,17 @@ public class PopupContent extends Composite {
 		if (internalFile != null) {
 //			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getRealPath() + "." + internalFile.getViewType(), "_blank", "");
 			Window.open(GWT.getHostPageBaseURL() + "server/view/" + internalFile.getPath() + "." + internalFile.getViewType(), "_blank", "");
+		}
+	}
+	
+	public void addCloseHandler(ClickHandler handler) {
+		closeHandlers.add(handler);
+	}
+	
+	@UiHandler("closeLabel")
+	void onCloseLabelClick(ClickEvent event) {
+		for (ClickHandler handler : closeHandlers) {
+			handler.onClick(event);
 		}
 	}
 }
