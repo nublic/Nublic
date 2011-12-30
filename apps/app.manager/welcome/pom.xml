@@ -5,10 +5,10 @@
 	<!-- POM file generated with GWT webAppCreator -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nublic</groupId>
-	<artifactId>app.manager.web</artifactId>
+	<artifactId>app.manager.welcome</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>Manager app GWT client</name>
+	<name>Manager app welcome page</name>
 
 	<properties>
 		<!-- Convenience property to set the GWT version -->
@@ -109,7 +109,7 @@
 					documentation at codehaus.org -->
 				<configuration>
 					<!-- URL that should be automatically opened in the GWT shell (gwt:run). -->
-					<runTarget>ManagerApp.html</runTarget>
+					<runTarget>BrowserWelcomeApp.html</runTarget>
 					<!-- Location of the develop-mode web application structure (gwt:run). -->
 					<hostedWebapp>target/www</hostedWebapp>
 					<!-- Ask GWT to create the Story of Your Compile (SOYC) (gwt:compile) -->
@@ -169,7 +169,7 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>src/main/webapp/managerapp</directory>
+							<directory>src/main/webapp/welcomeapp</directory>
 						</fileset>
 						<fileset>
 							<directory>src/main/webapp/WEB-INF/classes</directory>

@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-manager
 Architecture: all
-Depends: ${misc:Depends}, nublic-app-manager-server, nublic-app-manager-web
+Depends: ${misc:Depends}, nublic-app-manager-server, nublic-app-manager-web, nublic-app-manager-welcome
 Description: Nublic Manager app
  Manager app for the Nublic platform - metapackage

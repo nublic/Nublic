@@ -1,0 +1,11 @@
+nublic-app-manager-welcome (2011-12-30-14-41) oneiric; urgency=low
+
+  * Building on vie dic 30 14:45:07 CET 2011
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Fri, 30 Dec 2011 14:45:08 +0100
+
+nublic-app-manager-welcome (0.0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Fri, 30 Dec 2011 13:52:48 +0200
