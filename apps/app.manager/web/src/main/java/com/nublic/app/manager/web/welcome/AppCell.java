@@ -48,7 +48,7 @@ public class AppCell extends Composite {
 		// Change favourite state
 		favourite = !favourite;
 		// Tell the manager
-		theUi.setFavourite(this.appId, favourite);
+		// theUi.setFavourite(this.appId, favourite);
 		this.setFavouriteImage();
 	}
 }

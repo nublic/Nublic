@@ -3,24 +3,17 @@ package com.nublic.app.manager.web.frame;
 import java.util.ArrayList;
 
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.NamedFrame;
+import com.google.gwt.user.client.ui.Frame;
 import com.nublic.app.manager.web.client.LocationWithHash;
 
-public class AppFrame extends NamedFrame {
-	
-	private static Counter counter = new Counter();
-	
-	// To distinguish between frames
-	long id;
+public class AppFrame extends Frame {	
 	// To handle Url changes
 	ArrayList<AppUrlChangeHandler> urlChangeHandlers;
 	String lastUrl;
 	String lastTitle;
 
-	public AppFrame(String name) {
-		super(name);
-		
-		id = counter.next();
+	public AppFrame() {
+		super();
 		
 		urlChangeHandlers = new ArrayList<AppUrlChangeHandler>();
 		lastUrl = "about:blank";
@@ -85,9 +78,5 @@ public class AppFrame extends NamedFrame {
 	public void forward() {
 		ExtendedFrameElement e = this.getElement().cast();
 		e.forward();
-	}
-	
-	public long getId() {
-		return this.id;
 	}
 }

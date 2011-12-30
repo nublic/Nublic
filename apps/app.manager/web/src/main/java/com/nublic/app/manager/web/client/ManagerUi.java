@@ -1,12 +1,10 @@
 package com.nublic.app.manager.web.client;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -19,9 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.manager.web.frame.AppFrame;
 import com.nublic.app.manager.web.frame.AppUrlChangeEvent;
 import com.nublic.app.manager.web.frame.AppUrlChangeHandler;
-import com.nublic.app.manager.web.frame.Counter;
-import com.nublic.app.manager.web.settings.SettingsPage;
-import com.nublic.app.manager.web.welcome.WelcomePage;
 import com.nublic.util.messages.SequenceHelper;
 
 public class ManagerUi extends Composite implements AppUrlChangeHandler {
@@ -34,22 +29,17 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	private static ManagerUiUiBinder uiBinder = GWT.create(ManagerUiUiBinder.class);
 	@UiField LayoutPanel layout;
 	@UiField TopBar navBar;
-	Widget innerWidget = null;
+	@UiField AppFrame innerFrame;
 	// Model
-	ExtendedHistory history = null;
 	HashMap<String, AppData> apps = null;
-	ClientState state = null;
-	String path = null;
 
 	interface ManagerUiUiBinder extends UiBinder<Widget, ManagerUi> {
 	}
 
 	public ManagerUi() {
 		initWidget(uiBinder.createAndBindUi(this));
-		// Initialize client state
-		this.history = new ExtendedHistory(Location.getHref());
-		this.state = ClientState.INITIAL;
-		this.path = "";
+		// Bind to URL changes
+		innerFrame.addAppUrlChangedHandler(this);
 		// Get apps from server
 		AppDataMessage msg = new AppDataMessage(this);
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
@@ -59,15 +49,8 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	
 	void loadApps(final HashMap<String, AppData> apps) {
 		this.apps = apps;
-		// Initialize set of favourites
 		for (AppData data : apps.values()) {
-			if (data.isFavourite()) {
-				addAppTab(data);
-			}
-		}
-		// Show apps in welcome page if shown
-		if (state == ClientState.WELCOME) {
-			((WelcomePage)innerWidget).showApps();
+			addAppTab(data);
 		}
 	}
 	
@@ -75,137 +58,32 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		navBar.addToPrimaryTab(data.getId(),
 				GWT.getHostPageBaseURL() + "manager/server/app-image/light/" + data.getId() + "/16",
 				data.getDefaultName(), 
-				"#" + data.getId() + "/" + data.getPath());
-	}
-
-	
-	public void setFavourite(String id, boolean favourite) {
-		AppData app = this.apps.get(id);
-		if (app.isFavourite() != favourite) {
-			FavouriteMessage msg = new FavouriteMessage(id);
-			if (favourite) {
-				addAppTab(app);
-				SequenceHelper.sendJustOne(msg, RequestBuilder.PUT);
-			} else {
-				navBar.removeFromTabs(id);
-				SequenceHelper.sendJustOne(msg, RequestBuilder.DELETE);
-			}
-			app.setFavourite(favourite);
-		}
-	}
-	
-	void setContentWidget(Widget w) {
-		if (innerWidget != null) {
-			layout.remove(innerWidget);
-		}
-		innerWidget = w;
-		innerWidget.setHeight("100%");
-		innerWidget.setWidth("100%");
-		layout.add(innerWidget);
-		layout.setWidgetTopBottom(innerWidget, 40, Unit.PX, 0, Unit.PX);
+				"#" + data.getId());
 	}
 	
 	public void go(String token) {
-		// Generate final URL
-		String current = Location.getHref();
-		ClientState newState = ClientState.fromToken(token);
 		String newHref = GWT.getHostPageBaseURL() + token;
-		long innerId = innerWidget instanceof AppFrame ? ((AppFrame)innerWidget).getId() : Counter.NOT_ALLOWED;
-		if (history.isCurrent(current) && !history.isBareNew()) {
-			/* Do nothing */
-		} else if (history.isPrevious(current)) {
-			if (newState == ClientState.FRAME && state == ClientState.FRAME) {
-				AppFrame frame = (AppFrame)innerWidget;
-				if (history.isPreviousId(innerId)) {
-					frame.back();
-				} else {
-					changeTo(newState, newHref);
-				}
-			} else {
-				changeTo(newState, newHref);
-			}
-			history.back();
-		} else if (history.isNext(current)) {
-			if (newState == ClientState.FRAME && state == ClientState.FRAME) {
-				AppFrame frame = (AppFrame)innerWidget;
-				if (history.isPreviousId(innerId)) {
-					frame.forward();
-				} else {
-					changeTo(newState, newHref);
-				}
-			} else {
-				changeTo(newState, newHref);
-			}
-			history.forward();
-		} else {
-			changeTo(newState, newHref);
-			innerId = innerWidget instanceof AppFrame ? ((AppFrame)innerWidget).getId() : Counter.NOT_ALLOWED;
-			history.go(current, innerId);
+		if (apps != null && apps.containsKey(token) && apps.get(token).getPath() != null) {
+			newHref += "/" + apps.get(token).getPath();
 		}
-		// Change tabs as needed
-		tabChange(token);
+		innerFrame.setHref(newHref);
 	}
 	
 	public void tabChange(String token) {
-		if (state == ClientState.WELCOME) {
-			// Remove elements which are not favourite
-			if (this.apps != null) {
-				ArrayList<String> toBeRemoved = new ArrayList<String>();
-				for (String appId : navBar.getElementsInPrimaryBar()) {
-					if (!this.apps.get(appId).isFavourite()) {
-						toBeRemoved.add(appId);
-					}
-				}
-				for (String appToRemove : toBeRemoved) {
-					navBar.removeFromTabs(appToRemove);
-				}
-			}
-		} else if (state == ClientState.FRAME) {
-			// Get app id
-			int slashPos = token.indexOf('/');
-			String appId = token.substring(0, slashPos);
-			if (!navBar.getElementsInPrimaryBar().contains(appId)) {
-				addAppTab(apps.get(appId));
-			}
+		int slashPos = token.indexOf('/');
+		String appId = null;
+		if (slashPos == -1) {
+			appId = token;
+		} else {
+			appId = token.substring(0, slashPos);
 		}
 		
-		if (state == ClientState.WELCOME) {
+		if (appId.equals("welcome")) {
 			// Deselect every element
 			navBar.deselectAll();
 		} else {
-			int slashPos = token.indexOf('/');
-			String appId = token.substring(0, slashPos);
 			navBar.select(appId);
 		}
-	}
-	
-	void changeTo(ClientState newState, String path) {
-		if (newState != state) {
-			setContentWidget(createWidget(newState));
-			if (newState == ClientState.FRAME) {
-				AppFrame frame = (AppFrame)innerWidget;
-				frame.setHref(path);
-			}
-			this.state = newState;
-			this.path = path;
-		}
-	}
-	
-	Widget createWidget(ClientState newState) {
-		switch(newState) {
-		case INITIAL:
-			return null;
-		case WELCOME:
-			return new WelcomePage(this);
-		case SETTINGS:
-			return new SettingsPage(this);
-		case FRAME:
-			AppFrame frame = new AppFrame("inner");
-			frame.addAppUrlChangedHandler(this);
-			frame.setStyleName(style.inner());
-			return frame;
-		}
-		return null;
 	}
 	
 	public Map<String, AppData> getApps() {
@@ -213,22 +91,21 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	}
 
 	@Override
-	public void appUrlChanged(AppUrlChangeEvent event) {
+	public void appUrlChanged(AppUrlChangeEvent event) {		
 		String path = event.getUrl().replace(GWT.getHostPageBaseURL(), "");
-		// Generate final URL
-		LocationWithHash location = new LocationWithHash(Location.getHref());
-		LocationWithHash newLocation = new LocationWithHash(location.getBase(), path);
-		String finalNewPath = newLocation.getLocation();
-		// Check in extended history
-		if (history.isCurrent(finalNewPath)) {
-			// Do nothing
-		} else if (history.isPrevious(finalNewPath)) {
-			History.back();
-		} else if (history.isNext(finalNewPath)) {
-			History.forward();
+		int slashPos = path.indexOf('/');
+		String appId = null;
+		if (slashPos == -1) {
+			appId = path;
 		} else {
-			History.newItem(path);
+			appId = path.substring(0, slashPos);
 		}
+		
+		if (!History.getToken().equals(appId)) {
+			Location.replace("#" + appId);
+		}
+		
+		tabChange(path);
 	}
 
 	@Override
