@@ -8,12 +8,15 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
+import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 
@@ -36,7 +39,7 @@ public class WelcomePage extends Composite {
 		SequenceHelper.sendJustOne(new Message() {
 			@Override
 			public String getURL() {
-				return GWT.getHostPageBaseURL() + "manager/server/user-name";
+				return LocationUtil.getHostBaseUrl() + "manager/server/user-name";
 			}
 			@Override
 			public void onSuccess(Response response) {
@@ -67,8 +70,8 @@ public class WelcomePage extends Composite {
 			for(String appId : appOrder) {
 				AppData app = apps.get(appId);
 				AppCell cell = new AppCell(appId, 
-						GWT.getHostPageBaseURL() + "manager/server/app-image/dark/" + appId + "/32",
-						app.getDefaultName(), appId + "/" + app.getPath(), app.isFavourite());
+						LocationUtil.getHostBaseUrl() + "manager/server/app-image/dark/" + appId + "/32",
+						app.getDefaultName(), LocationUtil.getHostBaseUrl() + appId + "/" + app.getPath(), app.isFavourite());
 				appGrid.add(cell);
 			}
 		}

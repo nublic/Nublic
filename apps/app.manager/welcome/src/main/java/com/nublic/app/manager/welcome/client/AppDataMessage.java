@@ -6,7 +6,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.Window.Location;
 import com.nublic.util.error.ErrorPopup;
+import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 
 public class AppDataMessage extends Message {
@@ -19,7 +21,7 @@ public class AppDataMessage extends Message {
 
 	@Override
 	public String getURL() {
-		return GWT.getHostPageBaseURL() + "manager/server/apps";
+		return LocationUtil.getHostBaseUrl() + "manager/server/apps";
 	}
 
 	@Override
