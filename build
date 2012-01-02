@@ -14,7 +14,10 @@ export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
 export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
 export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
 export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
-export MAVEN_OPTS="-Xms1536m -Xmx1536m -XX:PermSize=1024m -XX:MaxPermSize=2048m"
+export MAVEN_OPTS="-Xms1024m -Xmx1024m -XX:PermSize=1024m -XX:MaxPermSize=1024m"
+
+# Config options
+export SHOULD_CLEAN_MAVEN=0 # 1 for running 'maven clean'
 
 install_in_maven_repo() {
     ${MAVEN} install:install-file -Dfile=$1 -DgroupId=$2 \
@@ -53,17 +56,23 @@ build_deb_package() {
     echo
     echo "BUILDING .DEB FOR " $1
     cd "$1"
+    # Try to run Maven clean
+    if [ ${SHOULD_CLEAN_MAVEN} -eq 1 ]
+    then
+        ${MAVEN} clean
+    fi
+    # End trying
     dch -p -v ${DEBREVISION} Building on `date`
     ${DEBUILD} -i -us -uc -b
     exit=$?
     git checkout debian/changelog
-    if [ $exit != 0 ]
+    if [ $exit -ne 0 ]
     then
         dch -p -v ${DEBREVISION} Building on `date`
         ${DEBUILD} -i -us -uc -b
         exit=$?
         git checkout debian/changelog
-        if [ $exit != 0 ]
+        if [ $exit -ne 0 ]
         then
             echo "Error building package " $1
             exit 1
@@ -152,6 +161,8 @@ install_in_maven_repo apps/util/gwt/target/*.jar com.nublic util.gwt 0.0.1-SNAPS
 # Manager App
 build_deb_package apps/app.manager/server
 build_deb_package apps/app.manager/web
+build_deb_package apps/app.manager/welcome
+build_deb_package apps/app.manager/settings
 build_deb_package apps/app.manager
 # Browser App
 build_deb_package apps/app.browser/server

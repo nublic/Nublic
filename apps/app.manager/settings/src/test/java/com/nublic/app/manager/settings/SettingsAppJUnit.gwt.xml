@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='com.nublic.app.manager.settings.SettingsApp'/>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name='com.google.gwt.http.HTTP'/>
+  <!-- To prevent "required inherited module" error               -->
+  <inherits name="com.google.gwt.junit.JUnit"/>
+  <inherits name='com.nublic.util.GwtUtil'/>
+
+</module>
