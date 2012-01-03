@@ -63,10 +63,8 @@ import com.nublic.app.browser.web.client.UI.actions.PreviewImageAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewMusicAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewTextAction;
 import com.nublic.app.browser.web.client.UI.actions.PreviewVideoAction;
-import com.nublic.app.browser.web.client.UI.actions.SelectAllAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
-import com.nublic.app.browser.web.client.UI.actions.UnselectAllAction;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
@@ -82,6 +80,8 @@ import com.nublic.util.messages.SequenceHelper;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
+import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer, CheckedChangeHandler {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
@@ -115,6 +115,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField ListBox orderList;
 	@UiField TextBox filterBox;
 	@UiField NavigationBar navigationBar;
+	@UiField CheckBox allSelectedBox;
 	Label selectionCount = new Label();
 	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
@@ -185,8 +186,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private void initActions() {
 		actionsPanel.add(new FolderDownloadAction(this));
 		actionsPanel.add(selectionCount);
-		actionsPanel.add(new SelectAllAction(this));
-		actionsPanel.add(new UnselectAllAction(this));
+//		actionsPanel.add(new SelectAllAction(this));
+//		actionsPanel.add(new UnselectAllAction(this));
 		actionsPanel.add(new PreviewImageAction(this));
 		actionsPanel.add(new PreviewTextAction(this));
 		actionsPanel.add(new PreviewDocumentAction(this));
@@ -207,8 +208,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			public void onContextChange() {
 				if (selectedFiles.isEmpty()) {
 					selectionCount.setText("No files selected");
+					allSelectedBox.setValue(false, false);
 				} else {
 					selectionCount.setText("" + selectedFiles.size() + " files selected");
+					allSelectedBox.setValue(true, false);
 				}
 				if (clipboard.isEmpty()) {
 					clipboardCount.setText("");
@@ -540,6 +543,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			updateCentralPanel();
 		}
 	}
+	
+	// Handler for selection box
+	@UiHandler("allSelectedBox")
+	void onAllSelectedBoxValueChange(ValueChangeEvent<Boolean> event) {
+		if (allSelectedBox.getValue()) {
+			selectAllFiles();
+		} else {
+			unselectAllFiles();
+		}
+	}
 
 	// Handler for model change event
 	@Override
@@ -697,5 +710,4 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 		popUpBox.setContentWidget(newContent, current, previous, next);
 	}
-
 }

@@ -10,6 +10,9 @@
 		.horizontalmargin {
 	        margin: 10px;
 	    }
+	    .horizontalpadding {
+	        padding: 10px;
+	    }
 	    .margintop {
             margin-top: 5px;
         }
@@ -39,7 +42,7 @@
 	    }
 	    .middle {
 	        border-radius: 0 0 0 0 !important;
-	    }
+		}
 	    .showinline {
 	        display: inline;
 	    }
@@ -50,12 +53,16 @@
 	<g:DockLayoutPanel>
 		<!-- Panel for the navigator tree -->
 	   	<g:west size="176">
-	   		<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/>
+<!-- 		   	<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/> -->
+	   		<g:SimplePanel addStyleNames="{style.horizontalpadding}">
+	   			<g:Tree ui:field="treeView"/>
+	   		</g:SimplePanel>
 	   	</g:west>
 	   	
 	   	<!-- Actions panel -->
 	   	<g:east size="176">
-	   		<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}">
+<!-- 	   		<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}"> -->
+			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
 	   			<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Actions</h3></div></g:HTMLPanel>
 	   		</g:FlowPanel>
 	   	</g:east>
@@ -72,31 +79,41 @@
 	   					</g:north>
 	   					<g:east size="181">
 	   					    <g:HTMLPanel addStyleNames="{style.margintop}">
-	   					      <div class="input">
-	   					        <div class="input-prepend">
-	   					          <span class="add-on"><g:Image url="images/filter.png"/></span>
-	   					          <g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" />
-	   					        </div>
-	   					      </div>
-	   					    </g:HTMLPanel>
+		   						<div class="input">
+		   					    	<div class="input-prepend">
+		   					    		<span class="add-on"><g:Image url="images/filter.png"/></span>
+		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" />
+		   					   		</div>
+		   					    </div>
+		   					</g:HTMLPanel>
 		   				</g:east>
-		   				<g:west size="251">
-		   					    <g:HTMLPanel addStyleNames="{style.margintop} {style.marginleft}">
-                                  <div class="input">
-                                    <div class="input-prepend">
-                                      <span class="add-on">Order:</span>
-                                      <g:ListBox ui:field="orderList" addStyleNames="{style.topelements} {style.middle}" visibleItemCount='1' />
-                                      <span class="add-on {style.appended}">
-                                        <g:PushButton ui:field="upButton" addStyleNames="{style.nobackground} {style.showinline}">
-                                          <g:upFace image="{res.up}"/>
-                                        </g:PushButton>
-                                        <g:PushButton ui:field="downButton" addStyleNames="{style.nobackground} {style.showinline}">
-                                          <g:upFace image="{res.down}"/>
-                                        </g:PushButton>
-                                      </span>
-                                    </div>
-                                  </div>
-                                </g:HTMLPanel>
+		   				<g:west size="280">
+							<g:AbsolutePanel width="270px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
+								<!-- Check box to toggle selection to all or none -->
+								<g:at left='0' top='0'>
+		   							<g:CheckBox ui:field="allSelectedBox" width="10px"/>
+		   						</g:at>
+		   						<!-- Ordering "panel" -->
+		   						<g:at left='20' top='0'>
+<!-- 		   					    <g:HTMLPanel addStyleNames="{style.margintop} {style.marginleft}"> -->
+									<g:HTMLPanel>
+	                                  <div class="input">
+	                                    <div class="input-prepend">
+	                                      <span class="add-on">Order:</span>
+	                                      <g:ListBox ui:field="orderList" addStyleNames="{style.topelements} {style.middle}" visibleItemCount='1' />
+	                                      <span class="add-on {style.appended}">
+	                                        <g:PushButton ui:field="upButton" addStyleNames="{style.nobackground} {style.showinline}">
+	                                          <g:upFace image="{res.up}"/>
+	                                        </g:PushButton>
+	                                        <g:PushButton ui:field="downButton" addStyleNames="{style.nobackground} {style.showinline}">
+	                                          <g:upFace image="{res.down}"/>
+	                                        </g:PushButton>
+	                                      </span>
+	                                    </div>
+	                                  </div>
+	                                </g:HTMLPanel>
+                                </g:at>
+                        	</g:AbsolutePanel>
 		   				</g:west>
 	   				</g:DockLayoutPanel>
 	   			</g:north>
