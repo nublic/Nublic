@@ -23,6 +23,7 @@ public class Constants {
 	public final static String COMPRESSED_TYPE = "zip";
 	public final static String WINDOW_PRETITLE = "Browser - ";
 	public final static String WINDOW_HOME_TITLE = "Home";
+	public final static String CSS_SELECTED = "selected";
 	
 	public final static String KIND_MIRROR = "mirror";
 	public final static String KIND_SYNCED = "synced";

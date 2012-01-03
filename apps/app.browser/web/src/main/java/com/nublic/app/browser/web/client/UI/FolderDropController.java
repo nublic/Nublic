@@ -2,6 +2,7 @@ package com.nublic.app.browser.web.client.UI;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 
 public class FolderDropController extends AbstractDropController {
@@ -21,14 +22,16 @@ public class FolderDropController extends AbstractDropController {
 //		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), dropTarget.getPath(), stateProvider.getDevicesManager());
 	}
 
-	// TODO: change style when mouse is over..
-//	@Override
-//	public void onEnter(DragContext context) {
-//	}
+	// TODO: Mirar qué tal queda esto... recompilar. Mirar barra de ordenar en Chrome
+	@Override
+	public void onEnter(DragContext context) {
+		dropTarget.addStyleName(Constants.CSS_SELECTED);
+	}
 
-//	@Override
-//	public void onLeave(DragContext context) {
-//	}
+	@Override
+	public void onLeave(DragContext context) {
+		dropTarget.removeStyleName(Constants.CSS_SELECTED);
+	}
 	
 	
 

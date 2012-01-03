@@ -87,7 +87,7 @@
 		   					    </div>
 		   					</g:HTMLPanel>
 		   				</g:east>
-		   				<g:west size="280">
+		   				<g:west size="285">
 							<g:AbsolutePanel width="270px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
 								<!-- Check box to toggle selection to all or none -->
 								<g:at left='0' top='0'>
