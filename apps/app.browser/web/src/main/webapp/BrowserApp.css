@@ -25,6 +25,13 @@ body, html {
   width: 400px;
 }
 
+.gwt-Label-h3 {
+  color: #404040;
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 28px;
+}
+
 .dialogVPanel {
   margin: 5px;
 }
@@ -34,8 +41,9 @@ body, html {
 }
 
 .selected {
-  background-color: gray;
-  font-weight: bold;
+  background-color: #DDDDDD;
+  font-weight: bold !important;
+  opacity: 0.5;
 }
 
 /** Set ids using widget.getElement().setId("idOfElement") */

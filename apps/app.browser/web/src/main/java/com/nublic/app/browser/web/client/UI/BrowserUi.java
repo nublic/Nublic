@@ -209,9 +209,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				if (selectedFiles.isEmpty()) {
 					selectionCount.setText("No files selected");
 					allSelectedBox.setValue(false, false);
+					allSelectedBox.setTitle("Select all");
+					
+//					selectionNameLabel.setText(text);
 				} else {
 					selectionCount.setText("" + selectedFiles.size() + " files selected");
 					allSelectedBox.setValue(true, false);
+					allSelectedBox.setTitle("Unselect all");
+					
+//					selectionNameLabel.setText(text);
 				}
 				if (clipboard.isEmpty()) {
 					clipboardCount.setText("");
@@ -548,8 +554,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiHandler("allSelectedBox")
 	void onAllSelectedBoxValueChange(ValueChangeEvent<Boolean> event) {
 		if (allSelectedBox.getValue()) {
+			allSelectedBox.setTitle("Unselect all");
 			selectAllFiles();
 		} else {
+			allSelectedBox.setTitle("Select all");
 			unselectAllFiles();
 		}
 	}

@@ -53,7 +53,7 @@
 	<g:DockLayoutPanel>
 		<!-- Panel for the navigator tree -->
 	   	<g:west size="176">
-<!-- 		   	<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/> -->
+<!-- 		<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/> -->
 	   		<g:SimplePanel addStyleNames="{style.horizontalpadding}">
 	   			<g:Tree ui:field="treeView"/>
 	   		</g:SimplePanel>
@@ -61,8 +61,9 @@
 	   	
 	   	<!-- Actions panel -->
 	   	<g:east size="176">
-<!-- 	   		<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}"> -->
+<!-- 	   	<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}"> -->
 			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
+				<my:SelectionDetails></my:SelectionDetails>
 	   			<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Actions</h3></div></g:HTMLPanel>
 	   		</g:FlowPanel>
 	   	</g:east>
@@ -88,15 +89,16 @@
 		   					</g:HTMLPanel>
 		   				</g:east>
 		   				<g:west size="285">
-							<g:AbsolutePanel width="270px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
+							<g:AbsolutePanel width="285px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
 								<!-- Check box to toggle selection to all or none -->
 								<g:at left='0' top='0'>
-		   							<g:CheckBox ui:field="allSelectedBox" width="10px"/>
+		   							<g:CheckBox ui:field="allSelectedBox" width="10px" title="Select all"/>
 		   						</g:at>
 		   						<!-- Ordering "panel" -->
 		   						<g:at left='20' top='0'>
 <!-- 		   					    <g:HTMLPanel addStyleNames="{style.margintop} {style.marginleft}"> -->
-									<g:HTMLPanel>
+<!--								<g:HTMLPanel> -->
+									<g:HTMLPanel width="246px">
 	                                  <div class="input">
 	                                    <div class="input-prepend">
 	                                      <span class="add-on">Order:</span>
