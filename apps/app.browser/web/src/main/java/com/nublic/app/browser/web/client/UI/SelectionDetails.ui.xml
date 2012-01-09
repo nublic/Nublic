@@ -7,5 +7,6 @@
 	<g:FlowPanel>
 		<g:Label ui:field="selectionNameLabel" text="Folder" addStyleNames="gwt-Label-h3"/>
 		<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"></div></g:HTMLPanel>
+		<g:SimplePanel width="96px" height="96px" ui:field="thumbnailPanel"></g:SimplePanel>
 	</g:FlowPanel>
 </ui:UiBinder> 

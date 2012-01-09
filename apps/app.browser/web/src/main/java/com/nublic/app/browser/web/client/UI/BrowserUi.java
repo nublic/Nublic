@@ -116,6 +116,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField TextBox filterBox;
 	@UiField NavigationBar navigationBar;
 	@UiField CheckBox allSelectedBox;
+	@UiField SelectionDetails infoWidget;
 	Label selectionCount = new Label();
 	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
@@ -210,14 +211,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					selectionCount.setText("No files selected");
 					allSelectedBox.setValue(false, false);
 					allSelectedBox.setTitle("Select all");
-					
-//					selectionNameLabel.setText(text);
+					infoWidget.changeInfo(getShowingFolder().getName(), getShowingFiles());
 				} else {
 					selectionCount.setText("" + selectedFiles.size() + " files selected");
 					allSelectedBox.setValue(true, false);
 					allSelectedBox.setTitle("Unselect all");
-					
-//					selectionNameLabel.setText(text);
+					infoWidget.changeInfo(selectedFiles);
 				}
 				if (clipboard.isEmpty()) {
 					clipboardCount.setText("");

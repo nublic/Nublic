@@ -52,6 +52,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 //	String realPath;
 	boolean mouseOver = false;
 	boolean hasPreview = false;
+	Image fileImage;
 	Hyperlink fileThumbnail;
 	Image altThumbnail;
 	Hyperlink fileName;
@@ -110,7 +111,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			fileName.getElement().addClassName(style.ellipcenter());
 			
 			// Add the image thumbnail to the hypertext widget
-			Image fileImage = new Image(url);
+			fileImage = new Image(url);
 			fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
 			
 			// Set up name
@@ -175,6 +176,30 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	
 	public boolean isWritable() {
 		return node.isWritable();
+	}
+	
+	public String getPath() {
+		return path;
+	}
+	
+	public String getName() {
+		return node.getName(); 
+	}
+	
+	public double getLastUpdate() {
+		return node.getLastUpdate();
+	}
+	
+	public double getSize() {
+		return node.getSize();
+	}
+	
+	public Image getImage() {
+		if (hasPreview) {
+			return fileImage;
+		} else {
+			return altThumbnail;
+		}
 	}
 
 	private void setURL(String viewType) {
@@ -269,14 +294,6 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		selectedBox.setValue(checked);
 	}
-	
-	public String getPath() {
-		return path;
-	}
-	
-//	public String getRealPath() {
-//		return realPath;
-//	}
 	
 	// To proper handling of FileWidgets lists
 	@Override
