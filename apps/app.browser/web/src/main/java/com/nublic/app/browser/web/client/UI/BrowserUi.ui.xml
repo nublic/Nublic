@@ -19,6 +19,9 @@
         .marginleft {
             margin-left: 5px;
         }
+        .marginbottom {
+			margin-bottom: 5px;
+		}
 		.margin {
 			margin: 5px;
 		}
@@ -63,7 +66,7 @@
 	   	<g:east size="176">
 <!-- 	   	<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}"> -->
 			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
-				<my:SelectionDetails ui:field="infoWidget"/>
+				<my:SelectionDetails ui:field="infoWidget" addStyleNames="{style.marginbottom}"/>
 	   			<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Actions</h3></div></g:HTMLPanel>
 	   		</g:FlowPanel>
 	   	</g:east>

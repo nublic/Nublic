@@ -1,10 +1,15 @@
 package com.nublic.app.browser.web.client.UI;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -13,6 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.model.FileNode;
 
 public class SelectionDetails extends Composite {
@@ -22,7 +28,8 @@ public class SelectionDetails extends Composite {
 	@UiField InfoStyle style;
 	@UiField Label selectionNameLabel;
 	@UiField VerticalPanel thumbnailPanel;
-	@UiField Label sizeLabel;
+	@UiField Label info1Label;
+	@UiField Label info2Label;
 	@UiField Label dateLabel;
 	
 	public SelectionDetails() {
@@ -43,27 +50,39 @@ public class SelectionDetails extends Composite {
 				selectionNameLabel.setText(fw.getName());
 				selectionNameLabel.setTitle(fw.getName());
 				setImage(fw.getImage().getUrl());
-				double size = fw.getMime().equals(Constants.FOLDER_MIME) ? 0 : fw.getSize(); // To make size of folders 0
-				sizeLabel.setText(getFormatedSize(size));
-				dateLabel.setText("" + fw.getLastUpdate());
+				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
+					info1Label.setText("");
+					info2Label.setText("");
+				} else {
+					info1Label.setText(getFormatedSize(fw.getSize()));
+					info2Label.setText("");
+				}
+				dateLabel.setText(getFormatedDate(fw.getLastUpdate()));
 			}
 		} else {
 			selectionNameLabel.setText(newSelection.size() + " items");
 			selectionNameLabel.setTitle(newSelection.size() + " items");
-			setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
+			setImage(Resources.INSTANCE.multipleSelection());
+			//setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
 			double size = 0;
 			double date = 0;
+			int foldersNumber = 0;
+			int filesNumber = 0;
 			// Go through all selected items to show their info
 			for (Widget w : newSelection) {
 				FileWidget fw = ((FileWidget)w);
-				double addSize = fw.getMime().equals(Constants.FOLDER_MIME) ? 0 : fw.getSize();
-				size += addSize;
+				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
+					foldersNumber++;
+				} else {
+					filesNumber++;
+					size += fw.getSize();
+				}
 				if (fw.getLastUpdate() > date) {
 					date = fw.getLastUpdate();
 				}
 			}
-			sizeLabel.setText(getFormatedSize(size));
-			dateLabel.setText("" + date);
+			setFoldersAndFilesLabels(foldersNumber, filesNumber, size);
+			dateLabel.setText(getFormatedDate(date));
 		}
 	}
 
@@ -74,19 +93,57 @@ public class SelectionDetails extends Composite {
 		setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
 		double size = 0;
 		double date = 0;
+		int foldersNumber = 0;
+		int filesNumber = 0;
 		for (FileNode fn : inFolder) {
-			double addSize = fn.getMime().equals(Constants.FOLDER_MIME) ? 0 : fn.getSize();
-			size += addSize;
+			if (fn.getMime().equals(Constants.FOLDER_MIME)) {
+				foldersNumber++;
+			} else {
+				filesNumber++;
+				size += fn.getSize();
+			}
 			if (fn.getLastUpdate() > date) {
 				date = fn.getLastUpdate();
 			}
 		}
-		sizeLabel.setText(getFormatedSize(size));
-		dateLabel.setText("" + date);
+		setFoldersAndFilesLabels(foldersNumber, filesNumber, size);
+		dateLabel.setText(getFormatedDate(date));
 	}
 	
+	private void setFoldersAndFilesLabels(int foldersNumber, int filesNumber, double size) {
+		// m folders
+		// n files (k Kb)
+		if (foldersNumber > 0) {
+			StringBuilder foldersString = new StringBuilder();
+			foldersString.append(foldersNumber);
+			foldersString.append(" folders");
+			info1Label.setText(foldersString.toString());
+		} else {
+			info1Label.setText("");
+		}
+		
+		if (filesNumber > 0) {
+			StringBuilder filesString = new StringBuilder();
+			filesString.append(filesNumber);
+			filesString.append(" files (");
+			filesString.append(getFormatedSize(size));
+			filesString.append(")");
+			info2Label.setText(filesString.toString());
+		} else {
+			info2Label.setText("");
+		}
+		
+	}
+
 	private void setImage(String url) {
-		Image imageToShow = new Image(url);
+		setImage(new Image(url));
+	}
+	
+	private void setImage(ImageResource res) {
+		setImage(new Image(res));
+	}
+	
+	private void setImage(Image imageToShow) {
 		imageToShow.getElement().addClassName(style.center());
 		thumbnailPanel.clear();
 		thumbnailPanel.add(imageToShow);
@@ -130,19 +187,25 @@ public class SelectionDetails extends Composite {
 	
 	// Since String.format doesn't work for gwt...
 	public static StringBuilder getFormatedDouble(double number, int decimals) {
-		StringBuilder ret = new StringBuilder();
-		ret.append(number);
-		int index = ret.indexOf(".");
-		if (index != -1) {
-			if (decimals == 0) {
-				ret.setLength(index);
-			} else {
-				if (ret.length() > index + 1 + decimals) {
-					ret.setLength(index + 1 + decimals);
-				}
-			}
-		}
-		return ret;
+//		StringBuilder ret = new StringBuilder();
+//		ret.append(number);
+//		int index = ret.indexOf(".");
+//		if (index != -1) {
+//			if (decimals == 0) {
+//				ret.setLength(index);
+//			} else {
+//				if (ret.length() > index + 1 + decimals) {
+//					ret.setLength(index + 1 + decimals);
+//				}
+//			}
+//		}
+//		return ret;
+		return new StringBuilder(NumberFormat.getFormat("0.##").format(number));
+	}
+	
+	public static String getFormatedDate(double ddate) {
+		Date date = new Date((long) ddate);
+		return "Last date: " + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
 	}
 
 }

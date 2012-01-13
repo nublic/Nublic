@@ -19,7 +19,8 @@
 		<g:Label ui:field="selectionNameLabel" text="Folder" addStyleNames="gwt-Label-h3 {style.ellipsize}"/>
 		<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"></div></g:HTMLPanel>
 		<g:VerticalPanel ui:field="thumbnailPanel" width="156px" height="96px" verticalAlignment="middle" horizontalAlignment="center"/>
-		<g:Label ui:field="sizeLabel"/>
+		<g:Label ui:field="info1Label"/>
+		<g:Label ui:field="info2Label"/>
 		<g:Label ui:field="dateLabel"/>
 	</g:FlowPanel>
 </ui:UiBinder> 
