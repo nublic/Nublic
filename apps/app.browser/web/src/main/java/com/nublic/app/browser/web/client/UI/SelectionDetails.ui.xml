@@ -1,12 +1,25 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>	
+	<ui:style type='com.nublic.app.browser.web.client.UI.SelectionDetails.InfoStyle'>
+		.ellipsize {
+			white-space: nowrap;
+			width: 156px;	/* 176 - 20 padding */		/* IE6 needs any width */
+			overflow: hidden;							/* "overflow" value must be different from "visible" */   
+			-o-text-overflow: ellipsis;					/* Opera 9-10 */  
+			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
+			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
+		}
+		.center {
+			text-align: center;
+		}
 	</ui:style>
 	
 	<g:FlowPanel>
-		<g:Label ui:field="selectionNameLabel" text="Folder" addStyleNames="gwt-Label-h3"/>
+		<g:Label ui:field="selectionNameLabel" text="Folder" addStyleNames="gwt-Label-h3 {style.ellipsize}"/>
 		<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"></div></g:HTMLPanel>
-		<g:SimplePanel width="96px" height="96px" ui:field="thumbnailPanel"></g:SimplePanel>
+		<g:VerticalPanel ui:field="thumbnailPanel" width="156px" height="96px" verticalAlignment="middle" horizontalAlignment="center"/>
+		<g:Label ui:field="sizeLabel"/>
+		<g:Label ui:field="dateLabel"/>
 	</g:FlowPanel>
 </ui:UiBinder> 
