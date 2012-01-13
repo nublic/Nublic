@@ -49,6 +49,7 @@ public class SelectionDetails extends Composite {
 				FileWidget fw = ((FileWidget)w);
 				selectionNameLabel.setText(fw.getName());
 				selectionNameLabel.setTitle(fw.getName());
+//				setImage(fw.getImage()); // This doesn't create a new Image and so the original gets moved
 				setImage(fw.getImage().getUrl());
 				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
 					info1Label.setText("");
@@ -205,7 +206,7 @@ public class SelectionDetails extends Composite {
 	
 	public static String getFormatedDate(double ddate) {
 		Date date = new Date((long) ddate);
-		return "Last date: " + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
+		return "Last modified: " + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
 	}
 
 }

@@ -10,7 +10,7 @@ import com.nublic.util.messages.PostRedirectHelper;
 public class SetDownloadAction extends ActionWidget {
 
 	public SetDownloadAction(BrowserUi stateProvider) {
-		super("images/download.png", "Download selected files", stateProvider);
+		super("images/download.png", "Download as zip", stateProvider);
 	}
 
 	@Override

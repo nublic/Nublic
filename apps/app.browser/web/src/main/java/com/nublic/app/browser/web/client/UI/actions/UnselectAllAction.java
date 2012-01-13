@@ -2,7 +2,6 @@ package com.nublic.app.browser.web.client.UI.actions;
 
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 
-@Deprecated
 public class UnselectAllAction extends ActionWidget {
 
 	public UnselectAllAction(BrowserUi stateProvider) {

@@ -51,16 +51,16 @@ public class DeleteAction extends ActionWidget {
 		// Check if any of the selected files is not writable (we won't allow cut in that case)
 		for (Widget w : selected) {
 			if (!((FileWidget) w).isWritable()) {
-				return Availability.HIDDEN;
+				return Availability.UNCLICKABLE;
 			}
 		}
 
 		if (selected.isEmpty()) {
 			setExtraInfo(null);
-			return Availability.UNCLICKABLE;
+			return Availability.HIDDEN;
 		} else {
 			// To give feedback on the number of selected files to delete
-			setExtraInfo(String.valueOf(selected.size()));
+//			setExtraInfo(String.valueOf(selected.size()));
 			return Availability.AVAILABLE;
 		}
 	}

@@ -58,16 +58,22 @@ public class PasteAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		FolderNode n = stateProvider.getShowingFolder();
-		if (n != null && n.isWritable()) {
+		if (stateProvider.getSelectedFiles().isEmpty()) {
+			FolderNode n = stateProvider.getShowingFolder();
 			Set<Widget> clipboard = stateProvider.getClipboard();
-			if (clipboard.isEmpty()) {
-				setExtraInfo(null);
-				return Availability.UNCLICKABLE;
+			if (n != null && n.isWritable()) {
+				if (clipboard.isEmpty()) {
+					setExtraInfo(null);
+					return Availability.UNCLICKABLE;
+				} else {
+					// To give feedback on the number of selected files to paste
+					setExtraInfo(String.valueOf(clipboard.size()));
+					return Availability.AVAILABLE;
+				}
 			} else {
-				// To give feedback on the number of selected files to paste
-				setExtraInfo(String.valueOf(clipboard.size()));
-				return Availability.AVAILABLE;
+				String size = clipboard.isEmpty() ? null : String.valueOf(clipboard.size());
+				setExtraInfo(size);
+				return Availability.UNCLICKABLE;
 			}
 		} else {
 			return Availability.HIDDEN;

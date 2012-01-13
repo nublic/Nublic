@@ -7,7 +7,7 @@ import com.nublic.app.browser.web.client.UI.BrowserUi;
 public class FolderDownloadAction extends ActionWidget {
 
 	public FolderDownloadAction(BrowserUi stateProvider) {
-		super("images/folder_download.png", "Download the whole folder", stateProvider);
+		super("images/folder_download.png", "Download folder as zip", stateProvider);
 	}
 
 	@Override
@@ -19,11 +19,11 @@ public class FolderDownloadAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-//		if (stateProvider.getPath()) {
-//			// TODO: some condition on folders which content cannot be downloadable	
-//		} else {
+		if (stateProvider.getSelectedFiles().isEmpty()) {
 			return Availability.AVAILABLE;
-//		}
+		} else {
+			return Availability.HIDDEN;
+		}
 	}
 
 }

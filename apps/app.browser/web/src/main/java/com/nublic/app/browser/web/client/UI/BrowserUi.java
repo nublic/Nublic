@@ -30,6 +30,7 @@ import com.google.gwt.event.logical.shared.OpenEvent;
 import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -38,11 +39,11 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -52,17 +53,11 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
-import com.nublic.app.browser.web.client.UI.actions.ClearClipboardAction;
 import com.nublic.app.browser.web.client.UI.actions.CopyAction;
 import com.nublic.app.browser.web.client.UI.actions.CutAction;
 import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
-import com.nublic.app.browser.web.client.UI.actions.PreviewDocumentAction;
-import com.nublic.app.browser.web.client.UI.actions.PreviewImageAction;
-import com.nublic.app.browser.web.client.UI.actions.PreviewMusicAction;
-import com.nublic.app.browser.web.client.UI.actions.PreviewTextAction;
-import com.nublic.app.browser.web.client.UI.actions.PreviewVideoAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -80,8 +75,6 @@ import com.nublic.util.messages.SequenceHelper;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
-import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
 public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer, CheckedChangeHandler {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
@@ -117,8 +110,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField NavigationBar navigationBar;
 	@UiField CheckBox allSelectedBox;
 	@UiField SelectionDetails infoWidget;
-	Label selectionCount = new Label();
-	Label clipboardCount = new Label();
+//	Label selectionCount = new Label();
+//	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -186,43 +179,43 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	private void initActions() {
 		actionsPanel.add(new FolderDownloadAction(this));
-		actionsPanel.add(selectionCount);
+//		actionsPanel.add(selectionCount);
 //		actionsPanel.add(new SelectAllAction(this));
 //		actionsPanel.add(new UnselectAllAction(this));
-		actionsPanel.add(new PreviewImageAction(this));
-		actionsPanel.add(new PreviewTextAction(this));
-		actionsPanel.add(new PreviewDocumentAction(this));
-		actionsPanel.add(new PreviewMusicAction(this));
-		actionsPanel.add(new PreviewVideoAction(this));
+//		actionsPanel.add(new PreviewImageAction(this));
+//		actionsPanel.add(new PreviewTextAction(this));
+//		actionsPanel.add(new PreviewDocumentAction(this));
+//		actionsPanel.add(new PreviewMusicAction(this));
+//		actionsPanel.add(new PreviewVideoAction(this));
 		actionsPanel.add(new SingleDownloadAction(this));
 		actionsPanel.add(new SetDownloadAction(this));
-		actionsPanel.add(new CopyAction(this));
 		actionsPanel.add(new CutAction(this));
+		actionsPanel.add(new CopyAction(this));
 		actionsPanel.add(new DeleteAction(this));
-		actionsPanel.add(clipboardCount);
+//		actionsPanel.add(clipboardCount);
 		actionsPanel.add(new PasteAction(this));
-		actionsPanel.add(new ClearClipboardAction(this));
+//		actionsPanel.add(new ClearClipboardAction(this));
 		
 		// To give feedback to the user about what is the state of the browser
 		addContextChangeHandler(new ContextChangeHandler() {
 			@Override
 			public void onContextChange() {
 				if (selectedFiles.isEmpty()) {
-					selectionCount.setText("No files selected");
+//					selectionCount.setText("No files selected");
 					allSelectedBox.setValue(false, false);
 					allSelectedBox.setTitle("Select all");
 					infoWidget.changeInfo(getShowingFolder().getName(), getShowingFiles());
 				} else {
-					selectionCount.setText("" + selectedFiles.size() + " files selected");
+//					selectionCount.setText("" + selectedFiles.size() + " files selected");
 					allSelectedBox.setValue(true, false);
 					allSelectedBox.setTitle("Unselect all");
 					infoWidget.changeInfo(selectedFiles);
 				}
-				if (clipboard.isEmpty()) {
-					clipboardCount.setText("");
-				} else {
-					clipboardCount.setText("" + clipboard.size() + " files in the clipboard");
-				}
+//				if (clipboard.isEmpty()) {
+//					clipboardCount.setText("");
+//				} else {
+//					clipboardCount.setText("" + clipboard.size() + " files in the clipboard");
+//				}
 			}
 		});
 	}

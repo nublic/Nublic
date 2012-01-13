@@ -19,14 +19,13 @@ public class CopyAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-		// TODO: not permit copy depending on the place.. ? (ex: don't allow to copy a whole computer)
 		Set<Widget> selected = stateProvider.getSelectedFiles();
 		if (selected.isEmpty()) {
 			setExtraInfo(null);
-			return Availability.UNCLICKABLE;
+			return Availability.HIDDEN;
 		} else {
 			// To give feedback on the number of selected files to copy
-			setExtraInfo(String.valueOf(selected.size()));
+//			setExtraInfo(String.valueOf(selected.size()));
 			return Availability.AVAILABLE;
 		}
 	}
