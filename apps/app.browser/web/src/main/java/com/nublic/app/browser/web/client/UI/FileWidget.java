@@ -49,7 +49,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	FileNode node;
 	String path;
-//	String realPath;
+	String url = null;
 	boolean mouseOver = false;
 	boolean hasPreview = false;
 	Image fileImage;
@@ -208,11 +208,15 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	private void setURL(String viewType) {
 //		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + realPath;
-		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + path;
+		url = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + path;
 		if (fileThumbnail != null && fileName != null) {
-			fileThumbnail.setTargetHistoryToken(target);
-			fileName.setTargetHistoryToken(target);
+			fileThumbnail.setTargetHistoryToken(url);
+			fileName.setTargetHistoryToken(url);
 		}
+	}
+	
+	public String getURL() {
+		return url;
 	}
 	
 	@UiHandler("downloadButton")

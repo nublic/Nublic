@@ -13,6 +13,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -50,7 +51,12 @@ public class SelectionDetails extends Composite {
 				selectionNameLabel.setText(fw.getName());
 				selectionNameLabel.setTitle(fw.getName());
 //				setImage(fw.getImage()); // This doesn't create a new Image and so the original gets moved
-				setImage(fw.getImage().getUrl());
+				String onClickURL = fw.getURL();
+				if (onClickURL == null) {
+					setImage(fw.getImage().getUrl());
+				} else {
+					setHyperLink(fw.getImage().getUrl(), onClickURL);
+				}
 				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
 					info1Label.setText("");
 					info2Label.setText("");
@@ -150,44 +156,53 @@ public class SelectionDetails extends Composite {
 		thumbnailPanel.add(imageToShow);
 	}
 	
+	private void setHyperLink(String imageUrl, String linkUrl) {
+		Image imageToShow = new Image(imageUrl);
+		imageToShow.getElement().addClassName(style.center());
+		Hyperlink link = new Hyperlink("", linkUrl);
+		link.getElement().getChild(0).appendChild(imageToShow.getElement()); 
+		thumbnailPanel.clear();
+		thumbnailPanel.add(link);
+	}
+	
 	// To get the String representing the size in a readable way
 	public static String getFormatedSize(double size) {
 		if (size < Constants.MAX_SHOWING_SIZE) {
 			// return String.format("%.2f Bytes", size); // not supported in gwt yet...
-			StringBuilder ret = getFormatedDouble(size, 0);
+			StringBuilder ret = getFormatedDouble(size);
 			ret.append(" Bytes");
 			return ret.toString();
 		}
 		size /= 1024;
 		if (size < Constants.MAX_SHOWING_SIZE) {
 			// return String.format("%.2f Kb", size);
-			StringBuilder ret = getFormatedDouble(size, 2);
+			StringBuilder ret = getFormatedDouble(size);
 			ret.append(" Kb");
 			return ret.toString();
 		}
 		size /= 1024;
 		if (size < Constants.MAX_SHOWING_SIZE) {
 			// return String.format("%.2f Mb", size);
-			StringBuilder ret = getFormatedDouble(size, 2);
+			StringBuilder ret = getFormatedDouble(size);
 			ret.append(" Mb");
 			return ret.toString();
 		}
 		size /= 1024;
 		if (size < Constants.MAX_SHOWING_SIZE) {
 			// return String.format("%.2f Gb", size);
-			StringBuilder ret = getFormatedDouble(size, 2);
+			StringBuilder ret = getFormatedDouble(size);
 			ret.append(" Gb");
 			return ret.toString();
 		}
 		size /= 1024;
 		// return String.format("%.2f Tb", size);
-		StringBuilder ret = getFormatedDouble(size, 2);
+		StringBuilder ret = getFormatedDouble(size);
 		ret.append(" Tb");
 		return ret.toString();
 	}
 	
 	// Since String.format doesn't work for gwt...
-	public static StringBuilder getFormatedDouble(double number, int decimals) {
+	public static StringBuilder getFormatedDouble(double number) {
 //		StringBuilder ret = new StringBuilder();
 //		ret.append(number);
 //		int index = ret.indexOf(".");
