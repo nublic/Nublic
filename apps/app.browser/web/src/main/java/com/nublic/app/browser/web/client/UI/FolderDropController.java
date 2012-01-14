@@ -22,7 +22,6 @@ public class FolderDropController extends AbstractDropController {
 //		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), dropTarget.getPath(), stateProvider.getDevicesManager());
 	}
 
-	// TODO: Mirar qué tal queda esto... recompilar. Mirar barra de ordenar en Chrome
 	@Override
 	public void onEnter(DragContext context) {
 		dropTarget.addStyleName(Constants.CSS_SELECTED);

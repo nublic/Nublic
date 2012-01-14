@@ -24,4 +24,14 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/multiple-selection.png")
 	ImageResource multipleSelection();
+	
+	@Source("images/paste.png")
+	ImageResource paste();
+	
+	@Source("images/addfile.png")
+	ImageResource addfile();
+	
+	@Source("images/newfolder.png")
+	ImageResource newfolder();
+	
 }

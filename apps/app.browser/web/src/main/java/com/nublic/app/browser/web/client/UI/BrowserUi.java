@@ -103,13 +103,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField FlowPanel centralPanel;
 	@UiField FlowPanel actionsPanel;
 	@UiField(provided=true) Tree treeView;
-	@UiField PushButton upButton;
-	@UiField PushButton downButton;
 	@UiField ListBox orderList;
 	@UiField TextBox filterBox;
 	@UiField NavigationBar navigationBar;
 	@UiField CheckBox allSelectedBox;
 	@UiField SelectionDetails infoWidget;
+	@UiField PushButton upButton;
+	@UiField PushButton downButton;
+	@UiField PushButton newFolderTopButton;
+	@UiField PushButton addFileTopButton;
+	@UiField PushButton pasteTopButton;
 //	Label selectionCount = new Label();
 //	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
@@ -148,6 +151,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 		});
 		
+		// Unmark as available newFolder and addFile buttons TODO: implement newFolder and addFile
+		newFolderTopButton.setEnabled(false);
+		addFileTopButton.setEnabled(false);
+		
 		// Set the properties of our popUpDialog. Should start empty, hidden, ...
 		popUpBox = new FixedPopup(true, true); // auto-hide, modal
 
@@ -178,6 +185,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	private void initActions() {
+		// TODO: pass this to .xml
 		actionsPanel.add(new FolderDownloadAction(this));
 //		actionsPanel.add(selectionCount);
 //		actionsPanel.add(new SelectAllAction(this));

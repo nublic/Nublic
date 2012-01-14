@@ -43,6 +43,9 @@
 	        float: right !important;
 	        right: 5px;
 	    }
+	    .buttonpanel {
+	        border-radius: 3px 3px 3px 3px !important;
+	    }
 	    .middle {
 	        border-radius: 0 0 0 0 !important;
 		}
@@ -91,16 +94,22 @@
 		   					    </div>
 		   					</g:HTMLPanel>
 		   				</g:east>
-		   				<g:west size="285">
-							<g:AbsolutePanel width="285px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
+		   				<g:west size="370">
+							<g:AbsolutePanel width="350px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
 								<!-- Check box to toggle selection to all or none -->
 								<g:at left='0' top='0'>
-		   							<g:CheckBox ui:field="allSelectedBox" width="10px" title="Select all"/>
+									<g:HTMLPanel width="20px">
+									  <div class="input">
+	                                    <div class="input-prepend">
+	                                      <span class="add-on {style.buttonpanel}">
+		   								  	<g:CheckBox ui:field="allSelectedBox" width="10px" title="Select all"/>
+		   								  </span>
+		   								</div>
+		   							  </div>
+		   							</g:HTMLPanel>
 		   						</g:at>
 		   						<!-- Ordering "panel" -->
-		   						<g:at left='20' top='0'>
-<!-- 		   					    <g:HTMLPanel addStyleNames="{style.margintop} {style.marginleft}"> -->
-<!--								<g:HTMLPanel> -->
+		   						<g:at left='34' top='0'>
 									<g:HTMLPanel width="246px">
 	                                  <div class="input">
 	                                    <div class="input-prepend">
@@ -117,6 +126,26 @@
 	                                    </div>
 	                                  </div>
 	                                </g:HTMLPanel>
+                                </g:at>
+                                <!-- New file, new folder, paste -->
+                                <g:at left='283' top='0'>
+                                	<g:HTMLPanel width="85px">
+                                	  <div class="input">
+                                	    <div class="input-prepend">
+                                		  <span class="add-on {style.buttonpanel}">
+	                                        <g:PushButton addStyleNames="{style.nobackground} {style.showinline}" ui:field="newFolderTopButton">
+	                                          <g:upFace image="{res.newfolder}"/>
+	                                        </g:PushButton>
+	                                        <g:PushButton addStyleNames="{style.nobackground} {style.showinline}" ui:field="addFileTopButton">
+	                                          <g:upFace image="{res.addfile}"/>
+	                                        </g:PushButton>
+	                                        <g:PushButton addStyleNames="{style.nobackground} {style.showinline}" ui:field="pasteTopButton">
+	                                          <g:upFace image="{res.paste}"/>
+	                                        </g:PushButton>
+	                                	  </span>
+	                                    </div>
+	                                  </div>
+                                	</g:HTMLPanel>
                                 </g:at>
                         	</g:AbsolutePanel>
 		   				</g:west>

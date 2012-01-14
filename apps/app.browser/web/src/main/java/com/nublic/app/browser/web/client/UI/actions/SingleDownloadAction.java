@@ -30,14 +30,10 @@ public class SingleDownloadAction extends ActionWidget {
 
 	@Override
 	public Availability getAvailability() {
-//		if (stateProvider.getPath()) {
-//			// TODO: some condition on folders which content cannot be downloadable	
-//		} else {
-			if (stateProvider.getSelectedFiles().size() == 1) {
-				return Availability.AVAILABLE;
-			} else {
-				return Availability.HIDDEN;
-			}
-//		}
+		if (stateProvider.getSelectedFiles().size() == 1) {
+			return Availability.AVAILABLE;
+		} else {
+			return Availability.HIDDEN;
+		}
 	}
 }
