@@ -113,8 +113,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField PushButton newFolderTopButton;
 	@UiField PushButton addFileTopButton;
 	@UiField PushButton pasteTopButton;
-//	Label selectionCount = new Label();
-//	Label clipboardCount = new Label();
 	FixedPopup popUpBox;
 
 	public BrowserUi(BrowserModel model) {
@@ -187,23 +185,13 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private void initActions() {
 		// TODO: pass this to .xml
 		actionsPanel.add(new FolderDownloadAction(this));
-//		actionsPanel.add(selectionCount);
-//		actionsPanel.add(new SelectAllAction(this));
-//		actionsPanel.add(new UnselectAllAction(this));
-//		actionsPanel.add(new PreviewImageAction(this));
-//		actionsPanel.add(new PreviewTextAction(this));
-//		actionsPanel.add(new PreviewDocumentAction(this));
-//		actionsPanel.add(new PreviewMusicAction(this));
-//		actionsPanel.add(new PreviewVideoAction(this));
 		actionsPanel.add(new SingleDownloadAction(this));
 		actionsPanel.add(new SetDownloadAction(this));
 		actionsPanel.add(new CutAction(this));
 		actionsPanel.add(new CopyAction(this));
 		actionsPanel.add(new DeleteAction(this));
-//		actionsPanel.add(clipboardCount);
 		actionsPanel.add(new PasteAction(this));
-//		actionsPanel.add(new ClearClipboardAction(this));
-		
+
 		// To give feedback to the user about what is the state of the browser
 		addContextChangeHandler(new ContextChangeHandler() {
 			@Override
@@ -219,11 +207,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					allSelectedBox.setTitle("Unselect all");
 					infoWidget.changeInfo(selectedFiles);
 				}
-//				if (clipboard.isEmpty()) {
-//					clipboardCount.setText("");
-//				} else {
-//					clipboardCount.setText("" + clipboard.size() + " files in the clipboard");
-//				}
+				// Upper buttons
+				if (clipboard.isEmpty() || !getShowingFolder().isWritable()) {
+					pasteTopButton.setEnabled(false);
+				} else {
+					pasteTopButton.setEnabled(true);
+				}
 			}
 		});
 	}
@@ -561,6 +550,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			unselectAllFiles();
 		}
 	}
+	
+	// Handler for paste upper button
+	@UiHandler("pasteTopButton")
+	void onPasteTopButtonClick(ClickEvent event) {
+		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath());
+	}
 
 	// Handler for model change event
 	@Override
@@ -580,9 +575,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	public void showImage(String path) {
-//		String realPath = model.getDevicesManager().getRealPath(path);
-//		final Image newImage = new Image(GWT.getHostPageBaseURL()
-//				+ "server/view/" + realPath + "." + Constants.IMAGE_TYPE);
 		final Image newImage = new Image(GWT.getHostPageBaseURL()
 				+ "server/view/" + path + "." + Constants.IMAGE_TYPE);
 		// Load handler
@@ -608,8 +600,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 
 	public void showPDF(String path) {
-//		String realPath = model.getDevicesManager().getRealPath(path);
-//		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + realPath + "." + Constants.DOCUMENT_TYPE);
 		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
 		setContentOfPopUp(frame, path);
 		popUpBox.show();
@@ -629,8 +619,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			}
 			@Override
 			public String getURL() {
-//				String realPath = model.getDevicesManager().getRealPath(path);
-//				return GWT.getHostPageBaseURL() + "server/view/" + realPath + "." + Constants.TEXT_TYPE;
 				return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
 			}
 		};
@@ -659,28 +647,30 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void showPlayer(AbstractMediaPlayer player, String path) {
 		setContentOfPopUp(player, path);
-//		setContentOfPopUp(player, model.getDevicesManager().getMockPath(realPath));
 		popUpBox.show();
 	}
 	
 	public void showBrowser() {
 		popUpBox.hide();
 	}
-		
+
 	public void setWindowTitle(String title) {
 		Window.setTitle(Constants.WINDOW_PRETITLE + title);
 	}
 
+	// Auxiliary private functions
+	
+	// To get an internal widget knowing its path
 	private FileWidget findWidgetFromPath(String path) {
 		for (Widget w : centralPanel) {
 			if (((FileWidget)w).getPath().equals(path)) {
-//			if (((FileWidget)w).getRealPath().equals(path)) {
 				return (FileWidget)w;
 			}
 		}
 		return null;
 	}
 	
+	// To get the previous widget WITH PREVIEW in centralPanel to a given one (circular)
 	private FileWidget findPreviousTo(int index) {
 		int searchingIndex = index;
 		FileWidget possiblePrev = null;
@@ -695,6 +685,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		return possiblePrev;
 	}
 
+	// To get the next widget WITH PREVIEW in centralPanel to a given one (circular)
 	private FileWidget findNextTo(int index) {
 		int searchingIndex = index;
 		FileWidget possibleNext = null;
@@ -708,9 +699,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		} while (possibleNext.getViewType() == null);
 		return possibleNext;
 	}
-	
+
+	// Find previous and next widgets to show in the popup
 	private void setContentOfPopUp(Widget newContent, String path) {
-		// Find previous and next widgets to show in the popup
 		FileWidget current = findWidgetFromPath(path);
 		int index = centralPanel.getWidgetIndex(current);
 		FileWidget next = findNextTo(index);
