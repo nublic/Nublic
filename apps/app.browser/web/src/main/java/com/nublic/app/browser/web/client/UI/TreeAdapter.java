@@ -112,6 +112,12 @@ public class TreeAdapter {
 				updateNodeView(nodeView, child);
 			}
 		}
+		
+		// In case we have overwrite the selected node // TODO: check if this is necessary
+		FolderNode showingFolder = model.getShowingFolder();
+		if (showingFolder.isDescendantOf(node)) {
+			treeView.setSelectedItem(search(showingFolder));
+		}
 	}
 
 	private void updateRootView(FolderNode node) {

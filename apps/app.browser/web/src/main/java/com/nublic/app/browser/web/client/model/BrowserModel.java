@@ -19,7 +19,7 @@ public class BrowserModel {
 	List<FileNode> fileList;
 	String showingURL;
 	String showingPath;
-	DevicesManager devManager = new DevicesManager();
+	DevicesManager devManager;
 	
 	// TODO: synchronize updateFileList over an object to allow synchronized reading
 
@@ -34,6 +34,7 @@ public class BrowserModel {
 	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
+	    devManager = new DevicesManager();
 	}
 
 	public void addUpdateHandler(ModelUpdateHandler handler) {	 	
@@ -175,6 +176,7 @@ public class BrowserModel {
 		return currentNode;
 	}
 	
+	// It returns null if the node representing the required path doesn't exists
 	public synchronized FolderNode search(String path) {
 		if (path.equals("")) {
 			return folderTree;

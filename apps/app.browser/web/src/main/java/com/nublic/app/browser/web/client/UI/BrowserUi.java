@@ -123,9 +123,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		initWidget(uiBinder.createAndBindUi(this));
 		this.model = model;
 
-		// Request to update folder tree with the root directory
-		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
-		
 		// To handle openings of tree nodes
 		treeView.addOpenHandler(this);
 		
@@ -180,6 +177,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		dragController.addDragHandler(new FileDragHandler(this));
 		
 		initActions();
+		
+		// Request to update folder tree with the root directory
+		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 	}
 	
 	private void initActions() {

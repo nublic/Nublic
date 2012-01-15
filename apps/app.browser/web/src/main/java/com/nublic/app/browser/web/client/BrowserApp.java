@@ -120,10 +120,6 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
 				theUi.showImage(model.getDevicesManager().getMockPath(path));
-				
-//				theUi.setWindowTitle(path);
-//				// show the image lightbox
-//				theUi.showImage(path);
 			}
 		} else {
 			ErrorPopup.showError("Image file not found");
@@ -140,10 +136,6 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
 				theUi.showPDF(model.getDevicesManager().getMockPath(path));
-				
-//				theUi.setWindowTitle(path);
-//				// show the PDF lightbox
-//				theUi.showPDF(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -160,10 +152,6 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
 				theUi.showText(model.getDevicesManager().getMockPath(path));
-				
-//				theUi.setWindowTitle(path);
-//				// show the Ace lightbox
-//				theUi.showText(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -182,9 +170,6 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			} else {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				UIUtils.showPlayer(theUi, path, false, type);
-				
-//				theUi.setWindowTitle(path);
-//				UIUtils.showPlayer(theUi, path, false, type);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");

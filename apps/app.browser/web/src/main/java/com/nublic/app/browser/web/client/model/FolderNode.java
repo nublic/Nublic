@@ -64,7 +64,18 @@ public class FolderNode {
 	public boolean isWritable() {
 		return writable;
 	}
+	
+	public boolean isDescendantOf(FolderNode n) {
+		String myRealPath = getRealPath();
+		String nRealPath = n.getRealPath();
+		
+		return myRealPath.startsWith(nRealPath);
+	}
 
+	public boolean isParentOf(FolderNode n) {
+		return n.isDescendantOf(this);
+	}
+	
 	public String getPathName() {
 		return pathName;
 	}
@@ -136,9 +147,6 @@ public class FolderNode {
 
 	public FolderNode getChild(String name) {
 		for (FolderNode child : children) {
-//			if (child.getName().equals(name)) {
-//				return child;
-//			}
 			if (child.getPathName().equals(name)) {
 				return child;
 			}
