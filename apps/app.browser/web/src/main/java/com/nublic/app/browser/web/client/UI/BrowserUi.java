@@ -349,6 +349,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private void updateCentralPanel() {
 		// We cancel any popup which could be hiding the central panel
 		popUpBox.hide();
+		
+		// TODO: if root panel show different folders
 
 		List <FileNode> fileList = model.getFileList();
 		String path = model.getShowingPath();

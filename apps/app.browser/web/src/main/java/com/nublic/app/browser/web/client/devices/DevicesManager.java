@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.http.client.RequestBuilder;
-
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FolderMessage;

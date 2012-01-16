@@ -84,15 +84,13 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		}
 		String path = hmap.get(Constants.PATH_PARAMETER) == null ? "" : hmap.get(Constants.PATH_PARAMETER);
 
-//		path = model.getDevicesManager().getMockPath(path);
 		if (path.equals("")) {
 			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
-			// TODO: initial screen
 		} else {
 			theUi.setWindowTitle(path);
 		}
 		
-		if (path.equals(model.getShowingPath())) {
+		if (path.equals(model.getShowingPath()) && !path.equals("")) {
 			// If we're already showing the asked path we'll just uncover the browser view
 			theUi.showBrowser();
 		} else {

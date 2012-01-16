@@ -106,7 +106,6 @@ public class BrowserModel {
 	
 	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
 		FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
-		
 		if (!showingURL.equals(message.getURL())) {
 			filesMessageHelper.send(message, RequestBuilder.GET);
 		}
