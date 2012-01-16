@@ -66,19 +66,23 @@ public class BrowserModel {
 	}
 
 	public FolderNode getShowingFolder() {
-		List<String> pathTokens = devManager.splitPath(showingPath);
-		
-		if (pathTokens.get(0).equals("")) {
-			return folderTree;
-		} else {
-			FolderNode returnFolder = folderTree.getChild(pathTokens.get(0));
-			int i = 1;
-			while (i < pathTokens.size() && returnFolder != null) {
-				returnFolder = returnFolder.getChild(pathTokens.get(i));
-				i++;
-			}
-			return returnFolder;
-		}
+		// Add the showing path to the tree in case we've overwritten it
+		// (we've cleaned everything because we want to allow deletion updates in server to be shown,
+		// but if we're showing a path we need to have the nodes in the tree...)
+		return createBranch(showingPath);
+//		List<String> pathTokens = devManager.splitPath(showingPath);
+//		
+//		if (pathTokens.get(0).equals("")) {
+//			return folderTree;
+//		} else {
+//			FolderNode returnFolder = folderTree.getChild(pathTokens.get(0));
+//			int i = 1;
+//			while (i < pathTokens.size() && returnFolder != null) {
+//				returnFolder = returnFolder.getChild(pathTokens.get(i));
+//				i++;
+//			}
+//			return returnFolder;
+//		}
 	}
 	
 	public DevicesManager getDevicesManager() {
