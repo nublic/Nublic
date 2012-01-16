@@ -113,10 +113,16 @@ public class TreeAdapter {
 			}
 		}
 		
-		// In case we have overwrite the selected node // TODO: check if this is necessary
+		// In case we have overwrite the selected node
 		FolderNode showingFolder = model.getShowingFolder();
 		if (showingFolder.isDescendantOf(node)) {
-			treeView.setSelectedItem(search(showingFolder));
+			TreeItem selectedItem = search(showingFolder);
+			treeView.setSelectedItem(selectedItem, false);
+//			selectedItem = selectedItem.getParentItem();
+			while (selectedItem != null) {
+				selectedItem.setState(true, false);
+				selectedItem = selectedItem.getParentItem();
+			}
 		}
 	}
 

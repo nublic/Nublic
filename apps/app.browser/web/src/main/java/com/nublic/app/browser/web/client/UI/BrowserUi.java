@@ -200,8 +200,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //					selectionCount.setText("No files selected");
 					allSelectedBox.setValue(false, false);
 					allSelectedBox.setTitle("Select all");
-					FolderNode fn = getShowingFolder();
-					List<FileNode> showingFiles = getShowingFiles();
 					infoWidget.changeInfo(getShowingFolder().getName(), getShowingFiles());
 				} else {
 //					selectionCount.setText("" + selectedFiles.size() + " files selected");
