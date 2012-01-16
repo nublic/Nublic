@@ -13,6 +13,7 @@ public class FileNode {
 	double size;
 	double lastUpdate;
 	boolean writable;
+	String importantLink = null;
 
 	// Static Comparators
 	@SuppressWarnings("unchecked")
@@ -172,5 +173,12 @@ public class FileNode {
 	public boolean isWritable() {
 		return writable;
 	}
-	
+
+	public String getImportantLink() {
+		return importantLink;
+	}
+
+	public void setImportantLink(String importantLink) {
+		this.importantLink = importantLink;
+	}
 }

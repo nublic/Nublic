@@ -95,8 +95,9 @@ public class SelectionDetails extends Composite {
 
 	public void changeInfo(String folderName, List<FileNode> inFolder) {
 		// No items selected, shows info of the whole folder
-		selectionNameLabel.setText(folderName);
-		selectionNameLabel.setTitle(folderName);
+		String nameToShow = (folderName == null || folderName.equals("")) ? Constants.HOME_NAME : folderName;
+		selectionNameLabel.setText(nameToShow);
+		selectionNameLabel.setTitle(nameToShow);
 		setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
 		double size = 0;
 		double date = 0;

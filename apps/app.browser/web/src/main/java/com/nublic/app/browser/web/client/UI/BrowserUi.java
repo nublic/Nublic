@@ -60,6 +60,7 @@ import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
+import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
@@ -350,10 +351,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// We cancel any popup which could be hiding the central panel
 		popUpBox.hide();
 		
-		// TODO: if root panel show different folders
-
-		List <FileNode> fileList = model.getFileList();
 		String path = model.getShowingPath();
+		
+		List <FileNode> fileList;
+		// If we're showing the root panel we have to create special widgets...
+		if (path.equals("")) {
+			fileList = fakeRootList();
+		} else {
+			fileList = model.getFileList();			
+		}
 		
 		// Filter the list
 		if (!filterBox.getText().equals("")) {
@@ -409,7 +415,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Fill the panel
 		for (FileNode n : fileList) {
 			FileWidget newFileWidget = new FileWidget(n, path);
-//			FileWidget newFileWidget = new FileWidget(n, path, model.getDevicesManager());
 			// To handle changes in selections of files
 			newFileWidget.addCheckedChangeHandler(this);
 			// To make the filewidgets draggable
@@ -436,6 +441,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		markCutFiles();
 
 		notifyContextHandlers();
+	}
+
+	private List<FileNode> fakeRootList() {
+		List<FileNode> rootList = new ArrayList<FileNode>();
+		rootList.add(new FileNode(Constants.NUBLIC_ONLY, Constants.FOLDER_MIME, null, 0, 0, true));
+		for (Device d : getDevicesManager().getDevicesList()) {
+			FileNode deviceNode = new FileNode(d.getName(), Constants.FOLDER_MIME, null, 0, 0, false);
+			deviceNode.setImportantLink(d.getKind().getPathName() + "/" + d.getId());
+			rootList.add(deviceNode);
+		}
+		return rootList;
 	}
 
 	// To "shadow" them

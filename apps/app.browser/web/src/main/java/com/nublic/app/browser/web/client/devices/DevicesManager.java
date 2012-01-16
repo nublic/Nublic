@@ -34,6 +34,10 @@ public class DevicesManager {
 	public void clearDevices() {
 		devicesList.clear();
 	}
+	
+	public List<Device> getDevicesList() {
+		return devicesList;
+	}
 
 	// To transform real paths to mock ones and viceversa
 //	public String getRealPath(String mockPath) {

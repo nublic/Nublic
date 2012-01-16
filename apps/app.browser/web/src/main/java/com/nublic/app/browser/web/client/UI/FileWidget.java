@@ -74,7 +74,6 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	// path is the path of the folder where the file is placed
-//	public FileWidget(FileNode n, String path, DevicesManager pathConverter) {
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -87,8 +86,6 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		// Gets the thumbnail of the file
-//		realPath = pathConverter.getRealPath(this.path);
-//		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + realPath);
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
 		
 		String viewType = node.getView();
@@ -208,7 +205,9 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	private void setURL(String viewType) {
 //		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + realPath;
-		url = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + path;
+		String link = node.getImportantLink() == null ? path : node.getImportantLink();
+		url = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + link;
+
 		if (fileThumbnail != null && fileName != null) {
 			fileThumbnail.setTargetHistoryToken(url);
 			fileName.setTargetHistoryToken(url);
