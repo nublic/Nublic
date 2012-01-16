@@ -106,13 +106,16 @@ public class DevicesManager {
 	}
 
 	private void createNodeOnRoot(String name, String path, boolean writable, BrowserModel model) {
-		FolderNode root = model.getFolderTree();
+		FolderNode whatIsAlreadyCreated = model.search(path);
+		if (whatIsAlreadyCreated == null) {
+			FolderNode root = model.getFolderTree();
 		
-		FolderNode newNode = new FolderNode(root, name, path, writable);
-		root.addChild(newNode);
+			FolderNode newNode = new FolderNode(root, name, path, writable);
+			root.addChild(newNode);
 		
-		// Get the folders of the new Node created by devices
-		FolderMessage message = new FolderMessage(newNode, Constants.DEFAULT_DEPTH, model);
-		model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
+			// Get the folders of the new Node created by devices
+			FolderMessage message = new FolderMessage(newNode, Constants.DEFAULT_DEPTH, model);
+			model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
+		}
 	}
 }
