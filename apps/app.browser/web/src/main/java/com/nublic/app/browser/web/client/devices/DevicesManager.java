@@ -110,12 +110,12 @@ public class DevicesManager {
 		if (whatIsAlreadyCreated == null) {
 			FolderNode root = model.getFolderTree();
 		
-			FolderNode newNode = new FolderNode(root, name, path, writable);
-			root.addChild(newNode);
-		
-			// Get the folders of the new Node created by devices
-			FolderMessage message = new FolderMessage(newNode, Constants.DEFAULT_DEPTH, model);
-			model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
+			whatIsAlreadyCreated = new FolderNode(root, name, path, writable);
+			root.addChild(whatIsAlreadyCreated);
 		}
+		// Get the folders of the new Node created by devices
+		FolderMessage message = new FolderMessage(whatIsAlreadyCreated, Constants.DEFAULT_DEPTH, model);
+		model.getFoldersMessageHelper().send(message, RequestBuilder.GET);
+			
 	}
 }
