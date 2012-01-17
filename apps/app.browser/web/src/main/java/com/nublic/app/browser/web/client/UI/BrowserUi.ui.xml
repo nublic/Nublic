@@ -98,7 +98,7 @@
 							<g:AbsolutePanel width="350px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
 								<!-- Check box to toggle selection to all or none -->
 								<g:at left='0' top='0'>
-									<g:HTMLPanel width="20px">
+									<g:HTMLPanel width="21px">
 									  <div class="input">
 	                                    <div class="input-prepend">
 	                                      <span class="add-on {style.buttonpanel}">

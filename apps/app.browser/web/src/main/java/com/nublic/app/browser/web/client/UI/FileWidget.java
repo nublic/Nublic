@@ -87,6 +87,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		
 		// Gets the thumbnail of the file
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
+
 		
 		String viewType = node.getView();
 		if (node.getMime().equals(Constants.FOLDER_MIME)) {
@@ -96,6 +97,9 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		if (viewType != null) {
 			hasPreview = true;
 		}
+		
+		// Set the thumbnail
+		fileImage = node.getImportantThumbnail() == null ? new Image(url) : new Image(node.getImportantThumbnail());
 
 		// To fileWidgets with previews we'll create hyperlinks
 		if (hasPreview) {
@@ -108,7 +112,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			fileName.getElement().addClassName(style.ellipcenter());
 			
 			// Add the image thumbnail to the hypertext widget
-			fileImage = new Image(url);
+//			fileImage = new Image(url);
 			fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
 			
 			// Set up name
@@ -127,7 +131,8 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			fileName.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
 		} else {
 			// Create the alternative widgets (which are not links)
-			altThumbnail = new Image(url);
+//			altThumbnail = new Image(url);
+			altThumbnail = fileImage;			
 			altName = new Label(n.getName());
 			altName.setTitle(n.getName());
 			
@@ -196,15 +201,14 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	public Image getImage() {
-		if (hasPreview) {
+//		if (hasPreview) {
 			return fileImage;
-		} else {
-			return altThumbnail;
-		}
+//		} else {
+//			return altThumbnail;
+//		}
 	}
 
 	private void setURL(String viewType) {
-//		String target = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + realPath;
 		String link = node.getImportantLink() == null ? path : node.getImportantLink();
 		url = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + link;
 
@@ -221,13 +225,11 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
 		// TODO: Regression. this is not called anymore, using onmousedown (reported to library developer)
-//		SingleDownloadAction.download(realPath);
 		SingleDownloadAction.download(path);
 	}
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonMouseDown(MouseDownEvent event) {
-//		SingleDownloadAction.download(realPath);
 		SingleDownloadAction.download(path);
 	}
 	

@@ -2,6 +2,7 @@ package com.nublic.app.browser.web.client.model;
 
 import java.util.Comparator;
 
+import com.google.gwt.resources.client.ImageResource;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.util.comparators.CompoundComparator;
 import com.nublic.util.comparators.InverseComparator;
@@ -14,6 +15,7 @@ public class FileNode {
 	double lastUpdate;
 	boolean writable;
 	String importantLink = null;
+	ImageResource importantThumbnail = null;
 
 	// Static Comparators
 	@SuppressWarnings("unchecked")
@@ -180,5 +182,13 @@ public class FileNode {
 
 	public void setImportantLink(String importantLink) {
 		this.importantLink = importantLink;
+	}
+
+	public ImageResource getImportantThumbnail() {
+		return importantThumbnail;
+	}
+
+	public void setImportantThumbnail(ImageResource importantThumbnail) {
+		this.importantThumbnail = importantThumbnail;
 	}
 }

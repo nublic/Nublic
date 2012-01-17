@@ -53,6 +53,7 @@ import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.actions.CopyAction;
 import com.nublic.app.browser.web.client.UI.actions.CutAction;
 import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
@@ -61,6 +62,7 @@ import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.devices.Device;
+import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FileNode;
@@ -445,10 +447,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 	private List<FileNode> fakeRootList() {
 		List<FileNode> rootList = new ArrayList<FileNode>();
-		rootList.add(new FileNode(Constants.NUBLIC_ONLY, Constants.FOLDER_MIME, null, 0, 0, true));
+		FileNode deviceNode = new FileNode(Constants.NUBLIC_ONLY, Constants.FOLDER_MIME, null, 0, 0, true);
+		deviceNode.setImportantThumbnail(Resources.INSTANCE.nublicOnly());
+		rootList.add(deviceNode);
 		for (Device d : getDevicesManager().getDevicesList()) {
-			FileNode deviceNode = new FileNode(d.getName(), Constants.FOLDER_MIME, null, 0, 0, false);
+			deviceNode = new FileNode(d.getName(), Constants.FOLDER_MIME, null, 0, 0, false);
+			// Sets a different behaviour for click action (As we don't want it to open "/my-synced-folder" for example) 
 			deviceNode.setImportantLink(d.getKind().getPathName() + "/" + d.getId());
+			deviceNode.setImportantThumbnail(d.getKind() == DeviceKind.SYNCED ? Resources.INSTANCE.synced() : Resources.INSTANCE.mirror());
 			rootList.add(deviceNode);
 		}
 		return rootList;

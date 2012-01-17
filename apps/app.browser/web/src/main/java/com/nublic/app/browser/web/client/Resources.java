@@ -34,4 +34,13 @@ public interface Resources extends ClientBundle {
 	@Source("images/newfolder.png")
 	ImageResource newfolder();
 	
+	@Source("images/mirror.png")
+	ImageResource mirror();
+	
+	@Source("images/synced.png")
+	ImageResource synced();
+	
+	@Source("images/nublic-only.png")
+	ImageResource nublicOnly();
+	
 }
