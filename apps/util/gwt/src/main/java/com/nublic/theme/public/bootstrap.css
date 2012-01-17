@@ -617,7 +617,7 @@ label {
   font-size: 13px;
   line-height: 18px;
   float: left;
-  width: 130px;
+  width: 10px;
   text-align: right;
   color: #404040;
 }
@@ -712,7 +712,6 @@ input,
 textarea,
 .gwt-TextArea,
 .gwt-TextBox,
-.gwt-Checkbox,
 .gwt-RadioButton {
   -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
   -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
