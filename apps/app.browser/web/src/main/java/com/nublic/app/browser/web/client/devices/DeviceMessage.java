@@ -44,7 +44,7 @@ public class DeviceMessage extends Message {
 												 jsDevice.getOwner()));
 				}
 				manager.createRootTree(model);
-				model.fireUpdateHandlers(model.getFolderTree());
+				model.fireFolderUpdateHandlers(model.getFolderTree());
 			}
 		} else {
 			ErrorPopup.showError("The request could not be processed");

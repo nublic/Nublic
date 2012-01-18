@@ -96,7 +96,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		} else {
 			boolean shouldUpdateFoldersOnSuccess = true;
 			// If the branch to the folderNode already exists and has no children we try to update its information now
-			// Otherwise it will be created when the answer of files confirms its a valid folder
+			// Otherwise it will be created when the answer of files confirms it's a valid folder
 			FolderNode node = model.search(path);
 			if (node != null && node.getChildren().isEmpty()) {
 				model.updateFolders(node, Constants.DEFAULT_DEPTH);

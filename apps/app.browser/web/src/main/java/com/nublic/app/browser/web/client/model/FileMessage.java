@@ -63,10 +63,10 @@ public class FileMessage extends Message {
 
 				model.updateFileList(fileContentList, getURL(), path);
 				// Call every handler looking at the file list
-				for (ModelUpdateHandler handler : model.getUpdateHandlers()) {
-//					handler.onFilesUpdate(model, path);
-					handler.onFilesUpdate(model, shouldUpdateFoldersOnSuccess);
-				}
+				model.fireFilesUpdateHandlers(shouldUpdateFoldersOnSuccess, true);
+//				for (ModelUpdateHandler handler : model.getUpdateHandlers()) {
+//					handler.onFilesUpdate(model, shouldUpdateFoldersOnSuccess);
+//				}
 			}
 		} else {
 			ErrorPopup.showError("The request could not be processed");

@@ -180,6 +180,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return node.getMime();
 	}
 	
+	public boolean isFolder() {
+		return node.getMime().equals(Constants.FOLDER_MIME);
+	}
+	
 	public boolean isWritable() {
 		return node.isWritable();
 	}

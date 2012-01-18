@@ -45,10 +45,23 @@ public class BrowserModel {
 		return updateHandlers;
 	}
 	
-	public void fireUpdateHandlers(FolderNode node) {
+	public void fireFolderUpdateHandlers(FolderNode node) {
 		// Call every handler looking at the folder tree
 		for (ModelUpdateHandler handler : updateHandlers) {
 			handler.onFoldersUpdate(this, node);	
+		}
+	}
+
+	public void fireFilesUpdateHandlers(boolean shouldUpdateFoldersOnSuccess, boolean newFileList) {
+//		for (ModelUpdateHandler handler : updateHandlers) {
+//			handler.onFilesUpdate(this, shouldUpdateFoldersOnSuccess);	
+//		}
+		fireFilesUpdateHandlers(new FileEvent(this, shouldUpdateFoldersOnSuccess, newFileList));
+	}
+	
+	public void fireFilesUpdateHandlers(FileEvent e) {
+		for (ModelUpdateHandler handler : updateHandlers) {
+			handler.onFilesUpdate(e);	
 		}
 	}
 	
@@ -105,6 +118,7 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
+		// TODO: Bug on updating files of root panel when folder petition arrives before devices one
 		FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
 		if (!showingURL.equals(message.getURL())) {
 			filesMessageHelper.send(message, RequestBuilder.GET);
@@ -141,18 +155,23 @@ public class BrowserModel {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent.getName(),
-											 fileContent.getMime(),
-											 fileContent.getView(),
-											 fileContent.getSize(),
-											 fileContent.getLastUpdate(),
-											 fileContent.getWritable());
-				fileList.add(file);
+				addFile(fileContent.getName(), fileContent.getMime(),	    fileContent.getView(),
+						fileContent.getSize(), fileContent.getLastUpdate(), fileContent.getWritable());
 			}
 		} else {
 			// The requested folder is empty
 			fileList.clear();
 		}
+	}
+	
+	private synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
+		FileNode file = new FileNode(name, mime, view, size, lastUpdate, writable);
+		fileList.add(file);
+	}
+	
+	public synchronized void addFiles(List<FileNode> filesToAdd) {
+		fileList.addAll(filesToAdd);
+		fireFilesUpdateHandlers(false, false);
 	}
 	
 	// Other methods

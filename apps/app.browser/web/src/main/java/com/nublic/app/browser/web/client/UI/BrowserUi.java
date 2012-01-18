@@ -65,6 +65,7 @@ import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FileEvent;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
@@ -212,8 +213,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				}
 				// Upper buttons
 				if (clipboard.isEmpty() || !getShowingFolder().isWritable()) {
+					pasteTopButton.setTitle("Paste");
 					pasteTopButton.setEnabled(false);
 				} else {
+					pasteTopButton.setTitle("Paste (" + clipboard.size() + ")");
 					pasteTopButton.setEnabled(true);
 				}
 			}
@@ -304,12 +307,33 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		History.newItem(Constants.BROWSER_VIEW
 				+ "?" + Constants.PATH_PARAMETER
 				+ "=" + ((FolderNode) item.getUserObject()).getRealPath(), true);
-//				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onFilesUpdate(BrowserModel m, boolean shouldUpdateFoldersOnSuccess) {
+	public void onFilesUpdate(FileEvent e) {
+		if (e.isNewFileList()) {
+			replaceFileList(e.shouldUpdateFolders());
+		} else {
+			List<FileNode> fileList = model.getFileList();
+			Set<Widget> widgetList = new HashSet<Widget>();
+			for (FileNode n : fileList) {
+				FileWidget fw = new FileWidget(n, model.getShowingPath());
+				widgetList.add(fw);
+			}
+			Set<Widget> inCentralPanel = Sets.newHashSet(centralPanel);
+			Set<Widget> deleted = Sets.difference(inCentralPanel, widgetList);
+			Set<Widget> added = Sets.difference(widgetList, inCentralPanel);
+			for (Widget w : added) {
+				FileWidget fw = (FileWidget) w;
+//				fw.setUncut();
+//				fw.setChecked(false);
+				addToCentralPanel(fw);
+			}
+		}
+	}
+	
+	private void replaceFileList(boolean shouldUpdateFolders) {
 		selectedFiles.clear();
 		updateCentralPanel();
 
@@ -318,7 +342,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// If the given node has no children we try to update its info
 		// DONE: it's been tried to update before, when the call to update the files was done
 		// but it hasn't been tried in the case the branch didn't exist before, so that's why it's also called now
-		if (shouldUpdateFoldersOnSuccess && node.getChildren().isEmpty()) {
+		if (shouldUpdateFolders && node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
 
@@ -342,11 +366,40 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			// Set the node as selected
 			treeView.setSelectedItem(nodeView);
 		}
+		
 	}
-	
+
 	// Converts strings to lowercases without diacritical marks
 	String toComparable(String s) {
 		return s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+	}
+	
+	public void addToCentralPanel(List<FileNode> fileList, String folderPath) {
+		for (FileNode n : fileList) {
+			FileWidget newFileWidget = new FileWidget(n, folderPath);
+			addToCentralPanel(newFileWidget);
+		}
+	}
+	
+	public void addToCentralPanel(Set<Widget> setToAdd) {
+		for (Widget w : setToAdd) {
+			addToCentralPanel((FileWidget) w);
+		}
+	}
+	
+	public void addToCentralPanel(FileWidget newFileWidget) {
+		// To handle changes in selections of files
+		newFileWidget.addCheckedChangeHandler(this);
+		// To make the filewidgets draggable
+		dragController.makeDraggable(newFileWidget);
+		// To make possible drop on folders
+		if (newFileWidget.isFolder()) {
+			AbstractDropController folderDropController = new FolderDropController(newFileWidget, this);
+			activeDropControllers.add(folderDropController);
+			dragController.registerDropController(folderDropController);
+		}
+		// Add it to central panel
+		centralPanel.add(newFileWidget);
 	}
 	
 	private void updateCentralPanel() {
@@ -415,21 +468,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		activeDropControllers.clear();
 		centralPanel.clear();
 		// Fill the panel
-		for (FileNode n : fileList) {
-			FileWidget newFileWidget = new FileWidget(n, path);
-			// To handle changes in selections of files
-			newFileWidget.addCheckedChangeHandler(this);
-			// To make the filewidgets draggable
-			dragController.makeDraggable(newFileWidget);
-			// To make possible drop on folders
-			if (n.getMime().equals(Constants.FOLDER_MIME)) {
-				AbstractDropController folderDropController = new FolderDropController(newFileWidget, this);
-				activeDropControllers.add(folderDropController);
-				dragController.registerDropController(folderDropController);
-			}
-			// Add it to central panel
-			centralPanel.add(newFileWidget);
-		}
+		addToCentralPanel(fileList, path);
 		
 		// Select the new widgets marked as selected by the user before
 		// newSelectedFiles will always be Set<FileWidget> but it comes from the intersection of Set<Widget> and we must maintain the type
@@ -578,7 +617,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler for paste upper button
 	@UiHandler("pasteTopButton")
 	void onPasteTopButtonClick(ClickEvent event) {
-		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath());
+		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath(), this);
 	}
 
 	// Handler for model change event

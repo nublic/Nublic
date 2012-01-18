@@ -33,7 +33,7 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	String actionText;
 	PushButton imageButton;
 	Anchor actionLink;
-	BrowserUi stateProvider;
+	protected final BrowserUi stateProvider;
 	HandlerRegistration clickHandlerReg;
 	boolean hasHandler;
 	
