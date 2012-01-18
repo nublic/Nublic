@@ -160,6 +160,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 //			}
 //		});
 		selectedBox.setVisible(false);
+		selectedBox.setValue(false, false);
 		downloadButton.setVisible(false);
 		
 		selectedBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -172,6 +173,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		});
 	}
 
+	public FileNode getNode() {
+		return node;
+	}
+	
 	public String getViewType() {
 		return node.getView();
 	}

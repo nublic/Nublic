@@ -166,7 +166,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		addContextChangeHandler(new ContextChangeHandler() {
 			@Override
 			public void onContextChange() {
-				if (!lastPath.equals(getPath())) {
+				if (!lastPath.equals(getShowingPath())) {
 					updateNavigationBar();
 				}
 			}
@@ -273,11 +273,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	// To allow BrowserUi to work as a stateProvider
+	public BrowserModel getModel() {
+		return model;
+	}
+	
 	public Set<Widget> getSelectedFiles() {
 		return selectedFiles;
 	}
 
-	public String getPath() {
+	public String getShowingPath() {
 		return model.getShowingPath();
 	}
 
@@ -329,6 +333,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //				fw.setUncut();
 //				fw.setChecked(false);
 				addToCentralPanel(fw);
+			}
+			for (Widget w : deleted) {
+				centralPanel.remove(w);
 			}
 		}
 	}
@@ -540,7 +547,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void onClose(CloseEvent<PopupPanel> event) {
 		if (event.isAutoClosed()) {
-			History.newItem(Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + getPath());
+			History.newItem(Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + getShowingPath());
 		}
 	}
 	
@@ -568,7 +575,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	private void updateNavigationBar() {
-		lastPath = getPath();
+		lastPath = getShowingPath();
 		navigationBar.reset();
 		if (!lastPath.isEmpty()) {
 			StringBuilder builder = new StringBuilder();
@@ -617,7 +624,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler for paste upper button
 	@UiHandler("pasteTopButton")
 	void onPasteTopButtonClick(ClickEvent event) {
-		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath(), this);
+		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath(), model);
 	}
 
 	// Handler for model change event

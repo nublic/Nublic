@@ -18,7 +18,7 @@ public class FolderDropController extends AbstractDropController {
 	@Override
 	public void onDrop(DragContext context) {
 //		super.onDrop(context);
-		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), dropTarget.getPath(), stateProvider);
+		PasteAction.doPasteAction("copy", stateProvider.getSelectedFiles(), dropTarget.getPath(), stateProvider.getModel());
 	}
 
 	@Override

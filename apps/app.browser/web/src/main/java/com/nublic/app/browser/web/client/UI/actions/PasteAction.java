@@ -1,5 +1,7 @@
 package com.nublic.app.browser.web.client.UI.actions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
@@ -9,7 +11,10 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
+import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 
@@ -19,16 +24,26 @@ public class PasteAction extends ActionWidget {
 		super("images/edit_paste.png", "Paste", stateProvider);
 	}
 
-	public static void doPasteAction(final String mode, final Set<Widget> setToCopy, final String pathTo, final BrowserUi feedbackTarget) {
+	public static void doPasteAction(final String mode, final Set<Widget> setToCopy, final String pathTo, final BrowserModel feedbackTarget) {
 		Message m = new Message() {
 			@Override
 			public void onSuccess(Response response) {
-				if (feedbackTarget.getPath().equals(pathTo)) {
-					feedbackTarget.addToCentralPanel(setToCopy);
+				if (response.getStatusCode() == Response.SC_OK) {
+					if (feedbackTarget.getShowingPath().equals(pathTo)) {
+						List<FileNode> filesCopied = new ArrayList<FileNode>();
+						for (Widget w : setToCopy) {
+							filesCopied.add(((FileWidget)w).getNode());
+						}
+						feedbackTarget.addFiles(filesCopied);
+					}
+				} else {
+					ErrorPopup.showError("Could not " + mode + " files");
 				}
 			}
 			@Override
-			public void onError() {} // TODO: feedback
+			public void onError() {
+				ErrorPopup.showError("Could not " + mode + " files");
+			}
 			@Override
 			public String getURL() {
 				return URL.encode(GWT.getHostPageBaseURL() + "server/" + mode);
@@ -50,8 +65,8 @@ public class PasteAction extends ActionWidget {
 	public void executeAction() {
 		doPasteAction(stateProvider.getModeCut() ? "move" : "copy",
 				      stateProvider.getClipboard(),
-				      stateProvider.getPath(),
-				      stateProvider);
+				      stateProvider.getShowingPath(),
+				      stateProvider.getModel());
 		// TODO: if mode cut remove filewidgets from view
 	}
 

@@ -1,5 +1,7 @@
 package com.nublic.app.browser.web.client.UI.actions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
@@ -9,6 +11,8 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
+import com.nublic.app.browser.web.client.model.FileNode;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 
@@ -20,26 +24,41 @@ public class DeleteAction extends ActionWidget {
 
 	@Override
 	public void executeAction() {
+		// final variables to check and give feedback on response
+		final String pathFrom = stateProvider.getShowingPath();
+		final List<FileNode> removedFiles = new ArrayList<FileNode>();
+		// Create the parameters to the request
+		StringBuilder setOfFiles = new StringBuilder();
+		for (Widget w : stateProvider.getSelectedFiles()) {
+			FileWidget fw = (FileWidget) w;
+			if (setOfFiles.length() != 0) {
+				setOfFiles.append(":");
+			}
+			setOfFiles.append(fw.getPath());
+			removedFiles.add(fw.getNode());
+		}
+		
 		Message m = new Message() {
 			@Override
-			public void onSuccess(Response response) {} // TODO: feedback
+			public void onSuccess(Response response) {
+				if (response.getStatusCode() == Response.SC_OK) {
+					if (pathFrom.equals(stateProvider.getShowingPath())) {
+						stateProvider.getModel().removeFiles(removedFiles);
+					}
+				} else {
+					ErrorPopup.showError("Could not delete files");
+				}
+			}
 			@Override
-			public void onError() {} // TODO: feedback
+			public void onError() {
+				ErrorPopup.showError("Could not delete files");
+			}
 			@Override
 			public String getURL() {
 				return URL.encode(GWT.getHostPageBaseURL() + "server/delete");
 			}
 		};
-		StringBuilder setOfFiles = new StringBuilder();
-		for (Widget w : stateProvider.getSelectedFiles()) {
-			if (setOfFiles.length() != 0) {
-				setOfFiles.append(":");
-			}
-//			String realPath = stateProvider.getDevicesManager().getRealPath(((FileWidget) w).getPath());
-//			setOfFiles.append(realPath);
-//			setOfFiles.append(((FileWidget) w).getRealPath());
-			setOfFiles.append(((FileWidget) w).getPath());
-		}
+
 		m.addParam("files", setOfFiles.toString());
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
 	}

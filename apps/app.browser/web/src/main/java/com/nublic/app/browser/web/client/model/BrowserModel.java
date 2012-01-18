@@ -174,6 +174,11 @@ public class BrowserModel {
 		fireFilesUpdateHandlers(false, false);
 	}
 	
+	public synchronized void removeFiles(List<FileNode> filesToRemove) {
+		fileList.removeAll(filesToRemove);
+		fireFilesUpdateHandlers(false, false);
+	}
+	
 	// Other methods
 	public synchronized FolderNode createBranch(String path) {
 		if (path.equals("")) {
