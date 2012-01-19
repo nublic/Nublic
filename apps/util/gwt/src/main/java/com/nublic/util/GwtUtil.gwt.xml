@@ -15,5 +15,6 @@
   <source path='error'/>
   <source path='comparators'/>
   <source path='tuples'/>
+  <source path='widgets'/>
 
 </module>
