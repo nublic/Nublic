@@ -1,6 +1,7 @@
 package com.nublic.app.browser.web.client.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
@@ -22,6 +23,7 @@ public class BrowserModel {
 	List<FileNode> fileList;
 	String showingPath;
 	DevicesManager devManager;
+	double lastUpdateTime;
 	Timer filesPollingTimer = new Timer() {
 		@Override
 		public void run() {
@@ -38,7 +40,6 @@ public class BrowserModel {
 	    folderTree = new FolderNode();
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
-//	    showingURL = "";
 	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
@@ -128,7 +129,8 @@ public class BrowserModel {
 	}
 
 	public void reUpdateFiles() {
-		ChangesMessage cm = new ChangesMessage(this, showingPath);
+		ChangesMessage cm = new ChangesMessage(this, showingPath, lastUpdateTime);
+		lastUpdateTime = cm.getCreationDate();
 		changesMessageHelper.send(cm, RequestBuilder.GET);
 	}
 	
@@ -177,12 +179,10 @@ public class BrowserModel {
 	
 	public synchronized void addFiles(List<FileNode> filesToAdd) {
 		fileList.addAll(filesToAdd);
-		fireFilesUpdateHandlers(false, false);
 	}
 	
 	public synchronized void removeFiles(List<FileNode> filesToRemove) {
 		fileList.removeAll(filesToRemove);
-		fireFilesUpdateHandlers(false, false);
 	}
 	
 	// Other methods
@@ -234,7 +234,12 @@ public class BrowserModel {
 		resetTimer();
 	}
 	
-	private void resetTimer() {
+	public void resetTimer() {
+		lastUpdateTime = new Date().getTime();
+		scheduleNewTimer();
+	}
+	
+	public void scheduleNewTimer() {
 		filesPollingTimer.cancel();
 		filesPollingTimer.schedule(Constants.TIME_TO_POLLING);
 	}

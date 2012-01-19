@@ -10,7 +10,6 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.browser.web.client.Constants;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 import com.nublic.util.messages.Message;
@@ -18,12 +17,14 @@ import com.nublic.util.messages.Message;
 public class ChangesMessage extends Message {
 	BrowserModel model;
 	String path;
-	double date;
+	double creationDate;
+	double timeToAsk;
 	
-	public ChangesMessage(BrowserModel model, String path) {
+	public ChangesMessage(BrowserModel model, String path, double timeToAsk) {
 		this.model = model;
 		this.path = path;
-		date = new Date().getTime() - Constants.TIME_TO_POLLING;
+		this.timeToAsk = timeToAsk;
+		creationDate = new Date().getTime();
 	}
 
 	public static class Comparator implements PartialComparator<ChangesMessage> {
@@ -41,23 +42,25 @@ public class ChangesMessage extends Message {
 	
 	@Override
 	public String getURL() {
-		return URL.encode(GWT.getHostPageBaseURL() + "server/changes/" + String.valueOf((long)date) + "/" + path);
+		return URL.encode(GWT.getHostPageBaseURL() + "server/changes/" + String.valueOf((long)timeToAsk) + "/" + path);
 	}
 
 	@Override
 	public void onSuccess(Response response) {
 		ChangesContent changesContent = null;
 		
-		if (Response.SC_OK == response.getStatusCode()) {
+		if (response.getStatusCode() == Response.SC_OK) {
 			// When the call is successful
 			String text = response.getText();
 			changesContent = JsonUtils.safeEval(text);
 			List<FileNode> addedFiles = convertAddedFiles(changesContent.getNewFiles());
 			List<FileNode> deletedFiles = convertDeletesFiles(changesContent.getDeletedFiles());
 			
+			// TODO: Don't add files, but look for modifies ones also
 			model.addFiles(addedFiles);
 			model.removeFiles(deletedFiles);
 			model.fireFilesUpdateHandlers(false, false);
+			model.scheduleNewTimer();
 		} else {
 			// We're not showing any feedback for polling errors
 		}
@@ -87,6 +90,10 @@ public class ChangesMessage extends Message {
 	@Override
 	public void onError() {
 		// We're not showing any feedback for polling errors
+	}
+
+	public double getCreationDate() {
+		return creationDate;
 	}
 
 }

@@ -50,6 +50,7 @@ public class PasteAction extends ActionWidget {
 							filesCopied.add(((FileWidget)w).getNode());
 						}
 						feedbackTarget.addFiles(filesCopied);
+						feedbackTarget.fireFilesUpdateHandlers(false, false);
 					} else if (feedbackTarget.getShowingPath().equals(pathFrom)
 							   && mode.equals("move")) {
 						// If we're cutting from the showing file: feedback
@@ -58,6 +59,7 @@ public class PasteAction extends ActionWidget {
 							filesCut.add(((FileWidget)w).getNode());
 						}
 						feedbackTarget.removeFiles(filesCut);
+						feedbackTarget.fireFilesUpdateHandlers(false, false);
 					}
 				} else {
 					ErrorPopup.showError("Could not " + mode + " files");
