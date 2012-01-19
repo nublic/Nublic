@@ -14,7 +14,7 @@ public class FolderDownloadAction extends ActionWidget {
 	public void executeAction() {
 //		String realPath = stateProvider.getDevicesManager().getRealPath(stateProvider.getPath());
 //		Window.open(GWT.getHostPageBaseURL() + "server/zip/" + realPath, "_self", "");
-		Window.open(GWT.getHostPageBaseURL() + "server/zip/" + stateProvider.getPath(), "_self", "");
+		Window.open(GWT.getHostPageBaseURL() + "server/zip/" + stateProvider.getShowingPath(), "_self", "");
 	}
 
 	@Override

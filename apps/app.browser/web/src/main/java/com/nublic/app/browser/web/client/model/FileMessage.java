@@ -36,8 +36,6 @@ public class FileMessage extends Message {
 
 	@Override
 	public String getURL() {
-//		String realPath = model.getDevicesManager().getRealPath(path);
-//		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + realPath);
 		return URL.encode(GWT.getHostPageBaseURL() + "server/files/" + path);
 	}
 
@@ -63,10 +61,7 @@ public class FileMessage extends Message {
 
 				model.updateFileList(fileContentList, getURL(), path);
 				// Call every handler looking at the file list
-				for (ModelUpdateHandler handler : model.getUpdateHandlers()) {
-//					handler.onFilesUpdate(model, path);
-					handler.onFilesUpdate(model, shouldUpdateFoldersOnSuccess);
-				}
+				model.fireFilesUpdateHandlers(shouldUpdateFoldersOnSuccess, true);
 			}
 		} else {
 			ErrorPopup.showError("The request could not be processed");

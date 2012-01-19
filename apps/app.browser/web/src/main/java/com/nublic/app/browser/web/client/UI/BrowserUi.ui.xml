@@ -133,13 +133,13 @@
                                 	  <div class="input">
                                 	    <div class="input-prepend">
                                 		  <span class="add-on {style.buttonpanel}">
-	                                        <g:PushButton addStyleNames="{style.nobackground} {style.showinline}" ui:field="newFolderTopButton">
+	                                        <g:PushButton ui:field="newFolderTopButton" title="Create new folder" addStyleNames="{style.nobackground} {style.showinline}">
 	                                          <g:upFace image="{res.newfolder}"/>
 	                                        </g:PushButton>
-	                                        <g:PushButton addStyleNames="{style.nobackground} {style.showinline}" ui:field="addFileTopButton">
+	                                        <g:PushButton ui:field="addFileTopButton" title="Add file" addStyleNames="{style.nobackground} {style.showinline}">
 	                                          <g:upFace image="{res.addfile}"/>
 	                                        </g:PushButton>
-	                                        <g:PushButton addStyleNames="{style.nobackground} {style.showinline}" ui:field="pasteTopButton">
+	                                        <g:PushButton ui:field="pasteTopButton" title="Paste" addStyleNames="{style.nobackground} {style.showinline}">
 	                                          <g:upFace image="{res.paste}"/>
 	                                        </g:PushButton>
 	                                	  </span>

@@ -17,7 +17,6 @@ public class BrowserModel {
 	FolderNode folderTree;
 	// "State" dependent part
 	List<FileNode> fileList;
-	String showingURL;
 	String showingPath;
 	DevicesManager devManager;
 	
@@ -30,7 +29,7 @@ public class BrowserModel {
 	    folderTree = new FolderNode();
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
-	    showingURL = "";
+//	    showingURL = "";
 	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
@@ -45,10 +44,23 @@ public class BrowserModel {
 		return updateHandlers;
 	}
 	
-	public void fireUpdateHandlers(FolderNode node) {
+	public void fireFolderUpdateHandlers(FolderNode node) {
 		// Call every handler looking at the folder tree
 		for (ModelUpdateHandler handler : updateHandlers) {
 			handler.onFoldersUpdate(this, node);	
+		}
+	}
+
+	public void fireFilesUpdateHandlers(boolean shouldUpdateFoldersOnSuccess, boolean newFileList) {
+//		for (ModelUpdateHandler handler : updateHandlers) {
+//			handler.onFilesUpdate(this, shouldUpdateFoldersOnSuccess);	
+//		}
+		fireFilesUpdateHandlers(new FileEvent(this, shouldUpdateFoldersOnSuccess, newFileList));
+	}
+	
+	public void fireFilesUpdateHandlers(FileEvent e) {
+		for (ModelUpdateHandler handler : updateHandlers) {
+			handler.onFilesUpdate(e);	
 		}
 	}
 	
@@ -105,9 +117,16 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
-		FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
-		if (!showingURL.equals(message.getURL())) {
-			filesMessageHelper.send(message, RequestBuilder.GET);
+		// TODO: Bug on updating files of root panel when files request arrives before devices one
+		if (path.equals("")) {
+			// If root path, files gets updated with devices
+			showingPath = "";
+			fireFilesUpdateHandlers(false, true);
+		} else {
+			if (!showingPath.equals(path)) {
+				FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
+				filesMessageHelper.send(message, RequestBuilder.GET);
+			}
 		}
 	}
 
@@ -135,24 +154,33 @@ public class BrowserModel {
 	}
 	
 	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url, String path) {
-		showingURL = url;
 		showingPath = path;
 		if (fileContentList.length() != 0) {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
-				FileNode file = new FileNode(fileContent.getName(),
-											 fileContent.getMime(),
-											 fileContent.getView(),
-											 fileContent.getSize(),
-											 fileContent.getLastUpdate(),
-											 fileContent.getWritable());
-				fileList.add(file);
+				addFile(fileContent.getName(), fileContent.getMime(),	    fileContent.getView(),
+						fileContent.getSize(), fileContent.getLastUpdate(), fileContent.getWritable());
 			}
 		} else {
 			// The requested folder is empty
 			fileList.clear();
 		}
+	}
+	
+	private synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
+		FileNode file = new FileNode(name, mime, view, size, lastUpdate, writable);
+		fileList.add(file);
+	}
+	
+	public synchronized void addFiles(List<FileNode> filesToAdd) {
+		fileList.addAll(filesToAdd);
+		fireFilesUpdateHandlers(false, false);
+	}
+	
+	public synchronized void removeFiles(List<FileNode> filesToRemove) {
+		fileList.removeAll(filesToRemove);
+		fireFilesUpdateHandlers(false, false);
 	}
 	
 	// Other methods

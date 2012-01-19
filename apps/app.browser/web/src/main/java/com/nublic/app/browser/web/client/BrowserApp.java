@@ -90,13 +90,14 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			theUi.setWindowTitle(path);
 		}
 		
-		if (path.equals(model.getShowingPath()) && !path.equals("")) {
+//		if (path.equals(model.getShowingPath()) && !path.equals("")) {
+		if (path.equals(model.getShowingPath())) {
 			// If we're already showing the asked path we'll just uncover the browser view
 			theUi.showBrowser();
 		} else {
 			boolean shouldUpdateFoldersOnSuccess = true;
 			// If the branch to the folderNode already exists and has no children we try to update its information now
-			// Otherwise it will be created when the answer of files confirms its a valid folder
+			// Otherwise it will be created when the answer of files confirms it's a valid folder
 			FolderNode node = model.search(path);
 			if (node != null && node.getChildren().isEmpty()) {
 				model.updateFolders(node, Constants.DEFAULT_DEPTH);

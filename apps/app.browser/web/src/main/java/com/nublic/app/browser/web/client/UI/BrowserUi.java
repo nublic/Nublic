@@ -65,6 +65,7 @@ import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FileEvent;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.app.browser.web.client.model.FolderNode;
 import com.nublic.app.browser.web.client.model.ModelUpdateHandler;
@@ -165,7 +166,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		addContextChangeHandler(new ContextChangeHandler() {
 			@Override
 			public void onContextChange() {
-				if (!lastPath.equals(getPath())) {
+				if (!lastPath.equals(getShowingPath())) {
 					updateNavigationBar();
 				}
 			}
@@ -212,8 +213,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				}
 				// Upper buttons
 				if (clipboard.isEmpty() || !getShowingFolder().isWritable()) {
+					pasteTopButton.setTitle("Paste");
 					pasteTopButton.setEnabled(false);
 				} else {
+					pasteTopButton.setTitle("Paste (" + clipboard.size() + ")");
 					pasteTopButton.setEnabled(true);
 				}
 			}
@@ -270,11 +273,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	// To allow BrowserUi to work as a stateProvider
+	public BrowserModel getModel() {
+		return model;
+	}
+	
 	public Set<Widget> getSelectedFiles() {
 		return selectedFiles;
 	}
 
-	public String getPath() {
+	public String getShowingPath() {
 		return model.getShowingPath();
 	}
 
@@ -304,12 +311,36 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		History.newItem(Constants.BROWSER_VIEW
 				+ "?" + Constants.PATH_PARAMETER
 				+ "=" + ((FolderNode) item.getUserObject()).getRealPath(), true);
-//				+ "=" + ((FolderNode) item.getUserObject()).getPath(), true);
 	}
 
 	// Handler fired when a new update of the file list is available
 	@Override
-	public void onFilesUpdate(BrowserModel m, boolean shouldUpdateFoldersOnSuccess) {
+	public void onFilesUpdate(FileEvent e) {
+		if (e.isNewFileList()) {
+			replaceFileList(e.shouldUpdateFolders());
+		} else {
+			List<FileNode> fileList = model.getFileList();
+			Set<Widget> widgetList = new HashSet<Widget>();
+			for (FileNode n : fileList) {
+				FileWidget fw = new FileWidget(n, model.getShowingPath());
+				widgetList.add(fw);
+			}
+			Set<Widget> inCentralPanel = Sets.newHashSet(centralPanel);
+			Set<Widget> deleted = Sets.difference(inCentralPanel, widgetList);
+			Set<Widget> added = Sets.difference(widgetList, inCentralPanel);
+			for (Widget w : added) {
+				FileWidget fw = (FileWidget) w;
+				addToCentralPanel(fw);
+			}
+			for (Widget w : deleted) {
+				selectedFiles.remove(w);
+				centralPanel.remove(w);
+			}
+			notifyContextHandlers();
+		}
+	}
+	
+	private void replaceFileList(boolean shouldUpdateFolders) {
 		selectedFiles.clear();
 		updateCentralPanel();
 
@@ -318,7 +349,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// If the given node has no children we try to update its info
 		// DONE: it's been tried to update before, when the call to update the files was done
 		// but it hasn't been tried in the case the branch didn't exist before, so that's why it's also called now
-		if (shouldUpdateFoldersOnSuccess && node.getChildren().isEmpty()) {
+		if (shouldUpdateFolders && node.getChildren().isEmpty()) {
 			model.updateFolders(node, Constants.DEFAULT_DEPTH);
 		}
 
@@ -341,12 +372,43 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			
 			// Set the node as selected
 			treeView.setSelectedItem(nodeView);
+		} else {
+			treeView.setSelectedItem(null);
 		}
+		
 	}
-	
+
 	// Converts strings to lowercases without diacritical marks
 	String toComparable(String s) {
 		return s.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase();
+	}
+	
+	public void addToCentralPanel(List<FileNode> fileList, String folderPath) {
+		for (FileNode n : fileList) {
+			FileWidget newFileWidget = new FileWidget(n, folderPath);
+			addToCentralPanel(newFileWidget);
+		}
+	}
+	
+	public void addToCentralPanel(Set<Widget> setToAdd) {
+		for (Widget w : setToAdd) {
+			addToCentralPanel((FileWidget) w);
+		}
+	}
+	
+	public void addToCentralPanel(FileWidget newFileWidget) {
+		// To handle changes in selections of files
+		newFileWidget.addCheckedChangeHandler(this);
+		// To make the filewidgets draggable
+		dragController.makeDraggable(newFileWidget);
+		// To make possible drop on folders
+		if (newFileWidget.isFolder()) {
+			AbstractDropController folderDropController = new FolderDropController(newFileWidget, this);
+			activeDropControllers.add(folderDropController);
+			dragController.registerDropController(folderDropController);
+		}
+		// Add it to central panel
+		centralPanel.add(newFileWidget);
 	}
 	
 	private void updateCentralPanel() {
@@ -415,21 +477,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		activeDropControllers.clear();
 		centralPanel.clear();
 		// Fill the panel
-		for (FileNode n : fileList) {
-			FileWidget newFileWidget = new FileWidget(n, path);
-			// To handle changes in selections of files
-			newFileWidget.addCheckedChangeHandler(this);
-			// To make the filewidgets draggable
-			dragController.makeDraggable(newFileWidget);
-			// To make possible drop on folders
-			if (n.getMime().equals(Constants.FOLDER_MIME)) {
-				AbstractDropController folderDropController = new FolderDropController(newFileWidget, this);
-				activeDropControllers.add(folderDropController);
-				dragController.registerDropController(folderDropController);
-			}
-			// Add it to central panel
-			centralPanel.add(newFileWidget);
-		}
+		addToCentralPanel(fileList, path);
 		
 		// Select the new widgets marked as selected by the user before
 		// newSelectedFiles will always be Set<FileWidget> but it comes from the intersection of Set<Widget> and we must maintain the type
@@ -501,7 +549,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@Override
 	public void onClose(CloseEvent<PopupPanel> event) {
 		if (event.isAutoClosed()) {
-			History.newItem(Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + getPath());
+			History.newItem(Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" + getShowingPath());
 		}
 	}
 	
@@ -529,27 +577,37 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	private void updateNavigationBar() {
-		lastPath = getPath();
+		lastPath = getShowingPath();
 		navigationBar.reset();
 		if (!lastPath.isEmpty()) {
-			StringBuilder builder = new StringBuilder();
-			String realTokenList[] = lastPath.split("/");
+//			StringBuilder builder = new StringBuilder();
+//			String realTokenList[] = lastPath.split("/");
+//			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
+//			for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
+//				if (builder.length() != 0) {
+//					builder.append("/");
+//				}
+//				// If we are adding the first element it could have a different URL than the name
+//				if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
+//					builder.append(realTokenList[j]);
+//					builder.append("/");
+//					j++;
+//				}
+//				builder.append(realTokenList[j]);
+//				navigationBar.addItem(mockTokenList[i],
+//						Constants.BROWSER_VIEW + "?" +
+//						Constants.PATH_PARAMETER + "=" +
+//						builder.toString());
+//			}
+			StringBuilder targetURL = new StringBuilder();
+			List<String> realTokenList = model.getDevicesManager().splitPath(lastPath);
 			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
-			for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
-				if (builder.length() != 0) {
-					builder.append("/");
+			for (int i = 0; i < mockTokenList.length; i++) {
+				if (targetURL.length() != 0) {
+					targetURL.append("/");
 				}
-				// If we are adding the first element it could have a different URL than the name
-				if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
-					builder.append(realTokenList[j]);
-					builder.append("/");
-					j++;
-				}
-				builder.append(realTokenList[j]);
-				navigationBar.addItem(mockTokenList[i],
-						Constants.BROWSER_VIEW + "?" +
-						Constants.PATH_PARAMETER + "=" +
-						builder.toString());
+				targetURL.append(realTokenList.get(i));
+				navigationBar.addItem(mockTokenList[i], Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" +	targetURL.toString());
 			}
 		}
 	}
@@ -578,7 +636,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler for paste upper button
 	@UiHandler("pasteTopButton")
 	void onPasteTopButtonClick(ClickEvent event) {
-		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath());
+		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath(), model);
 	}
 
 	// Handler for model change event

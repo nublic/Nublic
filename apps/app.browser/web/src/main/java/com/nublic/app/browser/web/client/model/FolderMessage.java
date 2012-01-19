@@ -62,7 +62,7 @@ public class FolderMessage extends Message {
 				model.updateTree(node, folderList);
 			}
 			
-			model.fireUpdateHandlers(node);		
+			model.fireFolderUpdateHandlers(node);		
 		} else {
 			ErrorPopup.showError("The request could not be processed");
 		}

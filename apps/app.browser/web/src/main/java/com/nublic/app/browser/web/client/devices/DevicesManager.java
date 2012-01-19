@@ -39,50 +39,23 @@ public class DevicesManager {
 		return devicesList;
 	}
 
-	// To transform real paths to mock ones and viceversa
-//	public String getRealPath(String mockPath) {
-//		// Converts paths of the form "dispositive_name/..." to "dispositive_kind/id/.."
-//		if (mockPath.equals("")) {
-//			return "";
-//		}
-//
-//		String splitPath[] = mockPath.split("/", 2);
-//		if (splitPath[0].equals(Constants.NUBLIC_ONLY)) {
-//			return mockPath;
-//		} else {
-//			StringBuilder realPath = new StringBuilder();
-//			for (Device d : devicesList) {
-//				if (d.getName().equals(splitPath[0])) {
-//					realPath.append(d.getKind().getPathName());
-//					realPath.append("/");
-//					realPath.append(d.getId());
-//					realPath.append("/");
-//					realPath.append(splitPath[1]);
-//					return realPath.toString();
-//				}
-//			}
-//			// This should never happen
-//			return null;
-//		}
-//	}
-	
 	public String getMockPath(String realPath) {
-		// Convert paths of the form "dispositive_kind/id/.." to "dispositive_name/..."
+		// Convert paths of the form "device_kind/id/.." to "device_name/..."
 		String splitPath[] = realPath.split("/", 3);
 		
 		if (splitPath[0].equals(Constants.NUBLIC_ONLY) || splitPath.length < 2) {
 			return realPath;
 		} else {
 			for (Device d : devicesList) {
-				if (d.getKind() == DeviceKind.parse(splitPath[0])
+				if (d.getKind() == DeviceKind.parseFromPath(splitPath[0])
 						&& d.getId() == Integer.valueOf(splitPath[1])) {
 					String rest = splitPath.length == 2 ? "" : splitPath[2]; 
 					return d.getName() + rest;
 				}
 			}
 			// TODO: This should never happen
-//			return null;
-			return realPath;
+			return null;
+//			return realPath;
 		}
 	}
 	
