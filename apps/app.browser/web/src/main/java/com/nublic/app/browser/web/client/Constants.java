@@ -6,6 +6,7 @@ public class Constants {
 	public final static int DEFAULT_DEPTH = 2; // Number of levels of the tree requested each time
 	public final static int DRAG_START_SENSITIVIY = 10;
 	public final static int TIME_TO_OPEN = 1000; // when mouse is over a tree item
+	public final static int TIME_TO_POLLING = 4000; // to make requests of files when showingPath doesn't change
 	public final static int MAX_SHOWING_SIZE = 1023;
 	public final static String BROWSER_VIEW = "browser";
 	public final static String PATH_PARAMETER = "path";
@@ -30,7 +31,8 @@ public class Constants {
 	public final static String KIND_MIRROR = "mirror";
 	public final static String KIND_SYNCED = "synced";
 	public final static String KIND_MEDIA  = "media";
-	public final static String NUBLIC_ONLY = "nublic-only"; // TODO: split into two constants
+	public final static String NUBLIC_ONLY = "nublic-only";
+	public final static String NUBLIC_ONLY_NAME = "Nublic files";
 	public final static String KIND_MIRROR_FOLDER = "mirrors";
 	public final static String KIND_SYNCED_FOLDER = "synced";
 	public final static String KIND_MEDIA_FOLDER  = "media";
