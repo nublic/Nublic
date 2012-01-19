@@ -347,38 +347,42 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     }
   }
   
-  post("/new-folder/:name/*") {
-    withUserAndRestPath(false) { user => folder =>
-      val name = params("name")
-      if (name.contains("..") || !user.canWrite(folder)) {
-        halt(500)  // Cannot write in that folder
-      } else {
-        val new_folder = new File(folder, name)
-        if (new_folder.exists()) {
-          halt(500)
+  post("/new-folder") {
+    withUser { user =>
+      withPath("path", false) { folder =>
+        val name = params("name").trim()
+        if (name.contains("..") || !folder.isDirectory() || !user.canWrite(folder)) {
+          halt(500)  // Cannot write in that folder
         } else {
-          new_folder.mkdir()
-          user.assignFile(new_folder)
-        }
-      } 
+          val new_folder = new File(folder, name)
+          if (new_folder.exists()) {
+            halt(500)
+          } else {
+            new_folder.mkdir()
+            user.assignFile(new_folder)
+          }
+        } 
+      }
     }
   }
   
-  post("/upload/:name/*") {
-    withUserAndRestPath(false) { user => folder =>
-      val name = params("name")
-      val file = fileParams("contents")
-      if (name.contains("..") || !user.canWrite(folder)) {
-        halt(500)  // Cannot write in that folder
-      } else {
-        val new_file = new File(folder, name)
-        if (new_file.exists()) {
-          halt(500)
+  post("/upload") {
+    withUser { user =>
+      withPath("path", false) { folder =>
+        val name = params("name").trim()
+        val file = fileParams("contents")
+        if (name.contains("..") || folder.isDirectory() || !user.canWrite(folder)) {
+          halt(500)  // Cannot write in that folder
         } else {
-          file.write(new_file)
-          user.assignFile(new_file)
-        }
-      } 
+          val new_file = new File(folder, name)
+          if (new_file.exists()) {
+            halt(500)
+          } else {
+            file.write(new_file)
+            user.assignFile(new_file)
+          }
+        } 
+      }
     }
   }
   
