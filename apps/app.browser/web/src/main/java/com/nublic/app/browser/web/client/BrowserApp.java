@@ -89,8 +89,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		} else {
 			theUi.setWindowTitle(path);
 		}
-		
-//		if (path.equals(model.getShowingPath()) && !path.equals("")) {
+
 		if (path.equals(model.getShowingPath())) {
 			// If we're already showing the asked path we'll just uncover the browser view
 			theUi.showBrowser();
@@ -118,7 +117,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			} else {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
-				theUi.showImage(model.getDevicesManager().getMockPath(path));
+				theUi.showImage(path);
 			}
 		} else {
 			ErrorPopup.showError("Image file not found");
@@ -134,7 +133,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			} else {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
-				theUi.showPDF(model.getDevicesManager().getMockPath(path));
+				theUi.showPDF(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");
@@ -150,7 +149,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			} else {
 				theUi.setWindowTitle(model.getDevicesManager().getMockPath(path));
 				// show the image lightbox
-				theUi.showText(model.getDevicesManager().getMockPath(path));
+				theUi.showText(path);
 			}
 		} else {
 			ErrorPopup.showError("No path to the resource found");

@@ -42,20 +42,28 @@ public class DevicesManager {
 	public String getMockPath(String realPath) {
 		// Convert paths of the form "device_kind/id/.." to "device_name/..."
 		String splitPath[] = realPath.split("/", 3);
-		
-		if (splitPath[0].equals(Constants.NUBLIC_ONLY) || splitPath.length < 2) {
-			return realPath;
+		if (realPath.equals("")) {
+			return "";
+		} else if (splitPath[0].equals(Constants.NUBLIC_ONLY) || splitPath.length < 2) {
+			StringBuilder mockPath = new StringBuilder(Constants.NUBLIC_ONLY_NAME);
+			mockPath.append("/");
+			if (splitPath.length == 2) {
+				mockPath.append(splitPath[1]);
+			} else if (splitPath.length > 2) {
+				mockPath.append(splitPath[1]);
+				mockPath.append(splitPath[2]);
+			}
+			return mockPath.toString();
 		} else {
 			for (Device d : devicesList) {
 				if (d.getKind() == DeviceKind.parseFromPath(splitPath[0])
 						&& d.getId() == Integer.valueOf(splitPath[1])) {
-					String rest = splitPath.length == 2 ? "" : splitPath[2]; 
+					String rest = splitPath.length == 2 ? "" : splitPath[2];
 					return d.getName() + rest;
 				}
 			}
-			// TODO: This should never happen
+			// This should never happen
 			return null;
-//			return realPath;
 		}
 	}
 	
@@ -74,7 +82,8 @@ public class DevicesManager {
 	}
 
 	public void createRootTree(BrowserModel model) {		
-		createNodeOnRoot(Constants.NUBLIC_ONLY, Constants.NUBLIC_ONLY, true, model);
+//		createNodeOnRoot(Constants.NUBLIC_ONLY, Constants.NUBLIC_ONLY, true, model);
+		createNodeOnRoot(Constants.NUBLIC_ONLY_NAME, Constants.NUBLIC_ONLY, true, model);
 
 		for (Device d : devicesList) {
 			createNodeOnRoot(d.getName(), d.getKind().getPathName() + "/" + d.getId(), false, model);
