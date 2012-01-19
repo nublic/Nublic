@@ -2324,6 +2324,7 @@ input[type=submit].btn::-moz-focus-inner,
   font-weight: bold;
   line-height: 13.5px;
   text-shadow: 0 1px 0 #ffffff;
+  cursor: pointer;
   filter: alpha(opacity=25);
   -khtml-opacity: 0.25;
   -moz-opacity: 0.25;
