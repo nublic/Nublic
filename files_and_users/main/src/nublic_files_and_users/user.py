@@ -12,6 +12,7 @@ from model import *
 # APACHE_PASSWD_FILE = "/var/nublic/conf/apache.passwd"
 APACHE_PASSWD_FILE = "/var/nublic/secure/.htpasswd" # for debugging purposes
 USER_SEPARATOR = ':'
+DATA_ROOT = "/var/nublic/data"
 
 class UserDBus(dbus.service.Object):
     def __init__(self, loop = None):
@@ -30,7 +31,7 @@ class UserDBus(dbus.service.Object):
     def user_shown_name_changed(self, username, name):
         print "User %s changed shown name to %s" % (username, name)
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='b')
+    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'b')
     def user_exists(self, username):
         try:
             spwd.getspnam(username)
@@ -38,7 +39,7 @@ class UserDBus(dbus.service.Object):
         except KeyError:
             return False
     
-    @dbus.service.method('com.nublic.users', in_signature = '', out_signature='s')
+    @dbus.service.method('com.nublic.users', in_signature = '', out_signature = 's')
     def get_all_users(self):
         ''' Gets all users separated by :'''
         r = ""
@@ -48,12 +49,12 @@ class UserDBus(dbus.service.Object):
             r = r + u.username
         return r
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='i')
+    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'i')
     def get_user_uid(self, username):
         user = pwd.getpwnam(username)
         return user[2] # Corresponds to uid
     
-    @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature='')
+    @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def create_user(self, username, password, name):
         if ' ' in username or self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
@@ -90,7 +91,7 @@ class UserDBus(dbus.service.Object):
         # Notify
         self.user_created(username, name)
     
-    @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature='')
+    @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def change_user_password(self, username, old_password, new_password):
         if ' ' in username or not self.user_exists(username):
             raise NameError()
@@ -118,7 +119,7 @@ class UserDBus(dbus.service.Object):
         htpasswd_child.sendline(new_password)
         print("Changed in htpasswd")
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='s')
+    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 's')
     def get_user_shown_name(self, username):
         if ' ' in username or not self.user_exists(username):
             raise NameError()
@@ -126,7 +127,7 @@ class UserDBus(dbus.service.Object):
         user = User.get_by(username=username)
         return user.name
     
-    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature='')
+    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
     def change_user_shown_name(self, username, name):
         if ' ' in username or not self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
@@ -138,7 +139,7 @@ class UserDBus(dbus.service.Object):
         # notify
         self.user_shown_name_changed(username, name)
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature='')
+    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = '')
     def delete_user(self, username):
         if ' ' in username or not self.user_exists(username):
             raise NameError()
@@ -158,3 +159,16 @@ class UserDBus(dbus.service.Object):
         session.commit()
         # Notify
         self.user_deleted(username, name)
+    
+    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
+    def assign_file(self, username, path):
+        # Do not allow going to parent
+        if path.find("..") != -1:
+            raise NameError()
+        # Get user id
+        user = User.get_by(username=username)
+        if user is None:
+            raise NameError()
+        # Make chown
+        real_path = DATA_ROOT + path
+        os.chown(real_path, user.uid, -1)

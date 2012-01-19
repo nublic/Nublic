@@ -103,6 +103,15 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
     }
   }
   
+  get("/changes/:since/*") {
+    withUserAndRestPath(false) { user => folder => 
+      val since = java.lang.Long.valueOf(params("since"))
+      val new_files = get_files(folder, user).filter(f => f.last_update > since)
+      val deleted_files = watcher.getDeletionProcessor.getDeletedFilesSince(folder.getAbsolutePath(), since)
+      write(BrowserPoll(new_files, deleted_files))
+    }
+  }
+  
   get("/raw/*") {
     withUserAndRestPath(false) { user => file =>
       if (!file.exists() || file.isDirectory() || !user.canRead(file)) {
@@ -265,9 +274,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
   }
   
   def do_chown(file: File, user: User) = {
-    val p = FileSystems.getDefault().getPath(file.getAbsolutePath())
-    val u = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByName(user.getUsername())
-    Files.setOwner(p, u)
+    user.assignFile(file)
   }
   
   post("/delete") {
