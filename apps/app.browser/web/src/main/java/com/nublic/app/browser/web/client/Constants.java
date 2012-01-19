@@ -6,6 +6,7 @@ public class Constants {
 	public final static int DEFAULT_DEPTH = 2; // Number of levels of the tree requested each time
 	public final static int DRAG_START_SENSITIVIY = 10;
 	public final static int TIME_TO_OPEN = 1000; // when mouse is over a tree item
+	public final static int TIME_TO_POLLING = 4000; // to make requests of files when showingPath doesn't change
 	public final static int MAX_SHOWING_SIZE = 1023;
 	public final static String BROWSER_VIEW = "browser";
 	public final static String PATH_PARAMETER = "path";

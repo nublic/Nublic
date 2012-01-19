@@ -13,11 +13,11 @@
 	    <g:north size="36">
 	      <g:DockLayoutPanel addStyleNames="modal-header">
 	        <g:east size="20">
-	          <g:Label styleName="close" ui:field="closeLabel">&times;</g:Label>
+	          <g:Label ui:field="closeLabel" styleName="close">&times;</g:Label>
 	        </g:east>
 	        <g:center>
 	          <g:HTMLPanel>
-               <h5><g:Label addStyleNames="{style.withmargin}" ui:field="titleLabel">?</g:Label></h5>
+               <h5><g:Label ui:field="titleLabel" addStyleNames="{style.withmargin}">?</g:Label></h5>
               </g:HTMLPanel>
 	        </g:center>
 	      </g:DockLayoutPanel>

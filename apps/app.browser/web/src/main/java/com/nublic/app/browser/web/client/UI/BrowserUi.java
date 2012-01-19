@@ -185,7 +185,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// Request to update folder tree with the root directory
 		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
 	}
-	
+
 	private void initActions() {
 		// TODO: pass this to .xml
 		actionsPanel.add(new FolderDownloadAction(this));

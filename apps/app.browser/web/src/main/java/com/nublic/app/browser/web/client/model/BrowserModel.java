@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.user.client.Timer;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.devices.DeviceMessage;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
 import com.nublic.util.messages.SequenceHelper;
@@ -14,11 +16,18 @@ import com.nublic.util.messages.SequenceWaiter;
 public class BrowserModel {
 	SequenceWaiter<FolderMessage> foldersMessageHelper;
 	SequenceIgnorer<FileMessage> filesMessageHelper;
+	SequenceWaiter<ChangesMessage> changesMessageHelper;
 	FolderNode folderTree;
 	// "State" dependent part
 	List<FileNode> fileList;
 	String showingPath;
 	DevicesManager devManager;
+	Timer filesPollingTimer = new Timer() {
+		@Override
+		public void run() {
+			reUpdateFiles();
+		}
+	};
 	
 	// TODO: synchronize updateFileList over an object to allow synchronized reading
 
@@ -33,6 +42,7 @@ public class BrowserModel {
 	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
+	    changesMessageHelper = new SequenceWaiter<ChangesMessage>(new ChangesMessage.Comparator());
 	    devManager = new DevicesManager();
 	}
 
@@ -52,13 +62,11 @@ public class BrowserModel {
 	}
 
 	public void fireFilesUpdateHandlers(boolean shouldUpdateFoldersOnSuccess, boolean newFileList) {
-//		for (ModelUpdateHandler handler : updateHandlers) {
-//			handler.onFilesUpdate(this, shouldUpdateFoldersOnSuccess);	
-//		}
 		fireFilesUpdateHandlers(new FileEvent(this, shouldUpdateFoldersOnSuccess, newFileList));
 	}
 	
 	public void fireFilesUpdateHandlers(FileEvent e) {
+		// Call every handler looking at the files
 		for (ModelUpdateHandler handler : updateHandlers) {
 			handler.onFilesUpdate(e);	
 		}
@@ -82,19 +90,6 @@ public class BrowserModel {
 		// (we've cleaned everything because we want to allow deletion updates in server to be shown,
 		// but if we're showing a path we need to have the nodes in the tree...)
 		return createBranch(showingPath);
-//		List<String> pathTokens = devManager.splitPath(showingPath);
-//		
-//		if (pathTokens.get(0).equals("")) {
-//			return folderTree;
-//		} else {
-//			FolderNode returnFolder = folderTree.getChild(pathTokens.get(0));
-//			int i = 1;
-//			while (i < pathTokens.size() && returnFolder != null) {
-//				returnFolder = returnFolder.getChild(pathTokens.get(i));
-//				i++;
-//			}
-//			return returnFolder;
-//		}
 	}
 	
 	public DevicesManager getDevicesManager() {
@@ -120,16 +115,23 @@ public class BrowserModel {
 		// TODO: Bug on updating files of root panel when files request arrives before devices one
 		if (path.equals("")) {
 			// If root path, files gets updated with devices
-			showingPath = "";
+			changePath("");
 			fireFilesUpdateHandlers(false, true);
 		} else {
 			if (!showingPath.equals(path)) {
 				FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
 				filesMessageHelper.send(message, RequestBuilder.GET);
+			} else {
+				resetTimer();
 			}
 		}
 	}
 
+	public void reUpdateFiles() {
+		ChangesMessage cm = new ChangesMessage(this, showingPath);
+		changesMessageHelper.send(cm, RequestBuilder.GET);
+	}
+	
 	// Update methods for responses
 	public synchronized void updateTree(FolderNode n, JsArray<FolderContent> folderList) {
 		updateTreeNoSync(n, folderList);
@@ -154,7 +156,7 @@ public class BrowserModel {
 	}
 	
 	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url, String path) {
-		showingPath = path;
+		changePath(path);
 		if (fileContentList.length() != 0) {
 			fileList.clear();
 			for (int i = 0; i < fileContentList.length(); i++) {
@@ -188,7 +190,6 @@ public class BrowserModel {
 		if (path.equals("")) {
 			return folderTree;
 		}
-
 		List<String> splited = devManager.splitPath(path);
 
 		FolderNode currentNode = folderTree;
@@ -212,7 +213,6 @@ public class BrowserModel {
 		if (path.equals("")) {
 			return folderTree;
 		}
-
 		List<String> splited = devManager.splitPath(path);
 
 		FolderNode currentNode = folderTree;
@@ -229,4 +229,13 @@ public class BrowserModel {
 		return currentNode;
 	}
 	
+	private void changePath(String newPath) {
+		showingPath = newPath;
+		resetTimer();
+	}
+	
+	private void resetTimer() {
+		filesPollingTimer.cancel();
+		filesPollingTimer.schedule(Constants.TIME_TO_POLLING);
+	}
 }
