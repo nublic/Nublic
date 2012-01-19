@@ -23,11 +23,13 @@ public class User {
 	List<String> readablePaths;
 	List<String> writablePaths;
 	
+	public static final String DATA_ROOT = "/var/nublic/data";
+	
 	public User(String username) {
 		this.username = username;
 		this.uid = null;
-		this.readablePaths = Lists.newArrayList("/var/nublic/data");
-		this.writablePaths = Lists.newArrayList("/var/nublic/data/nublic-only");
+		this.readablePaths = Lists.newArrayList(DATA_ROOT);
+		this.writablePaths = Lists.newArrayList(DATA_ROOT + "/nublic-only");
 	}
 	
 	public static List<User> getAll() throws UserQueryException {
@@ -113,6 +115,22 @@ public class User {
 	
 	public boolean isOwner(Folder folder) throws FileQueryException, IOException {
 		return folder.getOwner().getUsername().equals(username);
+	}
+	
+	public void assignFile(File file) throws FileQueryException, IOException {
+		this.assignFile(file.getAbsolutePath());
+	}
+	
+	public void assignFile(String path) throws FileQueryException, IOException {
+		if (!path.startsWith(DATA_ROOT + "/"))
+			throw new FileQueryException("You are not allowed to change that path's owner");
+		
+		String path_to_send = path.replace(DATA_ROOT, "");
+		try {
+			Singletons.getUsers().assign_file(username, path_to_send);
+		} catch (DBusException e) {
+			throw new FileQueryException();
+		}
 	}
 	
 	public boolean canRead(Folder folder) throws FileQueryException, IOException {

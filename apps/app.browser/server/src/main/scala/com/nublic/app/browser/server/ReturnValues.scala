@@ -13,3 +13,5 @@ object BrowserDevice {
   val MIRROR = "mirror"
   val SYNCED_FOLDER = "synced"
 }
+
+case class BrowserPoll(val new_files: List[BrowserFile], val deleted_files: List[String])
