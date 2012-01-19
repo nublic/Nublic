@@ -18,8 +18,9 @@ import com.nublic.filesAndUsers.java._
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import scala.collection.JavaConversions._
+import org.scalatra.fileupload.FileUploadSupport
 
-class BrowserServer extends ScalatraFilter with JsonSupport {
+class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
@@ -342,6 +343,45 @@ class BrowserServer extends ScalatraFilter with JsonSupport {
           }
         }
         case Nil => halt(403)
+      }
+    }
+  }
+  
+  post("/new-folder") {
+    withUser { user =>
+      withPath("path", false) { folder =>
+        val name = params("name").trim()
+        if (name.contains("..") || !folder.isDirectory() || !user.canWrite(folder)) {
+          halt(500)  // Cannot write in that folder
+        } else {
+          val new_folder = new File(folder, name)
+          if (new_folder.exists()) {
+            halt(500)
+          } else {
+            new_folder.mkdir()
+            user.assignFile(new_folder)
+          }
+        } 
+      }
+    }
+  }
+  
+  post("/upload") {
+    withUser { user =>
+      withPath("path", false) { folder =>
+        val name = params("name").trim()
+        val file = fileParams("contents")
+        if (name.contains("..") || folder.isDirectory() || !user.canWrite(folder)) {
+          halt(500)  // Cannot write in that folder
+        } else {
+          val new_file = new File(folder, name)
+          if (new_file.exists()) {
+            halt(500)
+          } else {
+            file.write(new_file)
+            user.assignFile(new_file)
+          }
+        } 
       }
     }
   }
