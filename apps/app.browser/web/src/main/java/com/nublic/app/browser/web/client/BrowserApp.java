@@ -90,7 +90,8 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 			theUi.setWindowTitle(path);
 		}
 		
-		if (path.equals(model.getShowingPath()) && !path.equals("")) {
+//		if (path.equals(model.getShowingPath()) && !path.equals("")) {
+		if (path.equals(model.getShowingPath())) {
 			// If we're already showing the asked path we'll just uncover the browser view
 			theUi.showBrowser();
 		} else {

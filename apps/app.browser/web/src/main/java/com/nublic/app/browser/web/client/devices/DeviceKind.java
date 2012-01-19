@@ -31,4 +31,13 @@ public enum DeviceKind {
 		}
 		return null;
 	}
+
+	public static DeviceKind parseFromPath(String s) {
+		for (DeviceKind k : DeviceKind.values()) {
+			if (s.equals(k.getPathName())) {
+				return k;
+			}
+		}
+		return null;
+	}
 }

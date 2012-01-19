@@ -17,7 +17,6 @@ public class BrowserModel {
 	FolderNode folderTree;
 	// "State" dependent part
 	List<FileNode> fileList;
-	String showingURL;
 	String showingPath;
 	DevicesManager devManager;
 	
@@ -30,7 +29,7 @@ public class BrowserModel {
 	    folderTree = new FolderNode();
 	    fileList = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
-	    showingURL = "";
+//	    showingURL = "";
 	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
 	    filesMessageHelper = new SequenceIgnorer<FileMessage>(new FileMessage.Comparator());
@@ -118,10 +117,16 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
-		// TODO: Bug on updating files of root panel when folder petition arrives before devices one
-		FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
-		if (!showingURL.equals(message.getURL())) {
-			filesMessageHelper.send(message, RequestBuilder.GET);
+		// TODO: Bug on updating files of root panel when files request arrives before devices one
+		if (path.equals("")) {
+			// If root path, files gets updated with devices
+			showingPath = "";
+			fireFilesUpdateHandlers(false, true);
+		} else {
+			if (!showingPath.equals(path)) {
+				FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
+				filesMessageHelper.send(message, RequestBuilder.GET);
+			}
 		}
 	}
 
@@ -149,7 +154,6 @@ public class BrowserModel {
 	}
 	
 	public synchronized void updateFileList(JsArray<FileContent> fileContentList, String url, String path) {
-		showingURL = url;
 		showingPath = path;
 		if (fileContentList.length() != 0) {
 			fileList.clear();

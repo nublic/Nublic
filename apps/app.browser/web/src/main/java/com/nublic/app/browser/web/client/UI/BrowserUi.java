@@ -330,13 +330,13 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			Set<Widget> added = Sets.difference(widgetList, inCentralPanel);
 			for (Widget w : added) {
 				FileWidget fw = (FileWidget) w;
-//				fw.setUncut();
-//				fw.setChecked(false);
 				addToCentralPanel(fw);
 			}
 			for (Widget w : deleted) {
+				selectedFiles.remove(w);
 				centralPanel.remove(w);
 			}
+			notifyContextHandlers();
 		}
 	}
 	
@@ -372,6 +372,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			
 			// Set the node as selected
 			treeView.setSelectedItem(nodeView);
+		} else {
+			treeView.setSelectedItem(null);
 		}
 		
 	}
@@ -578,24 +580,34 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		lastPath = getShowingPath();
 		navigationBar.reset();
 		if (!lastPath.isEmpty()) {
-			StringBuilder builder = new StringBuilder();
-			String realTokenList[] = lastPath.split("/");
+//			StringBuilder builder = new StringBuilder();
+//			String realTokenList[] = lastPath.split("/");
+//			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
+//			for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
+//				if (builder.length() != 0) {
+//					builder.append("/");
+//				}
+//				// If we are adding the first element it could have a different URL than the name
+//				if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
+//					builder.append(realTokenList[j]);
+//					builder.append("/");
+//					j++;
+//				}
+//				builder.append(realTokenList[j]);
+//				navigationBar.addItem(mockTokenList[i],
+//						Constants.BROWSER_VIEW + "?" +
+//						Constants.PATH_PARAMETER + "=" +
+//						builder.toString());
+//			}
+			StringBuilder targetURL = new StringBuilder();
+			List<String> realTokenList = model.getDevicesManager().splitPath(lastPath);
 			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
-			for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
-				if (builder.length() != 0) {
-					builder.append("/");
+			for (int i = 0; i < mockTokenList.length; i++) {
+				if (targetURL.length() != 0) {
+					targetURL.append("/");
 				}
-				// If we are adding the first element it could have a different URL than the name
-				if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
-					builder.append(realTokenList[j]);
-					builder.append("/");
-					j++;
-				}
-				builder.append(realTokenList[j]);
-				navigationBar.addItem(mockTokenList[i],
-						Constants.BROWSER_VIEW + "?" +
-						Constants.PATH_PARAMETER + "=" +
-						builder.toString());
+				targetURL.append(realTokenList.get(i));
+				navigationBar.addItem(mockTokenList[i], Constants.BROWSER_VIEW + "?" + Constants.PATH_PARAMETER + "=" +	targetURL.toString());
 			}
 		}
 	}

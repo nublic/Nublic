@@ -25,16 +25,39 @@ public class PasteAction extends ActionWidget {
 	}
 
 	public static void doPasteAction(final String mode, final Set<Widget> setToCopy, final String pathTo, final BrowserModel feedbackTarget) {
+		String tempPathFrom = null;
+		// Create the request params
+		StringBuilder setOfFiles = new StringBuilder();		
+		for (Widget w : setToCopy) {
+			if (setOfFiles.length() != 0) {
+				setOfFiles.append(":");
+			} else {
+				tempPathFrom = ((FileWidget)w).getInPath();
+			}
+			setOfFiles.append(((FileWidget) w).getPath());
+		}
+		// Necessary to get the path from we're copying. In case we want to give feedback in that folder
+		final String pathFrom = tempPathFrom;
+
 		Message m = new Message() {
 			@Override
 			public void onSuccess(Response response) {
 				if (response.getStatusCode() == Response.SC_OK) {
 					if (feedbackTarget.getShowingPath().equals(pathTo)) {
+						// If we're copying to the showing file: feedback
 						List<FileNode> filesCopied = new ArrayList<FileNode>();
 						for (Widget w : setToCopy) {
 							filesCopied.add(((FileWidget)w).getNode());
 						}
 						feedbackTarget.addFiles(filesCopied);
+					} else if (feedbackTarget.getShowingPath().equals(pathFrom)
+							   && mode.equals("move")) {
+						// If we're cutting from the showing file: feedback
+						List<FileNode> filesCut = new ArrayList<FileNode>();
+						for (Widget w : setToCopy) {
+							filesCut.add(((FileWidget)w).getNode());
+						}
+						feedbackTarget.removeFiles(filesCut);
 					}
 				} else {
 					ErrorPopup.showError("Could not " + mode + " files");
@@ -49,13 +72,6 @@ public class PasteAction extends ActionWidget {
 				return URL.encode(GWT.getHostPageBaseURL() + "server/" + mode);
 			}
 		};
-		StringBuilder setOfFiles = new StringBuilder();
-		for (Widget w : setToCopy) {
-			if (setOfFiles.length() != 0) {
-				setOfFiles.append(":");
-			}
-			setOfFiles.append(((FileWidget) w).getPath());
-		}
 		m.addParam("files", setOfFiles.toString());
 		m.addParam("target", pathTo);
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
@@ -67,7 +83,6 @@ public class PasteAction extends ActionWidget {
 				      stateProvider.getClipboard(),
 				      stateProvider.getShowingPath(),
 				      stateProvider.getModel());
-		// TODO: if mode cut remove filewidgets from view
 	}
 
 	@Override

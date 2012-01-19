@@ -49,6 +49,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	FileNode node;
 	String path;
+	String inPath;
 	String url = null;
 	boolean mouseOver = false;
 	boolean hasPreview = false;
@@ -80,8 +81,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		// init internal variables
 		this.node = n;
 		if (path.equals("")) {
+			inPath = "";
 			this.path = n.getName();
 		} else {
+			inPath = path;
 			this.path = path + "/" + n.getName();
 		}
 		
@@ -197,6 +200,14 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return path;
 	}
 	
+	public String getInPath() {
+		return inPath;
+	}
+
+	public void setInPath(String inPath) {
+		this.inPath = inPath;
+	}
+
 	public String getName() {
 		return node.getName(); 
 	}

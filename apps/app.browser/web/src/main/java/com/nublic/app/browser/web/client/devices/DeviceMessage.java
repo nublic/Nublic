@@ -6,6 +6,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.browser.web.client.model.BrowserModel;
+import com.nublic.app.browser.web.client.model.FileEvent;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
@@ -45,6 +46,9 @@ public class DeviceMessage extends Message {
 				}
 				manager.createRootTree(model);
 				model.fireFolderUpdateHandlers(model.getFolderTree());
+				if (model.getShowingPath().equals("")) {
+					model.fireFilesUpdateHandlers(new FileEvent(model, false, true));
+				}
 			}
 		} else {
 			ErrorPopup.showError("The request could not be processed");
