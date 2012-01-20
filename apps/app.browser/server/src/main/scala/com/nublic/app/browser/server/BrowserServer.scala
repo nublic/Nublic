@@ -107,9 +107,10 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   get("/changes/:since/*") {
     withUserAndRestPath(false) { user => folder => 
       val since = java.lang.Long.valueOf(params("since"))
-      val new_files = get_files(folder, user).filter(f => f.last_update > since)
+      val new_files = watcher.getDeletionProcessor.getNewFilesSince(folder.getAbsolutePath(), since)
+      val new_files_info = new_files.map(f => get_one_file(new File(f), user))
       val deleted_files = watcher.getDeletionProcessor.getDeletedFilesSince(folder.getAbsolutePath(), since)
-      write(BrowserPoll(new_files, deleted_files))
+      write(BrowserPoll(new_files_info, deleted_files))
     }
   }
   
@@ -406,35 +407,36 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   }
   
   def get_files(folder: File, user: User): List[BrowserFile] = {
-    var files = List[BrowserFile]()
-	for (file <- folder.listFiles()) {
-	  if (!is_hidden(file.getName()) && user.canRead(file)) {
-	    Solr.getMimeType(file.getPath()) match {
-	      case None       => {
-	        // We need to get the mime type correctly
-	        // Tell filewatcher
-	        try {
-	          FileUtils.touch(file)
-	        } catch {
-	          case _ => { /* Nothing in special */ }
-	        }
-	        if (file.isDirectory()) {
-	          files ::= BrowserFile(file.getName(), "application/x-directory", null,
-	            file.length(), file.lastModified(), user.canWrite(file))
-	        } else {
-	          // Return unknown as mimetype
-	          files ::= BrowserFile(file.getName(), "unknown", null,
-	            file.length(), file.lastModified(), user.canWrite(file))
-	        }
-	      }
-	      case Some(mime) => 
-	        files ::= BrowserFile(file.getName(), mime,
-	            find_view(file.getAbsolutePath(), mime),
-	            file.length(), file.lastModified(), user.canWrite(file))
-	    }
-	  }
-	}
-	files.sort(fileLt)
+    folder.listFiles().filter(f => !is_hidden(f.getName()) && user.canRead(f))
+                      .map(f => get_one_file(f, user))
+                      .toList
+                      .sort(fileLt)
+  }
+  
+  def get_one_file(file: File, user: User): BrowserFile = {
+    Solr.getMimeType(file.getPath()) match {
+      case None       => {
+        // We need to get the mime type correctly
+        // Tell filewatcher
+        try {
+          FileUtils.touch(file)
+        } catch {
+          case _ => { /* Nothing in special */ }
+        }
+        if (file.isDirectory()) {
+          BrowserFile(file.getName(), "application/x-directory", null,
+            file.length(), file.lastModified(), user.canWrite(file))
+        } else {
+          // Return unknown as mimetype
+          BrowserFile(file.getName(), "unknown", null,
+            file.length(), file.lastModified(), user.canWrite(file))
+        }
+      }
+      case Some(mime) => 
+        BrowserFile(file.getName(), mime,
+            find_view(file.getAbsolutePath(), mime),
+            file.length(), file.lastModified(), user.canWrite(file))
+    }
   }
   
   def fileLt(a: BrowserFile, b: BrowserFile) = {

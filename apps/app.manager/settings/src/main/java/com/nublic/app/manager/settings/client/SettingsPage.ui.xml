@@ -37,7 +37,7 @@
 					height="95%" barHeight="0" barUnit="PX">
 					<g:tab>
 						<g:header size='0'>User</g:header>
-						<settings:DeviceSettingsTab />
+						<settings:UserSettingsTab />
 					</g:tab>
 					<g:tab>
 						<g:header size='0'>Work Folders</g:header>

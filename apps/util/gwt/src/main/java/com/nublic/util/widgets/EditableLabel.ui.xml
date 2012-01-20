@@ -10,7 +10,7 @@
 	<g:FocusPanel ui:field="focusPanel">
 		<g:DeckPanel ui:field="deckPanel">
 			<g:Label styleName="{style.editableLabel}" ui:field="editLabel" />
-			<g:TextArea styleName="edit" ui:field="editBox" />
+			<g:TextBox styleName="edit" ui:field="editBox" />
 		</g:DeckPanel>
 	</g:FocusPanel>
 </ui:UiBinder> 
