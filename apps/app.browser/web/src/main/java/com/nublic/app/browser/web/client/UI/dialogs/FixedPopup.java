@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client.UI;
+package com.nublic.app.browser.web.client.UI.dialogs;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -8,6 +8,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.FileWidget;
 
 // A pop-up that occupy all the space except a margin at boundaries
 public class FixedPopup extends PopupPanel implements ResizeHandler, ClickHandler {

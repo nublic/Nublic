@@ -64,6 +64,7 @@ import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
+import com.nublic.app.browser.web.client.UI.dialogs.FixedPopup;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;

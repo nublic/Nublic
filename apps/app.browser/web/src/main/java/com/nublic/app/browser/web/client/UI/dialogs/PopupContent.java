@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client.UI;
+package com.nublic.app.browser.web.client.UI.dialogs;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.FileWidget;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -63,7 +64,7 @@ public class PopupContent extends Composite {
 	public void setCurrentFile(FileWidget current) {
 		internalFile = current;
 		if (current != null) {
-			titleLabel.setText(current.fileName.getText());
+			titleLabel.setText(current.getName());
 		} else {
 			titleLabel.setText("?");
 		}
