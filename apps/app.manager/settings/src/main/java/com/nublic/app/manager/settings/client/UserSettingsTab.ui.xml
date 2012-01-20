@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.util.widgets">
+	<ui:style>
+	.name {
+	   font-size: 200%;
+	   font-weight: bold;
+	   height: 30px;
+	   padding-bottom: 10px;
+	}
+	.username {
+	   font-size: 120%;
+	   font-weight: bold;
+	}
+	</ui:style>
+	<g:HTMLPanel>
+	<n:EditableLabel ui:field="name" addStyleNames="{style.name}">Ejemplo</n:EditableLabel>
+	<g:Label addStyleNames="{style.username}">poloni9</g:Label>
+	</g:HTMLPanel>
+</ui:UiBinder> 
