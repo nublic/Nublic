@@ -113,7 +113,6 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
-		// TODO: Bug on updating files of root panel when files request arrives before devices one
 		if (path.equals("")) {
 			// If root path, files gets updated with devices
 			changePath("");

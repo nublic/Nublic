@@ -67,6 +67,7 @@ public class ChangesMessage extends Message {
 
 	}
 
+	// From JsArray to List<FileNode>
 	private List<FileNode> convertAddedFiles(JsArray<FileContent> newFiles) {
 		List<FileNode> retList = new ArrayList<FileNode>();
 		for (int i = 0; i < newFiles.length() ; i++) {
@@ -78,6 +79,7 @@ public class ChangesMessage extends Message {
 		return retList;
 	}
 
+	// From JsArray to List<FileNode>
 	private List<FileNode> convertDeletesFiles(JsArrayString deletedFiles) {
 		List<FileNode> retList = new ArrayList<FileNode>();
 		for (int i = 0; i < deletedFiles.length() ; i++) {

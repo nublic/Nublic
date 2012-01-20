@@ -54,13 +54,16 @@ import com.google.gwt.user.client.ui.TreeItem;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
+import com.nublic.app.browser.web.client.UI.actions.Availability;
 import com.nublic.app.browser.web.client.UI.actions.CopyAction;
 import com.nublic.app.browser.web.client.UI.actions.CutAction;
 import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.NewFolderAction;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
+import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -149,11 +152,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				updateCentralPanel();
 			}
 		});
-		
-		// Unmark as available newFolder and addFile buttons TODO: implement newFolder and addFile
-		newFolderTopButton.setEnabled(false);
-		addFileTopButton.setEnabled(false);
-		
+
 		// Set the properties of our popUpDialog. Should start empty, hidden, ...
 		popUpBox = new FixedPopup(true, true); // auto-hide, modal
 
@@ -190,11 +189,16 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// TODO: pass this to .xml
 		actionsPanel.add(new FolderDownloadAction(this));
 		actionsPanel.add(new SingleDownloadAction(this));
+		final NewFolderAction folderAction = new NewFolderAction(this);
+		actionsPanel.add(folderAction);
+		final UploadAction upAction = new UploadAction(this);
+		actionsPanel.add(upAction);
 		actionsPanel.add(new SetDownloadAction(this));
 		actionsPanel.add(new CutAction(this));
 		actionsPanel.add(new CopyAction(this));
 		actionsPanel.add(new DeleteAction(this));
-		actionsPanel.add(new PasteAction(this));
+		final PasteAction pasteAction = new PasteAction(this);
+		actionsPanel.add(pasteAction);
 
 		// To give feedback to the user about what is the state of the browser
 		addContextChangeHandler(new ContextChangeHandler() {
@@ -212,12 +216,22 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					infoWidget.changeInfo(selectedFiles);
 				}
 				// Upper buttons
-				if (clipboard.isEmpty() || !getShowingFolder().isWritable()) {
-					pasteTopButton.setTitle("Paste");
-					pasteTopButton.setEnabled(false);
-				} else {
-					pasteTopButton.setTitle("Paste (" + clipboard.size() + ")");
+				if (pasteAction.getAvailability() == Availability.AVAILABLE) {
 					pasteTopButton.setEnabled(true);
+					pasteTopButton.setTitle("Paste (" + clipboard.size() + ")");
+				} else {
+					pasteTopButton.setEnabled(false);
+					pasteTopButton.setTitle("Paste");
+				}
+				if (upAction.getAvailability() == Availability.AVAILABLE) {
+					addFileTopButton.setEnabled(true);
+				} else {
+					addFileTopButton.setEnabled(false);
+				}
+				if (folderAction.getAvailability() == Availability.AVAILABLE) {
+					newFolderTopButton.setEnabled(true);
+				} else {
+					newFolderTopButton.setEnabled(false);
 				}
 			}
 		});

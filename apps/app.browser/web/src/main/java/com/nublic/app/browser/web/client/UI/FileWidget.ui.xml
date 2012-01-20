@@ -32,6 +32,9 @@
 			padding: 0px;
 			border: none;
 		}
+		.smartbutton {
+			padding: 1px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
@@ -47,9 +50,9 @@
 				<g:CheckBox ui:field="selectedBox" width="20px">
 				</g:CheckBox>
 			</g:at>
-			<g:at left='68' top='68'> <!-- 96px of the thumbnail minus 16px of the download image -->
+			<g:at left='74' top='74'> <!-- 96px of the thumbnail minus 16px of the download image -->
 <!-- 				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}"> -->
-				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}">
+				<g:PushButton ui:field="downloadButton" addStyleNames="{style.smartbutton}">
 					<g:upFace image="{res.download}"/>
 				</g:PushButton>
 			</g:at>
