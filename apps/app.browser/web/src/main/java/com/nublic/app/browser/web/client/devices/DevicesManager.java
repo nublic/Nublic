@@ -51,6 +51,7 @@ public class DevicesManager {
 				mockPath.append(splitPath[1]);
 			} else if (splitPath.length > 2) {
 				mockPath.append(splitPath[1]);
+				mockPath.append("/");
 				mockPath.append(splitPath[2]);
 			}
 			return mockPath.toString();
