@@ -2,9 +2,9 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-	.withmargin {
-	   margin-left: 10px;
-	}
+		.withmargin {
+	   		margin-left: 10px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>

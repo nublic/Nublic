@@ -2,8 +2,41 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		
+		.withmargin {
+	   		margin-left: 10px;
+		}
 	</ui:style>
-	<g:HTMLPanel>
-	</g:HTMLPanel>
+
+
+	<g:DockLayoutPanel>
+	    <g:north size="36">
+	      <g:DockLayoutPanel addStyleNames="modal-header">
+	        <g:east size="20">
+	          <g:Label ui:field="closeLabel" styleName="close">&times;</g:Label>
+	        </g:east>
+	        <g:center>
+	          <g:HTMLPanel>
+               <h5><g:Label ui:field="titleLabel" addStyleNames="{style.withmargin}">?</g:Label></h5>
+              </g:HTMLPanel>
+	        </g:center>
+	      </g:DockLayoutPanel>
+	    </g:north>
+		<g:center>
+			<g:LayoutPanel width="100%">
+				<g:layer left="0px" right="0px">
+					<g:TextBox ui:field="textBox"/>
+				</g:layer>
+			</g:LayoutPanel>
+		</g:center>
+		<g:south size="50">
+			<g:HorizontalPanel width="100%" verticalAlignment="middle" horizontalAlignment="right" addStyleNames="modal-footer">
+			  <g:HorizontalPanel>
+				<g:Button ui:field="cancelButton" text="cancel">
+				</g:Button>
+				<g:Button ui:field="acceptButton" text="accept" addStyleNames="{style.withmargin}">
+				</g:Button>
+			  </g:HorizontalPanel>
+			</g:HorizontalPanel>
+		</g:south>
+	</g:DockLayoutPanel>
 </ui:UiBinder> 

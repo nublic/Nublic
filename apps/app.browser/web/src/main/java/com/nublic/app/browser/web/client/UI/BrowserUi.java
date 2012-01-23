@@ -65,6 +65,7 @@ import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 import com.nublic.app.browser.web.client.UI.dialogs.FixedPopup;
+import com.nublic.app.browser.web.client.UI.dialogs.NewFolderPopup;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -122,6 +123,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField PushButton addFileTopButton;
 	@UiField PushButton pasteTopButton;
 	FixedPopup popUpBox;
+	NewFolderPopup popupNewFolder;
 
 	public BrowserUi(BrowserModel model) {
 		// Initialize tree
@@ -161,6 +163,11 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
 		popUpBox.setAutoHideOnHistoryEventsEnabled(false);
+		
+		// new folder popup
+		popupNewFolder = new NewFolderPopup(true, true);
+		popUpBox.hide();
+		popUpBox.setGlassEnabled(true);
 		
 		// Navigation Bar
 		addContextChangeHandler(new ContextChangeHandler() {
@@ -311,7 +318,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public DevicesManager getDevicesManager() {
 		return model.getDevicesManager();
 	}
-
+	
 	// Handler of the open action for the browser tree
 	@Override
 	public void onOpen(OpenEvent<TreeItem> event) {
@@ -613,25 +620,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		lastPath = getShowingPath();
 		navigationBar.reset();
 		if (!lastPath.isEmpty()) {
-//			StringBuilder builder = new StringBuilder();
-//			String realTokenList[] = lastPath.split("/");
-//			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
-//			for (int i = 0, j = 0; i < mockTokenList.length ; i++, j++) {
-//				if (builder.length() != 0) {
-//					builder.append("/");
-//				}
-//				// If we are adding the first element it could have a different URL than the name
-//				if (i == 0 && !realTokenList[0].equals(Constants.NUBLIC_ONLY)) {
-//					builder.append(realTokenList[j]);
-//					builder.append("/");
-//					j++;
-//				}
-//				builder.append(realTokenList[j]);
-//				navigationBar.addItem(mockTokenList[i],
-//						Constants.BROWSER_VIEW + "?" +
-//						Constants.PATH_PARAMETER + "=" +
-//						builder.toString());
-//			}
 			StringBuilder targetURL = new StringBuilder();
 			List<String> realTokenList = model.getDevicesManager().splitPath(lastPath);
 			String mockTokenList[] = model.getDevicesManager().getMockPath(lastPath).split("/");
@@ -823,5 +811,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		FileWidget previous = findPreviousTo(index);
 
 		popUpBox.setContentWidget(newContent, current, previous, next);
+	}
+
+	@UiHandler("newFolderTopButton")
+	void onNewFolderTopButtonClick(ClickEvent event) {
+		showNewFolderPopup();
+	}
+	
+	public void showNewFolderPopup() {
+		popupNewFolder.center();
 	}
 }

@@ -10,13 +10,14 @@ public class NewFolderAction extends ActionWidget {
 		super(Resources.INSTANCE.newfolder(), "Create new folder", stateProvider);
 	}
 	
-	public static void doCreateFolder(String pathTo) {
+	public static void doCreateFolder(String newFolderName, String pathTo) {
 		
 	}
 
 	@Override
 	public void executeAction() {
-		doCreateFolder(stateProvider.getShowingPath());
+		stateProvider.showNewFolderPopup();
+//		doCreateFolder(stateProvider.getShowingPath());
 	}
 
 	@Override
