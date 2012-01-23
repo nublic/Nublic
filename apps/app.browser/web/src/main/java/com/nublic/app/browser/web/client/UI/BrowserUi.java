@@ -33,6 +33,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -41,6 +42,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Image;
@@ -79,6 +81,7 @@ import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.Callback;
 import com.nublic.util.gwt.LazyLoader;
 import com.nublic.util.messages.Message;
+import com.nublic.util.messages.PostRedirectHelper;
 import com.nublic.util.messages.SequenceHelper;
 
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
@@ -122,6 +125,13 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField PushButton newFolderTopButton;
 	@UiField PushButton addFileTopButton;
 	@UiField PushButton pasteTopButton;
+//	@UiField FormPanel uploadForm;
+//	@UiField VerticalPanel uploadPanel;
+	@UiField FileUpload uploadWidget;
+//	@UiField NewFolderAction folderAction;
+//	@UiField UploadAction upAction;
+//	@UiField PasteAction pasteAction;
+	
 	FixedPopup popUpBox;
 	NewFolderPopup popupNewFolder;
 
@@ -819,5 +829,39 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	public void showNewFolderPopup() {
 		popupNewFolder.showDialog(getShowingPath());
+	}
+	
+	public void showUploadPopup() {
+//		FormPanel uploadForm = new FormPanel();
+//		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
+//		uploadForm.setMethod(FormPanel.METHOD_POST);
+//		uploadForm.setAction(URL.encode(GWT.getHostPageBaseURL() + "server/upload"));
+//		
+//		VerticalPanel uploadPanel = new VerticalPanel();
+//
+//		uploadForm.setWidget(uploadPanel);
+//
+//		final TextBox pathTo = new TextBox();
+//		pathTo.setName("path");
+//		pathTo.setText(getShowingPath());
+//		uploadPanel.add(pathTo);
+//
+//		final TextBox name = new TextBox();
+//		name.setName("name");
+//		name.setText(uploadWidget.getFilename());
+//		uploadPanel.add(name);
+//		
+//		uploadWidget.setName("file");
+//		uploadPanel.add(uploadWidget);
+//
+//		RootPanel.get().add(uploadForm);
+//		uploadForm.submit();
+		
+		PostRedirectHelper sendFileHelper = new PostRedirectHelper(URL.encode(GWT.getHostPageBaseURL() + "server/upload"));
+		sendFileHelper.addParam("path", getShowingPath());
+		sendFileHelper.addParam("name", uploadWidget.getFilename());
+		sendFileHelper.addParam("file", uploadWidget);
+		
+		sendFileHelper.send();
 	}
 }

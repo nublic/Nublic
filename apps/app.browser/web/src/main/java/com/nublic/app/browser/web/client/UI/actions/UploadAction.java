@@ -16,7 +16,8 @@ public class UploadAction extends ActionWidget {
 
 	@Override
 	public void executeAction() {
-		doUpload(stateProvider.getShowingPath());
+		stateProvider.showUploadPopup();
+//		doUpload(stateProvider.getShowingPath());
 	}
 
 	@Override
