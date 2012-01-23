@@ -80,11 +80,6 @@
 <!-- 	   			<acts:CopyAction/> -->
 <!-- 	   			<acts:DeleteAction/> -->
 <!-- 	   			<acts:PasteAction ui:field="pasteAction"/> -->
-<!-- 	   			<g:FormPanel ui:field="uploadForm"> -->
-<!-- 	   				<g:VerticalPanel ui:field="uploadPanel"> -->
-	   			<g:FileUpload ui:field="uploadWidget"/>
-<!-- 	   				</g:VerticalPanel> -->
-<!-- 	   			</g:FormPanel> -->
 	   		</g:FlowPanel>
 	   	</g:east>
 	   	

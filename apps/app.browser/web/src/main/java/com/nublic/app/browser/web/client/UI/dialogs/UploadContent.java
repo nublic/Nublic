@@ -3,49 +3,54 @@ package com.nublic.app.browser.web.client.UI.dialogs;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.TextBox;
+import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 
-public class FormContent extends Composite implements HasText {
-	private static FormContentUiBinder uiBinder = GWT.create(FormContentUiBinder.class);
-	interface FormContentUiBinder extends UiBinder<Widget, FormContent> { }
+public class UploadContent extends Composite {
+	private static UploadContentUiBinder uiBinder = GWT.create(UploadContentUiBinder.class);
+	interface UploadContentUiBinder extends UiBinder<Widget, UploadContent> { }
 
 	@UiField Label titleLabel;
 	@UiField Label closeLabel;
 	@UiField Button cancelButton;
 	@UiField Button acceptButton;
-	@UiField TextBox textBox;
+	@UiField FileUpload uploadBox;
 	ArrayList<ClickHandler> closeHandlers;
+	String pathTo = "";
 	
-	public FormContent() {
-		this ("Enter text", "");
+	public UploadContent() {
+		this ("Select the file to upload");
 	}
 	
-	public FormContent(String title) {
-		this(title, "");
-	}
-	
-	public FormContent(String title, String defaultText) {
+	public UploadContent(String title) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
 		closeHandlers = new ArrayList<ClickHandler>();
 		titleLabel.setText(title);
-		textBox.setTitle(title);
-		textBox.setText(defaultText);
+		uploadBox.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				titleLabel.setText("Upload " + uploadBox.getFilename());				
+			}
+		});
 	}
-
 	
 	public void addCloseHandler(ClickHandler handler) {
 		closeHandlers.add(handler);
+	}
+	
+	public void setCreationPath(String createInPath) {
+		pathTo = createInPath;
 	}
 	
 	@UiHandler("closeLabel")
@@ -55,13 +60,12 @@ public class FormContent extends Composite implements HasText {
 
 	@UiHandler("cancelButton")
 	void onCancelButtonClick(ClickEvent event) {
-		onCancel();
 		close(event);
 	}
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		onAccept();
+		UploadAction.doUpload(pathTo, uploadBox);
 		close(event);
 	}
 	
@@ -70,20 +74,5 @@ public class FormContent extends Composite implements HasText {
 			handler.onClick(event);
 		}
 	}
-	
-	public void onAccept() { }
-	
-	public void onCancel() { }
-	
-	@Override
-	public String getText() {
-		return textBox.getText();
-	}
-
-	@Override
-	public void setText(String text) {
-		textBox.setText(text);
-	}
 
 }
-
