@@ -43,4 +43,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/nublic-only.png")
 	ImageResource nublicOnly();
 	
+	@Source("images/home.png")
+	ImageResource home();
+	
 }
