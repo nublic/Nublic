@@ -158,7 +158,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 		// Set the properties of our popUpDialog. Should start empty, hidden, ...
 		popUpBox = new FixedPopup(true, true); // auto-hide, modal
-
 		popUpBox.hide();
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
@@ -167,7 +166,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		// new folder popup
 		popupNewFolder = new NewFolderPopup(true, true);
 		popUpBox.hide();
-		popUpBox.setGlassEnabled(true);
 		
 		// Navigation Bar
 		addContextChangeHandler(new ContextChangeHandler() {
