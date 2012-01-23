@@ -334,27 +334,43 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		if (e.isNewFileList()) {
 			replaceFileList(e.shouldUpdateFolders());
 		} else {
-			List<FileNode> fileList = model.getFileList();
-			Set<Widget> widgetList = new HashSet<Widget>();
-			for (FileNode n : fileList) {
-				FileWidget fw = new FileWidget(n, model.getShowingPath());
-				widgetList.add(fw);
-			}
-			Set<Widget> inCentralPanel = Sets.newHashSet(centralPanel);
-			Set<Widget> deleted = Sets.difference(inCentralPanel, widgetList);
-			Set<Widget> added = Sets.difference(widgetList, inCentralPanel);
-			for (Widget w : added) {
-				FileWidget fw = (FileWidget) w;
-				addToCentralPanel(fw);
-			}
-			for (Widget w : deleted) {
-				selectedFiles.remove(w);
-				centralPanel.remove(w);
-			}
-			notifyContextHandlers();
+			modifyCentralPanel();
 		}
 	}
 	
+	private void modifyCentralPanel() {
+		List<FileNode> fileList = model.getFileList();
+		Set<Widget> widgetList = new HashSet<Widget>();
+		for (FileNode n : fileList) {
+			FileWidget fw = new FileWidget(n, model.getShowingPath());
+			widgetList.add(fw);
+		}
+		Set<Widget> inCentralPanel = Sets.newHashSet(centralPanel);
+		Set<Widget> deleted = Sets.newHashSet(Sets.difference(inCentralPanel, widgetList));
+		Set<Widget> added = Sets.newHashSet(Sets.difference(widgetList, inCentralPanel));
+		// We'll include modified files in both deleted and added sets so they get refreshed
+		final List<FileNode> modified = model.getModifiedFiles();
+		Set<Widget> modifiedWidgets = Sets.filter(inCentralPanel, new Predicate<Widget>() {
+			@Override
+			public boolean apply(Widget input) {
+				return modified.contains(((FileWidget)input).getNode());
+			}
+		});
+		added.addAll(modifiedWidgets);
+		deleted.addAll(modifiedWidgets);
+		model.clearModifiedFiles();
+		// Actual delete action
+		for (Widget w : deleted) {
+			selectedFiles.remove(w);
+			centralPanel.remove(w);
+		}
+		// Actual add action
+		for (Widget w : added) {
+			addToCentralPanel((FileWidget) w);
+		}
+		notifyContextHandlers();
+	}
+
 	private void replaceFileList(boolean shouldUpdateFolders) {
 		selectedFiles.clear();
 		updateCentralPanel();

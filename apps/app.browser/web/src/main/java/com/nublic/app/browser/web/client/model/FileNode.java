@@ -191,4 +191,20 @@ public class FileNode {
 	public void setImportantThumbnail(ImageResource importantThumbnail) {
 		this.importantThumbnail = importantThumbnail;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof FileNode) {
+			return ((FileNode)o).getName().equals(name);
+		} else {
+			return false;
+		}
+	}
+	
+	// To make Sets.interection(Set<FileNode>, ...) work
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
 }
