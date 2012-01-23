@@ -181,7 +181,7 @@ public class BrowserModel {
 		}
 	}
 	
-	private synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
+	public synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
 		FileNode file = new FileNode(name, mime, view, size, lastUpdate, writable);
 		fileList.add(file);
 	}

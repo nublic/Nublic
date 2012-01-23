@@ -164,8 +164,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setAutoHideOnHistoryEventsEnabled(false);
 		
 		// new folder popup
-		popupNewFolder = new NewFolderPopup(true, true);
-		popUpBox.hide();
+		popupNewFolder = new NewFolderPopup(true, true, this); // it's necessary to pass the ui because the feedback when the answer to create folder arrives goes to it
+		popupNewFolder.hide();
+		popupNewFolder.setGlassEnabled(true);
 		
 		// Navigation Bar
 		addContextChangeHandler(new ContextChangeHandler() {
@@ -817,6 +818,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showNewFolderPopup() {
-		popupNewFolder.center();
+		popupNewFolder.showDialog(getShowingPath());
 	}
 }

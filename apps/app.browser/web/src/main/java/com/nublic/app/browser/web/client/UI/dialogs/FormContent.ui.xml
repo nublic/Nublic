@@ -37,10 +37,8 @@
 		<g:south size="45">
 			<g:HorizontalPanel width="100%" verticalAlignment="middle" horizontalAlignment="right" addStyleNames="modal-footer">
 			  <g:HorizontalPanel>
-				<g:Button ui:field="cancelButton" text="cancel">
-				</g:Button>
-				<g:Button ui:field="acceptButton" text="accept" addStyleNames="{style.leftmargin} {style.rightmargin}">
-				</g:Button>
+				<g:Button ui:field="cancelButton" text="Cancel"/>
+				<g:Button ui:field="acceptButton" text="Accept" addStyleNames="primary {style.leftmargin} {style.rightmargin}"/>
 			  </g:HorizontalPanel>
 			</g:HorizontalPanel>
 		</g:south>
