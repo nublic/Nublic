@@ -26,6 +26,8 @@ public class FormContent extends Composite implements HasText {
 	@UiField TextBox textBox;
 	ArrayList<ClickHandler> closeHandlers;
 	
+	
+	// TODO: fix layout problems in chrome
 	public FormContent() {
 		this ("Enter text", "");
 	}

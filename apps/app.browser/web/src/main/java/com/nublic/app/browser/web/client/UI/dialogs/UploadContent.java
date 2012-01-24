@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 
-public class UploadContent extends Composite {
+public class UploadContent extends Composite implements ChangeHandler {
 	private static UploadContentUiBinder uiBinder = GWT.create(UploadContentUiBinder.class);
 	interface UploadContentUiBinder extends UiBinder<Widget, UploadContent> { }
 
@@ -28,7 +28,7 @@ public class UploadContent extends Composite {
 	@UiField FileUpload uploadBox;
 	ArrayList<ClickHandler> closeHandlers;
 	String pathTo = "";
-	
+
 	public UploadContent() {
 		this ("Select the file to upload");
 	}
@@ -37,12 +37,7 @@ public class UploadContent extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		closeHandlers = new ArrayList<ClickHandler>();
 		titleLabel.setText(title);
-		uploadBox.addChangeHandler(new ChangeHandler() {
-			@Override
-			public void onChange(ChangeEvent event) {
-				titleLabel.setText("Upload " + uploadBox.getFilename());				
-			}
-		});
+		uploadBox.addChangeHandler(this);
 	}
 	
 	public void addCloseHandler(ClickHandler handler) {
@@ -65,7 +60,9 @@ public class UploadContent extends Composite {
 
 	@UiHandler("acceptButton")
 	void onAcceptButtonClick(ClickEvent event) {
-		UploadAction.doUpload(pathTo, uploadBox);
+		if (uploadBox.getFilename() != null && !uploadBox.getFilename().equals("")) {
+			UploadAction.doUpload(pathTo, uploadBox);
+		}
 		close(event);
 	}
 	
@@ -73,6 +70,11 @@ public class UploadContent extends Composite {
 		for (ClickHandler handler : closeHandlers) {
 			handler.onClick(event);
 		}
+	}
+
+	@Override
+	public void onChange(ChangeEvent event) {
+		titleLabel.setText("Upload " + uploadBox.getFilename());
 	}
 
 }

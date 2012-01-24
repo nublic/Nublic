@@ -14,13 +14,19 @@ public class UploadPopup extends PopupPanel implements ResizeHandler, ClickHandl
 		super(autoHide, modal);
 
 		Window.addResizeHandler(this);
+		setNewContent();
+	}
+
+	private void setNewContent() {
 		content = new UploadContent();
 		this.add(content);
-		content.addCloseHandler(this);
+		content.addCloseHandler(this);		
 	}
 
 	@Override
 	public void onClick(ClickEvent event) {
+		this.remove(content);
+		setNewContent();
 		this.hide(true);
 	}
 	
