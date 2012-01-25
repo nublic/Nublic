@@ -1,7 +1,10 @@
 package com.nublic.app.music.client.datamodel.messages;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.Tag;
 import com.nublic.util.messages.Message;
 
 //GET /collections
@@ -20,19 +23,22 @@ public class TagMessage extends Message {
 
 	@Override
 	public String getURL() {
-		// TODO Auto-generated method stub
-		return null;
+		return URL.encode(GWT.getHostPageBaseURL() + "server/collections" );
 	}
 
 	@Override
 	public void onSuccess(Response response) {
-		// TODO Auto-generated method stub
-
+		// Fake thing to test without server
+		model.addTag(new Tag("1", "Pablo"));
+		model.addTag(new Tag("2", "Jazz"));
+		model.addTag(new Tag("3", "Pop"));
+		model.addTag(new Tag("4", "Rock&Roll"));
+		model.fireTagsHandlers();
 	}
 
 	@Override
 	public void onError() {
-		// TODO Auto-generated method stub
-
+		// TODO: do something real
+		onSuccess(null);
 	}
 }
