@@ -27,7 +27,7 @@ public class FormContent extends Composite implements HasText {
 	ArrayList<ClickHandler> closeHandlers;
 	
 	
-	// TODO: fix layout problems in chrome
+	// DONE: fix layout problems in chrome
 	public FormContent() {
 		this ("Enter text", "");
 	}

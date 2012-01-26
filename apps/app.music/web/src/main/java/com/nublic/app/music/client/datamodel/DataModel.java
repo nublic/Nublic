@@ -6,9 +6,13 @@ import java.util.List;
 import com.google.gwt.http.client.RequestBuilder;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
+import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.TagMessage;
+import com.nublic.util.messages.DefaultComparator;
+import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.messages.SequenceIgnorer;
 
 public class DataModel {
 
@@ -18,11 +22,12 @@ public class DataModel {
 	Playlist currentList;
 		
 	// Depending on what is being played
-	int currentPlayingListIndex; // -1 means currentList, any other number is the index in playlistList
+	Playlist currentPlayingList;
 	int currentSongInPlaylist;
 	
 	// Depending on what is being shown
-	int currentShowingIndex;
+	Playlist showingPlaylist = null; // null if a tag is being shown
+	Tag showingTag = null;			 // null if a playlist is being shown
 	State currentShowingState;
 	List<Song> songList;
 	List<Album> albumList;
@@ -31,6 +36,9 @@ public class DataModel {
 	// Handlers
 	List<TagsChangeHandler> tagsHandlers = new ArrayList<TagsChangeHandler>();
 	List<PlaylistsChangeHandler> playlistsHandlers = new ArrayList<PlaylistsChangeHandler>();
+	
+	// Sending messages
+	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	
 	public DataModel() {
 		sendInitialMessages();
@@ -64,5 +72,31 @@ public class DataModel {
 		for (PlaylistsChangeHandler h : playlistsHandlers) {
 			h.onPlaylistsChange();
 		}
+	}
+	
+	// State
+	public State getCurrentShowingState() { return currentShowingState; }
+	public Playlist getShowingPlaylist() { return showingPlaylist; }
+	public Tag getShowingTag() { return showingTag; }
+	public void setShowing(Playlist p) {
+
+	}
+	public void setShowing(Tag t) {
+
+	}
+
+
+	public void showTag(Tag t) {
+		ArtistMessage am = new ArtistMessage(t);
+		messageSender.send(am, RequestBuilder.GET);
+	}
+	
+	public void showPlaylist(Playlist p) {
+//		ArtistMessage am = new ArtistMessage(p);
+//		messageSender.send(am, RequestBuilder.GET);
+	}
+	
+	public void playPlaylist(Playlist p) {
+
 	}
 }

@@ -30,9 +30,6 @@ public class MainUi extends Composite {
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
 	}
-
-	// TODO: let one being selected and one being played
-	// TODO: turn "Label"s into "intelligent" Widgets which know what to do when clicked, etc
 	
 	// Handler to handle changes in playlists list
 	private void addPlaylistsChangeHandler() {
@@ -43,7 +40,7 @@ public class MainUi extends Composite {
 				playlistsPanel.clear();
 				// Add current playlist, which is always there
 				PlaylistWidget currentPlaylist = new PlaylistWidget("Current playlist");
-				currentPlaylist.setPlaying(true);
+				currentPlaylist.setSelected(true);
 				playlistsPanel.add(currentPlaylist);
 				// Add rest of playlists
 				List<Playlist> playlistList = model.getPlaylistList();

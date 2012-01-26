@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:com.nublic.app.music.client.ui">
 	<ui:style>
 		.padding {
 			padding: 10px;
@@ -9,7 +10,7 @@
 	<g:DockLayoutPanel>
 		<g:west size="170">
 			<g:FlowPanel addStyleNames="{style.padding}">
-				<g:Label text="All music"/>
+				<my:PlaylistWidget name="All music"/>
 <!-- 			<g:Label text="Collections"/> -->
 				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Collections</h3></div></g:HTMLPanel>
 				<g:VerticalPanel ui:field="tagsPanel"/>
