@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
+	
+	<g:AbsolutePanel width="170px" height="16px">
+		<g:at left='0' top='0'>
+			<g:Image ui:field="playImage"/>
+		</g:at>
+		<g:at left='20' top='0'>
+			<g:Label ui:field="nameLabel"/>
+		</g:at>
+	</g:AbsolutePanel>
+</ui:UiBinder> 

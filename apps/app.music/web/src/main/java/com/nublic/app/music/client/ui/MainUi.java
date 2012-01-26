@@ -6,7 +6,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.DataModel;
@@ -32,15 +31,24 @@ public class MainUi extends Composite {
 		addPlaylistsChangeHandler();
 	}
 
+	// TODO: let one being selected and one being played
+	// TODO: turn "Label"s into "intelligent" Widgets which know what to do when clicked, etc
+	
 	// Handler to handle changes in playlists list
 	private void addPlaylistsChangeHandler() {
 		model.addPlaylistsChangeHandler(new PlaylistsChangeHandler() {
 			@Override
 			public void onPlaylistsChange() {
+				// Clear panel
 				playlistsPanel.clear();
+				// Add current playlist, which is always there
+				PlaylistWidget currentPlaylist = new PlaylistWidget("Current playlist");
+				currentPlaylist.setPlaying(true);
+				playlistsPanel.add(currentPlaylist);
+				// Add rest of playlists
 				List<Playlist> playlistList = model.getPlaylistList();
 				for (Playlist p : playlistList) {
-					playlistsPanel.add(new Label(p.getName()));
+					playlistsPanel.add(new PlaylistWidget(p.getName()));
 				}
 			}
 		});
@@ -54,12 +62,10 @@ public class MainUi extends Composite {
 				tagsPanel.clear();
 				List<Tag> tagList = model.getTagList();
 				for (Tag t : tagList) {
-					tagsPanel.add(new Label(t.getName()));
+					tagsPanel.add(new PlaylistWidget(t.getName()));
 				}
 			}
 		});
 	}
-	
-	
 
 }
