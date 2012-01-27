@@ -109,7 +109,7 @@ public class MainUi extends Composite {
 						if (showingPlaylistWidget != selectedPlaylist) {
 							setSelectedWidget(selectedPlaylist);
 						} else {
-							
+
 						}
 					} else {
 						error("Couldn't find playlist");

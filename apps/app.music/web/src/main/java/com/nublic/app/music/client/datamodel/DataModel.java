@@ -39,6 +39,7 @@ public class DataModel {
 	List<Song> songList;
 	List<Album> albumList;
 	List<Artist> artistList;
+//	HashMap<Artist, AlbumHandler>
 	
 	// Handlers
 	List<TagsChangeHandler> tagsHandlers = new ArrayList<TagsChangeHandler>();
