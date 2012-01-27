@@ -8,7 +8,7 @@
 	<artifactId>app.music.web</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>com.nublic.app.music.MusicApp</name>
+	<name>com.nublic.app.music.web.MusicApp</name>
 
 	<properties>
 		<!-- Convenience property to set the GWT version -->
