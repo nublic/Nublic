@@ -33,7 +33,10 @@ public class MusicApp implements EntryPoint, ValueChangeHandler<String> {
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
+		String args = event.getValue();
+		ParamsHashMap hmap = new ParamsHashMap(args);
 		
+		model.changeState(hmap);
 	}
 
 }

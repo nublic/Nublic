@@ -4,13 +4,17 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
+import com.nublic.app.music.client.datamodel.Playlist;
+import com.nublic.app.music.client.datamodel.Tag;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 
@@ -27,16 +31,32 @@ public class PlaylistWidget extends Composite implements HasText {
 	@UiField Image playImage;
 	@UiField Label nameLabel;
 	@UiField PlaylistStyle style;
+	String id;
 	boolean isBeingPlayed;
 	boolean isSelected;
+	boolean isTag;
 	
 	public PlaylistWidget() {
-		this("no name");
+		this("no name", null, false);
+	}
+
+	public @UiConstructor PlaylistWidget(String name) {
+		this(name, null, false);
 	}
 	
-	public @UiConstructor PlaylistWidget(String name) {
+	public PlaylistWidget(Playlist p) {
+		this(p.getName(), p.getId(), false);
+	}
+	
+	public PlaylistWidget(Tag t) {
+		this(t.getName(), t.getId(), true);
+	}
+	
+	public PlaylistWidget(String name, String id, boolean isTag) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+	
+		this.id = id;
+		this.isTag = isTag;
 		nameLabel.setText(name);
 		playImage.setResource(Resources.INSTANCE.playMini());
 		setPlaying(false);
@@ -82,6 +102,19 @@ public class PlaylistWidget extends Composite implements HasText {
 
 	@UiHandler("nameLabel")
 	void onNameLabelClick(ClickEvent event) {
-		// TODO: define behaviour onClick
+		if (id == null) {
+			// All music
+			History.newItem("");
+		} else if (isTag) {
+			// Collection
+			History.newItem(Constants.PARAM_COLLECTION + "=" + id);
+		} else {
+			// Playlist
+			History.newItem(Constants.PARAM_PLAYLIST + "=" + id);
+		}
+	}
+
+	public String getId() {
+		return id;
 	}
 }

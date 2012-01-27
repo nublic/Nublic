@@ -10,7 +10,7 @@
 	<g:DockLayoutPanel>
 		<g:west size="170">
 			<g:FlowPanel addStyleNames="{style.padding}">
-				<my:PlaylistWidget name="All music"/>
+				<my:PlaylistWidget ui:field="allMusic" name="All music"/>
 <!-- 			<g:Label text="Collections"/> -->
 				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Collections</h3></div></g:HTMLPanel>
 				<g:VerticalPanel ui:field="tagsPanel"/>
