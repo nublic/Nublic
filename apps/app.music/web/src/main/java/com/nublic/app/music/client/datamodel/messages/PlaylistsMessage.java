@@ -14,10 +14,10 @@ import com.nublic.util.messages.Message;
 //                       , "name" : $name
 //                       }
 
-public class PlaylistMessage extends Message {
+public class PlaylistsMessage extends Message {
 	DataModel model;
 	
-	public PlaylistMessage(DataModel model) {
+	public PlaylistsMessage(DataModel model) {
 		this.model = model;
 	}
 

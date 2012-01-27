@@ -11,8 +11,9 @@ import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
-import com.nublic.app.music.client.datamodel.messages.PlaylistMessage;
-import com.nublic.app.music.client.datamodel.messages.TagMessage;
+import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
+import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
+import com.nublic.app.music.client.datamodel.messages.TagsMessage;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
@@ -52,10 +53,10 @@ public class DataModel {
 	}
 	
 	private void sendInitialMessages() {
-		TagMessage tm = new TagMessage(this);
+		TagsMessage tm = new TagsMessage(this);
 		SequenceHelper.sendJustOne(tm, RequestBuilder.GET);
 		
-		PlaylistMessage pm = new PlaylistMessage(this);
+		PlaylistsMessage pm = new PlaylistsMessage(this);
 		SequenceHelper.sendJustOne(pm, RequestBuilder.GET);
 	}
 
@@ -106,27 +107,6 @@ public class DataModel {
 			h.onStateChange();
 		}
 	}
-
-
-	private void askForArtists() {
-		ArtistMessage am = new ArtistMessage(this);
-		messageSender.send(am, RequestBuilder.GET);	
-	}
-	
-	private void askForArtists(String collection) {
-		ArtistMessage am = new ArtistMessage(this, collection);
-		messageSender.send(am, RequestBuilder.GET);
-	}
-	
-	public void showTag(Tag t) {
-//		ArtistMessage am = new ArtistMessage(t);
-//		messageSender.send(am, RequestBuilder.GET);
-	}
-	
-	public void showPlaylist(Playlist p) {
-//		ArtistMessage am = new ArtistMessage(p);
-//		messageSender.send(am, RequestBuilder.GET);
-	}
 	
 	public void playPlaylist(Playlist p) {
 
@@ -147,13 +127,7 @@ public class DataModel {
 				askForArtists(collection);
 			}
 		} else if (playlist != null) {
-			if (artist != null) {
-				
-			} else if (album != null) {
-				
-			} else {
-				
-			}
+			askForPlaylistSongs(playlist);
 		} else {
 			// All music
 			if (artist != null) {
@@ -163,6 +137,26 @@ public class DataModel {
 			} else {
 				askForArtists();
 			}
+		}
+	}
+
+	private void askForArtists() {
+		ArtistMessage am = new ArtistMessage(this);
+		messageSender.send(am, RequestBuilder.GET);	
+	}
+	
+	private void askForArtists(String collection) {
+		ArtistMessage am = new ArtistMessage(this, collection);
+		messageSender.send(am, RequestBuilder.GET);
+	}
+
+	private void askForPlaylistSongs(String playlist) {
+		if (playlist.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			setShowing(currentList);
+			fireStateHandlers();
+		} else {
+			PlaylistContentMessage pcm = new PlaylistContentMessage(this, playlist);
+			messageSender.send(pcm, RequestBuilder.GET);
 		}
 	}
 }

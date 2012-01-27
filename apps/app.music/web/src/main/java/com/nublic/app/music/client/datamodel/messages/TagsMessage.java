@@ -14,10 +14,10 @@ import com.nublic.util.messages.Message;
 //                         , "name" : $name
 //                         }
 
-public class TagMessage extends Message {
+public class TagsMessage extends Message {
 	DataModel model;
 	
-	public TagMessage(DataModel model) {
+	public TagsMessage(DataModel model) {
 		this.model = model;
 	}
 
