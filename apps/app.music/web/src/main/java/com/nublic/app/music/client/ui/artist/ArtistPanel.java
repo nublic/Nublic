@@ -24,7 +24,7 @@ public class ArtistPanel extends Composite {
 
 	public void setArtistList(List<Artist> artistList) {
 		this.artistList = artistList;
-		
+
 		for (Artist a : artistList) {
 			ArtistWidget aw = new ArtistWidget(a);
 			mainPanel.add(aw);

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -23,9 +24,16 @@ public class ArtistWidget extends Composite {
 	private static ArtistWidgetUiBinder uiBinder = GWT.create(ArtistWidgetUiBinder.class);
 	interface ArtistWidgetUiBinder extends UiBinder<Widget, ArtistWidget> {}
 
+	// CSS Styles defined in the .xml file
+	interface ArtistStyle extends CssResource {
+		String inlineblock();
+		String padding();
+	}
+
 	@UiField Image artistImage;
 	@UiField Label artistNameLabel;
 	@UiField FlowPanel albumsPanel;
+	@UiField ArtistStyle style;
 
 	public ArtistWidget(Artist art) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -49,6 +57,7 @@ public class ArtistWidget extends Composite {
 				List<Album> albumList = artist.getAlbumList();
 				for (Album a : albumList) {
 					AlbumInArtist aw = new AlbumInArtist(a);
+					aw.getElement().addClassName(style.inlineblock());
 					albumsPanel.add(aw);
 				}
 			}

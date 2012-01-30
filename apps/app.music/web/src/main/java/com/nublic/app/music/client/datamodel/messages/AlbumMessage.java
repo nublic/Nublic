@@ -3,6 +3,7 @@ package com.nublic.app.music.client.datamodel.messages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.util.messages.Message;
@@ -49,9 +50,16 @@ public class AlbumMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		if (artist == null) {
-			
+			// For album messages directly for data model
 		} else {
-			
+			// For album messages filling some artist
+			artist.clearAlbumList();
+			// TODO: Fake info to try
+				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10));
+				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10));
+				artist.addAlbum(new Album("AlbumId3", "Bad", 10));
+				artist.addAlbum(new Album("AlbumId4", "Be here now", 10));
+			// Fake info end
 			artist.fireAlbumsHandler();
 		}
 	}

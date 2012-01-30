@@ -105,6 +105,8 @@ public class DataModel {
 	}
 	
 	// Actual info to show
+	public void clearArtistList() { artistList.clear(); }
+	public void addArtist(Artist a) { artistList.add(a); }
 	public List<Artist> getArtistList() { return artistList; }
 	
 //	public void playPlaylist(Playlist p) {

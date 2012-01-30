@@ -6,6 +6,10 @@
 		.padding {
 			padding: 10px;
 		}
+		.scroll {
+	        overflow-x: hidden;
+			overflow-y: auto;
+		}
 	</ui:style>
 	<g:DockLayoutPanel>
 		<g:west size="170">
@@ -25,7 +29,7 @@
 			</g:HorizontalPanel>
 		</g:north>
 		<g:center>
-			<g:SimplePanel ui:field="mainPanel">
+			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.scroll}">
 				<g:Label text="main panel"/>
 			</g:SimplePanel>
 		</g:center>
