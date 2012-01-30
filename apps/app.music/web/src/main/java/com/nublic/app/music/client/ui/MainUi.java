@@ -12,11 +12,14 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Playlist;
+import com.nublic.app.music.client.datamodel.State;
 import com.nublic.app.music.client.datamodel.Tag;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
+import com.nublic.app.music.client.ui.artist.ArtistPanel;
 import com.nublic.util.error.ErrorPopup;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class MainUi extends Composite {
 	private static MainUiUiBinder uiBinder = GWT.create(MainUiUiBinder.class);
@@ -24,6 +27,7 @@ public class MainUi extends Composite {
 	
 	@UiField VerticalPanel tagsPanel;
 	@UiField VerticalPanel playlistsPanel;
+	@UiField SimplePanel mainPanel;
 	@UiField PlaylistWidget allMusic;
 	HashMap<String, PlaylistWidget> tagIndex = new HashMap<String, PlaylistWidget>();
 	HashMap<String, PlaylistWidget> playlistIndex = new HashMap<String, PlaylistWidget>();
@@ -96,9 +100,8 @@ public class MainUi extends Composite {
 					if (selectedTag != null) {
 						if (showingPlaylistWidget != selectedTag) {
 							setSelectedWidget(selectedTag);
-						} else {
-							
 						}
+						refillCentralPanel();
 					} else {
 						error("Couldn't find collection");
 					}
@@ -108,9 +111,8 @@ public class MainUi extends Composite {
 					if (selectedPlaylist != null) {
 						if (showingPlaylistWidget != selectedPlaylist) {
 							setSelectedWidget(selectedPlaylist);
-						} else {
-
 						}
+						refillCentralPanel();
 					} else {
 						error("Couldn't find playlist");
 					}
@@ -118,9 +120,8 @@ public class MainUi extends Composite {
 					// "All music" is selected
 					if (showingPlaylistWidget != allMusic) {
 						setSelectedWidget(allMusic);
-					} else {
-						
 					}
+					refillCentralPanel();
 				}
 			}
 		});
@@ -134,5 +135,15 @@ public class MainUi extends Composite {
 
 	public void error(String message) {
 		ErrorPopup.showError(message);
+	}
+
+	public void refillCentralPanel() {
+		State s = model.getState();
+		
+		if (s == State.ARTIST_ALBUMS) {
+			ArtistPanel ap = new ArtistPanel();
+			ap.setArtistList(model.getArtistList());
+			mainPanel.setWidget(ap);
+		}
 	}
 }

@@ -4,7 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.Tag;
+import com.nublic.app.music.client.datamodel.State;
 import com.nublic.util.messages.Message;
 
 //GET /artists/:asc-desc/:start/:length/:colid/:colid/...
@@ -48,10 +48,11 @@ public class ArtistMessage extends Message {
 	public void onSuccess(Response response) {
 		if (collectionId == null) {
 			// All music
-			model.setShowing((Tag)null);
+			model.setShowing();
 		} else {
 			model.setShowing(collectionId, true);
 		}
+		model.setState(State.ARTIST_ALBUMS);
 		model.fireStateHandlers();
 	}
 

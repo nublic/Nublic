@@ -25,7 +25,7 @@
 			</g:HorizontalPanel>
 		</g:north>
 		<g:center>
-			<g:SimplePanel>
+			<g:SimplePanel ui:field="mainPanel">
 				<g:Label text="main panel"/>
 			</g:SimplePanel>
 		</g:center>

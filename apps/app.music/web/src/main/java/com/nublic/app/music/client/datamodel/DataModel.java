@@ -36,10 +36,9 @@ public class DataModel {
 	Playlist showingPlaylist = null; // null if a tag is being shown
 	Tag showingTag = null;			 // null if a playlist is being shown
 	State currentShowingState;
-	List<Song> songList;
-	List<Album> albumList;
-	List<Artist> artistList;
-//	HashMap<Artist, AlbumHandler>
+	List<Song> songList = new ArrayList<Song>();
+	List<Album> albumList = new ArrayList<Album>();
+	List<Artist> artistList = new ArrayList<Artist>();
 	
 	// Handlers
 	List<TagsChangeHandler> tagsHandlers = new ArrayList<TagsChangeHandler>();
@@ -84,17 +83,13 @@ public class DataModel {
 	}
 	
 	// State
-	public State getCurrentShowingState() { return currentShowingState; }
+	public void setState(State s) { currentShowingState = s; }
+	public State getState() { return currentShowingState; }
 	public Playlist getShowingPlaylist() { return showingPlaylist; }
 	public Tag getShowingTag() { return showingTag; }
-	public void setShowing(Playlist p) {
-		showingTag = null;
-		showingPlaylist = p;
-	}
-	public void setShowing(Tag t) {
-		showingTag = t;
-		showingPlaylist = null;
-	}
+	public void setShowing(Playlist p) { showingTag = null;	showingPlaylist = p; }
+	public void setShowing(Tag t) { showingTag = t;	showingPlaylist = null; }
+	public void setShowing() { showingTag = null; showingPlaylist = null; }
 	public void setShowing(String id, boolean isTag) {
 		if (isTag) {
 			setShowing(tagIndex.get(id));
@@ -109,9 +104,12 @@ public class DataModel {
 		}
 	}
 	
-	public void playPlaylist(Playlist p) {
-
-	}
+	// Actual info to show
+	public List<Artist> getArtistList() { return artistList; }
+	
+//	public void playPlaylist(Playlist p) {
+//
+//	}
 
 	public void changeState(ParamsHashMap hmap) {
 		String collection = hmap.get(Constants.PARAM_COLLECTION);
