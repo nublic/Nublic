@@ -112,7 +112,7 @@ public class MainUi extends Composite {
 						if (showingPlaylistWidget != selectedPlaylist) {
 							setSelectedWidget(selectedPlaylist);
 						}
-						refillCentralPanel();
+						playlistRefillCentralPanel();
 					} else {
 						error("Couldn't find playlist");
 					}
@@ -140,10 +140,20 @@ public class MainUi extends Composite {
 	public void refillCentralPanel() {
 		State s = model.getState();
 		
-		if (s == State.ARTIST_ALBUMS) {
+		switch (s) {
+		case ARTIST_ALBUMS:
 			ArtistPanel ap = new ArtistPanel();
 			ap.setArtistList(model.getArtistList());
 			mainPanel.setWidget(ap);
+			break;
+		case ALBUM_SONGS:
+			break;
+		case SONGS:
+			break;
 		}
+	}
+	
+	public void playlistRefillCentralPanel() {
+		
 	}
 }
