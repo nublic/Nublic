@@ -59,10 +59,10 @@ public class ArtistMessage extends Message {
 		// Fill artists list in model with the new info
 		model.clearArtistList();
 		// TODO: Fake info to try
-			model.addArtist(new Artist("Id1", "Joaquín Sabina", 4, 40));
-			model.addArtist(new Artist("Id2", "Oasis", 4, 40));
-			model.addArtist(new Artist("Id3", "Muse", 4, 40));
-			model.addArtist(new Artist("Id4", "Michael Jackson", 4, 40));
+			model.addArtist(new Artist("Id1", "Joaquín Sabina", 4, 40, collectionId));
+			model.addArtist(new Artist("Id2", "Oasis", 4, 40, collectionId));
+			model.addArtist(new Artist("Id3", "Muse", 4, 40, collectionId));
+			model.addArtist(new Artist("Id4", "Michael Jackson", 4, 40, collectionId));
 		// Fake info end
 		
 		model.fireStateHandlers();

@@ -44,7 +44,7 @@
 			<g:at left='90' top='40'>
 				<g:HorizontalPanel>
 					<g:SimplePanel addStyleNames="{style.alignmiddle} {style.rightmargin}">
-						<g:Label ui:field="artistNameLabel" text="Artist name"/>
+						<g:Hyperlink ui:field="artistNameLabel" text="Artist name"/>
 					</g:SimplePanel>
 					<g:PushButton ui:field="editButton" addStyleNames="{style.nobackground} {style.semitransparent} {style.transparent} {style.leftmargin}">
 						<g:upFace image="{res.edit}"/>

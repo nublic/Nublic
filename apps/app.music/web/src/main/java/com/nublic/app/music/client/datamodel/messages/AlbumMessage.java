@@ -20,13 +20,26 @@ import com.nublic.util.messages.Message;
 //                       $extra_info }
 
 public class AlbumMessage extends Message {
+	// One of this groups..
+	// Artist
 	Artist artist = null;
+	// Or model, id and collection (where artist and collection can be null)
 	DataModel model = null;
 	String artistId = null;
+	String inCollection = null;
 	
-	public AlbumMessage(DataModel model, String artistId) {
+	public AlbumMessage(DataModel model, String artistId, String inCollection) {
 		this.model = model;
 		this.artistId = artistId;
+		this.inCollection = inCollection;
+	}
+	
+	public AlbumMessage(DataModel model, String artistId) {
+		this(model, artistId, null);
+	}
+	
+	public AlbumMessage(DataModel model) {
+		this(model, null, null);
 	}
 
 	public AlbumMessage(Artist a) {
@@ -38,12 +51,24 @@ public class AlbumMessage extends Message {
 		StringBuilder url = new StringBuilder();
 		url.append(GWT.getHostPageBaseURL());
 		url.append("server/albums/");
-		if (artist == null) {
-			url.append(artistId);			
-		} else {
+		// Add possible artist filter
+		if (artist != null) {
 			url.append(artist.getId());
+			url.append("/");
+		} else if (artistId != null) {
+			url.append(artistId);
+			url.append("/");
 		}
-		url.append("/desc/0/32000");
+		url.append("desc/0/32000");
+		// Add possible collection filter
+		if (artist != null && artist.getInCollection() != null) {
+			url.append("/");
+			url.append(artist.getInCollection());
+		} else if (inCollection != null) {
+			url.append("/");
+			url.append(inCollection);
+		}
+		
 		return URL.encode(url.toString());
 	}
 

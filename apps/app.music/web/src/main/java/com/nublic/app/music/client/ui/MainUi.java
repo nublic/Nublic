@@ -101,7 +101,7 @@ public class MainUi extends Composite {
 						if (showingPlaylistWidget != selectedTag) {
 							setSelectedWidget(selectedTag);
 						}
-						refillCentralPanel();
+						refillCentralPanel(showingTag.getId());
 					} else {
 						error("Couldn't find collection");
 					}
@@ -121,7 +121,7 @@ public class MainUi extends Composite {
 					if (showingPlaylistWidget != allMusic) {
 						setSelectedWidget(allMusic);
 					}
-					refillCentralPanel();
+					refillCentralPanel(null);
 				}
 			}
 		});
@@ -137,12 +137,12 @@ public class MainUi extends Composite {
 		ErrorPopup.showError(message);
 	}
 
-	public void refillCentralPanel() {
+	public void refillCentralPanel(String collectionId) {
 		State s = model.getState();
 		
 		switch (s) {
 		case ARTIST_ALBUMS:
-			ArtistPanel ap = new ArtistPanel();
+			ArtistPanel ap = new ArtistPanel(collectionId);
 			ap.setArtistList(model.getArtistList());
 			mainPanel.setWidget(ap);
 			break;

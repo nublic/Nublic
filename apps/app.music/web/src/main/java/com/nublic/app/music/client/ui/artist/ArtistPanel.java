@@ -15,11 +15,15 @@ public class ArtistPanel extends Composite {
 	interface ArtistPanelUiBinder extends UiBinder<Widget, ArtistPanel> { }
 	
 	@UiField FlowPanel mainPanel;
-	
+
+	String collectionId;
 	List<Artist> artistList;
 
-	public ArtistPanel() {
+	// Pass null if all music is being shown
+	public ArtistPanel(String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.collectionId = collectionId;
 	}
 
 	public void setArtistList(List<Artist> artistList) {
