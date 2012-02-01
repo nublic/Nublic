@@ -18,9 +18,11 @@
 <!-- 			<g:Label text="Collections"/> -->
 				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Collections</h3></div></g:HTMLPanel>
 				<g:VerticalPanel ui:field="tagsPanel"/>
+				<my:AddTagWidget ui:field="addTagWidget"/>
 <!-- 			<g:Label text="Playlists"/> -->
 				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Playlists</h3></div></g:HTMLPanel>
 				<g:VerticalPanel ui:field="playlistsPanel"/>
+				<my:AddTagWidget ui:field="addPlaylistWidget"/>
 			</g:FlowPanel>
 		</g:west>
 		<g:north size="50">

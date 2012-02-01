@@ -22,4 +22,7 @@ public interface Resources extends ClientBundle {
 	@Source("images/save.png")
 	ImageResource save();
 	
+	@Source("images/plus.png")
+	ImageResource plus();
+	
 }

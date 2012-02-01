@@ -15,6 +15,7 @@ import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.State;
 import com.nublic.app.music.client.datamodel.Tag;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
@@ -30,6 +31,8 @@ public class MainUi extends Composite {
 	@UiField VerticalPanel playlistsPanel;
 	@UiField SimplePanel mainPanel;
 	@UiField PlaylistWidget allMusic;
+	@UiField AddTagWidget addTagWidget;
+	@UiField AddTagWidget addPlaylistWidget;
 	HashMap<String, PlaylistWidget> tagIndex = new HashMap<String, PlaylistWidget>();
 	HashMap<String, PlaylistWidget> playlistIndex = new HashMap<String, PlaylistWidget>();
 	PlaylistWidget showingPlaylistWidget;
@@ -44,8 +47,8 @@ public class MainUi extends Composite {
 		showingPlaylistWidget = allMusic;
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
-		addStateChangeHandler();
-		// TODO: Continue creating interface/underlying work for adding collections/playlists 
+		addStateChangeHandler(); 
+		addPutTagHandler();
 	}
 
 	// Handler to handle changes in playlists list
@@ -53,20 +56,21 @@ public class MainUi extends Composite {
 		model.addPlaylistsChangeHandler(new PlaylistsChangeHandler() {
 			@Override
 			public void onPlaylistsChange() {
-				// Clear panel
-				playlistsPanel.clear();
-				playlistIndex.clear();
 				// Add current playlist, which is always there
-				PlaylistWidget currentPlaylist = new PlaylistWidget(new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME));
-				currentPlaylist.setPlaying(true);
-				playlistIndex.put(Constants.CURRENT_PLAYLIST_ID, currentPlaylist); // Add playlist to index of playlists
-				playlistsPanel.add(currentPlaylist);
+				if (playlistIndex.get(Constants.CURRENT_PLAYLIST_ID) == null) {
+					PlaylistWidget currentPlaylist = new PlaylistWidget(new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME));
+					currentPlaylist.setPlaying(true); // TODO: set playing only when proceeds
+					playlistIndex.put(Constants.CURRENT_PLAYLIST_ID, currentPlaylist); // Add playlist to index of playlists
+					playlistsPanel.add(currentPlaylist);
+				}
 				// Add rest of playlists
 				List<Playlist> playlistList = model.getPlaylistList();
 				for (Playlist p : playlistList) {
-					PlaylistWidget newPlaylist = new PlaylistWidget(p);
-					playlistIndex.put(p.getId(), newPlaylist); // Add playlist to index of playlists
-					playlistsPanel.add(newPlaylist);
+					if (playlistIndex.get(p.getId()) == null) {
+						PlaylistWidget newPlaylist = new PlaylistWidget(p);
+						playlistIndex.put(p.getId(), newPlaylist); // Add playlist to index of playlists
+						playlistsPanel.add(newPlaylist);
+					}
 				}
 			}
 		});
@@ -77,13 +81,13 @@ public class MainUi extends Composite {
 		model.addTagsChangeHandler(new TagsChangeHandler() {
 			@Override
 			public void onTagsChange() {
-				tagsPanel.clear();
-				tagIndex.clear();
 				List<Tag> tagList = model.getTagList();
 				for (Tag t : tagList) {
-					PlaylistWidget newTag = new PlaylistWidget(t);
-					tagIndex.put(t.getId(), newTag); // Add tag to index of tags
-					tagsPanel.add(newTag);
+					if (tagIndex.get(t.getId()) == null) {
+						PlaylistWidget newTag = new PlaylistWidget(t);
+						tagIndex.put(t.getId(), newTag); // Add tag to index of tags
+						tagsPanel.add(newTag);
+					}
 				}
 			}
 		});
@@ -103,7 +107,7 @@ public class MainUi extends Composite {
 						if (showingPlaylistWidget != selectedTag) {
 							setSelectedWidget(selectedTag);
 						}
-						refillCentralPanel(showingTag.getId());
+						refillCentralPanel();
 					} else {
 						error("Couldn't find collection");
 					}
@@ -123,8 +127,24 @@ public class MainUi extends Composite {
 					if (showingPlaylistWidget != allMusic) {
 						setSelectedWidget(allMusic);
 					}
-					refillCentralPanel(null);
+					refillCentralPanel();
 				}
+			}
+		});
+	}
+	
+	// Handler to notify model that the user has added a tag
+	private void addPutTagHandler() {
+		addTagWidget.addPutTagHandler(new PutTagHandler() {
+			@Override
+			public void onPutTag() {
+				model.putNewTag(addTagWidget.getText());				
+			}
+		});
+		addPlaylistWidget.addPutTagHandler(new PutTagHandler() {
+			@Override
+			public void onPutTag() {
+				model.putNewPlaylist(addPlaylistWidget.getText());				
 			}
 		});
 	}
@@ -135,11 +155,7 @@ public class MainUi extends Composite {
 		newSelectedWidget.setSelected(true);
 	}
 
-	public void error(String message) {
-		ErrorPopup.showError(message);
-	}
-
-	public void refillCentralPanel(String collectionId) {
+	public void refillCentralPanel() {
 		State s = model.getState();
 		
 		switch (s) {
@@ -160,5 +176,9 @@ public class MainUi extends Composite {
 	
 	public void playlistRefillCentralPanel() {
 		
+	}
+	
+	public void error(String message) {
+		ErrorPopup.showError(message);
 	}
 }

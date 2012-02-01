@@ -10,6 +10,8 @@ import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
+import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
+import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
@@ -117,6 +119,7 @@ public class DataModel {
 //
 //	}
 
+	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
 		String collection = hmap.get(Constants.PARAM_COLLECTION);
 		String playlist   = hmap.get(Constants.PARAM_PLAYLIST);
@@ -144,7 +147,8 @@ public class DataModel {
 			}
 		}
 	}
-
+	
+	// methods to make requests to server in order to fill the data in the model
 	private void askForSongs(String album) {
 		askForSongs(album, null);		
 	}
@@ -179,5 +183,16 @@ public class DataModel {
 			PlaylistContentMessage pcm = new PlaylistContentMessage(this, playlist);
 			messageSender.send(pcm, RequestBuilder.GET);
 		}
+	}
+	
+	// methods to change the data in server and where proceeds
+	public void putNewTag(String name) {
+		AddTagMessage atm = new AddTagMessage(name, this);
+		SequenceHelper.sendJustOne(atm, RequestBuilder.PUT);
+	}
+
+	public void putNewPlaylist(String name) {
+		AddPlaylistMessage apm = new AddPlaylistMessage(name, this);
+		SequenceHelper.sendJustOne(apm, RequestBuilder.PUT);
 	}
 }
