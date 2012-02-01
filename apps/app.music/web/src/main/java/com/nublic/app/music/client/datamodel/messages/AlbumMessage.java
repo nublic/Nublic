@@ -6,6 +6,7 @@ import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.State;
 import com.nublic.util.messages.Message;
 
 //GET /albums/:artist-id/:asc-desc/:start/:length/:colid/:colid/...
@@ -76,6 +77,16 @@ public class AlbumMessage extends Message {
 	public void onSuccess(Response response) {
 		if (artist == null) {
 			// For album messages directly for data model
+			model.clearAlbumList();
+			// TODO: Fake info to try..
+				model.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10));
+				model.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10));
+				model.addAlbum(new Album("AlbumId3", "Bad", 10));
+				model.addAlbum(new Album("AlbumId4", "Be here now", 10));
+			// Fake info end
+			model.setState(State.ALBUM_SONGS);
+			model.fireStateHandlers();
+			// TODO: ask for songs if proceeds (if not using async data provider lists)
 		} else {
 			// For album messages filling some artist
 			artist.clearAlbumList();

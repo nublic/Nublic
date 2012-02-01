@@ -17,6 +17,7 @@ import com.nublic.app.music.client.datamodel.Tag;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
+import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
 import com.nublic.util.error.ErrorPopup;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -44,6 +45,7 @@ public class MainUi extends Composite {
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
 		addStateChangeHandler();
+		// TODO: Continue creating interface/underlying work for adding collections/playlists 
 	}
 
 	// Handler to handle changes in playlists list
@@ -142,11 +144,14 @@ public class MainUi extends Composite {
 		
 		switch (s) {
 		case ARTIST_ALBUMS:
-			ArtistPanel ap = new ArtistPanel(collectionId);
-			ap.setArtistList(model.getArtistList());
-			mainPanel.setWidget(ap);
+			ArtistPanel artPanel = new ArtistPanel();
+			artPanel.setArtistList(model.getArtistList());
+			mainPanel.setWidget(artPanel);
 			break;
 		case ALBUM_SONGS:
+			AlbumPanel albPanel = new AlbumPanel();
+			albPanel.setAlbumList(model.getAlbumList());
+			mainPanel.setWidget(albPanel);
 			break;
 		case SONGS:
 			break;

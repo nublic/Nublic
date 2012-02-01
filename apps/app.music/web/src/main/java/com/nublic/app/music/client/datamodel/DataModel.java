@@ -10,6 +10,7 @@ import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
+import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
@@ -108,6 +109,9 @@ public class DataModel {
 	public void clearArtistList() { artistList.clear(); }
 	public void addArtist(Artist a) { artistList.add(a); }
 	public List<Artist> getArtistList() { return artistList; }
+	public void clearAlbumList() { albumList.clear(); }
+	public void addAlbum(Album a) { albumList.add(a); }
+	public List<Album> getAlbumList() { return albumList; }
 	
 //	public void playPlaylist(Playlist p) {
 //
@@ -121,9 +125,9 @@ public class DataModel {
 		
 		if (collection != null) {
 			if (artist != null) {
-				
+				askForAlbums(artist, collection);
 			} else if (album != null) {
-				
+				askForSongs(album, collection);
 			} else {
 				askForArtists(collection);
 			}
@@ -132,18 +136,34 @@ public class DataModel {
 		} else {
 			// All music
 			if (artist != null) {
-				
+				askForAlbums(artist);
 			} else if (album != null) {
-				
+				askForSongs(album);
 			} else {
 				askForArtists();
 			}
 		}
 	}
 
+	private void askForSongs(String album) {
+		askForSongs(album, null);		
+	}
+
+	private void askForSongs(String album, String collection) {
+		// TODO Investigate if songs are going to fill the song list in this class or are going to be handled with an async data provider
+	}
+
+	private void askForAlbums(String artist) {
+		askForAlbums(artist, null);
+	}
+
+	private void askForAlbums(String artist, String collection) {
+		AlbumMessage am = new AlbumMessage(this, artist, collection);
+		messageSender.send(am, RequestBuilder.GET);
+	}
+
 	private void askForArtists() {
-		ArtistMessage am = new ArtistMessage(this);
-		messageSender.send(am, RequestBuilder.GET);	
+		askForArtists(null);
 	}
 	
 	private void askForArtists(String collection) {
