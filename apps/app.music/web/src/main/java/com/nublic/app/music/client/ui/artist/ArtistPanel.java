@@ -14,6 +14,8 @@ import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.popup.ConfirmDeletionPanel;
+import com.nublic.app.music.client.ui.popup.DeleteHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
@@ -29,6 +31,13 @@ public class ArtistPanel extends Composite {
 	String collectionId;
 	String collectionName;
 	List<Artist> artistList;
+	ConfirmDeletionPanel cdp = new ConfirmDeletionPanel(new DeleteHandler() {
+		@Override
+		public void onDelete() {
+			model.deleteTag(collectionId);
+			cdp.hide();
+		}
+	});
 
 	public ArtistPanel(DataModel model, String collectionId, String collectionName) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -62,7 +71,7 @@ public class ArtistPanel extends Composite {
 		b.setDeleteButtonHandler(new DeleteButtonHandler() {
 			@Override
 			public void onDelete() {
-				model.deleteTag(collectionId);
+				cdp.center();
 			}
 		});
 	}
