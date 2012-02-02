@@ -2,11 +2,14 @@ package com.nublic.app.music.client.ui;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
@@ -21,7 +24,6 @@ import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
 import com.nublic.util.error.ErrorPopup;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public class MainUi extends Composite {
 	private static MainUiUiBinder uiBinder = GWT.create(MainUiUiBinder.class);
@@ -65,12 +67,21 @@ public class MainUi extends Composite {
 				}
 				// Add rest of playlists
 				List<Playlist> playlistList = model.getPlaylistList();
+				Set<Widget> widgetsToRemove = Sets.newHashSet(playlistsPanel);
 				for (Playlist p : playlistList) {
-					if (playlistIndex.get(p.getId()) == null) {
+					PlaylistWidget pw = playlistIndex.get(p.getId());
+					if (pw == null) {
 						PlaylistWidget newPlaylist = new PlaylistWidget(p);
 						playlistIndex.put(p.getId(), newPlaylist); // Add playlist to index of playlists
 						playlistsPanel.add(newPlaylist);
+					} else {
+						widgetsToRemove.remove(pw);
 					}
+				}
+				// Remove deletions
+				for (Widget del : widgetsToRemove) {
+					playlistsPanel.remove(del);
+					playlistIndex.remove(((PlaylistWidget)del).getId());
 				}
 			}
 		});
@@ -82,12 +93,21 @@ public class MainUi extends Composite {
 			@Override
 			public void onTagsChange() {
 				List<Tag> tagList = model.getTagList();
+				Set<Widget> widgetsToRemove = Sets.newHashSet(tagsPanel);
 				for (Tag t : tagList) {
-					if (tagIndex.get(t.getId()) == null) {
+					PlaylistWidget w = tagIndex.get(t.getId());
+					if (w == null) {
 						PlaylistWidget newTag = new PlaylistWidget(t);
 						tagIndex.put(t.getId(), newTag); // Add tag to index of tags
 						tagsPanel.add(newTag);
+					} else {
+						widgetsToRemove.remove(w);
 					}
+				}
+				// Remove deletions
+				for (Widget del : widgetsToRemove) {
+					tagsPanel.remove(del);
+					tagIndex.remove(((PlaylistWidget)del).getId());
 				}
 			}
 		});
@@ -160,7 +180,7 @@ public class MainUi extends Composite {
 		
 		switch (s) {
 		case ARTIST_ALBUMS:
-			ArtistPanel artPanel = new ArtistPanel(showingPlaylistWidget.getId(), showingPlaylistWidget.getText());
+			ArtistPanel artPanel = new ArtistPanel(model, showingPlaylistWidget.getId(), showingPlaylistWidget.getText());
 			artPanel.setArtistList(model.getArtistList());
 			mainPanel.setWidget(artPanel);
 			break;

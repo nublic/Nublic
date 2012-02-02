@@ -14,6 +14,7 @@ import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
+import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
@@ -66,6 +67,8 @@ public class DataModel {
 	// Tags
 	public void resetTagList() { tagList.clear(); tagIndex.clear(); }
 	public void addTag(Tag t) {	tagList.add(t); tagIndex.put(t.getId(), t); }
+	public void removeTag(Tag t) { tagList.remove(t); tagIndex.remove(t.getId()); }
+	public void removeTag(String id) { removeTag(tagIndex.get(id)); }
 	public void addTagsChangeHandler(TagsChangeHandler h) { tagsHandlers.add(h); }
 	public List<Tag> getTagList() {	return tagList;	}
 	public void fireTagsHandlers() {
@@ -77,6 +80,8 @@ public class DataModel {
 	// Playlists
 	public void resetPlaylistList() { playlistList.clear(); playlistIndex.clear(); }
 	public void addPlaylist(Playlist p) { playlistList.add(p); playlistIndex.put(p.getId(), p); }
+	public void removePlaylist(Playlist p) { playlistList.remove(p); playlistIndex.remove(p.getId()); }
+	public void removePlaylist(String id) { removePlaylist(playlistIndex.get(id)); }
 	public void addPlaylistsChangeHandler(PlaylistsChangeHandler h) { playlistsHandlers.add(h);	}
 	public List<Playlist> getPlaylistList() { return playlistList; }
 	public void firePlaylistsHandlers() {
@@ -166,7 +171,7 @@ public class DataModel {
 		messageSender.send(am, RequestBuilder.GET);
 	}
 
-	private void askForArtists() {
+	public void askForArtists() {
 		askForArtists(null);
 	}
 	
@@ -194,5 +199,10 @@ public class DataModel {
 	public void putNewPlaylist(String name) {
 		AddPlaylistMessage apm = new AddPlaylistMessage(name, this);
 		SequenceHelper.sendJustOne(apm, RequestBuilder.PUT);
+	}
+	
+	public void deleteTag(String tagId) {
+		DeleteTagMessage dtm = new DeleteTagMessage(tagId, this);
+		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
 	}
 }

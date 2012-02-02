@@ -17,7 +17,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
+import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.AlbumsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 
 //GET /artist-art/:artist-id
@@ -41,11 +45,14 @@ public class ArtistWidget extends Composite {
 	@UiField FlowPanel albumsPanel;
 	@UiField ArtistStyle style;
 	@UiField HorizontalPanel labelAndButtonsPanel;
+	
+	DataModel model;
 	Artist artist;
 
-	public ArtistWidget(Artist art) {
+	public ArtistWidget(DataModel model, Artist art) {
 		initWidget(uiBinder.createAndBindUi(this));
 
+		this.model = model;
 		this.artist = art;
 
 		// building imageUrl as /artist-art/:artist-id
@@ -59,7 +66,12 @@ public class ArtistWidget extends Composite {
 		setClickTarget();
 		
 		setMyselfAsAlbumHandler();
-		labelAndButtonsPanel.add(new ButtonLine(true, true, true, labelAndButtonsPanel));
+		// Add button line
+		ButtonLine b = new ButtonLine(false, true, true, true, labelAndButtonsPanel);
+		setEditButtonHandler(b);
+		setAddAtEndButtonHandler(b);
+		setPlayButtonHandler(b);
+		labelAndButtonsPanel.add(b);
 	}
 
 	private void setClickTarget() {
@@ -90,5 +102,33 @@ public class ArtistWidget extends Composite {
 			}
 		});
 		artist.askForAlbums();
+	}
+	
+	// Handlers for button line
+	private void setEditButtonHandler(ButtonLine b) {
+		b.setEditButtonHandler(new EditButtonHandler() {
+			@Override
+			public void onEdit() {
+				// TODO: Edit
+			}
+		});
+	}
+
+	private void setAddAtEndButtonHandler(ButtonLine b) {
+		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
+			@Override
+			public void onAddAtEnd() {
+				// TODO: addAtEnd
+			}
+		});
+	}
+
+	private void setPlayButtonHandler(ButtonLine b) {
+		b.setPlayButtonHandler(new PlayButtonHandler() {
+			@Override
+			public void onPlay() {
+				// TODO: play
+			}
+		});
 	}
 }

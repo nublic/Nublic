@@ -10,6 +10,7 @@
 		.leftmargin {
 			margin-left: 8px;
 		}
+		/* TODO opaque over */
 		.semitransparent {
 			opacity: 0.4;
 		}
@@ -20,6 +21,9 @@
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 	
 	<g:HorizontalPanel>
+		<g:PushButton ui:field="deleteButton" addStyleNames="{style.nobackground} {style.semitransparent} {style.transparent} {style.leftmargin}">
+			<g:upFace image="{res.delete}"/>
+		</g:PushButton>
 		<g:PushButton ui:field="editButton" addStyleNames="{style.nobackground} {style.semitransparent} {style.transparent} {style.leftmargin}">
 			<g:upFace image="{res.edit}"/>
 		</g:PushButton>

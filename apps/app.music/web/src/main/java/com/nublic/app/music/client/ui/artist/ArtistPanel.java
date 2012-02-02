@@ -9,6 +9,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.nublic.app.music.client.datamodel.Artist;
+import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -21,26 +25,64 @@ public class ArtistPanel extends Composite {
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
 
+	DataModel model;
 	String collectionId;
 	String collectionName;
 	List<Artist> artistList;
 
-	public ArtistPanel(String collectionId, String collectionName) {
+	public ArtistPanel(DataModel model, String collectionId, String collectionName) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		this.model = model;
 		this.collectionId = collectionId;
 		this.collectionName = collectionName;
+		
 		titleLabel.setText(collectionName);
-		titlePanel.add(new ButtonLine(false, true, true, titlePanel));
+		
+		// Create button line
+		boolean canBeDeleted = collectionId == null ? false : true;
+		ButtonLine b = new ButtonLine(canBeDeleted, false, true, true, titlePanel);
+		setDeleteButtonHandler(b);
+		setAddAtEndButtonHandler(b);
+		setPlayButtonHandler(b);
+		titlePanel.add(b);
 	}
 
 	public void setArtistList(List<Artist> artistList) {
 		this.artistList = artistList;
 
 		for (Artist a : artistList) {
-			ArtistWidget aw = new ArtistWidget(a);
+			ArtistWidget aw = new ArtistWidget(model, a);
 			mainPanel.add(aw);
 		}
+	}
+	
+	// Handlers for button line
+	private void setDeleteButtonHandler(ButtonLine b) {
+		b.setDeleteButtonHandler(new DeleteButtonHandler() {
+			@Override
+			public void onDelete() {
+				model.deleteTag(collectionId);
+			}
+		});
+	}
+
+	private void setAddAtEndButtonHandler(ButtonLine b) {
+		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
+			@Override
+			public void onAddAtEnd() {
+				// TODO: addAtEnd
+			}
+		});
+	}
+
+	private void setPlayButtonHandler(ButtonLine b) {
+		b.setPlayButtonHandler(new PlayButtonHandler() {
+			@Override
+			public void onPlay() {
+				// TODO: play
+			}
+		});
 	}
 
 }
