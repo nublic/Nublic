@@ -8,28 +8,8 @@
 		.padding {
 			padding: 0px 0px 0px 100px;
 		}
-		.nobackground {
-			background: transparent;
-			padding: 0px;
-			border: none;
-		}
-		.leftmargin {
-			margin-left: 10px;
-		}
 		.rightmargin {
 			margin-right: 15px;
-		}
-  		/* .opaque :HOVER {
-  			opacity: 1 !important;
-  		} */
-		.semitransparent {
-			opacity: 0.4;
-		}
-		.transparent {
-			opacity: 0.1;
-		}
-		.alignmiddle {
-			vertical-align: middle;
 		}
 	</ui:style>
 	
@@ -41,20 +21,9 @@
 			<g:at left='0' top='0'>
 				<g:Image ui:field="artistImage"/>
 			</g:at>
-			<g:at left='90' top='40'>
-				<g:HorizontalPanel>
-					<g:SimplePanel addStyleNames="{style.alignmiddle} {style.rightmargin}">
-						<g:Hyperlink ui:field="artistNameLabel" text="Artist name"/>
-					</g:SimplePanel>
-					<g:PushButton ui:field="editButton" addStyleNames="{style.nobackground} {style.semitransparent} {style.transparent} {style.leftmargin}">
-						<g:upFace image="{res.edit}"/>
-					</g:PushButton>
-					<g:PushButton ui:field="addAtEndButton" addStyleNames="{style.nobackground} {style.semitransparent} {style.transparent} {style.leftmargin}">
-						<g:upFace image="{res.addAtEnd}"/>
-					</g:PushButton>
-					<g:PushButton ui:field="playButton" addStyleNames="{style.nobackground} {style.semitransparent} {style.transparent} {style.leftmargin}">
-						<g:upFace image="{res.playMini}"/>
-					</g:PushButton>
+			<g:at left='90' top='0' bottom='0'>
+				<g:HorizontalPanel verticalAlignment="middle" height="100%" ui:field="labelAndButtonsPanel">
+					<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.rightmargin}"/>
 				</g:HorizontalPanel>
 			</g:at>
 		</g:AbsolutePanel>

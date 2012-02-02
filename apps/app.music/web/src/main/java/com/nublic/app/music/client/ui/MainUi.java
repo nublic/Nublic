@@ -160,7 +160,7 @@ public class MainUi extends Composite {
 		
 		switch (s) {
 		case ARTIST_ALBUMS:
-			ArtistPanel artPanel = new ArtistPanel();
+			ArtistPanel artPanel = new ArtistPanel(showingPlaylistWidget.getId(), showingPlaylistWidget.getText());
 			artPanel.setArtistList(model.getArtistList());
 			mainPanel.setWidget(artPanel);
 			break;

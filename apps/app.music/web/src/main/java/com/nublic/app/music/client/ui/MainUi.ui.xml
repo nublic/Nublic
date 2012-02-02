@@ -31,7 +31,8 @@
 			</g:HorizontalPanel>
 		</g:north>
 		<g:center>
-			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.scroll}">
+<!-- 			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.scroll}"> -->
+			<g:SimplePanel ui:field="mainPanel">
 				<g:Label text="main panel"/>
 			</g:SimplePanel>
 		</g:center>
