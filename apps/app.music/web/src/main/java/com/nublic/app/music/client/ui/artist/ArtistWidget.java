@@ -7,7 +7,6 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -41,7 +40,7 @@ public class ArtistWidget extends Composite {
 
 	@UiField Image artistImage;
 	@UiField Hyperlink artistNameLabel;
-	@UiField AbsolutePanel artistPanel;
+//	@UiField AbsolutePanel artistPanel;
 	@UiField FlowPanel albumsPanel;
 	@UiField ArtistStyle style;
 	@UiField HorizontalPanel labelAndButtonsPanel;

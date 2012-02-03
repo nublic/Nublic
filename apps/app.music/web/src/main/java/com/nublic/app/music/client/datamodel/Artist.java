@@ -22,7 +22,7 @@ public class Artist {
 	AlbumsChangeHandler handler = null;
 	List<Album> albumList = new ArrayList<Album>();
 	
-	String inCollection; 
+	String inCollection;
 
 	public Artist(String id, String name, int numberOfDiscs, int numberOfSongs) {
 		this(id, name, numberOfDiscs, numberOfSongs, null);

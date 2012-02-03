@@ -17,12 +17,12 @@
 	
 	<g:FlowPanel>
 		<!-- Artist display -->
-		<g:AbsolutePanel height="80px" width="100%" ui:field="artistPanel">
+		<g:AbsolutePanel height="80px" width="100%">
 			<g:at left='0' top='0'>
 				<g:Image ui:field="artistImage"/>
 			</g:at>
 			<g:at left='90' top='0' bottom='0'>
-				<g:HorizontalPanel verticalAlignment="middle" height="100%" ui:field="labelAndButtonsPanel">
+				<g:HorizontalPanel ui:field="labelAndButtonsPanel" verticalAlignment="middle" height="100%">
 					<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.rightmargin}"/>
 				</g:HorizontalPanel>
 			</g:at>

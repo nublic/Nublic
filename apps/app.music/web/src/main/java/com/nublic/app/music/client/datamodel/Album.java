@@ -10,11 +10,17 @@ public class Album {
 	String name;
 	int numberOfSongs;
 
+	String inCollection;
+
 	public Album(String id, String name, int numberOfSongs) {
-		super();
+		this(id, name, numberOfSongs, null);
+	}
+	
+	public Album(String id, String name, int numberOfSongs, String inCollection) {
 		this.id = id;
 		this.name = name;
 		this.numberOfSongs = numberOfSongs;
+		this.inCollection = inCollection;
 	}
 
 	// Getters and setters
@@ -24,5 +30,7 @@ public class Album {
 	public void setName(String name) { this.name = name; }
 	public int getNumberOfSongs() { return numberOfSongs; }
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
+	public String getInCollection() { return inCollection; }
+	public void setInCollection(String inCollection) { this.inCollection = inCollection; }
 
 }
