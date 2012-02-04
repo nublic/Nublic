@@ -55,12 +55,12 @@ public class AlbumMessage extends Message {
 		// Add possible artist filter
 		if (artist != null) {
 			url.append(artist.getId());
-			url.append("/");
 		} else if (artistId != null) {
 			url.append(artistId);
-			url.append("/");
+		} else {
+			url.append("all");
 		}
-		url.append("desc/0/32000");
+		url.append("/desc/0/32000");
 		// Add possible collection filter
 		if (artist != null && artist.getInCollection() != null) {
 			url.append("/");
@@ -91,10 +91,10 @@ public class AlbumMessage extends Message {
 			// For album messages filling some artist
 			artist.clearAlbumList();
 			// TODO: Fake info to try
-				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10, artist.getInCollection()));
-				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10, artist.getInCollection()));
-				artist.addAlbum(new Album("AlbumId3", "Bad", 10, artist.getInCollection()));
-				artist.addAlbum(new Album("AlbumId4", "Be here now", 10, artist.getInCollection()));
+				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId3", "Bad", 10, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId4", "Be here now", 10, artist.getInCollection(), artist));
 			// Fake info end
 			artist.fireAlbumsHandler();
 		}

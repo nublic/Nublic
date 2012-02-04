@@ -14,6 +14,7 @@ import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.SongListWidget;
 import com.google.gwt.user.client.ui.Image;
 
 //GET /album-art/:album-id
@@ -27,11 +28,17 @@ public class AlbumWidget extends Composite {
 	@UiField HorizontalPanel labelAndButtonsPanel;
 	@UiField Hyperlink albumNameLabel;
 	@UiField Image albumImage;
+//	@UiField(provided=true) CellList<Object> cellList = new CellList<Object>(new AbstractCell<Object>(){
+//		@Override
+//		public void render(Context context, Object value, SafeHtmlBuilder sb) {
+//			// TODO
+//		}
+//	});
+	@UiField(provided=true) SongListWidget cellList = new SongListWidget();
 	Album album;
 	
 	public AlbumWidget(Album a) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
 		album = a;
 
 		// building imageUrl as /artist-art/:artist-id

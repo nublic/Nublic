@@ -1,6 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:p1="urn:import:com.google.gwt.user.cellview.client"
+	xmlns:my="urn:import:com.nublic.app.music.client.ui">
 	<ui:style>
 		.rightmargin {
 			margin-right: 15px;
@@ -19,6 +21,8 @@
 				</g:HorizontalPanel>
 			</g:at>
 		</g:AbsolutePanel>
+<!-- 		<p1:CellList ui:field="cellList"/> -->
+		<my:SongListWidget ui:field="cellList"/>
 		<!-- Songs display -->
 
 	</g:FlowPanel>
