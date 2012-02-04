@@ -110,7 +110,11 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
       val new_files = watcher.getDeletionProcessor.getNewFilesSince(folder.getAbsolutePath(), since)
       val new_files_info = new_files.map(f => get_one_file(new File(f), user))
       val deleted_files = watcher.getDeletionProcessor.getDeletedFilesSince(folder.getAbsolutePath(), since)
-      write(BrowserPoll(new_files_info, deleted_files))
+      val deleted_files_names = deleted_files.map(f => {
+        val i = f.lastIndexOf("/")
+        f.substring(i + 1)
+      })
+      write(BrowserPoll(new_files_info, deleted_files_names))
     }
   }
   

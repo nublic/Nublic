@@ -3,7 +3,9 @@ package com.nublic.app.browser.web.client.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import com.google.common.collect.Sets;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.user.client.Timer;
@@ -21,6 +23,7 @@ public class BrowserModel {
 	FolderNode folderTree;
 	// "State" dependent part
 	List<FileNode> fileList;
+	List<FileNode> modifiedFiles;
 	String showingPath;
 	DevicesManager devManager;
 	double lastUpdateTime;
@@ -39,6 +42,7 @@ public class BrowserModel {
 		 // To initialise the tree
 	    folderTree = new FolderNode();
 	    fileList = new ArrayList<FileNode>();
+	    modifiedFiles = new ArrayList<FileNode>();
 	    updateHandlers = new ArrayList<ModelUpdateHandler>();
 	    showingPath = "";
 	    foldersMessageHelper = new SequenceWaiter<FolderMessage>(new FolderMessage.Comparator());
@@ -82,6 +86,14 @@ public class BrowserModel {
 		return fileList;
 	}
 	
+	public List<FileNode> getModifiedFiles() {
+		return modifiedFiles;
+	}
+	
+	public void clearModifiedFiles() {
+		modifiedFiles.clear();
+	}
+	
 	public String getShowingPath() {
 		return showingPath;
 	}
@@ -113,7 +125,6 @@ public class BrowserModel {
 	}
 	
 	public void updateFiles(String path, boolean shouldUpdateFoldersOnSuccess) {
-		// TODO: Bug on updating files of root panel when files request arrives before devices one
 		if (path.equals("")) {
 			// If root path, files gets updated with devices
 			changePath("");
@@ -122,8 +133,6 @@ public class BrowserModel {
 			if (!showingPath.equals(path)) {
 				FileMessage message = new FileMessage(path, this, shouldUpdateFoldersOnSuccess);
 				filesMessageHelper.send(message, RequestBuilder.GET);
-			} else {
-				resetTimer();
 			}
 		}
 	}
@@ -172,13 +181,17 @@ public class BrowserModel {
 		}
 	}
 	
-	private synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
+	public synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
 		FileNode file = new FileNode(name, mime, view, size, lastUpdate, writable);
 		fileList.add(file);
 	}
 	
 	public synchronized void addFiles(List<FileNode> filesToAdd) {
-		fileList.addAll(filesToAdd);
+		// TODO: Check if it is more efficient to maintain a "Set<FileNode> fileList" all the time. (I think we should migrate to this when we've got time)
+		Set<FileNode> setToAdd = Sets.newHashSet(filesToAdd);
+		Set<FileNode> modified = Sets.intersection(Sets.newHashSet(fileList), setToAdd);
+		modifiedFiles.addAll(modified);
+		fileList.addAll(Sets.difference(setToAdd, modified));
 	}
 	
 	public synchronized void removeFiles(List<FileNode> filesToRemove) {
@@ -204,7 +217,6 @@ public class BrowserModel {
 			}
 			currentNode = newNode;
 		}
-
 		return currentNode;
 	}
 	
@@ -231,6 +243,7 @@ public class BrowserModel {
 	
 	private void changePath(String newPath) {
 		showingPath = newPath;
+		modifiedFiles.clear();
 		resetTimer();
 	}
 	
@@ -241,6 +254,9 @@ public class BrowserModel {
 	
 	public void scheduleNewTimer() {
 		filesPollingTimer.cancel();
-		filesPollingTimer.schedule(Constants.TIME_TO_POLLING);
+		if (!showingPath.equals("")) {
+			// It doesn't make sense to ask for changes in root folders as it works in a different way
+			filesPollingTimer.schedule(Constants.TIME_TO_POLLING);
+		}
 	}
 }

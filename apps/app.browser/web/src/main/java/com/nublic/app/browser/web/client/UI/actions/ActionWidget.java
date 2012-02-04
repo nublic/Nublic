@@ -5,6 +5,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
@@ -37,12 +38,21 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	HandlerRegistration clickHandlerReg;
 	boolean hasHandler;
 	
+	// TODO: mark this as Deprecated and solve problems..
 	public ActionWidget(String imageURL, String actionText, BrowserUi stateProvider) {
+		this(new Image(imageURL), actionText, stateProvider);
+	}
+	
+	public ActionWidget(ImageResource res, String actionText, BrowserUi stateProvider) {
+		this (new Image(res), actionText, stateProvider);
+	}
+	
+	public ActionWidget(Image image, String actionText, BrowserUi stateProvider) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.actionText = actionText;
 		this.stateProvider = stateProvider;
 		
-		imageButton = new PushButton(new Image(imageURL)); // TODO: use ImageResource
+		imageButton = new PushButton(image);
 		actionLink = new Anchor(actionText);
 
 		imageButton.addClickHandler(new MyClickHandler());

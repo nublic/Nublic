@@ -1,0 +1,40 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:com.nublic.app.music.client.ui">
+	<ui:style>
+		.padding {
+			padding: 10px;
+		}
+		.scroll {
+	        overflow-x: hidden;
+			overflow-y: auto;
+		}
+	</ui:style>
+	<g:DockLayoutPanel>
+		<g:west size="170">
+			<g:FlowPanel addStyleNames="{style.padding}">
+				<my:PlaylistWidget ui:field="allMusic" name="All music"/>
+<!-- 			<g:Label text="Collections"/> -->
+				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Collections</h3></div></g:HTMLPanel>
+				<g:VerticalPanel ui:field="tagsPanel"/>
+				<my:AddTagWidget ui:field="addTagWidget"/>
+<!-- 			<g:Label text="Playlists"/> -->
+				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Playlists</h3></div></g:HTMLPanel>
+				<g:VerticalPanel ui:field="playlistsPanel"/>
+				<my:AddTagWidget ui:field="addPlaylistWidget"/>
+			</g:FlowPanel>
+		</g:west>
+		<g:north size="50">
+			<g:HorizontalPanel>
+				<g:Label text="player"/>
+			</g:HorizontalPanel>
+		</g:north>
+		<g:center>
+<!-- 			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.scroll}"> -->
+			<g:SimplePanel ui:field="mainPanel">
+				<g:Label text="main panel"/>
+			</g:SimplePanel>
+		</g:center>
+	</g:DockLayoutPanel>
+</ui:UiBinder> 

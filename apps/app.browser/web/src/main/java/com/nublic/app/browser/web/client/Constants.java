@@ -27,6 +27,7 @@ public class Constants {
 	public final static String WINDOW_HOME_TITLE = "Home";
 	public final static String HOME_NAME = "Home";
 	public final static String CSS_SELECTED = "selected";
+	public final static String DEFAULT_NEWFOLDER_TEXT = "new folder";
 	
 	public final static String KIND_MIRROR = "mirror";
 	public final static String KIND_SYNCED = "synced";

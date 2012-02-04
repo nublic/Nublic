@@ -44,7 +44,7 @@ public class PasteAction extends ActionWidget {
 			public void onSuccess(Response response) {
 				if (response.getStatusCode() == Response.SC_OK) {
 					if (feedbackTarget.getShowingPath().equals(pathTo)) {
-						// If we're copying to the showing file: feedback
+						// If we're pasting into the showing file: feedback
 						List<FileNode> filesCopied = new ArrayList<FileNode>();
 						for (Widget w : setToCopy) {
 							filesCopied.add(((FileWidget)w).getNode());

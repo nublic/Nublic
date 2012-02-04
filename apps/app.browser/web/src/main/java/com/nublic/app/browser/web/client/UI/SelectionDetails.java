@@ -95,10 +95,16 @@ public class SelectionDetails extends Composite {
 
 	public void changeInfo(String folderName, List<FileNode> inFolder) {
 		// No items selected, shows info of the whole folder
-		String nameToShow = (folderName == null || folderName.equals("")) ? Constants.HOME_NAME : folderName;
+		String nameToShow;
+		if (folderName == null || folderName.equals("")) {
+			nameToShow = Constants.HOME_NAME;
+			setImage(Resources.INSTANCE.home());
+		} else {
+			nameToShow = folderName;
+			setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
+		}
 		selectionNameLabel.setText(nameToShow);
 		selectionNameLabel.setTitle(nameToShow);
-		setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
 		double size = 0;
 		double date = 0;
 		int foldersNumber = 0;
@@ -204,25 +210,13 @@ public class SelectionDetails extends Composite {
 	
 	// Since String.format doesn't work for gwt...
 	public static StringBuilder getFormatedDouble(double number) {
-//		StringBuilder ret = new StringBuilder();
-//		ret.append(number);
-//		int index = ret.indexOf(".");
-//		if (index != -1) {
-//			if (decimals == 0) {
-//				ret.setLength(index);
-//			} else {
-//				if (ret.length() > index + 1 + decimals) {
-//					ret.setLength(index + 1 + decimals);
-//				}
-//			}
-//		}
-//		return ret;
 		return new StringBuilder(NumberFormat.getFormat("0.##").format(number));
 	}
 	
 	public static String getFormatedDate(double ddate) {
 		Date date = new Date((long) ddate);
-		return "Last modified: " + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
+		return ((long) ddate) == 0 ? "" :
+			"Last modified: " + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
 	}
 
 }

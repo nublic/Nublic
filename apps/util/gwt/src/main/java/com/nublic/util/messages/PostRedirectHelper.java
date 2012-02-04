@@ -2,7 +2,7 @@ package com.nublic.util.messages;
 
 import java.util.HashMap;
 
-import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
@@ -13,6 +13,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class PostRedirectHelper {
 	HashMap<String, String> params = new HashMap<String, String>();
 	String url = "";
+	FileUpload fileUpload = null;
+	String paramFileUploadName = "";
 
 	public PostRedirectHelper() {
 	}
@@ -37,6 +39,11 @@ public class PostRedirectHelper {
 	public void addParam(String key, String value) {
 		params.put(key, value);
 	}
+	
+	public void addParam(String key, FileUpload value) {
+		fileUpload = value;
+		paramFileUploadName = key;
+	}
 
 	public HashMap<String, String> getParams() {
 		return params;
@@ -47,9 +54,15 @@ public class PostRedirectHelper {
 		VerticalPanel formContent = new VerticalPanel();
 		form.add(formContent);
 
-		form.setAction(GWT.getHostPageBaseURL() + "server/zip-set");
-		form.setEncoding(FormPanel.ENCODING_URLENCODED);
+		form.setAction(url);
 		form.setMethod(FormPanel.METHOD_POST);
+		if (fileUpload == null) {
+			form.setEncoding(FormPanel.ENCODING_URLENCODED);
+		} else {
+			form.setEncoding(FormPanel.ENCODING_MULTIPART);
+			fileUpload.setName(paramFileUploadName);
+			formContent.add(fileUpload);
+		}
 
 		// Set params
 		for (String key : params.keySet()) {

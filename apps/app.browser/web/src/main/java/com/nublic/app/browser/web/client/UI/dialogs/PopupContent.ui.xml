@@ -1,0 +1,58 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.withmargin {
+	   		margin-left: 10px;
+		}
+	</ui:style>
+	
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
+
+	<g:DockLayoutPanel>
+	    <g:north size="36">
+	      <g:DockLayoutPanel addStyleNames="modal-header">
+	        <g:east size="20">
+	          <g:Label ui:field="closeLabel" styleName="close">&times;</g:Label>
+	        </g:east>
+	        <g:center>
+	          <g:HTMLPanel>
+               <h5><g:Label ui:field="titleLabel" addStyleNames="{style.withmargin}">?</g:Label></h5>
+              </g:HTMLPanel>
+	        </g:center>
+	      </g:DockLayoutPanel>
+	    </g:north>
+		<g:center>
+			<g:LayoutPanel ui:field="contentTop">
+			</g:LayoutPanel>
+		</g:center>
+		<g:south size="36"> <!-- also defined in Constants.java -->
+			<g:DockLayoutPanel addStyleNames="modal-footer">
+				<g:west size="100">
+					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
+						<g:Hyperlink ui:field="previousLink" text="previous">
+						</g:Hyperlink>
+					</g:VerticalPanel>
+				</g:west>
+				<g:east size="100">
+					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
+						<g:Hyperlink ui:field="nextLink" text="next">
+						</g:Hyperlink>
+					</g:VerticalPanel>
+				</g:east>
+				<g:center>
+					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
+						<g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="center">
+							<g:PushButton ui:field="downloadButton" title="download file">
+								<g:upFace image="{res.download}"/>
+							</g:PushButton>
+							<g:PushButton ui:field="viewButton" title="preview in different window">
+								<g:upFace image="{res.view}"/>
+							</g:PushButton>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+				</g:center>
+			</g:DockLayoutPanel>
+		</g:south>
+	</g:DockLayoutPanel>
+</ui:UiBinder>

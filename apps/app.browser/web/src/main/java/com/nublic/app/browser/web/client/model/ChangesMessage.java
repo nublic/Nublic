@@ -55,11 +55,17 @@ public class ChangesMessage extends Message {
 			changesContent = JsonUtils.safeEval(text);
 			List<FileNode> addedFiles = convertAddedFiles(changesContent.getNewFiles());
 			List<FileNode> deletedFiles = convertDeletesFiles(changesContent.getDeletedFiles());
-			
-			// TODO: Don't add files, but look for modifies ones also
-			model.addFiles(addedFiles);
-			model.removeFiles(deletedFiles);
-			model.fireFilesUpdateHandlers(false, false);
+
+			if (!addedFiles.isEmpty()) {
+				model.addFiles(addedFiles);
+			}
+			if (!deletedFiles.isEmpty()) {
+				model.removeFiles(deletedFiles);
+			}
+			if (!addedFiles.isEmpty() || !deletedFiles.isEmpty()) {
+				model.fireFilesUpdateHandlers(false, false);
+			}
+
 			model.scheduleNewTimer();
 		} else {
 			// We're not showing any feedback for polling errors
@@ -67,6 +73,7 @@ public class ChangesMessage extends Message {
 
 	}
 
+	// From JsArray to List<FileNode>
 	private List<FileNode> convertAddedFiles(JsArray<FileContent> newFiles) {
 		List<FileNode> retList = new ArrayList<FileNode>();
 		for (int i = 0; i < newFiles.length() ; i++) {
@@ -78,6 +85,7 @@ public class ChangesMessage extends Message {
 		return retList;
 	}
 
+	// From JsArray to List<FileNode>
 	private List<FileNode> convertDeletesFiles(JsArrayString deletedFiles) {
 		List<FileNode> retList = new ArrayList<FileNode>();
 		for (int i = 0; i < deletedFiles.length() ; i++) {

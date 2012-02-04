@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.center {
+			text-align: center;
+			vertical-align: middle;
+		}
+	</ui:style>
+	<g:AbsolutePanel width="80px" height="120px">
+		<g:at left='0' top='0'>
+			<g:Image ui:field="albumImage"/>
+		</g:at>
+		<g:at left='0' right='0' top='80' bottom='0'>
+			<g:Hyperlink ui:field="albumNameLabel" width="80px" height="40px" addStyleNames="{style.center}" text="Album name"/>
+		</g:at>
+	</g:AbsolutePanel>
+</ui:UiBinder> 

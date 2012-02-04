@@ -1,31 +1,30 @@
 package com.nublic.app.music.client;
 
 import com.google.gwt.core.client.EntryPoint;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.nublic.app.music.client.ArtistCell.Images;
+import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.ui.MainUi;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
 public class MusicApp implements EntryPoint, ValueChangeHandler<String> {
-
-	MusicUi theUi;
-
+	DataModel model;
+	MainUi ui;
+	
 	/**
 	 * This is the entry point method.
 	 */
 	public void onModuleLoad() {
+		model = new DataModel();
+		ui = new MainUi(model);
 		
-		theUi = new MusicUi();
 		RootLayoutPanel rp = RootLayoutPanel.get();
-	    rp.add(theUi);
-	    
-	    //analizar 
+	    rp.add(ui);
+
 	    String startingToken = History.getToken();
 	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
@@ -34,8 +33,10 @@ public class MusicApp implements EntryPoint, ValueChangeHandler<String> {
 
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
-		// TODO Analizar
-		String url = event.getValue();
-		Window.alert(url);
+		String args = event.getValue();
+		ParamsHashMap hmap = new ParamsHashMap(args);
+		
+		model.changeState(hmap);
 	}
+
 }

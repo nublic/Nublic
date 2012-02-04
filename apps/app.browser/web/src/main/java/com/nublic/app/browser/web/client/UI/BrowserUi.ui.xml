@@ -3,6 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:p1="urn:import:com.google.gwt.user.cellview.client"
 	xmlns:my="urn:import:com.nublic.app.browser.web.client.UI">
+<!-- 	xmlns:acts="urn:import:com.nublic.app.browser.web.client.UI.actions"> -->
 	<ui:style>
 		.aligntop {
 			vertical-align: top;
@@ -67,10 +68,18 @@
 	   	
 	   	<!-- Actions panel -->
 	   	<g:east size="176">
-<!-- 	   	<g:FlowPanel ui:field="actionsPanel" styleName="{style.horizontalmargin}"> -->
 			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
 				<my:SelectionDetails ui:field="infoWidget" addStyleNames="{style.marginbottom}"/>
 	   			<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Actions</h3></div></g:HTMLPanel>
+<!-- 	   			<acts:FolderDownloadAction/> -->
+<!-- 	   			<acts:SingleDownloadAction/> -->
+<!-- 	   			<acts:NewFolderAction ui:field="folderAction"/> -->
+<!-- 	   			<acts:UploadAction ui:field="upAction"/> -->
+<!-- 	   			<acts:SetDownloadAction/> -->
+<!-- 	   			<acts:CutAction/> -->
+<!-- 	   			<acts:CopyAction/> -->
+<!-- 	   			<acts:DeleteAction/> -->
+<!-- 	   			<acts:PasteAction ui:field="pasteAction"/> -->
 	   		</g:FlowPanel>
 	   	</g:east>
 	   	
