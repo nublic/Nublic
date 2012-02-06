@@ -11,11 +11,14 @@
 		.rightmargin {
 			margin-right: 15px;
 		}
+		.minheight {
+			min-height: 200px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 	
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.minheight}">
 		<!-- Artist display -->
 		<g:AbsolutePanel height="80px" width="100%" addStyleNames="translucidPanel">
 			<g:at left='0' top='0'>

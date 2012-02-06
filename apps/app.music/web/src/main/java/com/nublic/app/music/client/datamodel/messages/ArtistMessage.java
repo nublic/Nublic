@@ -63,6 +63,15 @@ public class ArtistMessage extends Message {
 			model.addArtist(new Artist("Id2", "Oasis", 4, 40, collectionId));
 			model.addArtist(new Artist("Id3", "Muse", 4, 40, collectionId));
 			model.addArtist(new Artist("Id4", "Michael Jackson", 4, 40, collectionId));
+			model.addArtist(new Artist("Id5", "The Beatles", 4, 40, collectionId));
+			model.addArtist(new Artist("Id6", "The Strokes", 4, 40, collectionId));
+			model.addArtist(new Artist("Id7", "Red Hot Chilli Pepper", 4, 40, collectionId));
+			model.addArtist(new Artist("Artist8", "Maroon 5", 4, 40, collectionId));
+			model.addArtist(new Artist("Artist9", "Enrique Iglesias", 4, 40, collectionId));
+			model.addArtist(new Artist("Artist10", "Su padre Julio", 4, 40, collectionId));
+			model.addArtist(new Artist("Artist11", "Su abuelo", 4, 40, collectionId));
+			model.addArtist(new Artist("Artist12", "Dover", 4, 40, collectionId));
+			model.addArtist(new Artist("Artist13", "The Corrs", 4, 40, collectionId));
 		// Fake info end
 		
 		model.fireStateHandlers();

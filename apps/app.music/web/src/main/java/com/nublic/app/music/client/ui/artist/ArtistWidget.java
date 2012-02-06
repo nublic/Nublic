@@ -38,6 +38,7 @@ public class ArtistWidget extends Composite {
 		String inlineblock();
 		String padding();
 		String rightmargin();
+		String minheight();
 	}
 
 	@UiField Image artistImage;
@@ -49,32 +50,42 @@ public class ArtistWidget extends Composite {
 	
 	DataModel model;
 	Artist artist;
+	boolean loaded = false;
 
 	public ArtistWidget(DataModel model, Artist art) {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.model = model;
 		this.artist = art;
+		
+		artistNameLabel.setText(artist.getName());
+//		lazyLoad();
+		
+	}
 
-		// building imageUrl as /artist-art/:artist-id
-		StringBuilder imageUrl = new StringBuilder();
-		imageUrl.append(GWT.getHostPageBaseURL());
-		imageUrl.append("server/artist-art/");
-		imageUrl.append(art.getId());
-		
-		artistImage.setUrl(URL.encode(imageUrl.toString()));
-		artistNameLabel.setText(art.getName());
-		setClickTarget();
-		
-		setMyselfAsAlbumHandler();
-		// Add button line
-		ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
-				 								 ButtonLineParam.ADD_AT_END,
-				 								 ButtonLineParam.PLAY));
-		setEditButtonHandler(b);
-		setAddAtEndButtonHandler(b);
-		setPlayButtonHandler(b);
-		labelAndButtonsPanel.add(b);
+	public void lazyLoad() {
+		if (!loaded) {
+			loaded = true;
+			
+			// building imageUrl as /artist-art/:artist-id
+			StringBuilder imageUrl = new StringBuilder();
+			imageUrl.append(GWT.getHostPageBaseURL());
+			imageUrl.append("server/artist-art/");
+			imageUrl.append(artist.getId());
+	
+			artistImage.setUrl(URL.encode(imageUrl.toString()));
+			setClickTarget();
+	
+			setMyselfAsAlbumHandler();
+			// Add button line
+			ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
+													 ButtonLineParam.ADD_AT_END,
+													 ButtonLineParam.PLAY));
+			setEditButtonHandler(b);
+			setAddAtEndButtonHandler(b);
+			setPlayButtonHandler(b);
+			labelAndButtonsPanel.add(b);
+		}
 	}
 
 	private void setClickTarget() {

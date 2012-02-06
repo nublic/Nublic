@@ -1,9 +1,15 @@
 package com.nublic.app.music.client.ui.artist;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
@@ -21,7 +27,7 @@ import com.nublic.app.music.client.ui.popup.DeleteHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-public class ArtistPanel extends Composite {
+public class ArtistPanel extends Composite implements ScrollHandler {
 	private static ArtistPanelUiBinder uiBinder = GWT.create(ArtistPanelUiBinder.class);
 	interface ArtistPanelUiBinder extends UiBinder<Widget, ArtistPanel> { }
 	
@@ -32,6 +38,7 @@ public class ArtistPanel extends Composite {
 	DataModel model;
 	String collectionId;
 	String collectionName;
+	Set<ArtistWidget> unloadedWidgets = new HashSet<ArtistWidget>();
 	List<Artist> artistList;
 	ConfirmDeletionPanel cdp = new ConfirmDeletionPanel(new DeleteHandler() {
 		@Override
@@ -61,15 +68,46 @@ public class ArtistPanel extends Composite {
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.add(b);
+		
+		// For handling lazy scroll loading of ArtistWidgets
+		mainPanel.addDomHandler(this, ScrollEvent.getType());
+	}
+
+	// For handling lazy scroll loading of ArtistWidgets
+	@Override
+	public void onScroll(ScrollEvent event) {
+		Set<ArtistWidget> loadedInThisScroll = new HashSet<ArtistWidget>();
+		int panelTop = mainPanel.getAbsoluteTop();
+		int panelBottom = panelTop + mainPanel.getOffsetHeight();
+		for (ArtistWidget aw : unloadedWidgets) {
+			int widgetTop = aw.getAbsoluteTop();
+			int widgetBottom = widgetTop + aw.getOffsetHeight();
+			// If widget enters a visible zone we load it
+			if (widgetBottom > panelTop && widgetTop < panelBottom) {
+				aw.lazyLoad();
+				loadedInThisScroll.add(aw);
+			}
+		}
+		unloadedWidgets.removeAll(loadedInThisScroll);
 	}
 
 	public void setArtistList(List<Artist> artistList) {
 		this.artistList = artistList;
-
+		
 		for (Artist a : artistList) {
 			ArtistWidget aw = new ArtistWidget(model, a);
+			unloadedWidgets.add(aw); // for handling lazy scroll loading
 			mainPanel.add(aw);
 		}
+		// Couldn't find a way to do it on some widget event in Artist Widget (attachedHandler and LoadHandler don't work)
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				// This is executed when current events stack empties
+				// Call onScroll when the widgets are loaded, so content of shown ones can be lazy loaded
+				onScroll(null);
+			}
+		});
 	}
 	
 	// Handlers for button line
