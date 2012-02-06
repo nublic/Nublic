@@ -17,8 +17,13 @@ public class UploadAction extends ActionWidget {
 	public static void doUpload(String pathTo, FileUpload uploadWidget) {
 		PostRedirectHelper sendFileHelper = new PostRedirectHelper(URL.encode(GWT.getHostPageBaseURL() + "server/upload"));
 		sendFileHelper.addParam("path", pathTo);
-		sendFileHelper.addParam("name", uploadWidget.getFilename());
-		sendFileHelper.addParam("file", uploadWidget);
+		int backSlashIndex = uploadWidget.getFilename().lastIndexOf("\\");
+		String fileName = uploadWidget.getFilename();
+		if (backSlashIndex >= 0) {
+			fileName = fileName.substring(backSlashIndex); 
+		}
+		sendFileHelper.addParam("name", fileName);
+		sendFileHelper.addParam("contents", uploadWidget);
 		
 		sendFileHelper.send();
 	}
@@ -26,7 +31,6 @@ public class UploadAction extends ActionWidget {
 	@Override
 	public void executeAction() {
 		stateProvider.showUploadPopup();
-//		doUpload(stateProvider.getShowingPath());
 	}
 
 	@Override

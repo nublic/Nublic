@@ -44,6 +44,7 @@ public class DeleteAction extends ActionWidget {
 				if (response.getStatusCode() == Response.SC_OK) {
 					if (pathFrom.equals(stateProvider.getShowingPath())) {
 						stateProvider.getModel().removeFiles(removedFiles);
+						stateProvider.getModel().fireFilesUpdateHandlers(false, false);
 					}
 				} else {
 					ErrorPopup.showError("Could not delete files");
