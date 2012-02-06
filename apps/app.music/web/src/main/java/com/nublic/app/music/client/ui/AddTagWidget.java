@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -89,8 +90,8 @@ public class AddTagWidget extends Composite implements HasText {
 	}
 
 	@UiHandler("textBox")
-	void onTextBoxKeyPress(KeyPressEvent event) {
-		switch (event.getCharCode()) {
+	void onTextBoxKeyDown(KeyDownEvent event) {
+		switch (event.getNativeKeyCode()) {
 		case KeyCodes.KEY_ENTER:
 			addTag();
 			break;

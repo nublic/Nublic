@@ -59,8 +59,9 @@ public class MainUi extends Composite {
 			@Override
 			public void onPlaylistsChange() {
 				// Add current playlist, which is always there
-				if (playlistIndex.get(Constants.CURRENT_PLAYLIST_ID) == null) {
-					PlaylistWidget currentPlaylist = new PlaylistWidget(new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME));
+				PlaylistWidget currentPlaylist = playlistIndex.get(Constants.CURRENT_PLAYLIST_ID);
+				if (currentPlaylist == null) {
+					currentPlaylist = new PlaylistWidget(new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME));
 					currentPlaylist.setPlaying(true); // TODO: set playing only when proceeds
 					playlistIndex.put(Constants.CURRENT_PLAYLIST_ID, currentPlaylist); // Add playlist to index of playlists
 					playlistsPanel.add(currentPlaylist);
@@ -68,6 +69,7 @@ public class MainUi extends Composite {
 				// Add rest of playlists
 				List<Playlist> playlistList = model.getPlaylistList();
 				Set<Widget> widgetsToRemove = Sets.newHashSet(playlistsPanel);
+				widgetsToRemove.remove(currentPlaylist); // We don't want to remove current playlist from the panel
 				for (Playlist p : playlistList) {
 					PlaylistWidget pw = playlistIndex.get(p.getId());
 					if (pw == null) {
