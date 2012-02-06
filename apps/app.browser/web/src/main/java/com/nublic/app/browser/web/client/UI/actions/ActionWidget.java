@@ -53,6 +53,7 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 		this.stateProvider = stateProvider;
 		
 		imageButton = new PushButton(image);
+		imageButton.setWidth("16px");
 		actionLink = new Anchor(actionText);
 
 		imageButton.addClickHandler(new MyClickHandler());
