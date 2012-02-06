@@ -43,7 +43,9 @@ public abstract class SequenceHelper <M extends Message> {
 		try {
 			StringBuilder postData = new StringBuilder();
 			
-			if (method.equals(RequestBuilder.POST)) {
+			if (method.equals(RequestBuilder.POST)
+					|| method.equals(RequestBuilder.PUT)
+					|| method.equals(RequestBuilder.DELETE)) {
 				builder.setHeader("Content-type", "application/x-www-form-urlencoded");
 				
 				HashMap<String, String> params = message.getParams();

@@ -1,21 +1,31 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:com.nublic.util.widgets">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:n="urn:import:com.nublic.util.widgets">
 	<ui:style>
-	.name {
-	   font-size: 200%;
-	   font-weight: bold;
-	   height: 30px;
-	   padding-bottom: 10px;
-	}
-	.username {
-	   font-size: 120%;
-	   font-weight: bold;
-	}
+		.name {
+			font-size: 200%;
+			font-weight: bold;
+			height: 30px;
+			padding-bottom: 5px;
+		}
+		
+		.username {
+			font-size: 120%;
+			font-weight: bold;
+		}
+		
+		.changeButton {
+			margin-left: 15px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
-	<n:EditableLabel ui:field="name" addStyleNames="{style.name}">Ejemplo</n:EditableLabel>
-	<g:Label addStyleNames="{style.username}">poloni9</g:Label>
+		<n:EditableLabel ui:field="name" addStyleNames="{style.name}">Shown
+			name</n:EditableLabel>
+		<g:HorizontalPanel>
+			<g:cell verticalAlignment="ALIGN_MIDDLE">
+				<g:Label ui:field="username" addStyleNames="{style.username}">username</g:Label>
+			</g:cell>
+			<g:Button addStyleNames="info {style.changeButton}">Change password</g:Button>
+		</g:HorizontalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

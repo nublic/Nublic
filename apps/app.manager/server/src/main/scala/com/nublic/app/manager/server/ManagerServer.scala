@@ -10,7 +10,12 @@ import java.io.FilenameFilter
 import java.io.FileReader
 import java.io.FileWriter
 import com.nublic.filesAndUsers.java._
+import scala.collection.JavaConversions
 import scala.collection.JavaConversions._
+import javax.servlet.http.HttpUtils
+import java.util.Hashtable
+import org.scalatra.util.MapWithIndifferentAccess
+import org.scalatra.util.MultiMapHeadView
 
 class ManagerServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -23,6 +28,31 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   val FAVS = "favs"
   
   implicit val formats = Serialization.formats(NoTypeHints)
+  
+  var __extraParams : Option[scala.collection.immutable.Map[String, Seq[String]]] = None
+  
+  def _extraParams : Map[String, Seq[String]] = {
+    if (__extraParams == None) {
+      val ht = HttpUtils.parsePostData(request.getContentLength(),
+          request.getInputStream())
+      __extraParams = Some(JavaConversions.mapAsScalaMap(ht.asInstanceOf[Hashtable[String, Array[String]]]).toMap.map(f => (f._1, f._2.toSeq)))
+    }
+    __extraParams.get
+  }
+  
+  protected val extraParams = new MultiMapHeadView[String, String] with MapWithIndifferentAccess[String] {
+    protected def multiMap = _extraParams
+  }
+  
+  def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
+    __extraParams = None
+    action
+  }
+  
+  def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
+    __extraParams = None
+    action
+  }
   
   before() {
     session.put(APPS, load_apps)
@@ -66,8 +96,8 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     }
   } }
   
-  put("/favourite/:id") { withUser { user =>
-    val id = params("id")
+  put2("/favourite") { withUser { user =>
+    val id = extraParams("id")
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
     val username = user.getUsername()
     val user_favs = get_favourites_for(username)
@@ -77,8 +107,8 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     halt(200)
   } }
   
-  delete("/favourite/:id") { withUser { user =>
-    val id = params("id")
+  delete2("/favourite") { withUser { user =>
+    val id = extraParams("id")
     val apps = session.get(APPS).get.asInstanceOf[Map[String, AppData]]
     val username = user.getUsername()
     val user_favs = get_favourites_for(username)
@@ -94,14 +124,14 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     )
   } }
   
-  put("/mirror/*") { withUser { user =>
-    val name = params(THE_REST)
+  put2("/mirrors") { withUser { user =>
+    val name = extraParams("name")
     val m = Mirror.create(name, user.getUsername())
     m.getId()
   } }
   
-  delete("/mirror/:mid") { withUser { user =>
-    val mid = Integer.parseInt(params("mid"))
+  delete2("/mirrors") { withUser { user =>
+    val mid = Integer.parseInt(extraParams("id"))
     val m = new Mirror(mid)
     if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
       m.delete(false)
@@ -111,9 +141,9 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     }
   } }
   
-  put("/mirror-name/:mid/*") { withUser { user =>
-    val mid = Integer.parseInt(params("mid"))
-    val name = params(THE_REST)
+  put2("/mirror-name") { withUser { user =>
+    val mid = Integer.parseInt(extraParams("id"))
+    val name = extraParams("name")
     val m = new Mirror(mid)
     if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
       m.setName(name)
@@ -129,14 +159,14 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     )
   } }
   
-  put("/synced/*") {  withUser { user =>
-    val name = params(THE_REST)
+  put2("/synceds") {  withUser { user =>
+    val name = extraParams("name")
     val m = SyncedFolder.create(name, user.getUsername())
     m.getId()
   } }
   
-  delete("/synced/:mid") { withUser { user =>
-    val mid = Integer.parseInt(params("mid"))
+  delete2("/synceds") { withUser { user =>
+    val mid = Integer.parseInt(extraParams("iid"))
     val m = new SyncedFolder(mid)
     if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
       m.delete(false)
@@ -146,9 +176,9 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     }
   } }
   
-  put("/synced-name/:mid") { withUser { user =>
-    val mid = Integer.parseInt(params("mid"))
-    val name = params(THE_REST)
+  put2("/synced-name") { withUser { user =>
+    val mid = Integer.parseInt(extraParams("id"))
+    val name = extraParams("name")
     val m = new SyncedFolder(mid)
     if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
       m.setName(name)
@@ -164,11 +194,11 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     )
   } }
   
-  put("/user/:username") {
+  put2("/users") {
     
   }
   
-  delete("/user/:username") {
+  delete2("/users") {
     halt(500)
   }
   
@@ -176,9 +206,18 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     user.getShownName()
   } }
   
-  put("/user-name/*") { withUser { user =>
-  	user.setShownName(params(THE_REST))
-  	halt(200)
+  get("/user-info") { withUser { user =>
+    write(ReturnUser(user.getUsername(), user.getUserId(), user.getShownName()))
+  } }
+  
+  put2("/user-info") { withUser { user =>
+    if (!extraParams.contains("name")) {
+      write(extraParams)
+      halt(500)
+    } else {
+      user.setShownName(extraParams("name"))
+      halt(200)
+    }
   } }
   
   notFound {  // Executed when no other route succeeds

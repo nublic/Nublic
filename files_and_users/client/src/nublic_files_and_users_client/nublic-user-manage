@@ -23,3 +23,9 @@ if __name__ == '__main__':
         user = sys.argv[2]
         delete_user(user)
         sys.stdout.write("User deleted\n")
+    # Chnage user name
+    elif sys.argv[1] == 'name':
+        user = sys.argv[2]
+        sys.stdout.write("Name to be shown: ")
+        name = sys.stdin.readline().strip()
+        change_user_name(user, name)

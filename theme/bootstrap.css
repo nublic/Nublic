@@ -2325,6 +2325,7 @@ input[type=submit].btn::-moz-focus-inner,
   line-height: 13.5px;
   text-shadow: 0 1px 0 #ffffff;
   cursor: pointer;
+  cursor: hand;
   filter: alpha(opacity=25);
   -khtml-opacity: 0.25;
   -moz-opacity: 0.25;
@@ -3586,7 +3587,7 @@ input[type=submit].btn::-moz-focus-inner,
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContentContainer {
   border-color: #ccc;
   border-style: solid;
-  border-width: 0px 1px 1px;
+  border-width: 0px;
 }
 .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
   overflow: hidden;
