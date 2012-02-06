@@ -46,31 +46,35 @@ public class TopBar extends Composite {
 		
 		// Create hierarchy of elements
 		Element top = DOM.createDiv();
-		top.setClassName("topbar");
+		top.setClassName("navbar");
+		top.addClassName("navbar-fixed-top");
 		Element topInner = DOM.createDiv();
-		topInner.setClassName("topbar-inner");
-		topInner.addClassName("container-fluid");
+		topInner.setClassName("navbar-inner");
+		Element containerInner = DOM.createDiv();
+		containerInner.addClassName("container-fluid");
+		topInner.appendChild(containerInner);
 		top.appendChild(topInner);
 		// Create title
-		Element title = DOM.createElement("h3");
 		Element titleAnchor = DOM.createAnchor();
+		titleAnchor.addClassName("brand");
 		titleAnchor.setAttribute("href", "#welcome");
+		titleAnchor.setAttribute("style", "height: 16px;");
 		titleAnchor.setInnerText("Nublic");
-		title.appendChild(titleAnchor);
-		topInner.appendChild(title);
+		containerInner.appendChild(titleAnchor);
 		// Primary navigation
 		primaryNav = DOM.createElement("ul");
 		primaryNav.setClassName("nav");
-		topInner.appendChild(primaryNav);
+		containerInner.appendChild(primaryNav);
 		// Separation
-		Element separation = DOM.createDiv();
+		/* Element separation = DOM.createDiv();
 		separation.setClassName("pull-left");
-		topInner.appendChild(separation);
+		containerInner.appendChild(separation);*/
 		// Secondary navigation
 		secondaryNav = DOM.createElement("ul");
 		secondaryNav.setClassName("nav");
 		secondaryNav.addClassName("secondary-nav");
-		topInner.appendChild(secondaryNav);
+		secondaryNav.addClassName("pull-right");
+		containerInner.appendChild(secondaryNav);
 		
 		root.getElement().appendChild(top);
 	}
@@ -137,6 +141,7 @@ public class TopBar extends Composite {
 		if (image != null) {
 			Element i = DOM.createImg();
 			i.setAttribute("src", image);
+			i.setAttribute("style", "margin-top: 2px; float: left;");
 			l.appendChild(i);
 		}
 		Element lb = DOM.createSpan();

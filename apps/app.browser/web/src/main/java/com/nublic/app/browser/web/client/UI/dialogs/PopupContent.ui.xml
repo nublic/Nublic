@@ -3,6 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.withmargin {
+	        line-height: 36px;
 	   		margin-left: 10px;
 		}
 	</ui:style>
@@ -17,7 +18,7 @@
 	        </g:east>
 	        <g:center>
 	          <g:HTMLPanel>
-               <h5><g:Label ui:field="titleLabel" addStyleNames="{style.withmargin}">?</g:Label></h5>
+               <h4><g:Label ui:field="titleLabel" addStyleNames="{style.withmargin}">?</g:Label></h4>
               </g:HTMLPanel>
 	        </g:center>
 	      </g:DockLayoutPanel>
