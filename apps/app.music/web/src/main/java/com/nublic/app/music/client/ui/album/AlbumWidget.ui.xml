@@ -11,7 +11,7 @@
 	
 	<g:FlowPanel>
 		<!-- Album display -->
-		<g:AbsolutePanel height="80px" width="100%">
+		<g:AbsolutePanel height="80px" width="100%" addStyleNames="translucidPanel">
 			<g:at left='0' top='0'>
 				<g:Image ui:field="albumImage"/>
 			</g:at>

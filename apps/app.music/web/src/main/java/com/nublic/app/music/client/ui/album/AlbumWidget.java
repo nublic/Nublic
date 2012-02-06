@@ -1,5 +1,7 @@
 package com.nublic.app.music.client.ui.album;
 
+import java.util.EnumSet;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -14,6 +16,7 @@ import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.SongListWidget;
 import com.google.gwt.user.client.ui.Image;
 
@@ -52,7 +55,9 @@ public class AlbumWidget extends Composite {
 		setClickTarget();
 		
 		// Add button line
-		ButtonLine b = new ButtonLine(false, true, true, true, labelAndButtonsPanel);
+		ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
+												 ButtonLineParam.ADD_AT_END,
+												 ButtonLineParam.PLAY));
 		setEditButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);

@@ -1,5 +1,6 @@
 package com.nublic.app.music.client.ui.artist;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -14,6 +15,7 @@ import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.popup.ConfirmDeletionPanel;
 import com.nublic.app.music.client.ui.popup.DeleteHandler;
 import com.google.gwt.user.client.ui.Label;
@@ -49,8 +51,12 @@ public class ArtistPanel extends Composite {
 		titleLabel.setText(collectionName);
 		
 		// Create button line
-		boolean canBeDeleted = collectionId == null ? false : true;
-		ButtonLine b = new ButtonLine(canBeDeleted, false, true, true, titlePanel);
+		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
+														ButtonLineParam.PLAY);
+		if (collectionId != null) {
+			buttonSet.add(ButtonLineParam.DELETE);
+		}
+		ButtonLine b = new ButtonLine(buttonSet);
 		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);

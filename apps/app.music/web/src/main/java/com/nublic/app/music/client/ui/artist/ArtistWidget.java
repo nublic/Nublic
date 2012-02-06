@@ -1,5 +1,6 @@
 package com.nublic.app.music.client.ui.artist;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -22,6 +23,7 @@ import com.nublic.app.music.client.datamodel.handlers.AlbumsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.ButtonLineParam;
 
 //GET /artist-art/:artist-id
 //* Retrieve the image associated with an artist
@@ -66,7 +68,9 @@ public class ArtistWidget extends Composite {
 		
 		setMyselfAsAlbumHandler();
 		// Add button line
-		ButtonLine b = new ButtonLine(false, true, true, true, labelAndButtonsPanel);
+		ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
+				 								 ButtonLineParam.ADD_AT_END,
+				 								 ButtonLineParam.PLAY));
 		setEditButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);

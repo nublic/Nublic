@@ -28,6 +28,18 @@ h1 {
   color: red;
 }
 
+.translucidPanel .translucidButton {
+  opacity: 0.1;
+}
+
+.translucidPanel:hover .translucidButton {
+  opacity: 0.4;
+}
+
+.translucidPanel:hover .translucidButton:hover {
+  opacity: 1.0;
+}
+
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
   margin: 15px 6px 6px;

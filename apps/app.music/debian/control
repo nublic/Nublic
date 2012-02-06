@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-music
 Architecture: all
-Depends: ${misc:Depends}, nublic-app-music-server, nublic-app-music-fs
+Depends: ${misc:Depends}, nublic-app-music-server, nublic-app-music-fs, nublic-app-music-web
 Description: Nublic Music app
  Music app for the Nublic platform - metapackage
