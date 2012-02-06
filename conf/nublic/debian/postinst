@@ -5,7 +5,7 @@ set-acls.py
 # Remount the root
 mount -o remount /
 # Set tomcat6 to be able to write everywhere
-for dir in cache fs "data/nublic-only" "data/mirrors" "data/synced"
+for dir in cache fs log "data/nublic-only" "data/mirrors" "data/synced"
 do
     CURRENT_DIR=/var/nublic/${dir}
     setfacl -Rdm u:tomcat6:rwx ${CURRENT_DIR}

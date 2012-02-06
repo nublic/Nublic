@@ -43,7 +43,7 @@ class MusicActor(val servletContext : ServletContext) extends FileWatcherActor("
       }
     } catch {
       case e => {
-        val f = new FileWriter("/var/log/nublic-app-music-server.log", true)
+        val f = new FileWriter("/var/nublic/log/nublic-app-music-server.log", true)
         val pw = new PrintWriter(f)
         pw.print(e.getMessage() + "\n" + e.getStackTraceString)
         f.close()
