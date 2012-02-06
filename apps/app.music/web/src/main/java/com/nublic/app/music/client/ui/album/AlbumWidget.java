@@ -34,7 +34,6 @@ public class AlbumWidget extends Composite {
 //	@UiField(provided=true) CellList<Object> cellList = new CellList<Object>(new AbstractCell<Object>(){
 //		@Override
 //		public void render(Context context, Object value, SafeHtmlBuilder sb) {
-//			// TODO
 //		}
 //	});
 	@UiField(provided=true) SongListWidget cellList = new SongListWidget();
