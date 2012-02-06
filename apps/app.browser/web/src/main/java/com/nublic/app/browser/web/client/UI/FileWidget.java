@@ -248,10 +248,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		SingleDownloadAction.download(path);
 	}
 	
-	@UiHandler("downloadButton")
-	void onDownloadButtonMouseDown(MouseDownEvent event) {
-		SingleDownloadAction.download(path);
-	}
+//	@UiHandler("downloadButton")
+//	void onDownloadButtonMouseDown(MouseDownEvent event) {
+//		SingleDownloadAction.download(path);
+//	}
 	
 	public void setCut() {
 		if (hasPreview) {
