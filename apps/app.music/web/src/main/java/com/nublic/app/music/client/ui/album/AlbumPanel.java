@@ -21,7 +21,6 @@ public class AlbumPanel extends Composite {
 	public AlbumPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}
-	
 
 	public void setAlbumList(List<Album> albumList) {
 		this.albumList = albumList;

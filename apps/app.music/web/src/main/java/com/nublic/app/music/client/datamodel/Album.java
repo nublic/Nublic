@@ -1,5 +1,11 @@
 package com.nublic.app.music.client.datamodel;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
+
 //album  ::= { "id" : $album-id,
 //        "name": $name,
 //        "songs": $number_of_songs,
@@ -10,6 +16,10 @@ public class Album {
 	String name;
 	int numberOfSongs;
 
+	List<Song> songList;
+	HashMap<Integer, Song> songMap;
+	List<SongsChangeHandler> songHandlers;
+	
 	String inCollection;
 	Artist inArtist;
 
@@ -41,5 +51,29 @@ public class Album {
 	public Artist getInArtist() { return inArtist; }
 	public void setInArtist(Artist inArtist) { this.inArtist = inArtist; }
 	
+	public void prepareToAddSongs() {
+		songList = new ArrayList<Song>(numberOfSongs);
+		songMap = new HashMap<Integer, Song>(numberOfSongs);
+		songHandlers = new ArrayList<SongsChangeHandler>();
+	}
+	
+	public void addSong(int index, Song s) {
+		songList.set(index, s);
+		songMap.put(index, s);
+	}
+	
+	public Song getSong(int index) {
+		return songList.get(index);
+	}
+
+	public void addSongsChangeHandler(SongsChangeHandler handler) {
+		songHandlers.add(handler);
+	}
+	
+	public void fireSongHandlers(int from, int to) {
+		for (SongsChangeHandler h : songHandlers) {
+			h.onSongsChange(from, to);
+		}
+	}
 
 }

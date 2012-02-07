@@ -5,6 +5,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.Song;
 import com.nublic.util.messages.Message;
 
 //GET /songs/:artist-id/:album-id/:order/:asc-desc/:start/:length/:colid/:colid/...
@@ -31,6 +32,8 @@ public class SongMessage extends Message {
 	String artistId = null;
 	String albumId = null;
 	String inCollection = null;
+	int from = 0;
+	int to = 32000;
 	
 	public SongMessage(DataModel model, String artistId, String albumId, String inCollection) {
 		this.model = model;
@@ -52,6 +55,12 @@ public class SongMessage extends Message {
 	}
 
 	public SongMessage(Album a) {
+		this(0, 32000, a);
+	}
+	
+	public SongMessage(int from, int to, Album a) {
+		this.from = from;
+		this.to = to;
 		album = a;
 	}
 
@@ -86,7 +95,11 @@ public class SongMessage extends Message {
 				url.append("all");
 			}
 		}
-		url.append("/desc/0/32000");
+		// Range of request
+		url.append("/desc/");
+		url.append(from);
+		url.append("/");
+		url.append(to);
 		// Add possible collection filter
 		if (album != null && album.getInCollection() != null) {
 			url.append("/");
@@ -116,12 +129,18 @@ public class SongMessage extends Message {
 //			// For album messages filling some artist
 //			artist.clearAlbumList();
 //			// TODO: Fake info to try
+			for (int i = from; i <= to; i++) {
+				album.addSong(i, new Song("Song " + String.valueOf(i) + " id",
+										  album.getInArtist().getName() + " - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getName(),
+										  album.getInArtist().getId(),
+										  album.getId()));
+			}
 //				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10, artist.getInCollection()));
 //				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10, artist.getInCollection()));
 //				artist.addAlbum(new Album("AlbumId3", "Bad", 10, artist.getInCollection()));
 //				artist.addAlbum(new Album("AlbumId4", "Be here now", 10, artist.getInCollection()));
 //			// Fake info end
-//			artist.fireAlbumsHandler();
+			album.fireSongHandlers(from, to);
 		}
 	}
 

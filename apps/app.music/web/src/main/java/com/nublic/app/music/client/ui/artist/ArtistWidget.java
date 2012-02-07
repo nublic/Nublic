@@ -60,7 +60,6 @@ public class ArtistWidget extends Composite {
 		
 		artistNameLabel.setText(artist.getName());
 //		lazyLoad();
-		
 	}
 
 	public void lazyLoad() {

@@ -21,9 +21,9 @@
 				</g:HorizontalPanel>
 			</g:at>
 		</g:AbsolutePanel>
-<!-- 		<p1:CellList ui:field="cellList"/> -->
-		<my:SongListWidget ui:field="cellList"/>
-		<!-- Songs display -->
 
+		<!-- Songs display -->
+		<g:FlowPanel>
+		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder> 
