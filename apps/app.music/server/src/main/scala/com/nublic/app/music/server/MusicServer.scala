@@ -19,6 +19,13 @@ import org.squeryl.dsl.QueryYield
 import org.squeryl.dsl.fsm.BaseQueryYield
 import org.squeryl.dsl.ast.ExpressionNode
 import org.squeryl.dsl.fsm.SelectState
+import javax.servlet.http.HttpUtils
+import scala.collection.JavaConversions
+import java.util.Hashtable
+import org.scalatra.util.MapWithIndifferentAccess
+import org.scalatra.util.MultiMapHeadView
+import com.nublic.filesAndUsers.java._
+import com.nublic.app.music.server.model._
 
 class MusicServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -32,115 +39,183 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   implicit val formats = Serialization.formats(NoTypeHints)
   
+  var __extraParams : Option[scala.collection.immutable.Map[String, Seq[String]]] = None
+  
+  def _extraParams : Map[String, Seq[String]] = {
+    if (__extraParams == None) {
+      val ht = HttpUtils.parsePostData(request.getContentLength(),
+          request.getInputStream())
+      __extraParams = Some(JavaConversions.mapAsScalaMap(ht.asInstanceOf[Hashtable[String, Array[String]]]).toMap.map(f => (f._1, f._2.toSeq)))
+    }
+    __extraParams.get
+  }
+  
+  protected val extraParams = new MultiMapHeadView[String, String] with MapWithIndifferentAccess[String] {
+    protected def multiMap = _extraParams
+  }
+  
+  def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
+    __extraParams = None
+    action
+  }
+  
+  def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
+    __extraParams = None
+    action
+  }
+  
+  def withUser(action: User => Any) : Any = {
+    val user = new User(request.getRemoteUser())
+    action(user)
+  }
+  
+  def getUser(routeMatchers: org.scalatra.RouteMatcher)(action: User => Any) = get(routeMatchers) {
+    withUser(action)
+  }
+  
+  def postUser(routeMatchers: org.scalatra.RouteMatcher)(action: User => Any) = post(routeMatchers) {
+    withUser(action)
+  }
+  
+  def putUser(routeMatchers: org.scalatra.RouteMatcher)(action: User => Any) = put2(routeMatchers) {
+    withUser(action)
+  }
+  
+  def deleteUser(routeMatchers: org.scalatra.RouteMatcher)(action: User => Any) = delete2(routeMatchers) {
+    withUser(action)
+  }
+  
   // Tags
   // ====
-  get("/tags") {
+  getUser("/collections") { _ =>
     transaction {
-      val tagsQuery = from(Database.tags)(t => select(t.name))
-      val tags = tagsQuery.toList
-      write(tags)
+      val collsQuery = from(Database.collections)(t => select(t.name))
+      val colls = collsQuery.toList
+      write(colls)
     }
   }
   
-  put("/tag/:name") {
-    val name = params("name")
+  putUser("/collections") { _ =>
+    val name = extraParams("name")
     transaction {
-      Database.tagByName(name) match {
+      Database.collectionByName(name) match {
         case Some(_) => { /* It's already there */ }
         case None    => {
-          val newTag = new Tag(name)
-          Database.tags.insert(newTag)
+          val newCollection = new Collection(name)
+          Database.collections.insert(newCollection)
+          newCollection.id
         }
       }
     }
-    halt(200)
   }
   
-  delete("/tag/:name") {
-    val name = params("name")
+  deleteUser("/collections") { _ =>
+    val id = Long.parseLong(extraParams("id"))
     transaction {
-      Database.tagByName(name) match {
-        case None      => { /* There is no tag like that */ }
-        case Some(tag) => Database.tags.deleteWhere(t => t.id === tag.id)
+      Database.collections.lookup(id) match {
+        case None       => { /* There is no tag like that */ }
+        case Some(coll) => Database.collections.deleteWhere(t => t.id === coll.id)
       }
     }
     halt(200)
   }
   
-  put("/tag/:name/:song-id") {
-    val name = params("name")
-    val songId = Long.parseLong(params("song-id"))
+  putUser("/collection/:id") { _ =>
+    val id = Long.parseLong(params("id"))
+    val songs = params("songs").split(",").toList.map(Long.parseLong(_))
     transaction {
-      Database.tagByName(name).map(tag =>
-        Database.songs.lookup(songId).map(song =>
-          Database.songTags.lookup(compositeKey(song.id, tag.id)) match {
-            case Some(_) => { /* Already exists */ }
-            case None    => {
-              val songTag = new SongTag(song.id, tag.id)
-              Database.songTags.insert(songTag)
+      Database.collections.lookup(id).map(coll =>
+        songs.map(songId => 
+          Database.songs.lookup(songId).map(song =>
+            Database.songCollections.lookup(compositeKey(song.id, coll.id)) match {
+              case Some(_) => { /* Already exists */ }
+              case None    => {
+                val songTag = new SongCollection(song.id, coll.id)
+                Database.songCollections.insert(songTag)
+              }
             }
-          }
+          )
         )
       )
     }
     halt(200)
   }
   
-  delete("/tag/:name/:song-id") {
-    val name = params("name")
-    val songId = Long.parseLong(params("song-id"))
+  deleteUser("/collection/:id") { _ =>
+    val id = Long.parseLong(params("id"))
+    val songs = params("songs").split(",").toList.map(Long.parseLong(_))
     transaction {
-      Database.tagByName(name).map(tag =>
-        Database.songs.lookup(songId).map(song =>
-          Database.songTags.lookup(compositeKey(song.id, tag.id)) match {
-            case None     => { /* Already deleted */ }
-            case Some(st) => Database.songTags.deleteWhere(x =>
-              x.songId === st.songId and x.tagId === st.tagId)
-          }
+      Database.collections.lookup(id).map(coll =>
+        songs.map(songId => 
+          Database.songs.lookup(songId).map(song =>
+            Database.songCollections.lookup(compositeKey(song.id, coll.id)) match {
+              case None     => { /* Already deleted */ }
+              case Some(st) => Database.songCollections.deleteWhere(x =>
+                x.songId === st.songId and x.collectionId === st.collectionId)
+            }
+          )
         )
       )
     }
     halt(200)
   }
   
-  def parse_tags(tagList: String): List[Tag] = {
-    val splitString = tagList.split("/").toList
+  def parse_collection_ids(collList: String): List[Collection] = {
+    val ids = collList.split("/").toList.map(Long.parseLong(_))
     inTransaction {
-      val tagObjects = splitString.map(name => Database.tagByName(name))
-      tagObjects.filter(t => t != None).map(_.get)
+      val collObjects = ids.map(id => Database.collections.lookup(id))
+      collObjects.filter(c => c != None).map(_.get)
     }
   }
   
   // Artists
   // =======
   get("/artists") {
-    redirect("artists/")
+    redirect("artists/alpha/asc/0/20/")
   }
   
-  get("/artists/*") {
-    val tag_param = params(THE_REST)
-    val tags = parse_tags(tag_param).map(_.id)
+  get("/artists/:asc-desc/:start/:length") {
+    redirect(params("length") + "/")
+  }
+  
+  getUser("/artists/:asc-desc/:start/:length/*") { _ =>
+    // Get start and length
+    val start = Integer.parseInt(params("start"))
+    val length = Integer.parseInt(params("length"))
+    // Get collections to browser
+    val coll_param = params(THE_REST)
+    val collections = parse_collection_ids(coll_param).map(_.id)
+    
+    // Get ascending or descending
+    val asc_desc = if (params("asc") == "desc") {
+      ((t: OrderByArg) => new OrderByExpression(t desc))
+    } else {
+      ((t: OrderByArg) => new OrderByExpression(t asc))
+    }
+    
     val artists = transaction {
-      val query = if (tag_param.isEmpty()) {
+      val query = if (coll_param.isEmpty()) {
         from(Database.artists, Database.songs)((a, s) =>
           where(a.id === s.artistId)
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
+          orderBy(asc_desc(a.name))
         )
       } else {
-        from(Database.artists, Database.songs, Database.songTags)((a, s, st) =>
-          where((a.id === s.artistId) and (st.songId === s.id) and (st.tagId in tags))
+        from(Database.artists, Database.songs, Database.songCollections)((a, s, st) =>
+          where((a.id === s.artistId) and (st.songId === s.id) and (st.collectionId in collections))
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
+          orderBy(asc_desc(a.name))
         )
       }
-      query.toList
+      query.page(start, length).toList
     }
     val json_artists = artists.map(artist_to_json(_))
     write(json_artists)
   }
   
-  get("/artist-info/:artistid") {
+  getUser("/artist-info/:artistid") { _ =>
     val artist_id = Long.parseLong(params("artistid"))
     val artist = transaction {
       val query = from(Database.artists, Database.songs)((a, s) =>
@@ -156,7 +231,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  get("/artist-art/:artistid.png") {
+  getUser("/artist-art/:artistid.png") { _ =>
     val artist_id = Long.parseLong(params("artistid"))
     val place = new File(MusicFolder.getArtistFolder(artist_id), MusicFolder.THUMBNAIL_FILENAME)
     if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
@@ -175,7 +250,19 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     redirect(params("artistid") + "/")
   }
   
-  get("/albums/:artistid/*") {
+  get("/albums/:artistid/") {
+    redirect("alpha/asc/0/20/")
+  }
+  
+  get("/albums/:artistid/:asc-desc/:start/:length/*") {
+    redirect(params("length") + "/")
+  }
+  
+  getUser("/albums/:artistid/:asc-desc/:start/:length/*") { _ =>
+    // Get start and length
+    val start = Integer.parseInt(params("start"))
+    val length = Integer.parseInt(params("length"))
+    
     // Get query about artists
     val artistid = params("artistid")
     val artist_query: Song => LogicalBoolean = if(artistid == ALL_OF_SOMETHING) {
@@ -184,21 +271,32 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       val artistN = Long.parseLong(artistid)
       s: Song => s.artistId === artistN
     }
-    // Get tags query
-    val tag_param = params(THE_REST)
-    val tags = parse_tags(tag_param).map(_.id)
+    
+    // Get collections to browser
+    val coll_param = params(THE_REST)
+    val collections = parse_collection_ids(coll_param).map(_.id)
+    
+    // Get ascending or descending
+    val asc_desc = if (params("asc") == "desc") {
+      ((t: OrderByArg) => new OrderByExpression(t desc))
+    } else {
+      ((t: OrderByArg) => new OrderByExpression(t asc))
+    }
+    
     val albums = transaction {
-      val query = if (tag_param.isEmpty()) {
+      val query = if (coll_param.isEmpty()) {
         from(Database.albums, Database.songs)((a, s) =>
           where(a.id === s.albumId and artist_query(s))
           groupBy(a.id)
           compute(a.name, countDistinct(s.id))
+          orderBy(asc_desc(a.name))
         )
       } else {
-        from(Database.albums, Database.songs, Database.songTags)((a, s, st) =>
-          where((a.id === s.albumId) and artist_query(s) and (st.songId === s.id) and (st.tagId in tags))
+        from(Database.albums, Database.songs, Database.songCollections)((a, s, st) =>
+          where((a.id === s.albumId) and artist_query(s) and (st.songId === s.id) and (st.collectionId in collections))
           groupBy(a.id)
           compute(a.name, countDistinct(s.id))
+          orderBy(asc_desc(a.name))
         )
       }
       query.toList
@@ -207,7 +305,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     write(json_albums)
   }
   
-  get("/album-info/:albumid") {
+  getUser("/album-info/:albumid") { _ =>
     val album_id = Long.parseLong(params("albumid"))
     val album = transaction {
       val query = from(Database.albums, Database.songs)((a, s) =>
@@ -223,7 +321,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  get("/album-art/:albumid.png") {
+  getUser("/album-art/:albumid.png") { _ =>
     val album_id = Long.parseLong(params("albumid"))
     val place = new File(MusicFolder.getAlbumFolder(album_id), MusicFolder.THUMBNAIL_FILENAME)
     if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
@@ -251,7 +349,11 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     redirect("alpha/asc/0/20/")
   }
   
-  get("/songs/:artistid/:albumid/:order/:asc/:start/:length/*") {
+  get("/songs/:artistid/:albumid/:order/:asc/:start/:length") {
+    redirect(params("length") + "/")
+  }
+  
+  getUser("/songs/:artistid/:albumid/:order/:asc/:start/:length/*") { _ =>
     // Get start and length
     val start = Integer.parseInt(params("start"))
     val length = Integer.parseInt(params("length"))
@@ -289,20 +391,20 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         (q.orderBy(asc_desc(ar.name), asc_desc(ab.name), asc_desc(s.disc_no), asc_desc(s.track))) )
     }
     // Get tags query
-    val tag_param = params(THE_REST)
-    val tags = parse_tags(tag_param).map(_.id)
+    val coll_param = params(THE_REST)
+    val collections = parse_collection_ids(coll_param).map(_.id)
     val songs = transaction {
-      val query = if (tag_param.isEmpty()) {
+      val query = if (coll_param.isEmpty()) {
         from(Database.songs, Database.artists, Database.albums)((s, ar, ab) =>
           order(s, ar, ab)(
             where(s.artistId === ar.id and s.albumId === ab.id and artist_query(s) and album_query(s))
             select(s))
         )
       } else {
-        from(Database.songs, Database.artists, Database.albums, Database.songTags)((s, ar, ab, st) =>
+        from(Database.songs, Database.artists, Database.albums, Database.songCollections)((s, ar, ab, st) =>
           order(s, ar, ab)(
             where(s.artistId === ar.id and s.albumId === ab.id and artist_query(s) and album_query(s)
-                  and (st.songId === s.id) and (st.tagId in tags))
+                  and (st.songId === s.id) and (st.collectionId in collections))
             select(s))
         )
       }
@@ -312,7 +414,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     write(json_songs)
   }
   
-  get("/song-info/:songid") {
+  getUser("/song-info/:songid") { _ =>
     val song_id = Long.parseLong(params("songid"))
     transaction {
       Database.songs.lookup(song_id) match {
@@ -328,7 +430,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   // Song files
   // ==========
   
-  get("/raw/:songid") {
+  getUser("/raw/:songid") { _ =>
     val song_id = Long.parseLong(params("songid"))
     val song = transaction { Database.songs.lookup(song_id) }
     song match {
@@ -337,7 +439,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  get("/view/:songid.mp3") {
+  getUser("/view/:songid.mp3") { _ =>
     val song_id = Long.parseLong(params("songid"))
     val song = transaction { Database.songs.lookup(song_id) }
     song match {
