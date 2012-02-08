@@ -10,6 +10,7 @@ import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
@@ -46,6 +47,8 @@ public class SongList extends Composite implements ScrollHandler {
 		this.album = a;
 		this.scrollPanel = scrollPanel;
 		
+		prepareGrid();
+		
 		// Fake widgets which know if are being shown to be replaced onScroll
 		prepareLocalizers(album.getNumberOfSongs());
 	
@@ -64,7 +67,12 @@ public class SongList extends Composite implements ScrollHandler {
 	
 	public SongList(String artistId, String albumId, String collectionId, int numberOfSongs) {
 	}
-	
+
+	private void prepareGrid() {
+		grid.resize(album.getNumberOfSongs(), 3);
+		grid.getColumnFormatter().setWidth(0, "100px");
+	}
+
 	private void prepareLocalizers(int amount) {
 		localizerIndex = new SongLocalizer[amount];
 		unloadedLocalizers = new ArrayList<SongLocalizer>(amount);
@@ -87,7 +95,8 @@ public class SongList extends Composite implements ScrollHandler {
 		for (int i = 0; i < unloadedLocalizers.size() && !needToLoad; i++) {
 			// We try to find first unloadedWidgets which need to be lazy-loaded
 			SongLocalizer sl = unloadedLocalizers.get(i);
-			if (sl.isInRange(panelTop, panelBottom)) {
+//			if (sl.isInRange(panelTop, panelBottom)) {
+			if (sl.isNearRange(panelTop, panelBottom)) {
 				needToLoad = true;
 				// If we find it we'll construct a request asking for the previous 10 to it and next 30 (if are unloaded and not waiting for answer)
 				rangeToAsk.add(findRangeFromPosition(sl.getPosition()));
@@ -121,8 +130,13 @@ public class SongList extends Composite implements ScrollHandler {
 	
 	public void setSong(int row, Song s) {
 		Label titleLabel = new Label(s.getTitle());
-		grid.setWidget(row, 0, titleLabel);
-		grid.setWidget(row, 1, new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.EDIT)));
+		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.EDIT));
+		HorizontalPanel h = new HorizontalPanel();
+		h.add(titleLabel);
+		h.add(buttonLine);
+		h.getElement().addClassName("translucidPanel");
+		
+		grid.setWidget(row, 1, h);
 	}
 
 }

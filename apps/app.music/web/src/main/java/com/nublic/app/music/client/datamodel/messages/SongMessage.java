@@ -131,8 +131,8 @@ public class SongMessage extends Message {
 //			// TODO: Fake info to try
 			for (int i = from; i < to; i++) {
 				album.addSong(i, new Song("Song " + String.valueOf(i) + " id",
-										  album.getInArtist().getName() + " - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getName(),
-										  album.getInArtist().getId(),
+										  "Queen - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getName(),
+										  "Queen Id",
 										  album.getId()));
 			}
 //				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10, artist.getInCollection()));

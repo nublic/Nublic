@@ -79,10 +79,10 @@ public class AlbumMessage extends Message {
 			// For album messages directly for data model
 			model.clearAlbumList();
 			// TODO: Fake info to try..
-				model.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10));
-				model.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10));
-				model.addAlbum(new Album("AlbumId3", "Bad", 10));
-				model.addAlbum(new Album("AlbumId4", "Be here now", 10));
+				model.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 100));
+				model.addAlbum(new Album("AlbumId2", "Origins of symmetry", 100));
+				model.addAlbum(new Album("AlbumId3", "Bad", 100));
+				model.addAlbum(new Album("AlbumId4", "Be here now", 100));
 			// Fake info end
 			model.setState(State.ALBUM_SONGS);
 			model.fireStateHandlers();
@@ -91,10 +91,10 @@ public class AlbumMessage extends Message {
 			// For album messages filling some artist
 			artist.clearAlbumList();
 			// TODO: Fake info to try
-				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10, artist.getInCollection(), artist));
-				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10, artist.getInCollection(), artist));
-				artist.addAlbum(new Album("AlbumId3", "Bad", 10, artist.getInCollection(), artist));
-				artist.addAlbum(new Album("AlbumId4", "Be here now", 10, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 100, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 100, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId3", "Bad", 100, artist.getInCollection(), artist));
+				artist.addAlbum(new Album("AlbumId4", "Be here now", 100, artist.getInCollection(), artist));
 			// Fake info end
 			artist.fireAlbumsHandler();
 		}

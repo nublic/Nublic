@@ -7,6 +7,6 @@
 			overflow-y: auto;
 		}
 	</ui:style>
-	<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll}">
+	<g:FlowPanel ui:field="mainPanel" height="100%" width="100%" addStyleNames="{style.scroll}">
 	</g:FlowPanel>
 </ui:UiBinder> 
