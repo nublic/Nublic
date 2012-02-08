@@ -18,7 +18,7 @@ def start_watching(folder):
     apps_info = apps.load_all_apps()
     config = apps.load_app_config()
     wm = WatchManager2()
-    handler = EventHandler(wm, config, apps_info)
+    handler = EventHandler(wm, config, apps_info, folder)
     notifier = pyinotify.Notifier(wm, handler, timeout=10)
     gobject.timeout_add(500, quick_check, notifier)
     # Exclude files beginning with . or ending in ~

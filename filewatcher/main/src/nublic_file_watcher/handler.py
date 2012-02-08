@@ -21,12 +21,13 @@ class EventHandler(pyinotify.ProcessEvent):
     '''
     Listens the inotify events
     '''
-    def __init__(self, manager, config, apps_info):
+    def __init__(self, manager, config, apps_info, folder):
         pyinotify.ProcessEvent.__init__(self)
         self.signalers = apps.create_initial_signalers(config, apps_info)
         self.manager = manager
         self.config = config
         self.apps_info = apps_info
+        self.watched_folder = folder
     
     def mask(self):
         return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW #IGNORE:E1101
@@ -95,33 +96,40 @@ class EventHandler(pyinotify.ProcessEvent):
         self.handle_process("modify", event)
 
     def process_IN_MOVED_TO(self, event):
-        # If is is a directory, change children
-        if event.dir:
-            # Change names in sudirectories
-            dir_name = event.src_pathname
-            new_dir_name = event.pathname
-            for file_info in solr.retrieve_docs_in_dir(dir_name):
-                file_path = file_info.get_pathname()
-                new_file_path = file_path.replace(dir_name, new_dir_name, 1)
-                if file_info.is_directory():
-                    self.change_watched_path(file_path, new_file_path)
-                file_info.set_new_pathname(new_file_path)
-                file_info.save()
-                print "%s -> %s" % (file_path, new_file_path)
-            # Change the path for inotify events
-            self.change_watched_path(event.src_pathname, event.pathname)
-        # Change in Solr
-        if solr.has_doc(event.src_pathname):
-            file_info = solr.retrieve_doc(event.src_pathname)
-            file_info.set_new_pathname(event.pathname)
-            file_info.save()
+        if not hasattr(event, 'src_pathname'):
+            # We come from a directory outside
+            # so this is equivalent to a creation
+            self.process_IN_CREATE(event)
         else:
-            # Create a new file
-            file_info = solr.new_doc(event.pathname, event.dir)
-            file_info.save()
-        # Notify via D-Bus
-        # Special case, we have an extra parameter
-        self.send_signal("move", event.pathname, event.src_pathname, event.dir)
+            # The movement is in between watched folders
+            
+            # If is is a directory, change children
+            if event.dir:
+                # Change names in sudirectories
+                dir_name = event.src_pathname
+                new_dir_name = event.pathname
+                for file_info in solr.retrieve_docs_in_dir(dir_name):
+                    file_path = file_info.get_pathname()
+                    new_file_path = file_path.replace(dir_name, new_dir_name, 1)
+                    if file_info.is_directory():
+                        self.change_watched_path(file_path, new_file_path)
+                    file_info.set_new_pathname(new_file_path)
+                    file_info.save()
+                    print "%s -> %s" % (file_path, new_file_path)
+                # Change the path for inotify events
+                self.change_watched_path(event.src_pathname, event.pathname)
+            # Change in Solr
+            if solr.has_doc(event.src_pathname):
+                file_info = solr.retrieve_doc(event.src_pathname)
+                file_info.set_new_pathname(event.pathname)
+                file_info.save()
+            else:
+                # Create a new file
+                file_info = solr.new_doc(event.pathname, event.dir)
+                file_info.save()
+            # Notify via D-Bus
+            # Special case, we have an extra parameter
+            self.send_signal("move", event.pathname, event.src_pathname, event.dir)
     
     def change_watched_path(self, source, target):
         mgr = self.manager
