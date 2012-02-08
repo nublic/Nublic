@@ -129,7 +129,7 @@ public class SongMessage extends Message {
 //			// For album messages filling some artist
 //			artist.clearAlbumList();
 //			// TODO: Fake info to try
-			for (int i = from; i <= to; i++) {
+			for (int i = from; i < to; i++) {
 				album.addSong(i, new Song("Song " + String.valueOf(i) + " id",
 										  album.getInArtist().getName() + " - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getName(),
 										  album.getInArtist().getId(),

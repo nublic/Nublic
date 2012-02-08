@@ -17,7 +17,9 @@ import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.song.SongList;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.FlowPanel;
 
 //GET /album-art/:album-id
 //* Retrieve the image associated with an album
@@ -30,9 +32,10 @@ public class AlbumWidget extends Composite {
 	@UiField HorizontalPanel labelAndButtonsPanel;
 	@UiField Hyperlink albumNameLabel;
 	@UiField Image albumImage;
+	@UiField FlowPanel songsPanel;
 	Album album;
 	
-	public AlbumWidget(Album a) {
+	public AlbumWidget(Album a, Widget inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		album = a;
 
@@ -54,6 +57,9 @@ public class AlbumWidget extends Composite {
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		labelAndButtonsPanel.add(b);
+		
+		// Add song list
+		songsPanel.add(new SongList(album, inPanel));
 	}
 
 	private void setClickTarget() {

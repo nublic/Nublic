@@ -2,11 +2,11 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		.scroll {
-			overflow-x: hidden;
-			overflow-y: auto;
+		.minheight {
+			min-height: 20px;
 		}
 	</ui:style>
-	<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll}">
-	</g:FlowPanel>
+	
+	<g:HTMLPanel addStyleNames="{style.minheight}">
+	</g:HTMLPanel>
 </ui:UiBinder> 

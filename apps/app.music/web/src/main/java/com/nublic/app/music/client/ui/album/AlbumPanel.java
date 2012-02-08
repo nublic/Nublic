@@ -26,7 +26,7 @@ public class AlbumPanel extends Composite {
 		this.albumList = albumList;
 
 		for (Album a : albumList) {
-			AlbumWidget aw = new AlbumWidget(a);
+			AlbumWidget aw = new AlbumWidget(a, mainPanel);
 			mainPanel.add(aw);
 		}
 	}

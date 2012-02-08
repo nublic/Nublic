@@ -15,4 +15,7 @@ public class Constants {
 	public static final String CONFIRM_DELETION_TITLE = "Confirm deletion?";
 	public static final String CONFIRM_DELETION_INFO = "This action will erase the collection, but not any of the song files. You will still be able to find them in \"All music\" and/or in other collections";
 	
+	public static final int PREVIOUS_SONGS_TO_ASK = 10;
+	public static final int NEXT_SONGS_TO_ASK = 29;
+	
 }
