@@ -59,7 +59,7 @@ public class Range {
 	}
 	
 	public int distance() {
-		return to - from;
+		return to - from +1;
 	}
 	
 	public static void remove(List<Range> from, Range r) {
