@@ -59,11 +59,23 @@ class SongCollection(val songId: Long, val collectionId: Long) extends KeyedEnti
   def id = compositeKey(songId, collectionId)
 }
 
+class Playlist(val id: Long, var name: String, var user: String) extends KeyedEntity[Long] {
+  def this() = this(0, "", "")
+  def this(name: String, user: String) = this(0, name, user)
+  
+  lazy val songs = Database.songPlaylists.right(this)
+}
+
+class SongPlaylist(val songId: Long, var playlistId: Long, val position: Int) extends KeyedEntity[CompositeKey2[Long, Long]] {
+  def id = compositeKey(songId, playlistId)
+}
+
 object Database extends Schema {
   val artists = table[Artist]
   val albums = table[Album]
   val songs = table[Song]
   val collections = table[Collection]
+  val playlists = table[Playlist]
   
   val songArtists = oneToManyRelation(artists, songs).
     via((artist, song) => artist.id === song.artistId)
@@ -71,11 +83,19 @@ object Database extends Schema {
     via((album, song) => album.id === song.albumId)
   val songCollections = manyToManyRelation(songs, collections).
   	via[SongCollection]((s, t, st) => (s.id === st.songId, t.id === st.collectionId))
+  val songPlaylists = manyToManyRelation(songs, playlists).
+    via[SongPlaylist]((s, p, sp) => (s.id === sp.songId, p.id === sp.playlistId))
   
   def songByFilename(file: String) = maybe(songs.where(s => s.file === file))
   def artistByNameNormalizing(name: String) = maybe(artists.where(a => a.normalized === StringUtil.normalize(name)))
   def albumByNameNormalizing(name: String) = maybe(albums.where(a => a.normalized === StringUtil.normalize(name)))
   def collectionByName(name: String) = maybe(collections.where(t => t.name === name))
+  def playlistByName(name: String) = maybe(playlists.where(t => t.name === name))
+  def playlistsByUser(user: String) = playlists.where(p => p.user === user).toList
+  def isPlaylistOfUser(pid: Long, user: String) = playlists.lookup(pid) match {
+    case None     => false
+    case Some(pl) => pl.user == user
+  }
   
   def maybe[R](q: Query[R]): Option[R] = {
     try {
