@@ -45,6 +45,10 @@ public class Range {
 		return from <= r.from && to >= r.to; 
 	}
 	
+	public boolean contains(int position) {
+		return (position >= from) && (position <= to); 
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof Range)) {
@@ -79,14 +83,23 @@ public class Range {
 			} else if (r.intersects(rInList)) {
 				if (r.from < rInList.from) {
 					// [  |  ]  |
-					rInList.setFrom(r.to);
+					rInList.setFrom(r.to + 1);
 				} else {
 					// |  [  |  ]
-					rInList.setTo(r.from);
+					rInList.setTo(r.from - 1);
 				}
 			}
 		}
 		from.removeAll(removeList);
 		from.addAll(addList);
+	}
+
+	public static boolean contains(List<Range> rangesList, int position) {
+		boolean contains = false;
+		for (int i = 0; i < rangesList.size() && !contains; i++) {
+			Range r = rangesList.get(i);
+			contains = r.contains(position);
+		}
+		return contains;
 	}
 }
