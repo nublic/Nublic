@@ -1,4 +1,4 @@
-package com.nublic.app.music.client.datamodel.cache;
+package com.nublic.util.cache;
 
 import com.google.gwt.event.shared.EventHandler;
 

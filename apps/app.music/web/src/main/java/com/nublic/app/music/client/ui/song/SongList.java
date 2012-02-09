@@ -22,11 +22,11 @@ import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Song;
-import com.nublic.app.music.client.datamodel.cache.CacheHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
@@ -48,8 +48,8 @@ public class SongList extends Composite implements ScrollHandler {
 	
 
 	public SongList(DataModel model, Album a, Widget scrollPanel) {
-		// TODO: pass scroll panel in which we are in to handle lazy loading
-		// And number of songs
+		// Scroll panel which we in are in to handle lazy loading
+		// DataModel to get access to cache
 		initWidget(uiBinder.createAndBindUi(this));
 		this.album = a;
 		this.scrollPanel = scrollPanel;

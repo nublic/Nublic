@@ -7,7 +7,7 @@ import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
-import com.nublic.app.music.client.datamodel.cache.Cache;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.messages.Message;
 
 //GET /albums/:artist-id/:asc-desc/:start/:length/:colid/:colid/...

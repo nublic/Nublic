@@ -1,4 +1,4 @@
-package com.nublic.app.music.client.datamodel.cache;
+package com.nublic.util.cache;
 
 import java.util.Collection;
 import java.util.HashMap;
