@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.http.client.RequestBuilder;
+import com.nublic.app.music.client.datamodel.cache.Cache;
 import com.nublic.app.music.client.datamodel.handlers.AlbumsChangeHandler;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.util.messages.SequenceHelper;
@@ -40,8 +41,8 @@ public class Artist {
 		handler = h;
 	}
 	
-	public void askForAlbums() {
-		AlbumMessage am = new AlbumMessage(this);
+	public void askForAlbums(Cache<String, Album> albumCache) {
+		AlbumMessage am = new AlbumMessage(this, albumCache);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	

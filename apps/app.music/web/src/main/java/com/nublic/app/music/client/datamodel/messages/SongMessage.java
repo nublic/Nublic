@@ -126,7 +126,7 @@ public class SongMessage extends Message {
 //			model.setState(State.ALBUM_SONGS);
 //			model.fireStateHandlers();
 		} else {
-//			// For album messages filling some artist
+//			// For song messages filling some album
 //			artist.clearAlbumList();
 //			// TODO: Fake info to try
 			for (int i = from; i <= to; i++) {
@@ -135,10 +135,6 @@ public class SongMessage extends Message {
 										  "Queen Id",
 										  album.getId()));
 			}
-//				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10, artist.getInCollection()));
-//				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10, artist.getInCollection()));
-//				artist.addAlbum(new Album("AlbumId3", "Bad", 10, artist.getInCollection()));
-//				artist.addAlbum(new Album("AlbumId4", "Be here now", 10, artist.getInCollection()));
 //			// Fake info end
 			album.fireSongHandlers(from, to);
 		}

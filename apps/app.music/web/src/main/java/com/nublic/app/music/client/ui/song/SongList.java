@@ -5,6 +5,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.http.client.RequestBuilder;
@@ -17,7 +19,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.Artist;
+import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Song;
+import com.nublic.app.music.client.datamodel.cache.CacheHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -34,23 +39,23 @@ public class SongList extends Composite implements ScrollHandler {
 	@UiField Grid grid;
 	Album album;
 	Widget scrollPanel;
+	DataModel model;
+	
 	SequenceIgnorer<Message> sendHelper = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	List<SongLocalizer> unloadedLocalizers;
 	SongLocalizer[] localizerIndex;
 	List<Range> askedRanges = new ArrayList<Range>();
 	
 
-	public SongList(Album a, Widget scrollPanel) {
+	public SongList(DataModel model, Album a, Widget scrollPanel) {
 		// TODO: pass scroll panel in which we are in to handle lazy loading
 		// And number of songs
 		initWidget(uiBinder.createAndBindUi(this));
 		this.album = a;
 		this.scrollPanel = scrollPanel;
+		this.model = model;
 		
 		prepareGrid();
-		
-		// Fake widgets which know if are being shown to be replaced onScroll
-		prepareLocalizers(album.getNumberOfSongs());
 	
 		album.prepareToAddSongs();
 		album.addSongsChangeHandler(new SongsChangeHandler() {
@@ -64,13 +69,16 @@ public class SongList extends Composite implements ScrollHandler {
 				}
 			}
 		});
+		
+		// Fake widgets which know if are being shown to be replaced onScroll
+		prepareLocalizers(album.getNumberOfSongs());		
 	}
 	
 	public SongList(String artistId, String albumId, String collectionId, int numberOfSongs) {
 	}
 
 	private void prepareGrid() {
-		grid.resize(album.getNumberOfSongs(), 3);
+		grid.resize(album.getNumberOfSongs(), 4);
 		grid.getColumnFormatter().setWidth(0, "100px");
 	}
 
@@ -84,6 +92,16 @@ public class SongList extends Composite implements ScrollHandler {
 			grid.setWidget(i, 0, loc);
 		}
 		scrollPanel.addDomHandler(this, ScrollEvent.getType());
+		
+		// Couldn't find a way to do it on some widget event in Artist Widget (attachedHandler and LoadHandler don't work)
+		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+			@Override
+			public void execute() {
+				// This is executed when current events stack empties
+				// Call onScroll when the widgets are loaded, so content of shown ones can be lazy loaded
+				onScroll(null);
+			}
+		});
 	}
 
 	@Override
@@ -130,14 +148,39 @@ public class SongList extends Composite implements ScrollHandler {
 	// TODO: make a function to invalid askedRange if request fails
 	
 	public void setSong(int row, Song s) {
+		// Column 0
+		// (It's just a gap)
+
+		// Column 1
 		Label titleLabel = new Label(s.getTitle());
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.EDIT));
 		HorizontalPanel h = new HorizontalPanel();
 		h.add(titleLabel);
 		h.add(buttonLine);
 		h.getElement().addClassName("translucidPanel");
-		
 		grid.setWidget(row, 1, h);
+		
+		// Column 2
+		final Label albumLabel = new Label();
+		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, Album>() {
+			@Override
+			public void onCacheUpdated(String k, Album v) {
+				albumLabel.setText(v.getName());
+			}
+		});
+		model.getAlbumCache().obtain(s.getAlbumId());
+		grid.setWidget(row, 2, albumLabel);
+		
+		// Column 3
+		final Label artistLabel = new Label();
+		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, Artist>() {
+			@Override
+			public void onCacheUpdated(String k, Artist v) {
+				artistLabel.setText(v.getName());
+			}
+		});
+		model.getArtistCache().obtain(s.getArtistId());
+		grid.setWidget(row, 3, artistLabel);
 	}
 
 }

@@ -114,7 +114,7 @@ public class ArtistWidget extends Composite {
 				}
 			}
 		});
-		artist.askForAlbums();
+		artist.askForAlbums(model.getAlbumCache());
 	}
 	
 	// Handlers for button line

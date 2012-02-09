@@ -25,13 +25,13 @@ public class SongLocalizer extends Composite {
 	public void setPosition(int position) {
 		this.position = position;
 	}
-	
+
 	public boolean isInRange(int top, int bottom) {
 		int myTop = getAbsoluteTop();
 		int myBottom = myTop + getOffsetHeight();
 		return (myBottom > top) && (myTop < bottom);
 	}
-	
+
 	public boolean isNearRange(int top, int bottom) {
 		int myTop = getAbsoluteTop();
 		int myBottom = myTop + getOffsetHeight();

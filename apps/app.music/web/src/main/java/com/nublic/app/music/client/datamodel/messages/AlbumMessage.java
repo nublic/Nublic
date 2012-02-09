@@ -7,6 +7,7 @@ import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
+import com.nublic.app.music.client.datamodel.cache.Cache;
 import com.nublic.util.messages.Message;
 
 //GET /albums/:artist-id/:asc-desc/:start/:length/:colid/:colid/...
@@ -24,6 +25,7 @@ public class AlbumMessage extends Message {
 	// One of this groups..
 	// Artist
 	Artist artist = null;
+	Cache<String, Album> albumCache = null;
 	// Or model, id and collection (where artist and collection can be null)
 	DataModel model = null;
 	String artistId = null;
@@ -43,8 +45,9 @@ public class AlbumMessage extends Message {
 		this(model, null, null);
 	}
 
-	public AlbumMessage(Artist a) {
+	public AlbumMessage(Artist a, Cache<String, Album> albumCache) {
 		artist = a;
+		this.albumCache = albumCache;
 	}
 
 	@Override
@@ -83,6 +86,10 @@ public class AlbumMessage extends Message {
 				model.addAlbum(new Album("AlbumId2", "Origins of symmetry", 100));
 				model.addAlbum(new Album("AlbumId3", "Bad", 100));
 				model.addAlbum(new Album("AlbumId4", "Be here now", 100));
+				model.getAlbumCache().put("AlbumId1", new Album("AlbumId1", "Vinagre y Rosas", 100));
+				model.getAlbumCache().put("AlbumId2", new Album("AlbumId2", "Origins of symmetry", 100));
+				model.getAlbumCache().put("AlbumId3", new Album("AlbumId3", "Bad", 100));
+				model.getAlbumCache().put("AlbumId4", new Album("AlbumId4", "Be here now", 100));
 			// Fake info end
 			model.setState(State.ALBUM_SONGS);
 			model.fireStateHandlers();
@@ -95,6 +102,10 @@ public class AlbumMessage extends Message {
 				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 100, artist.getInCollection(), artist));
 				artist.addAlbum(new Album("AlbumId3", "Bad", 100, artist.getInCollection(), artist));
 				artist.addAlbum(new Album("AlbumId4", "Be here now", 100, artist.getInCollection(), artist));
+				albumCache.put("AlbumId1", new Album("AlbumId1", "Vinagre y Rosas", 100));
+				albumCache.put("AlbumId2", new Album("AlbumId2", "Origins of symmetry", 100));
+				albumCache.put("AlbumId3", new Album("AlbumId3", "Bad", 100));
+				albumCache.put("AlbumId4", new Album("AlbumId4", "Be here now", 100));
 			// Fake info end
 			artist.fireAlbumsHandler();
 		}

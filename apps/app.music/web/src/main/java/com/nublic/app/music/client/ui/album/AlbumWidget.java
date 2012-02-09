@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -35,7 +36,7 @@ public class AlbumWidget extends Composite {
 	@UiField FlowPanel songsPanel;
 	Album album;
 	
-	public AlbumWidget(Album a, Widget inPanel) {
+	public AlbumWidget(DataModel model, Album a, Widget inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		album = a;
 
@@ -59,7 +60,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new SongList(album, inPanel));
+		songsPanel.add(new SongList(model, album, inPanel)); // Needs the model to access cache
 	}
 
 	private void setClickTarget() {

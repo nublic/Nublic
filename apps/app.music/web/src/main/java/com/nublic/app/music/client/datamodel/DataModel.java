@@ -4,9 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
+import com.nublic.app.music.client.datamodel.cache.Cache;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
@@ -24,7 +28,6 @@ import com.nublic.util.messages.SequenceHelper;
 import com.nublic.util.messages.SequenceIgnorer;
 
 public class DataModel {
-
 	// Independent things
 	List<Tag> tagList = new ArrayList<Tag>();
 	List<Playlist> playlistList = new ArrayList<Playlist>();
@@ -52,7 +55,37 @@ public class DataModel {
 	// Sending messages
 	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	
+	// Caches to archive albums and artists
+	Cache<String, Album> albumCache;
+	Cache<String, Artist> artistCache;
+	
 	public DataModel() {
+		// Initialize variables
+		albumCache = new Cache<String, Album>() {
+			@Override
+			public String getURL(String albumId) {
+				// GET /album-info/:album-id
+				return URL.encode(GWT.getHostPageBaseURL() + "server/album-info/" + albumId);
+			}
+			@Override
+			public Album getValue(Response r) {
+				// TODO: fake info..
+				return new Album("ImagineImAnAlbumId", "A night at the opera", 10);
+			}
+		};
+		artistCache = new Cache<String, Artist>() {
+			@Override
+			public String getURL(String artistId) {
+				// GET /artist-info/:artist-id
+				return URL.encode(GWT.getHostPageBaseURL() + "server/artist-info/" + artistId);
+			}
+			@Override
+			public Artist getValue(Response r) {
+				// TODO: fake info..
+				return new Artist("ImagineImAnArtistId", "Queen", 10, 20);
+			}
+		};
+		
 		sendInitialMessages();
 	}
 	
@@ -63,6 +96,10 @@ public class DataModel {
 		PlaylistsMessage pm = new PlaylistsMessage(this);
 		SequenceHelper.sendJustOne(pm, RequestBuilder.GET);
 	}
+	
+	// Cache
+	public Cache<String, Album> getAlbumCache() { return albumCache; }
+	public Cache<String, Artist> getArtistCache() { return artistCache; }
 
 	// Tags
 	public void resetTagList() { tagList.clear(); tagIndex.clear(); }
@@ -120,10 +157,6 @@ public class DataModel {
 	public void addAlbum(Album a) { albumList.add(a); }
 	public List<Album> getAlbumList() { return albumList; }
 	
-//	public void playPlaylist(Playlist p) {
-//
-//	}
-
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
 		String collection = hmap.get(Constants.PARAM_COLLECTION);
@@ -205,4 +238,8 @@ public class DataModel {
 		DeleteTagMessage dtm = new DeleteTagMessage(tagId, this);
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
 	}
+	
+//	public void playPlaylist(Playlist p) {
+//
+//	}
 }

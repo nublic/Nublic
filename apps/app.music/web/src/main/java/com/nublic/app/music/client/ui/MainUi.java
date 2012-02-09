@@ -187,7 +187,7 @@ public class MainUi extends Composite {
 			mainPanel.setWidget(artPanel);
 			break;
 		case ALBUM_SONGS:
-			AlbumPanel albPanel = new AlbumPanel();
+			AlbumPanel albPanel = new AlbumPanel(model);
 			albPanel.setAlbumList(model.getAlbumList());
 			mainPanel.setWidget(albPanel);
 			break;
