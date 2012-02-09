@@ -35,6 +35,7 @@ class DeletionProcessor(watcher: FileWatcherActor) extends Processor("deletion",
     c match {
       case Created(filename, _, _)  => process_new(filename, now)
       case Modified(filename, _, _) => process_new(filename, now)
+      case AttribsChanged(fn, _, _) => process_new(fn, now)
       case Moved(from, to, _, _)    => {
         process_deleted(from, now)
         process_new(to, now)

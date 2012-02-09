@@ -30,7 +30,7 @@ y
 EOF
 fi
 
-for dir in cache fs "data/nublic-only" "data/mirrors" "data/synced"
+for dir in cache fs log "data/nublic-only" "data/mirrors" "data/synced"
 do
     CURRENT_DIR=/var/nublic/${dir}
     mkdir -p ${CURRENT_DIR}

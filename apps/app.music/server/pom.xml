@@ -185,6 +185,11 @@
 			<version>2.8.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.nublic</groupId>
+			<artifactId>files-and-users.java</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>

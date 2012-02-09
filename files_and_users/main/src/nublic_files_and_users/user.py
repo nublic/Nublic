@@ -3,6 +3,7 @@ import os.path
 import pexpect
 import pwd
 import spwd
+import grp
 
 from elixir import *
 from model import *
@@ -160,6 +161,10 @@ class UserDBus(dbus.service.Object):
         # Notify
         self.user_deleted(username, name)
     
+    def get_nublic_gid(self):
+        nublic = grp.getgrnam('nublic')
+        return nublic.gr_gid
+    
     @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
     def assign_file(self, username, path):
         # Do not allow going to parent
@@ -171,4 +176,5 @@ class UserDBus(dbus.service.Object):
             raise NameError()
         # Make chown
         real_path = DATA_ROOT + path
-        os.chown(real_path, user.uid, -1)
+        os.chown(real_path, user.uid, self.get_nublic_gid())
+        pexpect.run('setfacl -m u:tomcat6:rwx "' + real_path + '"')

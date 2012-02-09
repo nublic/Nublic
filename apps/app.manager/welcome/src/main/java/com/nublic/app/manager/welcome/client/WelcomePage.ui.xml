@@ -7,10 +7,10 @@
 	<g:HTMLPanel>
 		<div class="container">
 			<div class="row">
-				<div class="span8">
+				<div class="span6">
 				   <h1 style="padding-top: 10px;"><g:Label text="Welcome to Nublic!" ui:field="welcomeLabel" /></h1>
 				</div>
-				<div class="span8">
+				<div class="span6">
 				  <div class="page-header">
 				    <h3>Your apps</h3>
 				  </div>

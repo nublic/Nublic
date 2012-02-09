@@ -43,6 +43,7 @@
 	        border-radius: 0 3px 3px 0 !important;
 	        float: right !important;
 	        right: 5px;
+	        position: relative;
 	    }
 	    .buttonpanel {
 	        border-radius: 3px 3px 3px 3px !important;
@@ -104,7 +105,7 @@
 		   					</g:HTMLPanel>
 		   				</g:east>
 		   				<g:west size="370">
-							<g:AbsolutePanel width="350px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
+							<g:AbsolutePanel width="360px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
 								<!-- Check box to toggle selection to all or none -->
 								<g:at left='0' top='0'>
 									<g:HTMLPanel width="21px">
@@ -119,7 +120,7 @@
 		   						</g:at>
 		   						<!-- Ordering "panel" -->
 		   						<g:at left='34' top='0'>
-									<g:HTMLPanel width="246px">
+									<g:HTMLPanel width="251px">
 	                                  <div class="input">
 	                                    <div class="input-prepend">
 	                                      <span class="add-on">Order:</span>
@@ -137,7 +138,7 @@
 	                                </g:HTMLPanel>
                                 </g:at>
                                 <!-- New file, new folder, paste -->
-                                <g:at left='283' top='0'>
+                                <g:at left='286' top='0'>
                                 	<g:HTMLPanel width="85px">
                                 	  <div class="input">
                                 	    <div class="input-prepend">

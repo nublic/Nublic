@@ -356,15 +356,20 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     withUser { user =>
       withPath("path", false) { folder =>
         val name = params("name").trim()
-        if (name.contains("..") || !folder.isDirectory() || !user.canWrite(folder)) {
-          halt(500)  // Cannot write in that folder
+        if (name.contains("..")) {
+          throw new Exception("name contains ..")
+        } else if (!folder.isDirectory()) {
+          throw new Exception("folder is not a directory")
+        } else if (!user.canWrite(folder)) {
+          throw new Exception("user cannot write in that folder")
         } else {
           val new_folder = new File(folder, name)
           if (new_folder.exists()) {
-            halt(500)
+            throw new Exception("a file with that name already exists")
           } else {
             new_folder.mkdir()
             user.assignFile(new_folder)
+            halt(200)
           }
         } 
       }
@@ -376,15 +381,20 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
       withPath("path", false) { folder =>
         val name = params("name").trim()
         val file = fileParams("contents")
-        if (name.contains("..") || folder.isDirectory() || !user.canWrite(folder)) {
-          halt(500)  // Cannot write in that folder
+        if (name.contains("..")) {
+          throw new Exception("name contains ..")
+        } else if (!folder.isDirectory()) {
+          throw new Exception("folder is not a directory")
+        } else if (!user.canWrite(folder)) {
+          throw new Exception("user cannot write in that folder")
         } else {
           val new_file = new File(folder, name)
           if (new_file.exists()) {
-            halt(500)
+            throw new Exception("a file with that name already exists")
           } else {
             file.write(new_file)
             user.assignFile(new_file)
+            halt(200)
           }
         } 
       }

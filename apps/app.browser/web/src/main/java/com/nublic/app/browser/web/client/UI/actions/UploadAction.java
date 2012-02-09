@@ -20,7 +20,7 @@ public class UploadAction extends ActionWidget {
 		int backSlashIndex = uploadWidget.getFilename().lastIndexOf("\\");
 		String fileName = uploadWidget.getFilename();
 		if (backSlashIndex >= 0) {
-			fileName = fileName.substring(backSlashIndex); 
+			fileName = fileName.substring(backSlashIndex + 1); 
 		}
 		sendFileHelper.addParam("name", fileName);
 		sendFileHelper.addParam("contents", uploadWidget);
