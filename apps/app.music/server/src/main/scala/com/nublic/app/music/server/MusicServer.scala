@@ -85,6 +85,15 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     withUser(action)
   }
   
+  def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
+    def v = s.trim()
+    if (v == "") {
+      List()
+    } else {
+      v.split(sep).toList.map(_.trim()).filter(_ != "")
+    }
+  }
+  
   // Collections
   // ===========
   getUser("/collections") { _ =>
@@ -125,7 +134,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   putUser("/collection/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val songs = params("songs").split(",").toList.map(Long.parseLong(_))
+    val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
     transaction {
       Database.collections.lookup(id).map(coll =>
         songs.map(songId => 
@@ -146,7 +155,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/collection/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val songs = params("songs").split(",").toList.map(Long.parseLong(_))
+    val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
     transaction {
       Database.collections.lookup(id).map(coll =>
         Database.songCollections.deleteWhere(x =>
@@ -157,7 +166,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   def parse_collection_ids(collList: String): List[Collection] = {
-    val ids = collList.split("/").toList.map(Long.parseLong(_))
+    val ids = splitThatRespectsReasonableSemantics("/")(collList).map(Long.parseLong(_))
     inTransaction {
       val collObjects = ids.map(id => Database.collections.lookup(id))
       collObjects.filter(c => c != None).map(_.get)
@@ -213,8 +222,8 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     if (!Database.isPlaylistOfUser(id, user.getUsername())) {
       halt(500)
     } else {
-      val songs = params("songs").split(",").toList.map(Long.parseLong(_))
-      val positions = params("positions").split(",").toList.map(parse_playlist_position)
+      val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
+      val positions = splitThatRespectsReasonableSemantics(",")(params("songs")).map(parse_playlist_position)
       val song_pos = songs.zip(positions)
       transaction {
         Database.playlists.lookup(id).map(pl =>
