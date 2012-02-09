@@ -99,7 +99,7 @@ public class SongMessage extends Message {
 		url.append("/desc/");
 		url.append(from);
 		url.append("/");
-		url.append(to);
+		url.append(to - from + 1);
 		// Add possible collection filter
 		if (album != null && album.getInCollection() != null) {
 			url.append("/");
@@ -129,7 +129,7 @@ public class SongMessage extends Message {
 //			// For album messages filling some artist
 //			artist.clearAlbumList();
 //			// TODO: Fake info to try
-			for (int i = from; i < to; i++) {
+			for (int i = from; i <= to; i++) {
 				album.addSong(i, new Song("Song " + String.valueOf(i) + " id",
 										  "Queen - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getName(),
 										  "Queen Id",

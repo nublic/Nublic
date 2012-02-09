@@ -38,8 +38,8 @@ public class SongLocalizer extends Composite {
 		int distanceFromMeToItsBottom = (myTop - bottom) < 0 ? Constants.NEAR_TO_SCREEN : (myTop - bottom);
 		int distanceFromMeToItsTop = (top - myBottom) < 0 ? Constants.NEAR_TO_SCREEN : (top - myBottom);
 		return ((myBottom > top) && (myTop < bottom)) ||
-				(distanceFromMeToItsBottom < Constants.NEAR_TO_SCREEN) ||
-				(distanceFromMeToItsTop < Constants.NEAR_TO_SCREEN);
+			   (distanceFromMeToItsBottom < Constants.NEAR_TO_SCREEN) ||
+			   (distanceFromMeToItsTop < Constants.NEAR_TO_SCREEN);
 	}
 
 }

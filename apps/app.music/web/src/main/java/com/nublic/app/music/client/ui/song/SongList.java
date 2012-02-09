@@ -56,8 +56,9 @@ public class SongList extends Composite implements ScrollHandler {
 		album.addSongsChangeHandler(new SongsChangeHandler() {
 			@Override
 			public void onSongsChange(int from, int to) {
-				for (int i = from; i < to; i++) {
+				for (int i = from; i <= to; i++) {
 					setSong(i, album.getSong(i));
+					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition < to
 					SongLocalizer loc = localizerIndex[i];
 					unloadedLocalizers.remove(loc);
 				}
@@ -96,7 +97,7 @@ public class SongList extends Composite implements ScrollHandler {
 			// We try to find first unloadedWidgets which need to be lazy-loaded
 			SongLocalizer sl = unloadedLocalizers.get(i);
 //			if (sl.isInRange(panelTop, panelBottom)) {
-			if (sl.isNearRange(panelTop, panelBottom)) {
+			if (!Range.contains(askedRanges, sl.getPosition()) && sl.isNearRange(panelTop, panelBottom)) {
 				needToLoad = true;
 				// If we find it we'll construct a request asking for the previous 10 to it and next 30 (if are unloaded and not waiting for answer)
 				rangeToAsk.add(findRangeFromPosition(sl.getPosition()));

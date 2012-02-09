@@ -3,7 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.minheight {
-			min-height: 30px;
+			min-height: 25px;
 		}
 	</ui:style>
 	
