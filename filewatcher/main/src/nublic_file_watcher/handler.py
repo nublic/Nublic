@@ -11,6 +11,7 @@ import pyinotify
 import solr
 import re
 import apps
+import sys
 
 class FakeCreationEvent:
     def __init__(self, pathname, isdir):
@@ -41,22 +42,27 @@ class EventHandler(pyinotify.ProcessEvent):
         # If dir, we have to simulate file creation
         # because pyinotify only works well with inner dirs
         if event.dir:
+            # Path to take account
+            account_path = event.pathname.replace('/var/nublic/data/', '', 1)
             # Try to see if there is a signaler to add
-            for _, app in self.apps_info.iteritems():
+            for app_id, app in self.apps_info.iteritems():
                 if app.supports_filewatcher():
                     fw_folders = app.filewatcher.paths
                     for expr in fw_folders:
+                        # sys.stderr.write("Trying to add " + event.pathname + " as " + expr + "\n")
                         regex = re.compile(expr, re.IGNORECASE)
-                        if regex.match(event.pathname):
+                        if regex.match(account_path):
                             # We found a matching path
                             to_add = True
-                            for already_path in self.config['apps'][app]:
-                                if already_path.startswith(event.pathname):
-                                    self.config['apps'][app].delete(already_path)
-                                elif event.pathname.startwith(already_path):
+                            for already_path in self.config[u'apps'][app_id]:
+                                if already_path.startswith(account_path):
+                                    self.config[u'apps'][app_id].delete(already_path)
+                                elif event.pathname.startswith(already_path):
                                     to_add = False
                             if to_add:
-                                self.config['apps'][app].append(event.pathname)
+                                # sys.stderr.write("Added!\n")
+                                self.config[u'apps'][app_id].append(account_path + '/')
+                                apps.write_app_config(self.config)
                                 
             # Touch all files
             for inner_file in os.listdir(event.pathname):
