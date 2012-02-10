@@ -6,13 +6,33 @@
 			text-align: center;
 			vertical-align: middle;
 		}
+		.padding {
+			padding-left: 21px;
+			padding-right: 21px;
+			padding-top: 10px;
+			padding-bottom: 10px;
+		}
+		.marginbottom {
+			margin-bottom: 10px;
+		}
+		.aligntop {
+			vertical-align: top;
+		}
 	</ui:style>
-	<g:AbsolutePanel width="80px" height="120px">
-		<g:at left='0' top='0'>
+<!-- 	<g:AbsolutePanel width="84px" height="120px"> -->
+<!-- 		<g:at left='10' top='10'> -->
+<!-- 			<g:HTMLPanel> -->
+<!-- 				<g:Image ui:field="albumImage"/> -->
+<!-- 			</g:HTMLPanel> -->
+<!-- 		</g:at> -->
+<!-- 		<g:at left='0' right='0' top='80' bottom='0'> -->
+<!-- 			<g:Hyperlink ui:field="albumNameLabel" width="80px" height="40px" addStyleNames="{style.center}" text="Album name"/> -->
+<!-- 		</g:at> -->
+<!-- 	</g:AbsolutePanel> -->
+	<g:VerticalPanel width="90px" horizontalAlignment="center" addStyleNames="{style.aligntop}">
+		<g:HTMLPanel addStyleNames="{style.padding}">
 			<g:Image ui:field="albumImage"/>
-		</g:at>
-		<g:at left='0' right='0' top='80' bottom='0'>
-			<g:Hyperlink ui:field="albumNameLabel" width="80px" height="40px" addStyleNames="{style.center}" text="Album name"/>
-		</g:at>
-	</g:AbsolutePanel>
+		</g:HTMLPanel>
+		<g:Hyperlink ui:field="albumNameLabel" width="85px" addStyleNames="{style.center} {style.marginbottom}" text="Album name"/>
+	</g:VerticalPanel>
 </ui:UiBinder> 
