@@ -18,6 +18,8 @@ case class SongInfo(title: Option[String], artist: Option[String], album: Option
 
 object SongInfo {
   
+  def EMPTY_SONG_INFO = SongInfo(None, None, None, None, None, None)
+  
   def from(filename: String, context: String): SongInfo = {
     var tag_info = clean(JAudioTaggerExtractor.from(filename))
 	if (tag_info.hasImportantInfoMissing) {

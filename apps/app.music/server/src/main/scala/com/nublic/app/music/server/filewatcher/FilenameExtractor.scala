@@ -23,6 +23,7 @@ object FilenameExtractor {
         fname = rest.trim()
         path = new File(path.getParentFile(), fname)
       }
+      case _ => { /* Do nothing */ }
     }
     // Parse rest of the string
     val artist_album_title = """\s*(.*)-\s*(.*)-\s*(.*)$"""".r

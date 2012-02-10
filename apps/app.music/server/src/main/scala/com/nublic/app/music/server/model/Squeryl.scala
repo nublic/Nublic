@@ -97,13 +97,14 @@ object Database extends Schema {
     case Some(pl) => pl.user == user
   }
   
-  def maybe[R](q: Query[R]): Option[R] = {
+  def maybe[R](q: Query[R]): Option[R] = q.headOption
+  /*{
     try {
       Some(q.single)
     } catch {
       case _ => None
     }
-  }
+  }*/
   
   def ensureInDb[R <: { def getId(): Long }](name: String, table: Table[R], 
       searcher: String => Option[R], constructor: String => R): R = {

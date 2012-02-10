@@ -7,6 +7,14 @@ import java.io.File
 object JAudioTaggerExtractor {
   
   def from(filename: String): SongInfo = {
+    try {
+      from_internal(filename)
+    } catch {
+      case _: Throwable => SongInfo.EMPTY_SONG_INFO
+    }
+  }
+  
+  def from_internal(filename: String): SongInfo = {
     val audio = AudioFileIO.read(new File(filename))
 	extract_info_from_tag(audio.getTag())
   }
