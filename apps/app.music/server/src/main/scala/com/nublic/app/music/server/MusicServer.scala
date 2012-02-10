@@ -316,14 +316,14 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   // Artists
   // =======
   get("/artists") {
-    redirect("artists/alpha/asc/0/20/")
+    redirect("artists/asc/0/20/")
   }
   
   get("/artists/:asc-desc/:start/:length") {
     redirect(params("length") + "/")
   }
   
-  getUser("/artists/:asc-desc/:start/:length/*") { _ =>
+  getUser("/artists/:asc/:start/:length/*") { _ =>
     // Get start and length
     val start = Integer.parseInt(params("start"))
     val length = Integer.parseInt(params("length"))
@@ -344,14 +344,14 @@ class MusicServer extends ScalatraFilter with JsonSupport {
           where(a.id === s.artistId)
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
-          orderBy(asc_desc(a.name))
+          // orderBy(asc_desc(a.name))
         )
       } else {
         from(Database.artists, Database.songs, Database.songCollections)((a, s, st) =>
           where((a.id === s.artistId) and (st.songId === s.id) and (st.collectionId in collections))
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
-          orderBy(asc_desc(a.name))
+          // orderBy(asc_desc(a.name))
         )
       }
       query.page(start, length).toList
@@ -396,14 +396,14 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   get("/albums/:artistid/") {
-    redirect("alpha/asc/0/20/")
+    redirect("asc/0/20/")
   }
   
   get("/albums/:artistid/:asc-desc/:start/:length/*") {
     redirect(params("length") + "/")
   }
   
-  getUser("/albums/:artistid/:asc-desc/:start/:length/*") { _ =>
+  getUser("/albums/:artistid/:asc/:start/:length/*") { _ =>
     // Get start and length
     val start = Integer.parseInt(params("start"))
     val length = Integer.parseInt(params("length"))
