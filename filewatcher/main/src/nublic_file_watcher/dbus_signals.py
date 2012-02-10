@@ -28,7 +28,7 @@ class DbusSignaler(dbus.service.Object):
     def raise_event(self, ty, pathname, src_pathname, isdir):
         for context in self.contexts:
             if to_utf8(pathname).startswith(context):
-                sys.stderr.write("Sending to context " + context + " and app " + self.app_name + "\n")
+                # sys.stderr.write("Sending to context " + context + " and app " + self.app_name + "\n")
                 self.file_changed(ty, pathname, src_pathname, isdir, context)
 
     @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')

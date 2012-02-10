@@ -6,8 +6,10 @@ import org.squeryl.PrimitiveTypeMode._
 import com.nublic.filewatcher.scala._
 import com.nublic.app.music.server.Solr
 import com.nublic.app.music.server.model._
+import java.io.FileWriter
+import java.io.PrintWriter
 
-class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher) {
+class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher, true) {
   
   def taggedMimeTypes: List[String] = List(
       // MP4

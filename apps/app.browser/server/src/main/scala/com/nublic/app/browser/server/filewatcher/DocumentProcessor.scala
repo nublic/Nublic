@@ -8,7 +8,7 @@ import com.nublic.app.browser.server.filewatcher.workers.OfficeWorker
 import com.nublic.app.browser.server.Solr
 import com.nublic.app.browser.server.filewatcher.workers.Workers
 
-class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher) {
+class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher, false) {
   
   def process(c: FileChange) = c match {
     // case Created(filename, false)  => process_updated_file(filename)

@@ -5,7 +5,7 @@ import scala.collection.JavaConversions._
 import java.util.Date
 import java.util.ArrayList
 
-class DeletionProcessor(watcher: FileWatcherActor) extends Processor("deletion", watcher) {
+class DeletionProcessor(watcher: FileWatcherActor) extends Processor("deletion", watcher, false) {
 
   def TIME_TO_WAIT = 5 /* min */ * 60 /* sec */ * 1000 /* ms */
   

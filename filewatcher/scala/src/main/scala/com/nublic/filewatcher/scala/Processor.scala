@@ -4,7 +4,7 @@ import scala.actors.Actor
 import scala.actors.Actor._
 import java.util.logging.Logger
 
-abstract class Processor(val name: String, val watcher: FileWatcherActor) extends Actor {
+abstract class Processor(val name: String, val watcher: FileWatcherActor, val throwException: Boolean) extends Actor {
 
   def process(c: FileChange)
   
@@ -17,7 +17,11 @@ abstract class Processor(val name: String, val watcher: FileWatcherActor) extend
             Logger.getGlobal().finer("Processed " + name)
           } catch {
             case t: Throwable => {
-              Logger.getGlobal().fine("ERROR IN " + name + " PROCESSOR: " + t.getMessage())
+              if (throwException) {
+                throw new Exception("Error in file processing", t);
+              } else {
+                Logger.getGlobal().fine("ERROR IN " + name + " PROCESSOR: " + t.getMessage())
+              }
             }
           }
           watcher ! BackFileChange(name, id, c)
