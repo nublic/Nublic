@@ -1,6 +1,8 @@
 package com.nublic.app.music.client.ui.artist;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -9,6 +11,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.Album;
 
 //GET /album-art/:album-id
@@ -28,18 +31,28 @@ public class AlbumInArtist extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.collectionId = collectionId;
 		this.album = a;
-		
+
+		setImage();
+		albumNameLabel.setText(a.getInfo().getName());
+		setClickTarget();
+	}
+	
+	private void setImage() {
 		// building imageUrl as /album-art/:album-id
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
-		imageUrl.append(a.getId());
+		imageUrl.append(album.getInfo().getId());
 		
 		albumImage.setUrl(URL.encode(imageUrl.toString()));
-		albumNameLabel.setText(a.getName());
-		setClickTarget();
+		albumImage.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent event) {
+				albumImage.setResource(Resources.INSTANCE.album());
+			}
+		});
 	}
-	
+
 	private void setClickTarget() {
 		StringBuilder target = new StringBuilder();		
 		if (collectionId != null) {
@@ -50,7 +63,7 @@ public class AlbumInArtist extends Composite {
 		}
 		target.append(Constants.PARAM_ALBUM);
 		target.append("=");
-		target.append(album.getId());
+		target.append(album.getInfo().getId());
 		albumNameLabel.setTargetHistoryToken(target.toString());
 	}
 

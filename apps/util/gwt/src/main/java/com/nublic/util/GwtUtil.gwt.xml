@@ -16,5 +16,7 @@
   <source path='comparators'/>
   <source path='tuples'/>
   <source path='widgets'/>
+  <source path='range'/>
+  <source path='cache'/>
 
 </module>

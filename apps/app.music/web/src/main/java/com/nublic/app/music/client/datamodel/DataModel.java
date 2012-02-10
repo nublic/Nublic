@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
@@ -18,13 +21,13 @@ import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 import com.nublic.util.messages.SequenceIgnorer;
 
 public class DataModel {
-
 	// Independent things
 	List<Tag> tagList = new ArrayList<Tag>();
 	List<Playlist> playlistList = new ArrayList<Playlist>();
@@ -37,9 +40,11 @@ public class DataModel {
 	int currentSongInPlaylist;
 	
 	// Depending on what is being shown
+	State currentShowingState;
 	Playlist showingPlaylist = null; // null if a tag is being shown
 	Tag showingTag = null;			 // null if a playlist is being shown
-	State currentShowingState;
+	String showingArtistId = null;
+	String showingAlbumId = null;
 	List<Song> songList = new ArrayList<Song>();
 	List<Album> albumList = new ArrayList<Album>();
 	List<Artist> artistList = new ArrayList<Artist>();
@@ -52,7 +57,37 @@ public class DataModel {
 	// Sending messages
 	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	
+	// Caches to archive albums and artists
+	Cache<String, AlbumInfo> albumCache;
+	Cache<String, ArtistInfo> artistCache;
+	
 	public DataModel() {
+		// Initialize variables
+		albumCache = new Cache<String, AlbumInfo>() {
+			@Override
+			public String getURL(String albumId) {
+				// GET /album-info/:album-id
+				return URL.encode(GWT.getHostPageBaseURL() + "server/album-info/" + albumId);
+			}
+			@Override
+			public AlbumInfo getValue(Response r) {
+				// TODO: fake info..
+				return new AlbumInfo("ImagineImAnAlbumId", "A night at the opera", 10);
+			}
+		};
+		artistCache = new Cache<String, ArtistInfo>() {
+			@Override
+			public String getURL(String artistId) {
+				// GET /artist-info/:artist-id
+				return URL.encode(GWT.getHostPageBaseURL() + "server/artist-info/" + artistId);
+			}
+			@Override
+			public ArtistInfo getValue(Response r) {
+				// TODO: fake info..
+				return new ArtistInfo("ImagineImAnArtistId", "Queen", 10, 20);
+			}
+		};
+		
 		sendInitialMessages();
 	}
 	
@@ -63,6 +98,10 @@ public class DataModel {
 		PlaylistsMessage pm = new PlaylistsMessage(this);
 		SequenceHelper.sendJustOne(pm, RequestBuilder.GET);
 	}
+	
+	// Cache
+	public Cache<String, AlbumInfo> getAlbumCache() { return albumCache; }
+	public Cache<String, ArtistInfo> getArtistCache() { return artistCache; }
 
 	// Tags
 	public void resetTagList() { tagList.clear(); tagIndex.clear(); }
@@ -95,6 +134,10 @@ public class DataModel {
 	public State getState() { return currentShowingState; }
 	public Playlist getShowingPlaylist() { return showingPlaylist; }
 	public Tag getShowingTag() { return showingTag; }
+	public String getShowingArtistId() { return showingArtistId; }
+	public void setShowingArtistId(String showingArtistId) { this.showingArtistId = showingArtistId; }
+	public String getShowingAlbumId() { return showingAlbumId; }
+	public void setShowingAlbumId(String showingAlbumId) { this.showingAlbumId = showingAlbumId; }
 	public void setShowing(Playlist p) { showingTag = null;	showingPlaylist = p; }
 	public void setShowing(Tag t) { showingTag = t;	showingPlaylist = null; }
 	public void setShowing() { showingTag = null; showingPlaylist = null; }
@@ -120,10 +163,6 @@ public class DataModel {
 	public void addAlbum(Album a) { albumList.add(a); }
 	public List<Album> getAlbumList() { return albumList; }
 	
-//	public void playPlaylist(Playlist p) {
-//
-//	}
-
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
 		String collection = hmap.get(Constants.PARAM_COLLECTION);
@@ -205,4 +244,8 @@ public class DataModel {
 		DeleteTagMessage dtm = new DeleteTagMessage(tagId, this);
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
 	}
+	
+//	public void playPlaylist(Playlist p) {
+//
+//	}
 }

@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Artist;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
 import com.nublic.util.messages.Message;
@@ -59,19 +60,32 @@ public class ArtistMessage extends Message {
 		// Fill artists list in model with the new info
 		model.clearArtistList();
 		// TODO: Fake info to try
-			model.addArtist(new Artist("Id1", "Joaquín Sabina", 4, 40, collectionId));
-			model.addArtist(new Artist("Id2", "Oasis", 4, 40, collectionId));
-			model.addArtist(new Artist("Id3", "Muse", 4, 40, collectionId));
-			model.addArtist(new Artist("Id4", "Michael Jackson", 4, 40, collectionId));
-			model.addArtist(new Artist("Id5", "The Beatles", 4, 40, collectionId));
-			model.addArtist(new Artist("Id6", "The Strokes", 4, 40, collectionId));
-			model.addArtist(new Artist("Id7", "Red Hot Chilli Pepper", 4, 40, collectionId));
-			model.addArtist(new Artist("Artist8", "Maroon 5", 4, 40, collectionId));
-			model.addArtist(new Artist("Artist9", "Enrique Iglesias", 4, 40, collectionId));
-			model.addArtist(new Artist("Artist10", "Su padre Julio", 4, 40, collectionId));
-			model.addArtist(new Artist("Artist11", "Su abuelo", 4, 40, collectionId));
-			model.addArtist(new Artist("Artist12", "Dover", 4, 40, collectionId));
-			model.addArtist(new Artist("Artist13", "The Corrs", 4, 40, collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id1", "Joaquín Sabina", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id2", "Oasis", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id3", "Muse", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id4", "Michael Jackson", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id5", "The Beatles", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id6", "The Strokes", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Id7", "Red Hot Chilli Pepper", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Artist8", "Maroon 5", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Artist9", "Enrique Iglesias", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Artist10", "Su padre Julio", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Artist11", "Su abuelo", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Artist12", "Dover", 4, 40), collectionId));
+			model.addArtist(new Artist(new ArtistInfo("Artist13", "The Corrs", 4, 40), collectionId));
+			model.getArtistCache().put("Id1", new ArtistInfo("Id1", "Joaquín Sabina", 4, 40));
+			model.getArtistCache().put("Id2", new ArtistInfo("Id2", "Oasis", 4, 40));
+			model.getArtistCache().put("Id3", new ArtistInfo("Id3", "Muse", 4, 40));
+			model.getArtistCache().put("Id4", new ArtistInfo("Id4", "Michael Jackson", 4, 40));
+			model.getArtistCache().put("Id5", new ArtistInfo("Id5", "The Beatles", 4, 40));
+			model.getArtistCache().put("Id6", new ArtistInfo("Id6", "The Strokes", 4, 40));
+			model.getArtistCache().put("Id7", new ArtistInfo("Id7", "Red Hot Chilli Pepper", 4, 40));
+			model.getArtistCache().put("Artist8", new ArtistInfo("Artist8", "Maroon 5", 4, 40));
+			model.getArtistCache().put("Artist9", new ArtistInfo("Artist9", "Enrique Iglesias", 4, 40));
+			model.getArtistCache().put("Artist10", new ArtistInfo("Artist10", "Su padre Julio", 4, 40));
+			model.getArtistCache().put("Artist11", new ArtistInfo("Artist11", "Su abuelo", 4, 40));
+			model.getArtistCache().put("Artist12", new ArtistInfo("Artist12", "Dover", 4, 40));
+			model.getArtistCache().put("Artist13", new ArtistInfo("Artist13", "The Corrs", 4, 40));
 		// Fake info end
 		
 		model.fireStateHandlers();

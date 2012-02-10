@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -15,6 +17,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
@@ -58,22 +61,16 @@ public class ArtistWidget extends Composite {
 		this.model = model;
 		this.artist = art;
 		
-		artistNameLabel.setText(artist.getName());
+		artistNameLabel.setText(artist.getInfo().getName());
 //		lazyLoad();
-		
 	}
 
 	public void lazyLoad() {
 		if (!loaded) {
 			loaded = true;
 			
-			// building imageUrl as /artist-art/:artist-id
-			StringBuilder imageUrl = new StringBuilder();
-			imageUrl.append(GWT.getHostPageBaseURL());
-			imageUrl.append("server/artist-art/");
-			imageUrl.append(artist.getId());
-	
-			artistImage.setUrl(URL.encode(imageUrl.toString()));
+			setImage();
+			
 			setClickTarget();
 	
 			setMyselfAsAlbumHandler();
@@ -88,6 +85,22 @@ public class ArtistWidget extends Composite {
 		}
 	}
 
+	private void setImage() {
+		// building imageUrl as /artist-art/:artist-id
+		StringBuilder imageUrl = new StringBuilder();
+		imageUrl.append(GWT.getHostPageBaseURL());
+		imageUrl.append("server/artist-art/");
+		imageUrl.append(artist.getInfo().getId());
+
+		artistImage.setUrl(URL.encode(imageUrl.toString()));
+		artistImage.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent event) {
+				artistImage.setResource(Resources.INSTANCE.artist());
+			}
+		});
+	}
+
 	private void setClickTarget() {
 		StringBuilder target = new StringBuilder();		
 		if (artist.getInCollection() != null) {
@@ -98,7 +111,7 @@ public class ArtistWidget extends Composite {
 		}
 		target.append(Constants.PARAM_ARTIST);
 		target.append("=");
-		target.append(artist.getId());
+		target.append(artist.getInfo().getId());
 		artistNameLabel.setTargetHistoryToken(target.toString());
 	}
 
@@ -115,7 +128,7 @@ public class ArtistWidget extends Composite {
 				}
 			}
 		});
-		artist.askForAlbums();
+		artist.askForAlbums(model.getAlbumCache());
 	}
 	
 	// Handlers for button line
