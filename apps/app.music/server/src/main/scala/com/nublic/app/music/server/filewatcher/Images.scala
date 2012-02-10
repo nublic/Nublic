@@ -57,6 +57,8 @@ object Images {
         val image_url = new URL(image_infos.get(0).getURL())
         FileUtils.copyURLToFile(image_url, f)
       }
+    } catch {
+      case _: Throwable => { /* Do nothing */ }
     }
   }
   
@@ -90,6 +92,8 @@ object Images {
         stream.flush()
         stream.close()
       }
+    } catch {
+      case _: Throwable => { /* Do nothing */ }
     }
   }
   
@@ -111,6 +115,8 @@ object Images {
         val image_url = new URL(result.thumb)
         FileUtils.copyURLToFile(image_url, f)
       }
+    } catch {
+      case _: Throwable => { /* Do nothing */ }
     }
   }
   

@@ -12,8 +12,16 @@ import java.io.BufferedInputStream
 object EchonestExtractor {
   
   val ECHONEST_API_KEY = "UR4VKX7JXDXAULIWB"
- 
+  
   def from(filename: String): Option[SongInfo] = {
+    try {
+      from_internal(filename)
+    } catch {
+      case _: Throwable => None
+    }
+  }
+ 
+  def from_internal(filename: String): Option[SongInfo] = {
     val file = new File(filename)
     // Get fingerprint
     val cmd = new ProcessBuilder("echoprint-codegen", filename, "10", "30")
