@@ -40,9 +40,11 @@ public class DataModel {
 	int currentSongInPlaylist;
 	
 	// Depending on what is being shown
+	State currentShowingState;
 	Playlist showingPlaylist = null; // null if a tag is being shown
 	Tag showingTag = null;			 // null if a playlist is being shown
-	State currentShowingState;
+	String showingArtistId = null;
+	String showingAlbumId = null;
 	List<Song> songList = new ArrayList<Song>();
 	List<Album> albumList = new ArrayList<Album>();
 	List<Artist> artistList = new ArrayList<Artist>();
@@ -132,6 +134,10 @@ public class DataModel {
 	public State getState() { return currentShowingState; }
 	public Playlist getShowingPlaylist() { return showingPlaylist; }
 	public Tag getShowingTag() { return showingTag; }
+	public String getShowingArtistId() { return showingArtistId; }
+	public void setShowingArtistId(String showingArtistId) { this.showingArtistId = showingArtistId; }
+	public String getShowingAlbumId() { return showingAlbumId; }
+	public void setShowingAlbumId(String showingAlbumId) { this.showingAlbumId = showingAlbumId; }
 	public void setShowing(Playlist p) { showingTag = null;	showingPlaylist = p; }
 	public void setShowing(Tag t) { showingTag = t;	showingPlaylist = null; }
 	public void setShowing() { showingTag = null; showingPlaylist = null; }

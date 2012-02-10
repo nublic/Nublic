@@ -79,8 +79,7 @@ public class SongList extends Composite implements ScrollHandler {
 	}
 
 	private void prepareGrid() {
-		grid.resize(album.getInfo().getNumberOfSongs(), 4);
-		grid.getColumnFormatter().setWidth(0, "100px");
+		grid.resize(album.getInfo().getNumberOfSongs(), 3);
 	}
 
 	private void prepareLocalizers(int amount) {
@@ -150,18 +149,15 @@ public class SongList extends Composite implements ScrollHandler {
 	
 	public void setSong(int row, Song s) {
 		// Column 0
-		// (It's just a gap)
-
-		// Column 1
 		Label titleLabel = new Label(s.getTitle());
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.EDIT));
 		HorizontalPanel h = new HorizontalPanel();
 		h.add(titleLabel);
 		h.add(buttonLine);
 		h.getElement().addClassName("translucidPanel");
-		grid.setWidget(row, 1, h);
+		grid.setWidget(row, 0, h);
 		
-		// Column 2
+		// Column 1
 		final Label albumLabel = new Label();
 		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 			@Override
@@ -170,9 +166,9 @@ public class SongList extends Composite implements ScrollHandler {
 			}
 		});
 		model.getAlbumCache().obtain(s.getAlbumId());
-		grid.setWidget(row, 2, albumLabel);
+		grid.setWidget(row, 1, albumLabel);
 		
-		// Column 3
+		// Column 2
 		final Label artistLabel = new Label();
 		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
@@ -181,7 +177,7 @@ public class SongList extends Composite implements ScrollHandler {
 			}
 		});
 		model.getArtistCache().obtain(s.getArtistId());
-		grid.setWidget(row, 3, artistLabel);
+		grid.setWidget(row, 2, artistLabel);
 	}
 
 }

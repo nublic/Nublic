@@ -6,7 +6,19 @@
 			overflow-x: hidden;
 			overflow-y: auto;
 		}
+		.rightmargin {
+			margin-right: 15px;
+		}
 	</ui:style>
-	<g:FlowPanel ui:field="mainPanel" height="100%" width="100%" addStyleNames="{style.scroll}">
-	</g:FlowPanel>
+	<g:DockLayoutPanel width="100%" height="100%">
+		<g:north size='50'>
+			<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
+				<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
+			</g:HorizontalPanel>
+		</g:north>
+		<g:center>
+			<g:FlowPanel ui:field="mainPanel" height="100%" width="100%" addStyleNames="{style.scroll}"/>
+		</g:center>
+	</g:DockLayoutPanel>
+	
 </ui:UiBinder> 

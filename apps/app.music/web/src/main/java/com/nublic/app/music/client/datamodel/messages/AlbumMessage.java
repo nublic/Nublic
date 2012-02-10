@@ -93,6 +93,7 @@ public class AlbumMessage extends Message {
 				model.getAlbumCache().put("AlbumId4", new AlbumInfo("AlbumId4", "Be here now", 100));
 			// Fake info end
 			model.setState(State.ALBUM_SONGS);
+			model.setShowingArtistId(artistId);
 			model.fireStateHandlers();
 			// TODO: ask for songs if proceeds (if not using async data provider lists)
 		} else {
