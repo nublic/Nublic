@@ -58,7 +58,7 @@ public class ArtistWidget extends Composite {
 		this.model = model;
 		this.artist = art;
 		
-		artistNameLabel.setText(artist.getName());
+		artistNameLabel.setText(artist.getInfo().getName());
 //		lazyLoad();
 	}
 
@@ -70,7 +70,7 @@ public class ArtistWidget extends Composite {
 			StringBuilder imageUrl = new StringBuilder();
 			imageUrl.append(GWT.getHostPageBaseURL());
 			imageUrl.append("server/artist-art/");
-			imageUrl.append(artist.getId());
+			imageUrl.append(artist.getInfo().getId());
 	
 			artistImage.setUrl(URL.encode(imageUrl.toString()));
 			setClickTarget();
@@ -97,7 +97,7 @@ public class ArtistWidget extends Composite {
 		}
 		target.append(Constants.PARAM_ARTIST);
 		target.append("=");
-		target.append(artist.getId());
+		target.append(artist.getInfo().getId());
 		artistNameLabel.setTargetHistoryToken(target.toString());
 	}
 

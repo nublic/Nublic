@@ -44,10 +44,10 @@ public class AlbumWidget extends Composite {
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
-		imageUrl.append(album.getId());
+		imageUrl.append(album.getInfo().getId());
 		
 		albumImage.setUrl(URL.encode(imageUrl.toString()));
-		albumNameLabel.setText(album.getName());
+		albumNameLabel.setText(album.getInfo().getName());
 		setClickTarget();
 		
 		// Add button line
@@ -73,7 +73,7 @@ public class AlbumWidget extends Composite {
 		}
 		target.append(Constants.PARAM_ALBUM);
 		target.append("=");
-		target.append(album.getId());
+		target.append(album.getInfo().getId());
 		albumNameLabel.setTargetHistoryToken(target.toString());
 	}
 	

@@ -73,13 +73,13 @@ public class SongMessage extends Message {
 		if (album != null) {
 			// Artist filter
 			if (album.getInArtist() != null) {
-				url.append(album.getInArtist().getId());
+				url.append(album.getInArtist().getInfo().getId());
 				url.append("/");
 			} else {
 				url.append("all/");
 			}
 			// Album filter
-			url.append(album.getId());
+			url.append(album.getInfo().getId());
 		} else {
 			// Artist filter
 			if (artistId != null) {
@@ -131,9 +131,9 @@ public class SongMessage extends Message {
 //			// TODO: Fake info to try
 			for (int i = from; i <= to; i++) {
 				album.addSong(i, new Song("Song " + String.valueOf(i) + " id",
-										  "Queen - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getName(),
+										  "Queen - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getInfo().getName(),
 										  "Queen Id",
-										  album.getId()));
+										  album.getInfo().getId()));
 			}
 //			// Fake info end
 			album.fireSongHandlers(from, to);

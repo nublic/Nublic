@@ -19,7 +19,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Album;
-import com.nublic.app.music.client.datamodel.Artist;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Song;
 import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
@@ -71,14 +72,14 @@ public class SongList extends Composite implements ScrollHandler {
 		});
 		
 		// Fake widgets which know if are being shown to be replaced onScroll
-		prepareLocalizers(album.getNumberOfSongs());		
+		prepareLocalizers(album.getInfo().getNumberOfSongs());		
 	}
 	
 	public SongList(String artistId, String albumId, String collectionId, int numberOfSongs) {
 	}
 
 	private void prepareGrid() {
-		grid.resize(album.getNumberOfSongs(), 4);
+		grid.resize(album.getInfo().getNumberOfSongs(), 4);
 		grid.getColumnFormatter().setWidth(0, "100px");
 	}
 
@@ -135,7 +136,7 @@ public class SongList extends Composite implements ScrollHandler {
 		int unboundedFrom = position - Constants.PREVIOUS_SONGS_TO_ASK;
 		int from = unboundedFrom <= 0 ? 0 : unboundedFrom;
 		int unboundedTo = position + Constants.NEXT_SONGS_TO_ASK;
-		int to = unboundedTo >= album.getNumberOfSongs() ? album.getNumberOfSongs() -1 : unboundedTo;
+		int to = unboundedTo >= album.getInfo().getNumberOfSongs() ? album.getInfo().getNumberOfSongs() -1 : unboundedTo;
 		return new Range(from, to);
 	}
 	
@@ -162,9 +163,9 @@ public class SongList extends Composite implements ScrollHandler {
 		
 		// Column 2
 		final Label albumLabel = new Label();
-		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, Album>() {
+		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 			@Override
-			public void onCacheUpdated(String k, Album v) {
+			public void onCacheUpdated(String k, AlbumInfo v) {
 				albumLabel.setText(v.getName());
 			}
 		});
@@ -173,9 +174,9 @@ public class SongList extends Composite implements ScrollHandler {
 		
 		// Column 3
 		final Label artistLabel = new Label();
-		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, Artist>() {
+		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
-			public void onCacheUpdated(String k, Artist v) {
+			public void onCacheUpdated(String k, ArtistInfo v) {
 				artistLabel.setText(v.getName());
 			}
 		});

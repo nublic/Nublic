@@ -16,24 +16,18 @@ import com.nublic.util.messages.SequenceHelper;
 //        $extra_info }
 
 public class Artist {
-	String id;
-	String name;
-	int numberOfDiscs;
-	int numberOfSongs;
+	ArtistInfo info;
 	AlbumsChangeHandler handler = null;
 	List<Album> albumList = new ArrayList<Album>();
 	
 	String inCollection;
 
-	public Artist(String id, String name, int numberOfDiscs, int numberOfSongs) {
-		this(id, name, numberOfDiscs, numberOfSongs, null);
+	public Artist(ArtistInfo info) {
+		this(info, null);
 	}
 	
-	public Artist(String id, String name, int numberOfDiscs, int numberOfSongs, String inCollection) {
-		this.id = id;
-		this.name = name;
-		this.numberOfDiscs = numberOfDiscs;
-		this.numberOfSongs = numberOfSongs;
+	public Artist(ArtistInfo info, String inCollection) {
+		this.info = info;
 		this.inCollection = inCollection;
 	}
 	
@@ -41,8 +35,8 @@ public class Artist {
 		handler = h;
 	}
 	
-	public void askForAlbums(Cache<String, Album> albumCache) {
-		AlbumMessage am = new AlbumMessage(this, albumCache);
+	public void askForAlbums(Cache<String, AlbumInfo> cache) {
+		AlbumMessage am = new AlbumMessage(this, cache);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	
@@ -53,14 +47,8 @@ public class Artist {
 	}
 
 	// Getters and setters
-	public String getId() {	return id; }
-	public void setId(String id) { this.id = id; }
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
-	public int getNumberOfDiscs() { return numberOfDiscs; }
-	public void setNumberOfDiscs(int numberOfDiscs) { this.numberOfDiscs = numberOfDiscs; }
-	public int getNumberOfSongs() { return numberOfSongs; }
-	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
+	public ArtistInfo getInfo() { return info; }
+	public void setInfo(ArtistInfo info) { this.info = info; }
 	public List<Album> getAlbumList() {	return albumList; }
 	public void clearAlbumList() { albumList.clear(); }
 	public void addAlbum(Album a) { albumList.add(a); }

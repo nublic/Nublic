@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
@@ -25,7 +26,7 @@ public class AlbumMessage extends Message {
 	// One of this groups..
 	// Artist
 	Artist artist = null;
-	Cache<String, Album> albumCache = null;
+	Cache<String, AlbumInfo> albumCache = null;
 	// Or model, id and collection (where artist and collection can be null)
 	DataModel model = null;
 	String artistId = null;
@@ -45,7 +46,7 @@ public class AlbumMessage extends Message {
 		this(model, null, null);
 	}
 
-	public AlbumMessage(Artist a, Cache<String, Album> albumCache) {
+	public AlbumMessage(Artist a, Cache<String, AlbumInfo> albumCache) {
 		artist = a;
 		this.albumCache = albumCache;
 	}
@@ -57,7 +58,7 @@ public class AlbumMessage extends Message {
 		url.append("server/albums/");
 		// Add possible artist filter
 		if (artist != null) {
-			url.append(artist.getId());
+			url.append(artist.getInfo().getId());
 		} else if (artistId != null) {
 			url.append(artistId);
 		} else {
@@ -82,14 +83,14 @@ public class AlbumMessage extends Message {
 			// For album messages directly for data model
 			model.clearAlbumList();
 			// TODO: Fake info to try..
-				model.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 100));
-				model.addAlbum(new Album("AlbumId2", "Origins of symmetry", 100));
-				model.addAlbum(new Album("AlbumId3", "Bad", 100));
-				model.addAlbum(new Album("AlbumId4", "Be here now", 100));
-				model.getAlbumCache().put("AlbumId1", new Album("AlbumId1", "Vinagre y Rosas", 100));
-				model.getAlbumCache().put("AlbumId2", new Album("AlbumId2", "Origins of symmetry", 100));
-				model.getAlbumCache().put("AlbumId3", new Album("AlbumId3", "Bad", 100));
-				model.getAlbumCache().put("AlbumId4", new Album("AlbumId4", "Be here now", 100));
+				model.addAlbum(new Album(new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100)));
+				model.addAlbum(new Album(new AlbumInfo("AlbumId2", "Origins of symmetry", 100)));
+				model.addAlbum(new Album(new AlbumInfo("AlbumId3", "Bad", 100)));
+				model.addAlbum(new Album(new AlbumInfo("AlbumId4", "Be here now", 100)));
+				model.getAlbumCache().put("AlbumId1", new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100));
+				model.getAlbumCache().put("AlbumId2", new AlbumInfo("AlbumId2", "Origins of symmetry", 100));
+				model.getAlbumCache().put("AlbumId3", new AlbumInfo("AlbumId3", "Bad", 100));
+				model.getAlbumCache().put("AlbumId4", new AlbumInfo("AlbumId4", "Be here now", 100));
 			// Fake info end
 			model.setState(State.ALBUM_SONGS);
 			model.fireStateHandlers();
@@ -98,14 +99,14 @@ public class AlbumMessage extends Message {
 			// For album messages filling some artist
 			artist.clearAlbumList();
 			// TODO: Fake info to try
-				artist.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 100, artist.getInCollection(), artist));
-				artist.addAlbum(new Album("AlbumId2", "Origins of symmetry", 100, artist.getInCollection(), artist));
-				artist.addAlbum(new Album("AlbumId3", "Bad", 100, artist.getInCollection(), artist));
-				artist.addAlbum(new Album("AlbumId4", "Be here now", 100, artist.getInCollection(), artist));
-				albumCache.put("AlbumId1", new Album("AlbumId1", "Vinagre y Rosas", 100));
-				albumCache.put("AlbumId2", new Album("AlbumId2", "Origins of symmetry", 100));
-				albumCache.put("AlbumId3", new Album("AlbumId3", "Bad", 100));
-				albumCache.put("AlbumId4", new Album("AlbumId4", "Be here now", 100));
+				artist.addAlbum(new Album(new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100), artist.getInCollection(), artist));
+				artist.addAlbum(new Album(new AlbumInfo("AlbumId2", "Origins of symmetry", 100), artist.getInCollection(), artist));
+				artist.addAlbum(new Album(new AlbumInfo("AlbumId3", "Bad", 100), artist.getInCollection(), artist));
+				artist.addAlbum(new Album(new AlbumInfo("AlbumId4", "Be here now", 100), artist.getInCollection(), artist));
+				albumCache.put("AlbumId1", new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100));
+				albumCache.put("AlbumId2", new AlbumInfo("AlbumId2", "Origins of symmetry", 100));
+				albumCache.put("AlbumId3", new AlbumInfo("AlbumId3", "Bad", 100));
+				albumCache.put("AlbumId4", new AlbumInfo("AlbumId4", "Be here now", 100));
 			// Fake info end
 			artist.fireAlbumsHandler();
 		}

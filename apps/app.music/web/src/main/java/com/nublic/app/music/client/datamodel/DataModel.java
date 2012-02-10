@@ -56,33 +56,33 @@ public class DataModel {
 	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	
 	// Caches to archive albums and artists
-	Cache<String, Album> albumCache;
-	Cache<String, Artist> artistCache;
+	Cache<String, AlbumInfo> albumCache;
+	Cache<String, ArtistInfo> artistCache;
 	
 	public DataModel() {
 		// Initialize variables
-		albumCache = new Cache<String, Album>() {
+		albumCache = new Cache<String, AlbumInfo>() {
 			@Override
 			public String getURL(String albumId) {
 				// GET /album-info/:album-id
 				return URL.encode(GWT.getHostPageBaseURL() + "server/album-info/" + albumId);
 			}
 			@Override
-			public Album getValue(Response r) {
+			public AlbumInfo getValue(Response r) {
 				// TODO: fake info..
-				return new Album("ImagineImAnAlbumId", "A night at the opera", 10);
+				return new AlbumInfo("ImagineImAnAlbumId", "A night at the opera", 10);
 			}
 		};
-		artistCache = new Cache<String, Artist>() {
+		artistCache = new Cache<String, ArtistInfo>() {
 			@Override
 			public String getURL(String artistId) {
 				// GET /artist-info/:artist-id
 				return URL.encode(GWT.getHostPageBaseURL() + "server/artist-info/" + artistId);
 			}
 			@Override
-			public Artist getValue(Response r) {
+			public ArtistInfo getValue(Response r) {
 				// TODO: fake info..
-				return new Artist("ImagineImAnArtistId", "Queen", 10, 20);
+				return new ArtistInfo("ImagineImAnArtistId", "Queen", 10, 20);
 			}
 		};
 		
@@ -98,8 +98,8 @@ public class DataModel {
 	}
 	
 	// Cache
-	public Cache<String, Album> getAlbumCache() { return albumCache; }
-	public Cache<String, Artist> getArtistCache() { return artistCache; }
+	public Cache<String, AlbumInfo> getAlbumCache() { return albumCache; }
+	public Cache<String, ArtistInfo> getArtistCache() { return artistCache; }
 
 	// Tags
 	public void resetTagList() { tagList.clear(); tagIndex.clear(); }

@@ -33,10 +33,10 @@ public class AlbumInArtist extends Composite {
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
-		imageUrl.append(a.getId());
+		imageUrl.append(a.getInfo().getId());
 		
 		albumImage.setUrl(URL.encode(imageUrl.toString()));
-		albumNameLabel.setText(a.getName());
+		albumNameLabel.setText(a.getInfo().getName());
 		setClickTarget();
 	}
 	
@@ -50,7 +50,7 @@ public class AlbumInArtist extends Composite {
 		}
 		target.append(Constants.PARAM_ALBUM);
 		target.append("=");
-		target.append(album.getId());
+		target.append(album.getInfo().getId());
 		albumNameLabel.setTargetHistoryToken(target.toString());
 	}
 

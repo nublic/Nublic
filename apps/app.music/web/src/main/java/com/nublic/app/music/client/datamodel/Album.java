@@ -9,50 +9,38 @@ import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
 //        "name": $name,
 //        "songs": $number_of_songs,
 //        $extra_info }
-
 public class Album {
-	String id;
-	String name;
-	int numberOfSongs;
+	AlbumInfo info;
 
-//	List<Song> songList;
-//	HashMap<Integer, Song> songMap;
 	Song[] songList;
 	List<SongsChangeHandler> songHandlers;
-	
 	String inCollection;
 	Artist inArtist;
 
-	public Album(String id, String name, int numberOfSongs) {
-		this(id, name, numberOfSongs, null);
+	public Album(AlbumInfo info) {
+		this(info, null, null);
 	}
 	
-	public Album(String id, String name, int numberOfSongs, String inCollection) {
-		this(id, name, numberOfSongs, inCollection, null);
+	public Album(AlbumInfo info, String inCollection) {
+		this(info, inCollection, null);
 	}
 	
-	public Album(String id, String name, int numberOfSongs, String inCollection, Artist inArtist) {
-		this.id = id;
-		this.name = name;
-		this.numberOfSongs = numberOfSongs;
+	public Album(AlbumInfo info, String inCollection, Artist inArtist) {
+		this.info = info;
 		this.inCollection = inCollection;
 		this.inArtist = inArtist;
 	}
 
 	// Getters and setters
-	public String getId() { return id; }
-	public void setId(String id) { this.id = id; }
-	public String getName() { return name; }
-	public void setName(String name) { this.name = name; }
-	public int getNumberOfSongs() { return numberOfSongs; }
-	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
+	public AlbumInfo getInfo() { return info; }
+	public void setInfo(AlbumInfo info) { this.info = info; }
 	public String getInCollection() { return inCollection; }
 	public void setInCollection(String inCollection) { this.inCollection = inCollection; }
 	public Artist getInArtist() { return inArtist; }
 	public void setInArtist(Artist inArtist) { this.inArtist = inArtist; }
 	
 	public void prepareToAddSongs() {
-		songList = new Song[numberOfSongs];
+		songList = new Song[info.getNumberOfSongs()];
 		songHandlers = new ArrayList<SongsChangeHandler>();
 	}
 	
