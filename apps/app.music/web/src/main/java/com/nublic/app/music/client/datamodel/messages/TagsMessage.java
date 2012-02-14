@@ -51,18 +51,10 @@ public class TagsMessage extends Message {
 		}
 		
 		model.fireTagsHandlers();
-		
-		// Fake thing to test without server
-//		model.addTag(new Tag("1", "Pablo"));
-//		model.addTag(new Tag("2", "Jazz"));
-//		model.addTag(new Tag("3", "Pop"));
-//		model.addTag(new Tag("4", "Rock&Roll"));
-//		model.fireTagsHandlers();
 	}
 
 	@Override
 	public void onError() {
 		ErrorPopup.showError("Could not get collection list");
-//		onSuccess(null);
 	}
 }
