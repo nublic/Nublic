@@ -1,11 +1,16 @@
 package com.nublic.app.music.client.datamodel.messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Song;
+import com.nublic.app.music.client.datamodel.js.JSSong;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //GET /songs/:artist-id/:album-id/:order/:asc-desc/:start/:length/:colid/:colid/...
@@ -96,6 +101,8 @@ public class SongMessage extends Message {
 			}
 		}
 		// Range of request
+		url.append("/");
+		url.append(Constants.ORDER_ALPHA);
 		url.append("/desc/");
 		url.append(from);
 		url.append("/");
@@ -113,35 +120,54 @@ public class SongMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		if (album == null) {
-//			// For album messages directly for data model
-//			model.clearAlbumList();
-//			// TODO: Fake info to try..
-//				model.addAlbum(new Album("AlbumId1", "Vinagre y Rosas", 10));
-//				model.addAlbum(new Album("AlbumId2", "Origins of symmetry", 10));
-//				model.addAlbum(new Album("AlbumId3", "Bad", 10));
-//				model.addAlbum(new Album("AlbumId4", "Be here now", 10));
-//			// Fake info end
-//			model.setState(State.ALBUM_SONGS);
-//			model.fireStateHandlers();
-		} else {
-//			// For song messages filling some album
-//			artist.clearAlbumList();
-//			// TODO: Fake info to try
-			for (int i = from; i <= to; i++) {
-				album.addSong(i, new Song("Song " + String.valueOf(i) + " id",
-										  "Queen - Bohemian Rhapsody " + String.valueOf(i) + " in " + album.getInfo().getName(),
-										  "Queen Id",
-										  album.getInfo().getId()));
+		if (response.getStatusCode() == Response.SC_OK) {
+			// Commented for response including row count.
+//			JSSongResponse jsResponse = null;
+			String text = response.getText();
+//			jsResponse = JsonUtils.safeEval(text);
+			JsArray<JSSong> jsResponse = JsonUtils.safeEval(text);
+			if (album == null) {
+				// For song messages directly for data model
+				if (jsResponse == null) {
+					onError();
+				} else {
+					insertResponseInModel(jsResponse);
+				}
+			} else {
+	//			// For song messages filling some album
+				if (jsResponse == null) {
+					onError();
+				} else {
+					insertResponseInAlbum(jsResponse);
+				}
 			}
-//			// Fake info end
-			album.fireSongHandlers(from, to);
+		} else {
+			onError();
 		}
+	}
+
+	private void insertResponseInAlbum(JsArray<JSSong> jsResponse) {
+//		album.clearAlbumList();
+//		JsArray<JSSong> songList = jsResponse.getSongs();
+//		for (int i = 0; i < songList.length(); i++) {
+//			JSSong song = songList.get(i);
+		for (int i = 0; i < jsResponse.length(); i++) {
+			JSSong song = jsResponse.get(i);
+
+			Song info = new Song(song.getId(), song.getTitle(), song.getArtistId(), song.getAlbumId());
+			album.addSong(from + i, info);
+		}
+		album.fireSongHandlers(from, to);
+	}
+
+	private void insertResponseInModel(JsArray<JSSong> jsResponse) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void onError() {
-		onSuccess(null);
+		ErrorPopup.showError("Could not get songs");
 	}
 
 }

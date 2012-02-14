@@ -17,7 +17,6 @@ import com.nublic.util.messages.Message;
 //  where:  collection ::= { "id"   : $id
 //                         , "name" : $name
 //                         }
-
 public class TagsMessage extends Message {
 	DataModel model;
 	

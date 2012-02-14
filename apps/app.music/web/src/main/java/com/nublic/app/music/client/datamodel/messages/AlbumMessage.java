@@ -94,7 +94,6 @@ public class AlbumMessage extends Message {
 				} else {
 					insertResponseInModel(jsResponse);
 				}
-			// TODO: ask for songs if proceeds (if not using async data provider lists)
 			} else {
 				// For album messages filling some artist
 				if (jsResponse == null) {
@@ -139,6 +138,7 @@ public class AlbumMessage extends Message {
 		model.setState(State.ALBUM_SONGS);
 		model.setShowingArtistId(artistId);
 		model.fireStateHandlers();	
+		// TODO: ask for songs if proceeds (if not using async data provider lists)
 	}
 
 	@Override
