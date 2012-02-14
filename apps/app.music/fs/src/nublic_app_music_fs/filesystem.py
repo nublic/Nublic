@@ -31,25 +31,25 @@ class Filesystem(LoggingMixIn, Operations):
     def getattr(self, path, fh=None):
         elements = path.split("/")
         if path == "/": # /
-            tag_count = Tag.query.count()
-            return dict(st_mode=S_IFDIR, st_nlink=2 + 1 + tag_count,
+            coll_count = Collection.query.count()
+            return dict(st_mode=S_IFDIR, st_nlink=2 + 1 + coll_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 2: # /tag
-            tag = elements[1]
-            artist_count = self.create_artist_query(tag).count()
+            coll = elements[1]
+            artist_count = self.create_artist_query(coll).count()
             return dict(st_mode=S_IFDIR, st_nlink=2 + 1 + artist_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 3: # /tag/artist
-            tag = elements[1]
+            coll = elements[1]
             artist = elements[2]
-            album_count = self.create_album_query(tag, artist).count()
+            album_count = self.create_album_query(coll, artist).count()
             return dict(st_mode=S_IFDIR, st_nlink=2 + 1 + album_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 4: # /tag/artist/album
-            tag = elements[1]
+            coll = elements[1]
             artist = elements[2]
             album = elements[3]
-            song_count = self.create_song_query(tag, artist, album).count()
+            song_count = self.create_song_query(coll, artist, album).count()
             return dict(st_mode=S_IFDIR, st_nlink=2 + song_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 5: # /tag/artist/album/song
@@ -91,69 +91,69 @@ class Filesystem(LoggingMixIn, Operations):
         elements = path.split("/")
         if path == "/": # /
             r = [".", "..", "_all"]
-            for tag in Tag.query.all():
-                r.append(from_utf8(tag.name))
+            for coll in Collection.query.all():
+                r.append(from_utf8(coll.name))
             return r
         elif len(elements) == 2: # /tag
             r = [".", "..", "_all"]
-            tag = elements[1]
-            for artist in self.create_artist_query(tag).all():
+            coll = elements[1]
+            for artist in self.create_artist_query(coll).all():
                 r.append(from_utf8(artist.name))
             return list(set(r))
         elif len(elements) == 3: # /tag/artist
-            tag = elements[1]
+            coll = elements[1]
             artist = elements[2]
             r = [".", "..", "_all"]
-            for album in self.create_album_query(tag, artist).all():
+            for album in self.create_album_query(coll, artist).all():
                 r.append(from_utf8(album.name))
             return list(set(r))
         elif len(elements) == 4: # /tag/artist/album
-            tag = elements[1]
+            coll = elements[1]
             artist = elements[2]
             album = elements[3]
             r = [".", ".."]
-            for song in self.create_song_query(tag, artist, album).all():
+            for song in self.create_song_query(coll, artist, album).all():
                 r.append(from_utf8(song.title) + "." + str(song.id) + ".mp3")
             return list(set(r))
         else:
             raise FuseOSError(ENOENT)
     
-    def create_artist_query(self, tag):
-        if tag == "_all":
+    def create_artist_query(self, coll):
+        if coll == "_all":
             return Artist.query
         else:
-            return Artist.query.filter(Artist.songs.any(Song.tags.any(Tag.name == tag)))
+            return Artist.query.filter(Artist.songs.any(Song.tags.any(Collection.name == coll)))
     
-    def create_album_query(self, tag, artist):
-        if tag == "_all" and artist == "_all":
+    def create_album_query(self, coll, artist):
+        if coll == "_all" and artist == "_all":
             return Album.query
-        elif tag == "_all":
+        elif coll == "_all":
             return Album.query.filter(Album.songs.any(Song.artist.has(name=artist)))
         elif artist == "_all":
-            return Album.query.filter(Album.songs.any(Song.tags.any(Tag.name == tag)))
+            return Album.query.filter(Album.songs.any(Song.tags.any(Collection.name == coll)))
         else:
-            return Album.query.filter(Album.songs.any(Song.tags.any(Tag.name == tag))).filter(Album.songs.any(Song.artist.has(name=artist)))
+            return Album.query.filter(Album.songs.any(Song.tags.any(Collection.name == coll))).filter(Album.songs.any(Song.artist.has(name=artist)))
     
-    def create_song_query(self, tag, artist, album):
-        if tag == "_all" and artist == "_all" and album == "_all":
+    def create_song_query(self, coll, artist, album):
+        if coll == "_all" and artist == "_all" and album == "_all":
             return Song.query
         # One selected
-        elif tag == "_all" and artist == "_all" and album != "_all":
+        elif coll == "_all" and artist == "_all" and album != "_all":
             return Song.query.filter(Song.album.has(name=album))
-        elif tag == "_all" and artist != "_all" and album == "_all":
+        elif coll == "_all" and artist != "_all" and album == "_all":
             return Song.query.filter(Song.artist.has(name=artist))
-        elif tag != "_all" and artist == "_all" and album == "_all":
-            return Song.query.filter(Song.tags.any(Tag.name == tag))
+        elif coll != "_all" and artist == "_all" and album == "_all":
+            return Song.query.filter(Song.tags.any(Collection.name == coll))
         # Two selected
-        elif tag != "_all" and artist != "_all" and album == "_all":
-            return Song.query.filter(Song.tags.any(Tag.name == tag)).filter(Song.artist.has(name=artist))
-        elif tag != "_all" and artist == "_all" and album != "_all":
-            return Song.query.filter(Song.tags.any(Tag.name == tag)).filter(Song.album.has(name=album))
-        elif tag == "_all" and artist != "_all" and album != "_all":
+        elif coll != "_all" and artist != "_all" and album == "_all":
+            return Song.query.filter(Song.tags.any(Collection.name == coll)).filter(Song.artist.has(name=artist))
+        elif coll != "_all" and artist == "_all" and album != "_all":
+            return Song.query.filter(Song.tags.any(Collection.name == coll)).filter(Song.album.has(name=album))
+        elif coll == "_all" and artist != "_all" and album != "_all":
             return Song.query.filter(Song.artist.has(name=artist)).filter(Song.album.has(name=album))
         # All selected
         else:
-            return Song.query.filter(Song.tags.any(Tag.name == tag)).filter(Song.artist.has(name=artist)).filter(Song.album.has(name=album))
+            return Song.query.filter(Song.tags.any(Collection.name == coll)).filter(Song.artist.has(name=artist)).filter(Song.album.has(name=album))
 
 if __name__ == "__main__":
     fuse = FUSE(Filesystem(), "/var/nublic/fs/music", foreground=True)
