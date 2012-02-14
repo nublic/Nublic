@@ -100,12 +100,11 @@ public class SongMessage extends Message {
 		url.append(from);
 		url.append("/");
 		url.append(to - from + 1);
+		url.append("/");
 		// Add possible collection filter
 		if (album != null && album.getInCollection() != null) {
-			url.append("/");
 			url.append(album.getInCollection());
 		} else if (inCollection != null) {
-			url.append("/");
 			url.append(inCollection);
 		}
 		

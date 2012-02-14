@@ -3,6 +3,8 @@ package com.nublic.app.music.client.ui.album;
 import java.util.EnumSet;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -11,6 +13,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
@@ -40,13 +43,8 @@ public class AlbumWidget extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		album = a;
 
-		// building imageUrl as /album-art/:album-id
-		StringBuilder imageUrl = new StringBuilder();
-		imageUrl.append(GWT.getHostPageBaseURL());
-		imageUrl.append("server/album-art/");
-		imageUrl.append(album.getInfo().getId());
-		
-		albumImage.setUrl(URL.encode(imageUrl.toString()));
+		setImage();
+
 		albumNameLabel.setText(album.getInfo().getName());
 		setClickTarget();
 		
@@ -61,6 +59,23 @@ public class AlbumWidget extends Composite {
 		
 		// Add song list
 		songsPanel.add(new SongList(model, album, inPanel)); // Needs the model to access cache
+	}
+
+	private void setImage() {
+		// building imageUrl as /album-art/:album-id
+		StringBuilder imageUrl = new StringBuilder();
+		imageUrl.append(GWT.getHostPageBaseURL());
+		imageUrl.append("server/album-art/");
+		imageUrl.append(album.getInfo().getId());
+
+		albumImage.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent event) {
+				albumImage.setResource(Resources.INSTANCE.album());
+			}
+		});
+		
+		albumImage.setUrl(URL.encode(imageUrl.toString()));
 	}
 
 	private void setClickTarget() {

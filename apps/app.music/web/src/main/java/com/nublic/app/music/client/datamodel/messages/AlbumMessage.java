@@ -64,13 +64,11 @@ public class AlbumMessage extends Message {
 		} else {
 			url.append("all");
 		}
-		url.append("/desc/0/32000");
+		url.append("/desc/0/32000/");
 		// Add possible collection filter
 		if (artist != null && artist.getInCollection() != null) {
-			url.append("/");
 			url.append(artist.getInCollection());
 		} else if (inCollection != null) {
-			url.append("/");
 			url.append(inCollection);
 		}
 		

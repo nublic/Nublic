@@ -1,10 +1,14 @@
 package com.nublic.app.music.client.datamodel.messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Tag;
+import com.nublic.app.music.client.datamodel.js.JSTag;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //GET /collections
@@ -28,17 +32,37 @@ public class TagsMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		// Fake thing to test without server
-		model.addTag(new Tag("1", "Pablo"));
-		model.addTag(new Tag("2", "Jazz"));
-		model.addTag(new Tag("3", "Pop"));
-		model.addTag(new Tag("4", "Rock&Roll"));
+		JsArray <JSTag> jsTagList = null;
+		
+		if (response.getStatusCode() == Response.SC_OK) {
+			String text = response.getText();
+			jsTagList = JsonUtils.safeEval(text);
+			
+			if (jsTagList == null) {
+				onError();
+			} else {
+				for (int i = 0 ; i < jsTagList.length() ; i++) {
+					JSTag jsTag = jsTagList.get(i);
+					model.addTag(new Tag(jsTag.getId(), jsTag.getName()));
+				}
+			}
+		} else {
+			onError();
+		}
+		
 		model.fireTagsHandlers();
+		
+		// Fake thing to test without server
+//		model.addTag(new Tag("1", "Pablo"));
+//		model.addTag(new Tag("2", "Jazz"));
+//		model.addTag(new Tag("3", "Pop"));
+//		model.addTag(new Tag("4", "Rock&Roll"));
+//		model.fireTagsHandlers();
 	}
 
 	@Override
 	public void onError() {
-		// TODO: do something real
-		onSuccess(null);
+		ErrorPopup.showError("Could not get collection list");
+//		onSuccess(null);
 	}
 }

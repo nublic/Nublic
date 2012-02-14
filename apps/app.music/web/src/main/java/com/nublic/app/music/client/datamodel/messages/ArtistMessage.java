@@ -1,12 +1,16 @@
 package com.nublic.app.music.client.datamodel.messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
+import com.nublic.app.music.client.datamodel.js.JSArtist;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //GET /artists/:asc-desc/:start/:length/:colid/:colid/...
@@ -19,7 +23,6 @@ import com.nublic.util.messages.Message;
 //                       "discs": $number_of_discs,
 //                       "songs": $number_of_songs,
 //                       $extra_info }
-
 public class ArtistMessage extends Message {
 	String collectionId;
 	DataModel model;
@@ -38,9 +41,8 @@ public class ArtistMessage extends Message {
 		StringBuilder url = new StringBuilder();
 		url.append(GWT.getHostPageBaseURL());
 		url.append("server/artists");
-		url.append("/desc/0/32000");
+		url.append("/desc/0/32000/");
 		if (collectionId != null) {
-			url.append("/");
 			url.append(collectionId);
 		}
 		return URL.encode(url.toString());
@@ -48,6 +50,34 @@ public class ArtistMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
+		// Fill artists list in model with the new info
+		model.clearArtistList();
+
+		// Commented for response including row count.
+//		JSArtistResponse jsResponse = null;
+		if (response.getStatusCode() == Response.SC_OK) {
+			String text = response.getText();
+//			jsResponse = JsonUtils.safeEval(text);
+			JsArray<JSArtist> jsResponse = JsonUtils.safeEval(text);
+
+			if (jsResponse == null) {
+				onError();
+			} else {
+//				JsArray<JSArtist> artistList = jsResponse.getArtists();
+//				for (int i = 0; i < artistList.length(); i++) {
+//					JSArtist artist = artistList.get(i);
+				for (int i = 0; i < jsResponse.length(); i++) {
+					JSArtist artist = jsResponse.get(i);
+
+					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getDiscs(), artist.getSongs());
+					model.addArtist(new Artist(info, collectionId));
+					model.getArtistCache().put(artist.getId(), info);
+				}
+			}
+		} else {
+			onError();
+		}
+			
 		// Set the selected collection which is being shown
 		if (collectionId == null) {
 			// All music
@@ -55,45 +85,43 @@ public class ArtistMessage extends Message {
 		} else {
 			model.setShowing(collectionId, true);
 		}
-		model.setState(State.ARTIST_ALBUMS);
-		
-		// Fill artists list in model with the new info
-		model.clearArtistList();
-		// TODO: Fake info to try
-			model.addArtist(new Artist(new ArtistInfo("Id1", "Joaquín Sabina", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Id2", "Oasis", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Id3", "Muse", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Id4", "Michael Jackson", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Id5", "The Beatles", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Id6", "The Strokes", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Id7", "Red Hot Chilli Pepper", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Artist8", "Maroon 5", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Artist9", "Enrique Iglesias", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Artist10", "Su padre Julio", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Artist11", "Su abuelo", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Artist12", "Dover", 4, 40), collectionId));
-			model.addArtist(new Artist(new ArtistInfo("Artist13", "The Corrs", 4, 40), collectionId));
-			model.getArtistCache().put("Id1", new ArtistInfo("Id1", "Joaquín Sabina", 4, 40));
-			model.getArtistCache().put("Id2", new ArtistInfo("Id2", "Oasis", 4, 40));
-			model.getArtistCache().put("Id3", new ArtistInfo("Id3", "Muse", 4, 40));
-			model.getArtistCache().put("Id4", new ArtistInfo("Id4", "Michael Jackson", 4, 40));
-			model.getArtistCache().put("Id5", new ArtistInfo("Id5", "The Beatles", 4, 40));
-			model.getArtistCache().put("Id6", new ArtistInfo("Id6", "The Strokes", 4, 40));
-			model.getArtistCache().put("Id7", new ArtistInfo("Id7", "Red Hot Chilli Pepper", 4, 40));
-			model.getArtistCache().put("Artist8", new ArtistInfo("Artist8", "Maroon 5", 4, 40));
-			model.getArtistCache().put("Artist9", new ArtistInfo("Artist9", "Enrique Iglesias", 4, 40));
-			model.getArtistCache().put("Artist10", new ArtistInfo("Artist10", "Su padre Julio", 4, 40));
-			model.getArtistCache().put("Artist11", new ArtistInfo("Artist11", "Su abuelo", 4, 40));
-			model.getArtistCache().put("Artist12", new ArtistInfo("Artist12", "Dover", 4, 40));
-			model.getArtistCache().put("Artist13", new ArtistInfo("Artist13", "The Corrs", 4, 40));
-		// Fake info end
-		
+		model.setState(State.ARTIST_ALBUMS);		
 		model.fireStateHandlers();
+		
+		// Fake info to try
+//		model.addArtist(new Artist(new ArtistInfo("Id1", "Joaquín Sabina", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Id2", "Oasis", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Id3", "Muse", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Id4", "Michael Jackson", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Id5", "The Beatles", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Id6", "The Strokes", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Id7", "Red Hot Chilli Pepper", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Artist8", "Maroon 5", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Artist9", "Enrique Iglesias", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Artist10", "Su padre Julio", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Artist11", "Su abuelo", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Artist12", "Dover", 4, 40), collectionId));
+//		model.addArtist(new Artist(new ArtistInfo("Artist13", "The Corrs", 4, 40), collectionId));
+//		model.getArtistCache().put("Id1", new ArtistInfo("Id1", "Joaquín Sabina", 4, 40));
+//		model.getArtistCache().put("Id2", new ArtistInfo("Id2", "Oasis", 4, 40));
+//		model.getArtistCache().put("Id3", new ArtistInfo("Id3", "Muse", 4, 40));
+//		model.getArtistCache().put("Id4", new ArtistInfo("Id4", "Michael Jackson", 4, 40));
+//		model.getArtistCache().put("Id5", new ArtistInfo("Id5", "The Beatles", 4, 40));
+//		model.getArtistCache().put("Id6", new ArtistInfo("Id6", "The Strokes", 4, 40));
+//		model.getArtistCache().put("Id7", new ArtistInfo("Id7", "Red Hot Chilli Pepper", 4, 40));
+//		model.getArtistCache().put("Artist8", new ArtistInfo("Artist8", "Maroon 5", 4, 40));
+//		model.getArtistCache().put("Artist9", new ArtistInfo("Artist9", "Enrique Iglesias", 4, 40));
+//		model.getArtistCache().put("Artist10", new ArtistInfo("Artist10", "Su padre Julio", 4, 40));
+//		model.getArtistCache().put("Artist11", new ArtistInfo("Artist11", "Su abuelo", 4, 40));
+//		model.getArtistCache().put("Artist12", new ArtistInfo("Artist12", "Dover", 4, 40));
+//		model.getArtistCache().put("Artist13", new ArtistInfo("Artist13", "The Corrs", 4, 40));
+	// Fake info end
+		
 	}
 
 	@Override
 	public void onError() {
-		onSuccess(null);
+		ErrorPopup.showError("Could not get artist from server");
 	}
 
 }
