@@ -5,6 +5,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Tag;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //PUT /collections
@@ -28,14 +29,19 @@ public class AddTagMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		model.addTag(new Tag(name + "Id", name));
-		model.fireTagsHandlers();
+		if (response.getStatusCode() == Response.SC_OK) {
+			String text = response.getText();
+
+			model.addTag(new Tag(text, name));
+			model.fireTagsHandlers();
+		} else {
+			onError();
+		}
 	}
 
 	@Override
 	public void onError() {
-		// TODO doError
-		onSuccess(null);
+		ErrorPopup.showError("Could not add collection");
 	}
 
 }

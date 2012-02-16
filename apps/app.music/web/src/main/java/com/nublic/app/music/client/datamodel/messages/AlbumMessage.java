@@ -1,6 +1,8 @@
 package com.nublic.app.music.client.datamodel.messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Album;
@@ -8,7 +10,10 @@ import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
+import com.nublic.app.music.client.datamodel.js.JSAlbum;
+import com.nublic.app.music.client.datamodel.js.JSAlbumResponse;
 import com.nublic.util.cache.Cache;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //GET /albums/:artist-id/:asc-desc/:start/:length/:colid/:colid/...
@@ -64,13 +69,11 @@ public class AlbumMessage extends Message {
 		} else {
 			url.append("all");
 		}
-		url.append("/desc/0/32000");
+		url.append("/desc/0/32000/");
 		// Add possible collection filter
 		if (artist != null && artist.getInCollection() != null) {
-			url.append("/");
 			url.append(artist.getInCollection());
 		} else if (inCollection != null) {
-			url.append("/");
 			url.append(inCollection);
 		}
 		
@@ -79,43 +82,64 @@ public class AlbumMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		if (artist == null) {
-			// For album messages directly for data model
-			model.clearAlbumList();
-			// TODO: Fake info to try..
-				model.addAlbum(new Album(new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100)));
-				model.addAlbum(new Album(new AlbumInfo("AlbumId2", "Origins of symmetry", 100)));
-				model.addAlbum(new Album(new AlbumInfo("AlbumId3", "Bad", 100)));
-				model.addAlbum(new Album(new AlbumInfo("AlbumId4", "Be here now", 100)));
-				model.getAlbumCache().put("AlbumId1", new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100));
-				model.getAlbumCache().put("AlbumId2", new AlbumInfo("AlbumId2", "Origins of symmetry", 100));
-				model.getAlbumCache().put("AlbumId3", new AlbumInfo("AlbumId3", "Bad", 100));
-				model.getAlbumCache().put("AlbumId4", new AlbumInfo("AlbumId4", "Be here now", 100));
-			// Fake info end
-			model.setState(State.ALBUM_SONGS);
-			model.setShowingArtistId(artistId);
-			model.fireStateHandlers();
-			// TODO: ask for songs if proceeds (if not using async data provider lists)
+		if (response.getStatusCode() == Response.SC_OK) {
+			// Commented for response including row count.
+			JSAlbumResponse jsResponse = null;
+			String text = response.getText();
+			jsResponse = JsonUtils.safeEval(text);
+			if (artist == null) {
+				// For album messages directly for data model
+				if (jsResponse == null) {
+					onError();
+				} else {
+					insertResponseInModel(jsResponse);
+				}
+			} else {
+				// For album messages filling some artist
+				if (jsResponse == null) {
+					onError();
+				} else {
+					insertResponseInArtist(jsResponse);
+				}
+			}
 		} else {
-			// For album messages filling some artist
-			artist.clearAlbumList();
-			// TODO: Fake info to try
-				artist.addAlbum(new Album(new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100), artist.getInCollection(), artist));
-				artist.addAlbum(new Album(new AlbumInfo("AlbumId2", "Origins of symmetry", 100), artist.getInCollection(), artist));
-				artist.addAlbum(new Album(new AlbumInfo("AlbumId3", "Bad", 100), artist.getInCollection(), artist));
-				artist.addAlbum(new Album(new AlbumInfo("AlbumId4", "Be here now", 100), artist.getInCollection(), artist));
-				albumCache.put("AlbumId1", new AlbumInfo("AlbumId1", "Vinagre y Rosas", 100));
-				albumCache.put("AlbumId2", new AlbumInfo("AlbumId2", "Origins of symmetry", 100));
-				albumCache.put("AlbumId3", new AlbumInfo("AlbumId3", "Bad", 100));
-				albumCache.put("AlbumId4", new AlbumInfo("AlbumId4", "Be here now", 100));
-			// Fake info end
-			artist.fireAlbumsHandler();
+			onError();
 		}
+	}
+
+	private void insertResponseInArtist(JSAlbumResponse jsResponse) {
+		artist.clearAlbumList();
+		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
+		for (int i = 0; i < albumList.length(); i++) {
+			JSAlbum album = albumList.get(i);
+
+			AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+			artist.addAlbum(new Album(info));
+			albumCache.put(album.getId(), info);
+		}
+		artist.fireAlbumsHandler();
+		
+	}
+
+	private void insertResponseInModel(JSAlbumResponse jsResponse) {
+		model.clearAlbumList();
+		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
+		for (int i = 0; i < albumList.length(); i++) {
+			JSAlbum album = albumList.get(i);
+
+			AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+			model.addAlbum(new Album(info));
+			model.getAlbumCache().put(album.getId(), info);
+		}
+		model.setState(State.ALBUM_SONGS);
+		model.setShowingArtistId(artistId);
+		model.fireStateHandlers();	
+		// TODO: ask for songs if proceeds (if not using async data provider lists)
 	}
 
 	@Override
 	public void onError() {
-		onSuccess(null);
+		ErrorPopup.showError("Could not get albums");
 	}
 
 }

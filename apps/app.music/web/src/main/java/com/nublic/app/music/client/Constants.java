@@ -1,7 +1,6 @@
 package com.nublic.app.music.client;
 
 public class Constants {
-
 	public static final String PARAM_COLLECTION = "Collection";
 	public static final String PARAM_PLAYLIST = "Playlist";
 	public static final String PARAM_ARTIST = "Artist";

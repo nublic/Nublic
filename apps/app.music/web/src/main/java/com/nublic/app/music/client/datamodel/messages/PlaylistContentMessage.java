@@ -10,7 +10,6 @@ import com.nublic.util.messages.Message;
 //GET /playlist/:id/:order/:asc-desc/:start/:length
 //* Gets all the songs from the playlist
 //* Return: as in /songs
-
 public class PlaylistContentMessage extends Message {
 	DataModel model;
 	String id;

@@ -28,7 +28,7 @@ public class PlaylistsMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		// Fake thing to test without server
+		// TODO: Fake thing to test without server
 		model.addPlaylist(new Playlist("1", "Verano Mix 97"));
 		model.addPlaylist(new Playlist("2", "Cena de navidad 2008"));
 		model.firePlaylistsHandlers();
