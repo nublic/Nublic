@@ -19,7 +19,7 @@ public class SettingsPage extends Composite {
 	InlineHyperlink[] links;
 	@UiField InlineHyperlink userLink;
 	@UiField InlineHyperlink workFoldersLink;
-	@UiField InlineHyperlink nublicLink;
+	// @UiField InlineHyperlink nublicLink;
 
 	interface SettingsPageUiBinder extends UiBinder<Widget, SettingsPage> {
 	}
@@ -27,7 +27,7 @@ public class SettingsPage extends Composite {
 	public SettingsPage() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		links = new InlineHyperlink[] { userLink, workFoldersLink, nublicLink };
+		links = new InlineHyperlink[] { userLink, workFoldersLink, /*nublicLink*/ };
 		selectTab(0);
 	}
 	
@@ -52,8 +52,8 @@ public class SettingsPage extends Composite {
 		selectTab(1);
 	}
 	
-	@UiHandler("nublicLink")
+	/*@UiHandler("nublicLink")
 	void onNublicLinkClick(ClickEvent event) {
 		selectTab(2);
-	}
+	}*/
 }
