@@ -13,7 +13,7 @@ public class JSSongResponse extends JavaScriptObject {
 		return this.row_count;
 	}-*/;
 	
-	public final native JsArray<JSAlbum> getSongs() /*-{
+	public final native JsArray<JSSong> getSongs() /*-{
 		return this.songs;
     }-*/;
 

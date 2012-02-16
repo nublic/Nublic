@@ -10,6 +10,7 @@ import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
 import com.nublic.app.music.client.datamodel.js.JSArtist;
+import com.nublic.app.music.client.datamodel.js.JSArtistResponse;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
@@ -54,21 +55,17 @@ public class ArtistMessage extends Message {
 		model.clearArtistList();
 
 		// Commented for response including row count.
-//		JSArtistResponse jsResponse = null;
+		JSArtistResponse jsResponse = null;
 		if (response.getStatusCode() == Response.SC_OK) {
 			String text = response.getText();
-//			jsResponse = JsonUtils.safeEval(text);
-			JsArray<JSArtist> jsResponse = JsonUtils.safeEval(text);
+			jsResponse = JsonUtils.safeEval(text);
 
 			if (jsResponse == null) {
 				onError();
 			} else {
-//				JsArray<JSArtist> artistList = jsResponse.getArtists();
-//				for (int i = 0; i < artistList.length(); i++) {
-//					JSArtist artist = artistList.get(i);
-				for (int i = 0; i < jsResponse.length(); i++) {
-					JSArtist artist = jsResponse.get(i);
-
+				JsArray<JSArtist> artistList = jsResponse.getArtists();
+				for (int i = 0; i < artistList.length(); i++) {
+					JSArtist artist = artistList.get(i);
 					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getDiscs(), artist.getSongs());
 					model.addArtist(new Artist(info, collectionId));
 					model.getArtistCache().put(artist.getId(), info);

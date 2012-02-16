@@ -10,6 +10,7 @@ import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Song;
 import com.nublic.app.music.client.datamodel.js.JSSong;
+import com.nublic.app.music.client.datamodel.js.JSSongResponse;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
@@ -122,10 +123,9 @@ public class SongMessage extends Message {
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
 			// Commented for response including row count.
-//			JSSongResponse jsResponse = null;
+			JSSongResponse jsResponse = null;
 			String text = response.getText();
-//			jsResponse = JsonUtils.safeEval(text);
-			JsArray<JSSong> jsResponse = JsonUtils.safeEval(text);
+			jsResponse = JsonUtils.safeEval(text);
 			if (album == null) {
 				// For song messages directly for data model
 				if (jsResponse == null) {
@@ -146,21 +146,18 @@ public class SongMessage extends Message {
 		}
 	}
 
-	private void insertResponseInAlbum(JsArray<JSSong> jsResponse) {
+	private void insertResponseInAlbum(JSSongResponse jsResponse) {
 //		album.clearAlbumList();
-//		JsArray<JSSong> songList = jsResponse.getSongs();
-//		for (int i = 0; i < songList.length(); i++) {
-//			JSSong song = songList.get(i);
-		for (int i = 0; i < jsResponse.length(); i++) {
-			JSSong song = jsResponse.get(i);
-
+		JsArray<JSSong> songList = jsResponse.getSongs();
+		for (int i = 0; i < songList.length(); i++) {
+			JSSong song = songList.get(i);
 			Song info = new Song(song.getId(), song.getTitle(), song.getArtistId(), song.getAlbumId());
 			album.addSong(from + i, info);
 		}
 		album.fireSongHandlers(from, to);
 	}
 
-	private void insertResponseInModel(JsArray<JSSong> jsResponse) {
+	private void insertResponseInModel(JSSongResponse jsResponse) {
 		// TODO Auto-generated method stub
 		
 	}

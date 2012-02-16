@@ -11,6 +11,7 @@ import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.State;
 import com.nublic.app.music.client.datamodel.js.JSAlbum;
+import com.nublic.app.music.client.datamodel.js.JSAlbumResponse;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
@@ -83,10 +84,9 @@ public class AlbumMessage extends Message {
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
 			// Commented for response including row count.
-//			JSAlbumResponse jsResponse = null;
+			JSAlbumResponse jsResponse = null;
 			String text = response.getText();
-//			jsResponse = JsonUtils.safeEval(text);
-			JsArray<JSAlbum> jsResponse = JsonUtils.safeEval(text);
+			jsResponse = JsonUtils.safeEval(text);
 			if (artist == null) {
 				// For album messages directly for data model
 				if (jsResponse == null) {
@@ -107,13 +107,11 @@ public class AlbumMessage extends Message {
 		}
 	}
 
-	private void insertResponseInArtist(JsArray<JSAlbum> jsResponse) {
+	private void insertResponseInArtist(JSAlbumResponse jsResponse) {
 		artist.clearAlbumList();
-//		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
-//		for (int i = 0; i < albumList.length(); i++) {
-//			JSArtist album = albumList.get(i);
-		for (int i = 0; i < jsResponse.length(); i++) {
-			JSAlbum album = jsResponse.get(i);
+		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
+		for (int i = 0; i < albumList.length(); i++) {
+			JSAlbum album = albumList.get(i);
 
 			AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
 			artist.addAlbum(new Album(info));
@@ -123,13 +121,11 @@ public class AlbumMessage extends Message {
 		
 	}
 
-	private void insertResponseInModel(JsArray<JSAlbum> jsResponse) {
+	private void insertResponseInModel(JSAlbumResponse jsResponse) {
 		model.clearAlbumList();
-//		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
-//		for (int i = 0; i < albumList.length(); i++) {
-//			JSArtist album = albumList.get(i);
-		for (int i = 0; i < jsResponse.length(); i++) {
-			JSAlbum album = jsResponse.get(i);
+		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
+		for (int i = 0; i < albumList.length(); i++) {
+			JSAlbum album = albumList.get(i);
 
 			AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
 			model.addAlbum(new Album(info));
