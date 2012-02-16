@@ -7,6 +7,8 @@
 	   }
 	   .margined {
 	       margin: 5px;
+	       min-height: 32px;
+	       min-width: 40px;
 	   }
 	</ui:style>
 	<g:HorizontalPanel height="32" verticalAlignment="ALIGN_MIDDLE">
