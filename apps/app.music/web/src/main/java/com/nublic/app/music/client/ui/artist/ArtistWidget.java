@@ -41,14 +41,15 @@ public class ArtistWidget extends Composite {
 		String inlineblock();
 		String padding();
 		String rightmargin();
+		String leftmargin();
 		String minheight();
 	}
 
+	@UiField ArtistStyle style;
 	@UiField Image artistImage;
 	@UiField Hyperlink artistNameLabel;
 //	@UiField AbsolutePanel artistPanel;
 	@UiField FlowPanel albumsPanel;
-	@UiField ArtistStyle style;
 	@UiField HorizontalPanel labelAndButtonsPanel;
 	
 	DataModel model;

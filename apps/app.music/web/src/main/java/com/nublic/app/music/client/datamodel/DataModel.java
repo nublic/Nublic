@@ -22,6 +22,7 @@ import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
 import com.nublic.util.cache.Cache;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
@@ -71,8 +72,12 @@ public class DataModel {
 			}
 			@Override
 			public AlbumInfo getValue(Response r) {
-				// TODO: fake info..
-				return new AlbumInfo("ImagineImAnAlbumId", "A night at the opera", 10);
+				if (r.getStatusCode() == Response.SC_OK) {
+					return AlbumMessage.parseAlbumInfo(r);
+				} else {
+					ErrorPopup.showError("Could not access server to refresh album cache");
+					return null;
+				}
 			}
 		};
 		artistCache = new Cache<String, ArtistInfo>() {
@@ -83,8 +88,12 @@ public class DataModel {
 			}
 			@Override
 			public ArtistInfo getValue(Response r) {
-				// TODO: fake info..
-				return new ArtistInfo("ImagineImAnArtistId", "Queen", 10, 20);
+				if (r.getStatusCode() == Response.SC_OK) {
+					return ArtistMessage.parseArtistInfo(r);
+				} else {
+					ErrorPopup.showError("Could not access server to refresh artist cache");
+					return null;
+				}
 			}
 		};
 		
