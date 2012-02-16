@@ -4,6 +4,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //DELETE /collections
@@ -26,15 +27,18 @@ public class DeleteTagMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		model.removeTag(id);
-		model.fireTagsHandlers();
-		model.askForArtists();
+		if (response.getStatusCode() == Response.SC_OK) {
+			model.removeTag(id);
+			model.fireTagsHandlers();
+			model.askForArtists();
+		} else {
+			onError();
+		}
 	}
 
 	@Override
 	public void onError() {
-		// TODO doError
-		onSuccess(null);
+		ErrorPopup.showError("Could not delete collection");
 	}
 
 }

@@ -5,6 +5,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Playlist;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //PUT /playlists
@@ -28,14 +29,19 @@ public class AddPlaylistMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		model.addPlaylist(new Playlist(name + "Id", name));
-		model.firePlaylistsHandlers();
+		if (response.getStatusCode() == Response.SC_OK) {
+			String text = response.getText();
+
+			model.addPlaylist(new Playlist(text, name));
+			model.firePlaylistsHandlers();
+		} else {
+			onError();
+		}
 	}
 
 	@Override
 	public void onError() {
-		// TODO doError
-		onSuccess(null);
+		ErrorPopup.showError("Could not add playlist");
 	}
 
 }

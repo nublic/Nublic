@@ -13,7 +13,7 @@
 			<g:at left='0' top='0'>
 				<g:Image ui:field="albumImage"/>
 			</g:at>
-			<g:at left='90' top='0' bottom='0'>
+			<g:at left='60' top='0' bottom='0'>
 				<g:HorizontalPanel ui:field="labelAndButtonsPanel" verticalAlignment="middle" height="100%">
 					<g:Hyperlink ui:field="albumNameLabel" text="Album name" addStyleNames="{style.rightmargin}"/>
 				</g:HorizontalPanel>

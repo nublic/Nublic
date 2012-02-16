@@ -6,10 +6,13 @@
 			display: inline-block;
 		}
 		.padding {
-			padding: 0px 0px 0px 54px;
+			padding: 0px 0px 0px 44px;
 		}
 		.rightmargin {
 			margin-right: 15px;
+		}
+		.leftmargin {
+			margin-left: 15px;
 		}
 		.minheight {
 			min-height: 173px;
@@ -20,18 +23,12 @@
 	
 	<g:FlowPanel addStyleNames="{style.minheight}">
 		<!-- Artist display -->
-		<g:AbsolutePanel height="68px" width="100%" addStyleNames="translucidPanel">
-			<g:at left='10' top='10'>
-				<g:HTMLPanel>
-					<g:Image ui:field="artistImage"/>
-				</g:HTMLPanel>
-			</g:at>
-			<g:at left='75' top='0' bottom='0'>
-				<g:HorizontalPanel ui:field="labelAndButtonsPanel" verticalAlignment="middle" height="100%">
-					<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.rightmargin}"/>
-				</g:HorizontalPanel>
-			</g:at>
-		</g:AbsolutePanel>
+		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
+			<g:Image ui:field="artistImage"/>
+			<g:HTMLPanel addStyleNames="{style.leftmargin}">
+				<h3><g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.rightmargin}"/></h3>
+			</g:HTMLPanel>
+		</g:HorizontalPanel>
 		<!-- Albums display -->
 		<g:FlowPanel ui:field="albumsPanel" width="100%" addStyleNames="{style.padding}">
 		</g:FlowPanel>
