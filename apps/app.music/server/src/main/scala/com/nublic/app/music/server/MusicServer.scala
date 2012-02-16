@@ -112,7 +112,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         case None    => {
           val newCollection = new Collection(name)
           Database.collections.insert(newCollection)
-          newCollection.id
+          newCollection.id.toString()
         }
       }
     }
@@ -193,7 +193,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         case None    => {
           val newPlaylist = new Playlist(name, user.getUsername())
           Database.playlists.insert(newPlaylist)
-          newPlaylist.id
+          newPlaylist.id.toString()
         }
       }
     }
@@ -354,10 +354,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
           // orderBy(asc_desc(a.name))
         )
       }
-      query.page(start, length).toList
+      (query.count(_ => true), query.page(start, length).toList)
     }
-    val json_artists = artists.map(artist_to_json(_))
-    write(json_artists)
+    val json_artists = artists._2.map(artist_to_json(_))
+    write(JsonArtistWithCount(artists._1, json_artists))
   }
   
   getUser("/artist-info/:artistid") { _ =>
@@ -444,10 +444,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
           orderBy(asc_desc(a.name))
         )
       }
-      query.toList
+      (query.count(_ => true), query.page(start, length).toList)
     }
-    val json_albums = albums.map(album_to_json(_))
-    write(json_albums)
+    val json_albums = albums._2.map(album_to_json(_))
+    write(JsonAlbumsWithCount(albums._1, json_albums))
   }
   
   getUser("/album-info/:albumid") { _ =>
@@ -553,10 +553,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
             select(s))
         )
       }
-      query.page(start, length).toList
+      (query.count(_ => true), query.page(start, length).toList)
     }
-    val json_songs = songs.map(song_to_json(_))
-    write(json_songs)
+    val json_songs = songs._2.map(song_to_json(_))
+    write(JsonSongsWithCount(songs._1, json_songs))
   }
   
   getUser("/playlist/:id/:order/:asc/:start/:length") { user =>
@@ -596,10 +596,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
               where(sp.playlistId === id and sp.songId === s.id and s.artistId === ar.id and s.albumId === ab.id)
               select(s))
           )
-        query.page(start, length).toList
+        (query.count(_ => true), query.page(start, length).toList)
       }
-      val json_songs = songs.map(song_to_json(_))
-      write(json_songs)
+      val json_songs = songs._2.map(song_to_json(_))
+      write(JsonSongsWithCount(songs._1, json_songs))
     }
   }
   

@@ -17,7 +17,7 @@ class Song(Entity):
     year = Field(Integer)
     album = ManyToOne('Album', colname='albumId')
     artist = ManyToOne('Artist', colname='artistId')
-    tags = ManyToMany('Tag', tablename='SongTag', local_colname='songId', remote_colname='tagId')
+    collections = ManyToMany('Collection', tablename='SongCollection', local_colname='songId', remote_colname='collectionId')
 
     def __init__(self):
         Entity.__init__(self)
@@ -48,14 +48,14 @@ class Album(Entity):
     def __init__(self):
         Entity.__init__(self)
 
-class Tag(Entity):
+class Collection(Entity):
     '''
-    Represents a tag in the database
+    Represents a collection in the database
     '''
-    using_options(tablename='Tag')
+    using_options(tablename='Collection')
     id = Field(Integer, primary_key=True)
     name = Field(String())
-    songs = ManyToMany('Song', tablename='SongTag', local_colname='tagId', remote_colname='songId')
+    songs = ManyToMany('Song', tablename='SongCollection', local_colname='collectionId', remote_colname='songId')
     
     def __init__(self):
         Entity.__init__(self)
