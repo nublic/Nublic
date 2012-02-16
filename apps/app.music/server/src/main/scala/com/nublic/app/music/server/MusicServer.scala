@@ -112,7 +112,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         case None    => {
           val newCollection = new Collection(name)
           Database.collections.insert(newCollection)
-          newCollection.id
+          newCollection.id.toString()
         }
       }
     }
@@ -193,7 +193,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         case None    => {
           val newPlaylist = new Playlist(name, user.getUsername())
           Database.playlists.insert(newPlaylist)
-          newPlaylist.id
+          newPlaylist.id.toString()
         }
       }
     }
