@@ -614,7 +614,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   def song_to_json(s: Song) =
-	JsonSong(s.id, s.title, s.artistId, s.albumId, s.disc_no, s.track)
+	JsonSong(s.id, s.title, s.artistId, s.albumId, s.length, s.disc_no, s.track)
   
   // Song files
   // ==========

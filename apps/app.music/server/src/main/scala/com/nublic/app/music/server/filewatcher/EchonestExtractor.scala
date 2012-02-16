@@ -54,7 +54,7 @@ object EchonestExtractor {
       val songMap = songList.get(0).asInstanceOf[java.util.Map[String, _]]
       val title = songMap.get("title").asInstanceOf[String]
       val artist = songMap.get("artist_name").asInstanceOf[String]
-      Some(SongInfo(Some(title), Some(artist), None, None, None, None))
+      Some(SongInfo(Some(title), Some(artist),None,  None, None, None, None))
     } else {
       None
     }

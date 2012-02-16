@@ -169,6 +169,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         doc.setField("title", info.title.getOrElse(""))
         doc.setField("artist", info.artist.getOrElse(""))
         doc.setField("album", info.album.getOrElse(""))
+        doc.setField("length", info.length.getOrElse(0))
         info.year match {
           case None    => doc.removeField("year")
           case Some(y) => doc.setField("year", y)
@@ -193,6 +194,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       song.title = info.title.getOrElse("")
       song.artistId = artist.id
       song.albumId = album.id
+      song.length = if (info.length.isDefined) { info.length.get } else { 0 } 
       song.year = info.year
       song.track = info.track
       song.disc_no = info.disc_no
@@ -213,6 +215,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         song.title = info.title.getOrElse("")
         song.artistId = newArtist.id
         song.albumId = newAlbum.id
+        song.length = if (info.length.isDefined) { info.length.get } else { 0 } 
         song.year = info.year
         song.track = info.track
         song.disc_no = info.disc_no

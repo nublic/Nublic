@@ -65,6 +65,6 @@ object FilenameExtractor {
     }
     // Trim elements
     SongInfo(title.map(_.trim()), artist.map(_.trim()), album.map(_.trim()),
-        None, track, None)
+        None, None, track, None)
   }
 }

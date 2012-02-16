@@ -38,10 +38,10 @@ class Album(val id: Long, var name: String, var normalized: String) extends Keye
 }
 
 class Song(val id: Long, var file: String, var title: String,
-  var artistId: Long, var albumId: Long,
+  var artistId: Long, var albumId: Long, var length: Long,
   var year: Option[Int], var track: Option[Int], var disc_no: Option[Int])
   extends KeyedEntity[Long] {
-  def this() = this(0, "", "", 0, 0, Some(0), Some(0), Some(0))
+  def this() = this(0, "", "", 0, 0, 0, Some(0), Some(0), Some(0))
   
   lazy val artist: ManyToOne[Artist] = Database.songArtists.right(this)
   lazy val album: ManyToOne[Album] = Database.songAlbums.right(this)

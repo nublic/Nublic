@@ -10,7 +10,7 @@ case class JsonAlbumsWithCount(val row_count: Long,
     val albums: List[JsonAlbum])
 
 case class JsonSong(val id: Long, val title: String,
-    val artist_id: Long, val album_id: Long,
+    val artist_id: Long, val album_id: Long, val length: Long,
     val disc_no: Option[Int], val track: Option[Int])
 case class JsonSongsWithCount(val row_count: Long,
     val songs: List[JsonSong])
