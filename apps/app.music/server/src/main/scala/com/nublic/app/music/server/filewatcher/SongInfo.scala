@@ -21,14 +21,20 @@ object SongInfo {
   def EMPTY_SONG_INFO = SongInfo(None, None, None, None, None, None)
   
   def from(filename: String, context: String): SongInfo = {
+    Console.println("JAudioTagger for " + filename)
     var tag_info = clean(JAudioTaggerExtractor.from(filename))
+    
 	if (tag_info.hasImportantInfoMissing) {
+	  Console.println("Echonest for " + filename)
+      var tag_info = clean(JAudioTaggerExtractor.from(filename))
 	  EchonestExtractor.from(filename) match {
 	    case None => { /* */ }
 	    case Some(echonest_info) => tag_info = merge(tag_info, echonest_info)
 	  }
 	}
     if (tag_info.hasImportantInfoMissing) {
+      Console.println("Filenaming for " + filename)
+      var tag_info = clean(JAudioTaggerExtractor.from(filename))
       val fextract = FilenameExtractor.from(filename, context)
       tag_info = merge(tag_info, fextract)
     }
