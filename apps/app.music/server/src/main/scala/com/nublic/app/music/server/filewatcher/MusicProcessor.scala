@@ -8,6 +8,7 @@ import com.nublic.app.music.server.Solr
 import com.nublic.app.music.server.model._
 import java.io.FileWriter
 import java.io.PrintWriter
+//import java.util.logging.Logger
 
 class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher, true) {
   
@@ -54,12 +55,15 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       "audio/x-gsm", "audio/snd"
       )
   
-  def process(c: FileChange) = c match {
-    // case Created(filename, false)  => process_updated_file(filename)
-    case Modified(filename, context, false) => process_updated_file(filename, context)
-    case Moved(from, to, context, _)        => process_moved_file(from, to, context)
-    case Deleted(filename, _, false)        => process_deleted_file(filename)
-    case _                                  => { /* Nothing */ }
+  def process(c: FileChange) = {
+//    Logger.global.severe("Processing " + c.toString())
+    c match {
+      // case Created(filename, false)  => process_updated_file(filename)
+      case Modified(filename, context, false) => process_updated_file(filename, context)
+      case Moved(from, to, context, _)        => process_moved_file(from, to, context)
+      case Deleted(filename, _, false)        => process_deleted_file(filename)
+      case _                                  => { /* Nothing */ }
+    }
   }
   
   def process_updated_file(filename: String, context: String): Unit = {

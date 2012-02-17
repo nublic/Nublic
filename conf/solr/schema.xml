@@ -447,6 +447,7 @@
    <!-- Music --> 
    <field name="artist" type="text" indexed="true" stored="true" multiValued="true" />
    <field name="album" type="text" indexed="true" stored="true" />
+   <field name="length" type="int" indexed="true" stored="true" />
    <field name="year" type="string" indexed="true" stored="true" />
    <field name="genre" type="string" indexed="true" stored="true" multiValued="true" />
    <field name="trackNumber" type="int" indexed="true" stored="true" />
