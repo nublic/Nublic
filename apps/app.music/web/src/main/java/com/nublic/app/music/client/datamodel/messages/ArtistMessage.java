@@ -91,4 +91,11 @@ public class ArtistMessage extends Message {
 		ErrorPopup.showError("Could not get artist from server");
 	}
 
+	public static ArtistInfo parseArtistInfo(Response r) {
+		String text = r.getText();
+		JSArtist artist = JsonUtils.safeEval(text);
+		
+		return new ArtistInfo(artist.getId(), artist.getName(), artist.getDiscs(), artist.getSongs());
+	}
+
 }

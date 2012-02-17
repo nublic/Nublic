@@ -12,6 +12,7 @@ import org.squeryl.Session
 import org.squeryl.SessionFactory
 import FileWatcherDatabase._
 import java.util.HashMap
+//import java.util.logging.Logger
 
 object FileWatcherActor extends DBusSigHandler[FileWatcher.file_changed] {
   var lock: AnyRef = new Object()  
@@ -22,12 +23,14 @@ object FileWatcherActor extends DBusSigHandler[FileWatcher.file_changed] {
   
   def handle(change: FileWatcher.file_changed): Unit = {
     // Console.print("Something arrived on " + change.getObjectPath)
+    // Logger.global.severe("Something arrived on " + change.getObjectPath)
     lock.synchronized {
       actors_map.get(change.getObjectPath) match {
         case Some(actor) => actor ! change.getChange
         case None        => { /* Nothing */ }
       }
     }
+//    Logger.global.severe("Dispatched " + change.getObjectPath)
   }
   
   def addActor(object_path: String, actor: FileWatcherActor) = {
@@ -72,6 +75,7 @@ abstract class FileWatcherActor(val app_name: String) extends Actor {
           // Send to processors
           val objectId = dbChange.id
           for(processor <- processors.values) {
+//            Logger.global.severe("Sending to " + processor.name)
             processor ! ForwardFileChange(objectId, c)
           }
         }
@@ -109,7 +113,7 @@ abstract class FileWatcherActor(val app_name: String) extends Actor {
         FileWatcherDatabase.create
       } catch {
         case e: Throwable => { 
-          Console.println(e.getMessage())
+//          Logger.global.severe("Error creating database " + e.getMessage())
         }
       }
     }

@@ -26,7 +26,6 @@ import com.nublic.util.messages.Message;
 //                       "name": $name,
 //                       "songs": $number_of_songs,
 //                       $extra_info }
-
 public class AlbumMessage extends Message {
 	// One of this groups..
 	// Artist
@@ -136,10 +135,16 @@ public class AlbumMessage extends Message {
 		model.fireStateHandlers();	
 		// TODO: ask for songs if proceeds (if not using async data provider lists)
 	}
-
+	
 	@Override
 	public void onError() {
 		ErrorPopup.showError("Could not get albums");
 	}
 
+	public static AlbumInfo parseAlbumInfo(Response response) {
+		String text = response.getText();
+		JSAlbum album = JsonUtils.safeEval(text);
+		
+		return new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+	}
 }

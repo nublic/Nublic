@@ -1,5 +1,6 @@
 package com.nublic.app.music.client.datamodel;
 
+import com.google.gwt.i18n.client.NumberFormat;
 
 //song   ::= { "id": $song-id,
 //        "title": $title,
@@ -28,5 +29,19 @@ public class Song {
 	public void setArtistId(String artistId) { this.artistId = artistId; }
 	public String getAlbumId() { return albumId; }
 	public void setAlbumId(String albumId) { this.albumId = albumId; }
+
+	public int getLenght() {
+		// TODO Auto-generated method stub
+		return 300;
+	}
+	
+	public String getFormattedLenght() {
+		StringBuilder sb = new StringBuilder();
+		sb.append((int)(getLenght()/60));
+		sb.append(":");
+		sb.append(NumberFormat.getFormat("00").format(getLenght()%60));
+		return sb.toString();
+//		return String.format("%d:%d", getLenght()/60, getLenght()%60);
+	}
 	
 }

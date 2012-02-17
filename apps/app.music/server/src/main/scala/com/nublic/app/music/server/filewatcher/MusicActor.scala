@@ -12,12 +12,19 @@ import javax.servlet.ServletContext
 import java.io.File
 import java.io.FileWriter
 import java.io.PrintWriter
+//import java.util.logging.Logger
 
 class MusicActor(val servletContext : ServletContext) extends FileWatcherActor("Music") {  
   
+//  Logger.global.severe("Starting music actor 1")
+  
   loadMusicDb()
   
+//  Logger.global.severe("Starting music actor 2")
+  
   val processors = Map("music" -> new MusicProcessor(this))
+  
+//  Logger.global.severe("Starting music actor 3")
   
   def loadMusicDb(): Unit = {
     try {

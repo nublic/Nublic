@@ -10,6 +10,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.http.client.RequestBuilder;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,15 +20,12 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Album;
-import com.nublic.app.music.client.datamodel.AlbumInfo;
-import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Song;
 import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
@@ -37,6 +35,13 @@ public class SongList extends Composite implements ScrollHandler {
 	private static SongListUiBinder uiBinder = GWT.create(SongListUiBinder.class);
 	interface SongListUiBinder extends UiBinder<Widget, SongList> { }
 	
+	// CSS Styles defined in the .xml file
+	interface SongStyle extends CssResource {
+		String alignright();
+		String leftmargin();
+	}
+
+	@UiField SongStyle style;
 	@UiField Grid grid;
 	Album album;
 	Widget scrollPanel;
@@ -79,7 +84,8 @@ public class SongList extends Composite implements ScrollHandler {
 	}
 
 	private void prepareGrid() {
-		grid.resize(album.getInfo().getNumberOfSongs(), 3);
+		grid.resize(album.getInfo().getNumberOfSongs(), 2);
+		grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
 	}
 
 	private void prepareLocalizers(int amount) {
@@ -149,35 +155,47 @@ public class SongList extends Composite implements ScrollHandler {
 	
 	public void setSong(int row, Song s) {
 		// Column 0
-		Label titleLabel = new Label(s.getTitle());
-		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.EDIT));
+		Label trackNumLabel = new Label("100");
+		trackNumLabel.getElement().addClassName(style.alignright());
+		HorizontalPanel capsule = new HorizontalPanel();
+		capsule.setWidth("100%");
+		capsule.setHeight("100%");
+		capsule.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+		capsule.add(trackNumLabel);
+		grid.setWidget(row, 0, capsule);
+		
+		// Column 1
+		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLenght() + ")");
+		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
 		HorizontalPanel h = new HorizontalPanel();
+		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		h.add(titleLabel);
 		h.add(buttonLine);
 		h.getElement().addClassName("translucidPanel");
-		grid.setWidget(row, 0, h);
-		
-		// Column 1
-		final Label albumLabel = new Label();
-		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
-			@Override
-			public void onCacheUpdated(String k, AlbumInfo v) {
-				albumLabel.setText(v.getName());
-			}
-		});
-		model.getAlbumCache().obtain(s.getAlbumId());
-		grid.setWidget(row, 1, albumLabel);
+		h.getElement().addClassName(style.leftmargin());
+		grid.setWidget(row, 1, h);
 		
 		// Column 2
-		final Label artistLabel = new Label();
-		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
-			@Override
-			public void onCacheUpdated(String k, ArtistInfo v) {
-				artistLabel.setText(v.getName());
-			}
-		});
-		model.getArtistCache().obtain(s.getArtistId());
-		grid.setWidget(row, 2, artistLabel);
+//		final Label albumLabel = new Label();
+//		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+//			@Override
+//			public void onCacheUpdated(String k, AlbumInfo v) {
+//				albumLabel.setText(v.getName());
+//			}
+//		});
+//		model.getAlbumCache().obtain(s.getAlbumId());
+//		grid.setWidget(row, 1, albumLabel);
+		
+		// Column 3
+//		final Label artistLabel = new Label();
+//		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+//			@Override
+//			public void onCacheUpdated(String k, ArtistInfo v) {
+//				artistLabel.setText(v.getName());
+//			}
+//		});
+//		model.getArtistCache().obtain(s.getArtistId());
+//		grid.setWidget(row, 2, artistLabel);
 	}
 
 }

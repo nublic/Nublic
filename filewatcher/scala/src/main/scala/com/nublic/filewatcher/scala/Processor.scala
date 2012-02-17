@@ -2,7 +2,7 @@ package com.nublic.filewatcher.scala
 
 import scala.actors.Actor
 import scala.actors.Actor._
-import java.util.logging.Logger
+//import java.util.logging.Logger
 
 abstract class Processor(val name: String, val watcher: FileWatcherActor, val throwException: Boolean) extends Actor {
 
@@ -14,13 +14,13 @@ abstract class Processor(val name: String, val watcher: FileWatcherActor, val th
         case ForwardFileChange(id, c) => {
           try {
             process(c)
-            Logger.getGlobal().finer("Processed " + name)
+//            Logger.getGlobal().severe("Processed " + name)
           } catch {
             case t: Throwable => {
               if (throwException) {
                 throw new Exception("Error in file processing", t);
               } else {
-                Logger.getGlobal().fine("ERROR IN " + name + " PROCESSOR: " + t.getMessage())
+//                Logger.getGlobal().severe("ERROR IN " + name + " PROCESSOR: " + t.getMessage())
               }
             }
           }
