@@ -56,7 +56,7 @@ class EventHandler(pyinotify.ProcessEvent):
                             to_add = True
                             for already_path in self.config[u'apps'][app_id]:
                                 if already_path.startswith(account_path):
-                                    self.config[u'apps'][app_id].delete(already_path)
+                                    self.config[u'apps'][app_id].remove(already_path)
                                 elif event.pathname.startswith(already_path):
                                     to_add = False
                             if to_add:
@@ -77,6 +77,14 @@ class EventHandler(pyinotify.ProcessEvent):
         file_info = solr.retrieve_doc(event.pathname)
         if file_info != None:
             file_info.delete()
+        # Delete from watched folders if there
+        if event.dir:
+            # Path to take account
+            account_path = event.pathname.replace('/var/nublic/data/', '', 1) + '/'
+            for app_id, _ in self.config[u'apps'].iteritems():
+                if account_path in self.config[u'apps'][app_id]:
+                    self.config[u'apps'][app_id].remove(account_path)
+            apps.write_app_config(self.config)
         # Notify via D-Bus
         self.handle_process("delete", event)
     
@@ -124,6 +132,15 @@ class EventHandler(pyinotify.ProcessEvent):
                     print "%s -> %s" % (file_path, new_file_path)
                 # Change the path for inotify events
                 self.change_watched_path(event.src_pathname, event.pathname)
+                # Change in saved watched folders
+                # Path to take account
+                account_path_from = event.src_pathname.replace('/var/nublic/data/', '', 1) + '/'
+                account_path_to = event.pathname.replace('/var/nublic/data/', '', 1) + '/'
+                for app_id, _ in self.config[u'apps'].iteritems():
+                    if account_path_from in self.config[u'apps'][app_id]:
+                        self.config[u'apps'][app_id].remove(account_path_from)
+                        self.config[u'apps'][app_id].append(account_path_to)
+                apps.write_app_config(self.config)
             # Change in Solr
             if solr.has_doc(event.src_pathname):
                 file_info = solr.retrieve_doc(event.src_pathname)
