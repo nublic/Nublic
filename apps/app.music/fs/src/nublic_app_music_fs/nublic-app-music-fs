@@ -16,6 +16,7 @@ import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 from gobject import MainLoop, threads_init
 import time
+import logging
 
 def __get_bind_uri(dbus_loop):
     # Get conexion values 
@@ -43,5 +44,8 @@ if __name__ == '__main__':
     # Initialize connection to database
     __check_nublic_resource_is_on(dbus_loop)
     metadata.bind = __get_bind_uri(dbus_loop)
+    # Set up logging
+    # logging.basicConfig()
+    # logging.getLogger('sqlalchemy.pool').setLevel(logging.INFO)
     # Initialize FUSE filesystem
     fuse = FUSE(Filesystem(), "/var/nublic/fs/music", foreground=True, allow_other=True)

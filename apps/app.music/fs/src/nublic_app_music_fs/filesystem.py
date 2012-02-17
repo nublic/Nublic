@@ -12,6 +12,8 @@ from model import *
 import os
 import hashlib
 
+import elixir
+
 def to_utf8(string):
     return unicode(string, 'utf-8')
 
@@ -32,11 +34,13 @@ class Filesystem(LoggingMixIn, Operations):
         elements = path.split("/")
         if path == "/": # /
             coll_count = Collection.query.count()
+            elixir.session.close()
             return dict(st_mode=S_IFDIR, st_nlink=2 + 1 + coll_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 2: # /tag
             coll = elements[1]
             artist_count = self.create_artist_query(coll).count()
+            elixir.session.close()
             return dict(st_mode=S_IFDIR, st_nlink=2 + 1 + artist_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 3: # /tag/artist
@@ -50,12 +54,14 @@ class Filesystem(LoggingMixIn, Operations):
             artist = elements[2]
             album = elements[3]
             song_count = self.create_song_query(coll, artist, album).count()
+            elixir.session.close()
             return dict(st_mode=S_IFDIR, st_nlink=2 + song_count,
                         st_size=0, st_ctime=0, st_mtime=0, st_atime=0)
         elif len(elements) == 5: # /tag/artist/album/song
             song_part = elements[4]
             song_id = long(song_part.split(".")[-2])
             song = Song.get_by(id=song_id)
+            elixir.session.close()
             if not song is None:
                 song_path = from_utf8(song.file)
                 song_digest = hashlib.sha1(song_path).hexdigest()
@@ -74,6 +80,7 @@ class Filesystem(LoggingMixIn, Operations):
             song_part = elements[4]
             song_id = long(song_part.split(".")[-2])
             song = Song.get_by(id=song_id)
+            elixir.session.close()
             if not song is None:
                 song_path = from_utf8(song.file)
                 song_digest = hashlib.sha1(song_path).hexdigest()
@@ -91,20 +98,26 @@ class Filesystem(LoggingMixIn, Operations):
         elements = path.split("/")
         if path == "/": # /
             r = [".", "..", "_all"]
-            for coll in Collection.query.all():
+            colls = Collection.query.all()
+            elixir.session.close()
+            for coll in colls:
                 r.append(from_utf8(coll.name))
             return r
         elif len(elements) == 2: # /tag
             r = [".", "..", "_all"]
             coll = elements[1]
-            for artist in self.create_artist_query(coll).all():
+            artists = self.create_artist_query(coll).all()
+            elixir.session.close()
+            for artist in artists:
                 r.append(from_utf8(artist.name))
             return list(set(r))
         elif len(elements) == 3: # /tag/artist
             coll = elements[1]
             artist = elements[2]
             r = [".", "..", "_all"]
-            for album in self.create_album_query(coll, artist).all():
+            albums = self.create_album_query(coll, artist).all()
+            elixir.session.close()
+            for album in albums:
                 r.append(from_utf8(album.name))
             return list(set(r))
         elif len(elements) == 4: # /tag/artist/album
@@ -112,7 +125,9 @@ class Filesystem(LoggingMixIn, Operations):
             artist = elements[2]
             album = elements[3]
             r = [".", ".."]
-            for song in self.create_song_query(coll, artist, album).all():
+            songs = self.create_song_query(coll, artist, album).all()
+            elixir.session.close()
+            for song in songs:
                 r.append(from_utf8(song.title) + "." + str(song.id) + ".mp3")
             return list(set(r))
         else:
