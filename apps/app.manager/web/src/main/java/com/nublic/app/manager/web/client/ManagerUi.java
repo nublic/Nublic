@@ -101,7 +101,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 			appId = path.substring(0, slashPos);
 		}
 		
-		if (!History.getToken().equals(appId)) {
+		if (!History.getToken().equals(appId) && !History.getToken().startsWith(appId + "/")) {
 			Location.replace("#" + appId);
 		}
 		
