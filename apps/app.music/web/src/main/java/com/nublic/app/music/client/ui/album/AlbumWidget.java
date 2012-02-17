@@ -58,7 +58,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new SongList(model, album, inPanel)); // Needs the model to access cache
+		songsPanel.add(new SongList(album, inPanel)); // Needs the model to access cache
 	}
 
 	private void setImage() {

@@ -31,7 +31,6 @@ import com.nublic.app.music.client.ui.ButtonLineParam;
 //GET /artist-art/:artist-id
 //* Retrieve the image associated with an artist
 //* Return: the raw image data
-
 public class ArtistWidget extends Composite {
 	private static ArtistWidgetUiBinder uiBinder = GWT.create(ArtistWidgetUiBinder.class);
 	interface ArtistWidgetUiBinder extends UiBinder<Widget, ArtistWidget> {}
@@ -71,10 +70,9 @@ public class ArtistWidget extends Composite {
 			loaded = true;
 			
 			setImage();
-			
 			setClickTarget();
-	
 			setMyselfAsAlbumHandler();
+
 			// Add button line
 			ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
 													 ButtonLineParam.ADD_AT_END,

@@ -39,7 +39,7 @@ public class SongMessage extends Message {
 	String albumId = null;
 	String inCollection = null;
 	int from = 0;
-	int to = 32000;
+	int to = 25;
 	
 	public SongMessage(DataModel model, String artistId, String albumId, String inCollection) {
 		this.model = model;
@@ -163,8 +163,21 @@ public class SongMessage extends Message {
 	}
 
 	private void insertResponseInModel(JSSongResponse jsResponse) {
-		// TODO Auto-generated method stub
-		
+//		model.clearSongList();
+		JsArray<JSSong> songList = jsResponse.getSongs();
+		for (int i = 0; i < songList.length(); i++) {
+			JSSong song = songList.get(i);
+
+			//AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+			model.addSong(from + i, new Song(song.getId(),
+											 song.getTitle(),
+											 song.getArtistId(),
+											 song.getAlbumId(),
+											 song.getTrack(),
+											 song.getLength()));
+			//model.getAlbumCache().put(album.getId(), info);
+		}
+		model.fireSongHandlers(from, to, jsResponse.getRowCount());
 	}
 
 	@Override

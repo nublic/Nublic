@@ -43,9 +43,8 @@ public class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
-	Album album;
+	Album album = null;
 	Widget scrollPanel;
-	DataModel model;
 	
 	SequenceIgnorer<Message> sendHelper = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	List<SongLocalizer> unloadedLocalizers;
@@ -53,13 +52,12 @@ public class SongList extends Composite implements ScrollHandler {
 	List<Range> askedRanges = new ArrayList<Range>();
 	
 
-	public SongList(DataModel model, Album a, Widget scrollPanel) {
+	// Behaviour 1... inside an album...........................................................................
+	public SongList(Album a, Widget scrollPanel) {
 		// Scroll panel which we in are in to handle lazy loading
-		// DataModel to get access to cache
 		initWidget(uiBinder.createAndBindUi(this));
 		this.album = a;
 		this.scrollPanel = scrollPanel;
-		this.model = model;
 		
 		prepareGrid();
 	
@@ -69,7 +67,7 @@ public class SongList extends Composite implements ScrollHandler {
 			public void onSongsChange(int from, int to) {
 				for (int i = from; i <= to; i++) {
 					setSong(i, album.getSong(i));
-					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition < to
+					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition <= to
 					SongLocalizer loc = localizerIndex[i];
 					unloadedLocalizers.remove(loc);
 				}
@@ -78,9 +76,6 @@ public class SongList extends Composite implements ScrollHandler {
 		
 		// Fake widgets which know if are being shown to be replaced onScroll
 		prepareLocalizers(album.getInfo().getNumberOfSongs());		
-	}
-	
-	public SongList(String artistId, String albumId, String collectionId, int numberOfSongs) {
 	}
 
 	private void prepareGrid() {
@@ -197,6 +192,22 @@ public class SongList extends Composite implements ScrollHandler {
 //		});
 //		model.getArtistCache().obtain(s.getArtistId());
 //		grid.setWidget(row, 2, artistLabel);
+	}
+	
+	// Behaviour 2... directly on model...........................................................................
+	DataModel model;
+	int numberOfSongs;
+	
+	public SongList(DataModel model, Widget scrollPanel, String artistId, String albumId, String collectionId, int numberOfSongs) {
+		initWidget(uiBinder.createAndBindUi(this));
+		this.model = model;
+		this.numberOfSongs = numberOfSongs;
+		
+		if (numberOfSongs == -1) {
+			
+		} else {
+			
+		}
 	}
 
 }

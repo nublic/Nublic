@@ -11,6 +11,7 @@ import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
@@ -46,9 +47,11 @@ public class DataModel {
 	Tag showingTag = null;			 // null if a playlist is being shown
 	String showingArtistId = null;
 	String showingAlbumId = null;
-	List<Song> songList = new ArrayList<Song>();
-	List<Album> albumList = new ArrayList<Album>();
-	List<Artist> artistList = new ArrayList<Artist>();
+	List<Artist> artistList = new ArrayList<Artist>(); // These manage internal albums by themselves
+	List<Album> albumList = new ArrayList<Album>(); // These manage internal songs by themselves 
+	List<Song> songList = new ArrayList<Song>(); // These need following variables
+	List<SongsChangeHandler> songHandlers = new ArrayList<SongsChangeHandler>();
+	int numberOfSongs;
 	
 	// Handlers
 	List<TagsChangeHandler> tagsHandlers = new ArrayList<TagsChangeHandler>();
@@ -172,6 +175,18 @@ public class DataModel {
 	public void addAlbum(Album a) { albumList.add(a); }
 	public List<Album> getAlbumList() { return albumList; }
 	
+	// songList handling
+	public void addSong(int index, Song s) { songList.add(index, s); }
+	public Song getSong(int index) { return songList.get(index); }
+	public void addSongsChangeHandler(SongsChangeHandler handler) { songHandlers.add(handler); }
+	public int getNumberOfSongs() { return numberOfSongs; } // Only to be called when fireSongHandlers have already been called
+	public void fireSongHandlers(int from, int to, int total) {
+		numberOfSongs = total;
+		for (SongsChangeHandler h : songHandlers) {
+			h.onSongsChange(from, to);
+		}
+	}
+	
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
 		String collection = hmap.get(Constants.PARAM_COLLECTION);
@@ -207,7 +222,12 @@ public class DataModel {
 	}
 
 	private void askForSongs(String album, String collection) {
-		// TODO Investigate if songs are going to fill the song list in this class or are going to be handled with an async data provider
+//		SongMessage sm = new SongMessage(this, null, album);
+//		messageSender.send(sm, RequestBuilder.GET);
+		setState(State.SONGS);
+		setShowing(collection, true);
+		setShowingAlbumId(album);
+		fireStateHandlers();
 	}
 
 	private void askForAlbums(String artist) {

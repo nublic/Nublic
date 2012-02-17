@@ -23,6 +23,7 @@ import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
+import com.nublic.app.music.client.ui.song.SongPanel;
 import com.nublic.util.error.ErrorPopup;
 
 public class MainUi extends Composite {
@@ -192,6 +193,10 @@ public class MainUi extends Composite {
 			mainPanel.setWidget(albPanel);
 			break;
 		case SONGS:
+			String collectionId = model.getShowingTag() == null ? null : model.getShowingTag().getId();
+			SongPanel songPanel = new SongPanel(model, collectionId);
+//			songPanel.setSongList(model.getSongList());
+			mainPanel.setWidget(songPanel);
 			break;
 		}
 	}
