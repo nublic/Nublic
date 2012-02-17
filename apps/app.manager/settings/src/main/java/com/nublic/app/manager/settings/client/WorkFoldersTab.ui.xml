@@ -14,10 +14,11 @@
 			<g:Cell width="85%">
 				<g:ListBox visibleItemCount="5" width="100%" height="180px" ui:field="list"/>
 			</g:Cell>
-			<g:Cell width="15%">
+			<g:Cell width="15%%">
 				<g:VerticalPanel width="100%">
 				<g:Button width="100%" addStyleNames="{style.padded} {style.extraPadding} btn-info" ui:field="browseButton">Browse</g:Button>
-				<g:Button width="100%" addStyleNames="{style.padded}" ui:field="addButton">Add</g:Button>
+				<g:Button width="100%" addStyleNames="{style.padded} btn-success" ui:field="addButton">Add</g:Button>
+				<g:Button width="100%" addStyleNames="{style.padded}" ui:field="changeNameButton">Change name</g:Button>
 				<g:Button width="100%" addStyleNames="{style.padded} btn-danger" ui:field="removeButton">Remove</g:Button>
 			</g:VerticalPanel>
 			</g:Cell>
