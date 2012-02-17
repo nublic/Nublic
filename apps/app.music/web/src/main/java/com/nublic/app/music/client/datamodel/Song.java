@@ -12,12 +12,16 @@ public class Song {
 	String title;
 	String artistId;
 	String albumId;
+	int track;
+	int length;
 	
-	public Song(String id, String title, String artistId, String albumId) {
+	public Song(String id, String title, String artistId, String albumId, int track, int length) {
 		this.id = id;
 		this.title = title;
 		this.artistId = artistId;
 		this.albumId = albumId;
+		this.track = track;
+		this.length = length;
 	}
 
 	// Getters and setters
@@ -29,17 +33,16 @@ public class Song {
 	public void setArtistId(String artistId) { this.artistId = artistId; }
 	public String getAlbumId() { return albumId; }
 	public void setAlbumId(String albumId) { this.albumId = albumId; }
-
-	public int getLenght() {
-		// TODO Auto-generated method stub
-		return 300;
-	}
+	public int getTrack() { return track; }
+	public void setTrack(int track) { this.track = track; }
+	public int getLength() { return length; }
+	public void setLength(int length) { this.length = length; }
 	
-	public String getFormattedLenght() {
+	public String getFormattedLength() {
 		StringBuilder sb = new StringBuilder();
-		sb.append((int)(getLenght()/60));
+		sb.append((int)(length/60));
 		sb.append(":");
-		sb.append(NumberFormat.getFormat("00").format(getLenght()%60));
+		sb.append(NumberFormat.getFormat("00").format(length%60));
 		return sb.toString();
 //		return String.format("%d:%d", getLenght()/60, getLenght()%60);
 	}

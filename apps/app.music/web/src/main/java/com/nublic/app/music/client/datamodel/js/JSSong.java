@@ -38,4 +38,16 @@ public class JSSong extends JavaScriptObject {
 	public final native int _getAlbumId() /*-{
 		return this.album_id;
 	}-*/;
+	
+	public final native int getTrack() /*-{
+		if (this.track === undefined || this.track === null) {
+			return -1;
+		} else {
+			return this.track;
+		}
+	}-*/;
+	
+	public final native int getLength() /*-{
+		return this.length;
+	}-*/;
 }

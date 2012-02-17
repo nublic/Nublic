@@ -103,8 +103,8 @@ public class SongMessage extends Message {
 		}
 		// Range of request
 		url.append("/");
-		url.append(Constants.ORDER_ALPHA);
-		url.append("/desc/");
+		url.append(Constants.ORDER_ALBUM);
+		url.append("/asc/");
 		url.append(from);
 		url.append("/");
 		url.append(to - from + 1);
@@ -151,7 +151,12 @@ public class SongMessage extends Message {
 		JsArray<JSSong> songList = jsResponse.getSongs();
 		for (int i = 0; i < songList.length(); i++) {
 			JSSong song = songList.get(i);
-			Song info = new Song(song.getId(), song.getTitle(), song.getArtistId(), song.getAlbumId());
+			Song info = new Song(song.getId(),
+								 song.getTitle(),
+								 song.getArtistId(),
+								 song.getAlbumId(),
+								 song.getTrack(),
+								 song.getLength());
 			album.addSong(from + i, info);
 		}
 		album.fireSongHandlers(from, to);

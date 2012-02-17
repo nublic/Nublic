@@ -155,17 +155,18 @@ public class SongList extends Composite implements ScrollHandler {
 	
 	public void setSong(int row, Song s) {
 		// Column 0
-		Label trackNumLabel = new Label("100");
+		String trackStr = s.getTrack() == -1 ? "-" : String.valueOf(s.getTrack());
+		Label trackNumLabel = new Label(trackStr);
 		trackNumLabel.getElement().addClassName(style.alignright());
 		HorizontalPanel capsule = new HorizontalPanel();
 		capsule.setWidth("100%");
-		capsule.setHeight("100%");
+		capsule.setHeight("25px");
 		capsule.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		capsule.add(trackNumLabel);
 		grid.setWidget(row, 0, capsule);
 		
 		// Column 1
-		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLenght() + ")");
+		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
 		HorizontalPanel h = new HorizontalPanel();
 		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);

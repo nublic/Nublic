@@ -29,7 +29,7 @@ h1 {
 }
 
 .translucidPanel .translucidButton {
-  opacity: 0.1;
+  opacity: 0.05;
 }
 
 .translucidPanel:hover .translucidButton {
