@@ -1,11 +1,12 @@
 package com.nublic.app.music.server.model
 
 case class JsonArtist(val id: Long, val name: String,
-    val songs: Long, val discs: Long)
+    val songs: Long, val albums: Long)
 case class JsonArtistWithCount(val row_count: Long,
     val artists: List[JsonArtist])
     
-case class JsonAlbum(val id: Long, val name: String, val songs: Long)
+case class JsonAlbum(val id: Long, val name: String,
+    val songs: Long, val artists: List[Long])
 case class JsonAlbumsWithCount(val row_count: Long,
     val albums: List[JsonAlbum])
 
