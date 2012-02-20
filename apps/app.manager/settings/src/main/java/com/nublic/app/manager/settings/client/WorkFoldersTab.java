@@ -28,6 +28,7 @@ public class WorkFoldersTab extends Composite {
 	@UiField Button removeButton;
 	@UiField ListBox list;
 	@UiField Button browseButton;
+	@UiField Button changeNameButton;
 
 	interface WorkFoldersTabUiBinder extends UiBinder<Widget, WorkFoldersTab> {
 	}
@@ -61,9 +62,9 @@ public class WorkFoldersTab extends Composite {
 
 	@UiHandler("browseButton")
 	void onBrowseButtonClick(ClickEvent event) {
-		if (list.getSelectedIndex() > 0) {
+		if (list.getSelectedIndex() >= 0) {
 			String value = list.getValue(list.getSelectedIndex());
-			Window.open("/#browser?path=synced/" + value, "_blank", "");
+			Window.open("/browser/#browser?path=synced/" + value, "_blank", "");
 		}
 	}
 	
@@ -80,4 +81,7 @@ public class WorkFoldersTab extends Composite {
 	void onRemoveButtonClick(ClickEvent event) {
 	}
 
+	@UiHandler("changeNameButton")
+	void onChangeNameButtonClick(ClickEvent event) {
+	}
 }

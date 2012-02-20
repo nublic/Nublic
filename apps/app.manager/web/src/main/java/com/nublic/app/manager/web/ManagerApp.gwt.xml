@@ -24,9 +24,6 @@
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
-  <source path='shared'/>
   <source path='frame'/>
-  <source path='welcome'/>
-  <source path='settings'/>
 
 </module>

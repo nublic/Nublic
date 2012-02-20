@@ -7,7 +7,7 @@ import com.nublic.app.music.server.model._
 import net.liftweb.json._
 import org.apache.commons.io.output.ByteArrayOutputStream
 import java.io.BufferedInputStream
-//import java.util.logging.Logger
+import java.util.logging.Logger
 
 //Complete information about a Song
 // =================================
@@ -22,11 +22,11 @@ object SongInfo {
   def EMPTY_SONG_INFO = SongInfo(None, None, None, None, None, None, None)
   
   def from(filename: String, context: String): SongInfo = {
-//    Logger.global.severe("JAudioTagger for " + filename)
+    Logger.global.severe("Filewatcher: JAudioTagger for " + filename)
     var tag_info = clean(JAudioTaggerExtractor.from(filename))
     
 	if (tag_info.hasImportantInfoMissing) {
-//	  Logger.global.severe("Echonest for " + filename)
+	  Logger.global.severe("Filewatcher: Echonest for " + filename)
 	  EchonestExtractor.from(filename) match {
 	    case None => { /* */ }
 	    case Some(echonest_info) => tag_info = merge(tag_info, echonest_info)
@@ -34,11 +34,15 @@ object SongInfo {
 	}
     
     if (tag_info.hasImportantInfoMissing) {
-//      Logger.global.severe("Filenaming for " + filename)
+      Logger.global.severe("Filewatcher: Filenaming for " + filename)
       val fextract = FilenameExtractor.from(filename, context)
       tag_info = merge(tag_info, fextract)
     }
     tag_info
+  }
+  
+  def fromFilenameOnly(filename: String, context: String): SongInfo = {
+    FilenameExtractor.from(filename, context)
   }
   
   def clean(s: SongInfo): SongInfo = {

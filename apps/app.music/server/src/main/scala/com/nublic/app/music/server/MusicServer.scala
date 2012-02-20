@@ -472,8 +472,16 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
   }
   
-  def album_to_json(a: GroupWithMeasures[LongType, Product2[StringType, LongType]]) =
-    JsonAlbum(a.key, a.measures._1, a.measures._2)
+  def album_to_json(a: GroupWithMeasures[LongType, Product2[StringType, LongType]]) = {
+    val artists = transaction {
+      val query = from(Database.songs, Database.artists)((s, ar) =>
+      	where(s.albumId === a.key and s.artistId === ar.id)
+      	select(ar.id)
+      )
+      query.toList
+    }
+    JsonAlbum(a.key, a.measures._1, a.measures._2, artists)
+  }
   
   // Songs
   // ======
