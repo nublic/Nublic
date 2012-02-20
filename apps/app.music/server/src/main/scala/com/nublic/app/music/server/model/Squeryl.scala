@@ -77,12 +77,31 @@ object Database extends Schema {
   val collections = table[Collection]
   val playlists = table[Playlist]
   
+  on(artists)(f => declare(
+    f.name       is (dbType("varchar(32672)")),
+    f.normalized is (dbType("varchar(32672)"))
+  ))
+  on(albums)(f => declare(
+    f.name       is (dbType("varchar(32672)")),
+    f.normalized is (dbType("varchar(32672)"))
+  ))
+  on(songs)(f => declare(
+    f.file       is (dbType("varchar(32672)")),
+    f.title      is (dbType("varchar(32672)"))
+  ))
+  on(collections)(f => declare(
+    f.name       is (dbType("varchar(32672)"))
+  ))
+  on(playlists)(f => declare(
+    f.name       is (dbType("varchar(32672)"))
+  ))
+  
   val songArtists = oneToManyRelation(artists, songs).
     via((artist, song) => artist.id === song.artistId)
   val songAlbums = oneToManyRelation(albums, songs).
     via((album, song) => album.id === song.albumId)
   val songCollections = manyToManyRelation(songs, collections).
-  	via[SongCollection]((s, t, st) => (s.id === st.songId, t.id === st.collectionId))
+    via[SongCollection]((s, t, st) => (s.id === st.songId, t.id === st.collectionId))
   val songPlaylists = manyToManyRelation(songs, playlists).
     via[SongPlaylist]((s, p, sp) => (s.id === sp.songId, p.id === sp.playlistId))
   
