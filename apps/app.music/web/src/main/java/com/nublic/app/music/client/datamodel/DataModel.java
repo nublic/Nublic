@@ -10,6 +10,8 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
+import com.nublic.app.music.client.datamodel.Controller.MyAlbumHandler;
+import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
@@ -36,7 +38,7 @@ public class DataModel {
 	Playlist currentList = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
 	HashMap<String, Tag> tagIndex = new HashMap<String, Tag>();
 	HashMap<String, Playlist> playlistIndex = new HashMap<String, Playlist>();
-		
+
 	// Depending on what is being played
 	Playlist currentPlayingList;
 	int currentSongInPlaylist;
@@ -188,40 +190,40 @@ public class DataModel {
 	}
 	
 	// When URL changes this method is called
-	public void changeState(ParamsHashMap hmap) {
-		String collection = hmap.get(Constants.PARAM_COLLECTION);
-		String playlist   = hmap.get(Constants.PARAM_PLAYLIST);
-		String artist     = hmap.get(Constants.PARAM_ARTIST);
-		String album      = hmap.get(Constants.PARAM_ALBUM);
-		
-		if (collection != null) {
-			if (artist != null) {
-				askForAlbums(artist, collection);
-			} else if (album != null) {
-				askForSongs(album, collection);
-			} else {
-				askForArtists(collection);
-			}
-		} else if (playlist != null) {
-			askForPlaylistSongs(playlist);
-		} else {
-			// All music
-			if (artist != null) {
-				askForAlbums(artist);
-			} else if (album != null) {
-				askForSongs(album);
-			} else {
-				askForArtists();
-			}
-		}
-	}
+//	public void changeState(ParamsHashMap hmap) {
+//		String collection = hmap.get(Constants.PARAM_COLLECTION);
+//		String playlist   = hmap.get(Constants.PARAM_PLAYLIST);
+//		String artist     = hmap.get(Constants.PARAM_ARTIST);
+//		String album      = hmap.get(Constants.PARAM_ALBUM);
+//		
+//		if (collection != null) {
+//			if (artist != null) {
+//				askForAlbums(artist, collection);
+//			} else if (album != null) {
+//				askForSongs(album, collection);
+//			} else {
+//				askForArtists(collection);
+//			}
+//		} else if (playlist != null) {
+//			askForPlaylistSongs(playlist);
+//		} else {
+//			// All music
+//			if (artist != null) {
+//				askForAlbums(artist);
+//			} else if (album != null) {
+//				askForSongs(album);
+//			} else {
+//				askForArtists();
+//			}
+//		}
+//	}
 	
 	// methods to make requests to server in order to fill the data in the model
-	private void askForSongs(String album) {
+	public void askForSongs(String album) {
 		askForSongs(album, null);		
 	}
 
-	private void askForSongs(String album, String collection) {
+	public void askForSongs(String album, String collection) {
 //		SongMessage sm = new SongMessage(this, null, album);
 //		messageSender.send(sm, RequestBuilder.GET);
 		setState(State.SONGS);
@@ -230,11 +232,11 @@ public class DataModel {
 		fireStateHandlers();
 	}
 
-	private void askForAlbums(String artist) {
-		askForAlbums(artist, null);
+	public void askForAlbums(String artist) {
+		askForAlbums(artist, null, null);
 	}
 
-	private void askForAlbums(String artist, String collection) {
+	public void askForAlbums(String artist, String collection, AlbumHandler ah) {
 		AlbumMessage am = new AlbumMessage(this, artist, collection);
 		messageSender.send(am, RequestBuilder.GET);
 	}
@@ -243,12 +245,12 @@ public class DataModel {
 		askForArtists(null);
 	}
 	
-	private void askForArtists(String collection) {
+	public void askForArtists(String collection) {
 		ArtistMessage am = new ArtistMessage(this, collection);
 		messageSender.send(am, RequestBuilder.GET);
 	}
 
-	private void askForPlaylistSongs(String playlist) {
+	public void askForPlaylistSongs(String playlist) {
 		if (playlist.equals(Constants.CURRENT_PLAYLIST_ID)) {
 			setShowing(currentList);
 			fireStateHandlers();

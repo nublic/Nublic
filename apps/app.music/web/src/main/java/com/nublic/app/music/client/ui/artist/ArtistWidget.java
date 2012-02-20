@@ -22,7 +22,7 @@ import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
-import com.nublic.app.music.client.datamodel.handlers.AlbumsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -116,9 +116,9 @@ public class ArtistWidget extends Composite {
 
 	// To handle answers to album messages and add album widgets
 	private void setMyselfAsAlbumHandler() {
-		artist.setAlbumsHandler(new AlbumsChangeHandler() {
+		artist.setAlbumsHandler(new AlbumHandler() {
 			@Override
-			public void onAlbumsChange() {
+			public void onAlbumChange() {
 				List<Album> albumList = artist.getAlbumList();
 				for (Album a : albumList) {
 					AlbumInArtist aw = new AlbumInArtist(a, artist.getInCollection());

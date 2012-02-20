@@ -132,7 +132,7 @@ public class AlbumMessage extends Message {
 		}
 		model.setState(State.ALBUM_SONGS);
 		model.setShowingArtistId(artistId);
-		model.fireStateHandlers();	
+		model.fireStateHandlers();
 		// TODO: ask for songs if proceeds (if not using async data provider lists)
 	}
 	

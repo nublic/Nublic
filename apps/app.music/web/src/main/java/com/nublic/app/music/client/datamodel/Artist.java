@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.http.client.RequestBuilder;
-import com.nublic.app.music.client.datamodel.handlers.AlbumsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.messages.SequenceHelper;
@@ -17,7 +17,7 @@ import com.nublic.util.messages.SequenceHelper;
 
 public class Artist {
 	ArtistInfo info;
-	AlbumsChangeHandler handler = null;
+	AlbumHandler handler = null;
 	List<Album> albumList = new ArrayList<Album>();
 	
 	String inCollection;
@@ -31,7 +31,7 @@ public class Artist {
 		this.inCollection = inCollection;
 	}
 	
-	public void setAlbumsHandler(AlbumsChangeHandler h) {
+	public void setAlbumsHandler(AlbumHandler h) {
 		handler = h;
 	}
 	
@@ -42,7 +42,7 @@ public class Artist {
 	
 	public void fireAlbumsHandler() {
 		if (handler != null) {
-			handler.onAlbumsChange();
+			handler.onAlbumChange();
 		}
 	}
 

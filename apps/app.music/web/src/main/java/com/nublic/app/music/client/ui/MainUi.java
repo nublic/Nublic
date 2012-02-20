@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.State;
@@ -50,7 +51,7 @@ public class MainUi extends Composite {
 		showingPlaylistWidget = allMusic;
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
-		addStateChangeHandler(); 
+//		addStateChangeHandler(); 
 		addPutTagHandler();
 	}
 
@@ -117,44 +118,44 @@ public class MainUi extends Composite {
 	}
 
 	// Handler to handle changes in model states, which derive in showing different screens
-	private void addStateChangeHandler() {
-		model.addStateChangeHandler(new StateChangeHandler() {
-			@Override
-			public void onStateChange() {
-				Tag showingTag = model.getShowingTag();
-				Playlist showingPlaylist = model.getShowingPlaylist();
-				if (showingTag != null) {
-					// A tag is selected in the model, lets find which one
-					PlaylistWidget selectedTag = tagIndex.get(showingTag.getId());
-					if (selectedTag != null) {
-						if (showingPlaylistWidget != selectedTag) {
-							setSelectedWidget(selectedTag);
-						}
-						refillCentralPanel();
-					} else {
-						error("Couldn't find collection");
-					}
-				} else if (showingPlaylist != null) {
-					// A playlist is selected in the model, lets find which one
-					PlaylistWidget selectedPlaylist = playlistIndex.get(showingPlaylist.getId());
-					if (selectedPlaylist != null) {
-						if (showingPlaylistWidget != selectedPlaylist) {
-							setSelectedWidget(selectedPlaylist);
-						}
-						playlistRefillCentralPanel();
-					} else {
-						error("Couldn't find playlist");
-					}
-				} else {
-					// "All music" is selected
-					if (showingPlaylistWidget != allMusic) {
-						setSelectedWidget(allMusic);
-					}
-					refillCentralPanel();
-				}
-			}
-		});
-	}
+//	private void addStateChangeHandler() {
+//		model.addStateChangeHandler(new StateChangeHandler() {
+//			@Override
+//			public void onStateChange() {
+//				Tag showingTag = model.getShowingTag();
+//				Playlist showingPlaylist = model.getShowingPlaylist();
+//				if (showingTag != null) {
+//					// A tag is selected in the model, lets find which one
+//					PlaylistWidget selectedTag = tagIndex.get(showingTag.getId());
+//					if (selectedTag != null) {
+//						if (showingPlaylistWidget != selectedTag) {
+//							setSelectedWidget(selectedTag);
+//						}
+//						refillCentralPanel();
+//					} else {
+//						error("Couldn't find collection");
+//					}
+//				} else if (showingPlaylist != null) {
+//					// A playlist is selected in the model, lets find which one
+//					PlaylistWidget selectedPlaylist = playlistIndex.get(showingPlaylist.getId());
+//					if (selectedPlaylist != null) {
+//						if (showingPlaylistWidget != selectedPlaylist) {
+//							setSelectedWidget(selectedPlaylist);
+//						}
+//						playlistRefillCentralPanel();
+//					} else {
+//						error("Couldn't find playlist");
+//					}
+//				} else {
+//					// "All music" is selected
+//					if (showingPlaylistWidget != allMusic) {
+//						setSelectedWidget(allMusic);
+//					}
+//					refillCentralPanel();
+//				}
+//			}
+//		});
+//	}
 	
 	// Handler to notify model that the user has added a tag
 	private void addPutTagHandler() {
@@ -178,27 +179,34 @@ public class MainUi extends Composite {
 		newSelectedWidget.setSelected(true);
 	}
 
-	public void refillCentralPanel() {
-		State s = model.getState();
-		
-		switch (s) {
-		case ARTIST_ALBUMS:
-			ArtistPanel artPanel = new ArtistPanel(model, showingPlaylistWidget.getId(), showingPlaylistWidget.getText());
-			artPanel.setArtistList(model.getArtistList());
-			mainPanel.setWidget(artPanel);
-			break;
-		case ALBUM_SONGS:
-			AlbumPanel albPanel = new AlbumPanel(model);
-			albPanel.setAlbumList(model.getAlbumList());
-			mainPanel.setWidget(albPanel);
-			break;
-		case SONGS:
-			String collectionId = model.getShowingTag() == null ? null : model.getShowingTag().getId();
-			SongPanel songPanel = new SongPanel(model, collectionId);
-//			songPanel.setSongList(model.getSongList());
-			mainPanel.setWidget(songPanel);
-			break;
-		}
+//	public void refillCentralPanel() {
+//		State s = model.getState();
+//		
+//		switch (s) {
+//		case ARTIST_ALBUMS:
+//			ArtistPanel artPanel = new ArtistPanel(model, showingPlaylistWidget.getId(), showingPlaylistWidget.getText());
+//			artPanel.setArtistList(model.getArtistList());
+//			mainPanel.setWidget(artPanel);
+//			break;
+//		case ALBUM_SONGS:
+//			AlbumPanel albPanel = new AlbumPanel(model);
+//			albPanel.setAlbumList(model.getAlbumList());
+//			mainPanel.setWidget(albPanel);
+//			break;
+//		case SONGS:
+//			String collectionId = model.getShowingTag() == null ? null : model.getShowingTag().getId();
+//			SongPanel songPanel = new SongPanel(model, collectionId);
+////			songPanel.setSongList(model.getSongList());
+//			mainPanel.setWidget(songPanel);
+//			break;
+//		}
+//	}
+//	
+	
+	public void showAlbumList(List<Album> albumList) {
+		AlbumPanel albPanel = new AlbumPanel(model);
+		albPanel.setAlbumList(model.getAlbumList());
+		mainPanel.setWidget(albPanel);
 	}
 	
 	public void playlistRefillCentralPanel() {
