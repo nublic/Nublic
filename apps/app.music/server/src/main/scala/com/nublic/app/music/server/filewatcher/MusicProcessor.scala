@@ -8,7 +8,7 @@ import com.nublic.app.music.server.Solr
 import com.nublic.app.music.server.model._
 import java.io.FileWriter
 import java.io.PrintWriter
-//import java.util.logging.Logger
+import java.util.logging.Logger
 
 class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher, true) {
   
@@ -22,11 +22,17 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       // OGG
       "audio/ogg", "application/ogg", "audio/x-ogg",
       "application/x-ogg",
+      // ASF
+      "audio/asf",
+      // WMA
+      "audio/x-ms-wma",
+      // Real
+      "audio/rmf", "audio/x-rmf",
       // FLAC
       "audio/flac"
       )
   
-  def taggedExtensions: List[String] = List("mp3", "mp4", "ogg", "flac")
+  def taggedExtensions: List[String] = List("mp3", "mp4", "ogg", "flac", "wma", "rm")
   
   def supportedMimeTypes: List[String] = taggedMimeTypes ::: List(
       // AAC
@@ -36,8 +42,6 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       // AIFF
       "audio/aiff", "audio/x-aiff", "sound/aiff",
       "audio/x-pn-aiff",
-      // ASF
-      "audio/asf",
       // MIDI
       "audio/mid", "audio/x-midi", 
       // AU
@@ -48,15 +52,15 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       // WAV
       "audio/wav", "audio/x-wav", "audio/wave",
       "audio/x-pn-wav",
-      // WMA
-      "audio/x-ms-wma",
       // Various
-      "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
-      "audio/x-gsm", "audio/snd"
+      "audio/vnd.qcelp", "audio/x-gsm", "audio/snd"
       )
   
+  def supportedExtensions: List[String] = taggedExtensions ::: 
+    List("wav", "aac", "ac3", "aiff", "mid", "midi", "au", "pcm")
+  
   def process(c: FileChange) = {
-//    Logger.global.severe("Processing " + c.toString())
+    Logger.global.severe("Filewatcher: Processing " + c.toString())
     c match {
       // case Created(filename, false)  => process_updated_file(filename)
       case Modified(filename, context, false) => process_updated_file(filename, context)
@@ -68,22 +72,34 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   
   def process_updated_file(filename: String, context: String): Unit = {
     val extension = FilenameUtils.getExtension(filename)
-    if (taggedExtensions.contains(extension) || 
-        taggedMimeTypes.contains(Solr.getMimeType(filename))) {
-      val song_info = SongInfo.from(filename, context)
+    
+    Logger.global.severe("Filewatcher: Getting info from " + filename)
+    val song_info = 
+      if (taggedExtensions.contains(extension) || taggedMimeTypes.contains(Solr.getMimeType(filename))) {
+        Some(SongInfo.from(filename, context))
+      } else if (supportedExtensions.contains(extension) || supportedMimeTypes.contains(Solr.getMimeType(filename))) {
+        Some(FilenameExtractor.from(filename, context))
+      } else {
+        None
+      }
+    
+    Logger.global.severe("Filewatcher: Adding to database " + filename)
+    if (song_info.isDefined) {
       transaction {
         Database.songByFilename(filename) match {
           case Some(song) => {
             // Console.println("Replacing " + filename + " in database")
-            replace_in_database(filename, song.id, song_info) 
+            replace_in_database(filename, song.id, song_info.get) 
           }
           case None =>  {
             // Console.println("Adding " + filename + " in database")
-            add_to_database(filename, song_info)
+            add_to_database(filename, song_info.get)
           }
         }
       }
     }
+    
+    Logger.global.severe("Filewatcher: Added to database " + filename)
   }
   
   def process_moved_file(from: String, to: String, context: String): Unit = transaction {
