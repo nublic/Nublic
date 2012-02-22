@@ -9,6 +9,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.js.JSAlbum;
 import com.nublic.app.music.client.datamodel.js.JSAlbumResponse;
@@ -28,12 +29,19 @@ import com.nublic.util.messages.Message;
 public class AlbumMessage extends Message {
 	String artistId;
 	String inCollection;
+	
+	// Handler handling
 	AlbumHandler albumHandler;
+	// Necessary to know if handler must be called
+	int targetScreen;
+	DataModel model;
 
-	public AlbumMessage(String artistId, String inCollection, AlbumHandler ah) {
+	public AlbumMessage(String artistId, String inCollection, AlbumHandler ah, int currentScreen, DataModel model) {
 		this.artistId = artistId;
 		this.inCollection = inCollection;
 		this.albumHandler = ah;
+		this.targetScreen = currentScreen;
+		this.model = model;
 	}
 
 	@Override
@@ -72,8 +80,11 @@ public class AlbumMessage extends Message {
 				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
 				answerList.add(info);
 			}
-			
-			albumHandler.onAlbumChange(answerList);
+
+			// Only if the message arrives on time to fill the screen it was meant for
+			if (targetScreen == model.getCurrentScreen()) {
+				albumHandler.onAlbumChange(answerList);
+			}
 		} else {
 			onError();
 		}

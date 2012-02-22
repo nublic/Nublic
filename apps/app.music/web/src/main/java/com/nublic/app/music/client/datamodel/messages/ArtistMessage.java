@@ -9,6 +9,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.js.JSArtist;
 import com.nublic.app.music.client.datamodel.js.JSArtistResponse;
@@ -27,11 +28,19 @@ import com.nublic.util.messages.Message;
 //                       $extra_info }
 public class ArtistMessage extends Message {
 	String collectionId;
+	
+	// Handler handling
 	ArtistHandler artistHandler;
+	// Necessary to know if handler must be called
+	int targetScreen;
+	DataModel model;
+	
 
-	public ArtistMessage(String collection, ArtistHandler ah) {
+	public ArtistMessage(String collection, ArtistHandler ah, int currentScreen, DataModel model) {
 		collectionId = collection;
 		artistHandler = ah;
+		this.targetScreen = currentScreen;
+		this.model = model;
 	}
 
 	@Override
@@ -64,7 +73,11 @@ public class ArtistMessage extends Message {
 					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
 					answerList.add(info);
 				}
-				artistHandler.onArtistChange(answerList);
+				
+				// Only if the message arrives on time to fill the screen it was meant for
+				if (targetScreen == model.getCurrentScreen()) {
+					artistHandler.onArtistChange(answerList);
+				}
 			}
 		} else {
 			onError();

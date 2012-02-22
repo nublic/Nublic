@@ -24,10 +24,7 @@ import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.error.ErrorPopup;
-import com.nublic.util.messages.DefaultComparator;
-import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
-import com.nublic.util.messages.SequenceIgnorer;
 
 public class DataModel {
 	// Independent things
@@ -51,7 +48,8 @@ public class DataModel {
 	List<PlaylistsChangeHandler> playlistsHandlers = new ArrayList<PlaylistsChangeHandler>();
 
 	// Sending messages
-	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
+	int currentScreen = 0;
+//	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	
 	// Caches to archive albums and artists
 	Cache<String, AlbumInfo> albumCache;
@@ -146,21 +144,46 @@ public class DataModel {
 		}
 	}
 	
-	// methods to make requests to server in order to fill the data in the model
+	// methods to make requests to server
+	public void askForSongs(String album, String collection, SongHandler sh, boolean newScreen) {
+		if (newScreen) {
+			currentScreen++;
+		}
+		SongMessage am = new SongMessage(album, collection, sh, currentScreen, this);
+		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
+	}
+	
 	public void askForSongs(String album, String collection, SongHandler sh) {
-		SongMessage am = new SongMessage(album, collection, sh);
-		messageSender.send(am, RequestBuilder.GET);
+		askForSongs(album, collection, sh, false);
+	}
+	
+	public void askForAlbums(String artist, String collection, AlbumHandler ah, boolean newScreen) {
+		if (newScreen) {
+			currentScreen++;
+		}
+		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen, this);
+		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 
+
 	public void askForAlbums(String artist, String collection, AlbumHandler ah) {
-		AlbumMessage am = new AlbumMessage(artist, collection, ah);
-		messageSender.send(am, RequestBuilder.GET);
+		askForAlbums(artist, collection, ah, false);
+	}
+	
+	public void askForArtists(String collection, ArtistHandler ah, boolean newScreen) {
+		if (newScreen) {
+			currentScreen++;
+		}
+		ArtistMessage am = new ArtistMessage(collection, ah, currentScreen, this);
+		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 
 	public void askForArtists(String collection, ArtistHandler ah) {
-		ArtistMessage am = new ArtistMessage(collection, ah);
-		messageSender.send(am, RequestBuilder.GET);
+		askForArtists(collection, ah, false);
 	}
+	
+	// Control current screen
+	public int getCurrentScreen() { return currentScreen; }
 
 	
 	// methods to change the data in server and where proceeds

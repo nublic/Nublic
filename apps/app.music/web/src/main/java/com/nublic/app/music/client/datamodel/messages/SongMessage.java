@@ -9,6 +9,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.js.JSSong;
@@ -38,13 +39,19 @@ public class SongMessage extends Message {
 	String inCollection = null;
 	int from = 0;
 	int to = 25;
-	
+
+	// Handler handling
 	SongHandler songHandler;
+	// Necessary to know if handler must be called
+	int targetScreen;
+	DataModel model;
 	
-	public SongMessage(String album, String collection, SongHandler sh) {
+	public SongMessage(String album, String collection, SongHandler sh, int currentScreen, DataModel model) {
 		this.albumId = album;
 		this.inCollection = collection;
 		this.songHandler = sh;
+		this.targetScreen = currentScreen;
+		this.model = model;
 	}
 	
 //	public SongMessage(int from, int to, AlbumInfo a) {
@@ -110,7 +117,10 @@ public class SongMessage extends Message {
 										 song.getLength());
 					answerList.add(info);
 				}
-				songHandler.onSongsChange(from, to, answerList);
+				// Only if the message arrives on time to fill the screen it was meant for
+				if (targetScreen == model.getCurrentScreen()) {
+					songHandler.onSongsChange(from, to, answerList);
+				}
 			}
 		} else {
 			onError();
