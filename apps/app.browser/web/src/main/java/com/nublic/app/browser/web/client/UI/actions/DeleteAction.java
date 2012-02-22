@@ -34,11 +34,6 @@ public class DeleteAction extends ActionWidget {
 				"Do you really want to delete the selected files?",
 				EnumSet.of(PopupButton.CANCEL, PopupButton.DELETE));
 		
-		popup.setInnerHeight("120px");
-		
-		popup.addButtonHandler(PopupButton.CLOSE, popup.POPUP_CLOSE);
-		popup.addButtonHandler(PopupButton.CANCEL, popup.POPUP_CLOSE);
-		
 		popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
 			
 			@Override

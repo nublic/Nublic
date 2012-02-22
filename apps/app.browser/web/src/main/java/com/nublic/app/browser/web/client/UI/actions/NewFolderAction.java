@@ -48,7 +48,6 @@ public class NewFolderAction extends ActionWidget {
 	@Override
 	public void executeAction() {
 		stateProvider.showNewFolderPopup();
-//		doCreateFolder(stateProvider.getShowingPath());
 	}
 
 	@Override

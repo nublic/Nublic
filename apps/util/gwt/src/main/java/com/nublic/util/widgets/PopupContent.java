@@ -10,9 +10,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.DockLayoutPanel;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -23,7 +23,7 @@ public class PopupContent extends Composite {
 	
 	@UiField DockLayoutPanel dockPanel;
 	@UiField Label titleLabel;
-	@UiField SimplePanel mainPanel;
+	@UiField HTMLPanel mainPanel;
 	@UiField Button cancelButton;
 	@UiField Button noButton;
 	@UiField Button customButton;
@@ -35,6 +35,10 @@ public class PopupContent extends Composite {
 	
 	HashMap<PopupButton, HasVisibility> buttons;
 	HashMultimap<PopupButton, PopupButtonHandler> handlers;
+	
+	static int TOP_HEIGHT = 36;
+	static int BOTTOM_HEIGHT = 45;
+	static int EXTRA_PADDING = 20;
 
 	interface PopupContentUiBinder extends UiBinder<Widget, PopupContent> {
 	}
@@ -63,19 +67,28 @@ public class PopupContent extends Composite {
 		// Create palce to save handlers
 		handlers = HashMultimap.create();
 		// Add inner widget
-		mainPanel.add(w);
+		addWidget(w);
+		// Set initial size
+		this.setInnerHeight(180);
 	}
 	
 	public PopupContent(String title, EnumSet<PopupButton> buttonsToShow, Widget w) {
 		this(title, buttonsToShow, w, null);
+	}
+	
+	public void addWidget(Widget w) {
+		if (w != null) {
+			mainPanel.add(w);
+		}
 	}
 
 	public void addButtonHandler(PopupButton button, PopupButtonHandler handler) {
 		handlers.put(button, handler);
 	}
 	
-	public void setInnerHeight(String h) {
-		this.dockPanel.setHeight(h);
+	public void setInnerHeight(int h) {
+		this.dockPanel.setHeight(String.valueOf(h) + "px");
+		this.mainPanel.setHeight(String.valueOf(h - TOP_HEIGHT - BOTTOM_HEIGHT - EXTRA_PADDING) + "px");
 	}
 	
 	private void handle(PopupButton button, ClickEvent event) {

@@ -32,11 +32,15 @@ public class Popup extends PopupPanel implements ResizeHandler {
 		this(title, buttonsToShow, w, null);
 	}
 	
+	public void addWidget(Widget w) {
+		content.addWidget(w);
+	}
+	
 	public void addButtonHandler(PopupButton button, PopupButtonHandler handler) {
 		content.addButtonHandler(button, handler);
 	}
 	
-	public void setInnerHeight(String h) {
+	public void setInnerHeight(int h) {
 		this.content.setInnerHeight(h);
 	}
 	

@@ -65,8 +65,6 @@ import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 import com.nublic.app.browser.web.client.UI.dialogs.FixedPopup;
-import com.nublic.app.browser.web.client.UI.dialogs.NewFolderPopup;
-import com.nublic.app.browser.web.client.UI.dialogs.UploadPopup;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -81,6 +79,10 @@ import com.nublic.util.gwt.Callback;
 import com.nublic.util.gwt.LazyLoader;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.widgets.PopupButton;
+import com.nublic.util.widgets.PopupButtonHandler;
+import com.nublic.util.widgets.UploadPopup;
+import com.nublic.util.widgets.TextPopup;
 
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
@@ -128,8 +130,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //	@UiField PasteAction pasteAction;
 	
 	FixedPopup popUpBox;
-	NewFolderPopup popupNewFolder;
-	UploadPopup popupUpload;
 
 	public BrowserUi(BrowserModel model) {
 		// Initialize tree
@@ -168,16 +168,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		popUpBox.setGlassEnabled(true);
 		popUpBox.addCloseHandler(this);
 		popUpBox.setAutoHideOnHistoryEventsEnabled(false);
-		
-		// new folder popup
-		popupNewFolder = new NewFolderPopup(true, true, this); // it's necessary to pass the ui because the feedback when the answer to create folder arrives goes to it
-		popupNewFolder.hide();
-		popupNewFolder.setGlassEnabled(true);
-		
-		// new folder popup
-		popupUpload = new UploadPopup(true, true);
-		popupUpload.hide();
-		popupUpload.setGlassEnabled(true);
 		
 		// Navigation Bar
 		addContextChangeHandler(new ContextChangeHandler() {
@@ -834,11 +824,33 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showNewFolderPopup() {
-		popupNewFolder.showDialog(getShowingPath());
+		final TextPopup popup = new TextPopup("New folder name");
+		final String showingPath = this.getShowingPath();
+		
+		popup.addButtonHandler(PopupButton.OK, new PopupButtonHandler() {
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
+				NewFolderAction.doCreateFolder(popup.getText(), showingPath, BrowserUi.this);
+				popup.hide();
+			}
+		});
+		
+		popup.center();
 	}
 	
 	public void showUploadPopup() {
-		popupUpload.showDialog(getShowingPath());
+		final UploadPopup popup = new UploadPopup("Upload file");
+		final String showingPath = this.getShowingPath();
+		
+		popup.addButtonHandler(PopupButton.UPLOAD, new PopupButtonHandler() {
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
+				UploadAction.doUpload(showingPath, popup.getFileUpload());
+				popup.hide();
+			}
+		});
+		
+		popup.center();
 	}
 
 }
