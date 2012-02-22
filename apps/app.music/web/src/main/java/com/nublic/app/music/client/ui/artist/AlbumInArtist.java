@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
-import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
 
 //GET /album-art/:album-id
 //* Retrieve the image associated with an album
@@ -24,16 +24,16 @@ public class AlbumInArtist extends Composite {
 	
 	@UiField Hyperlink albumNameLabel;
 	@UiField Image albumImage;
-	Album album;
+	AlbumInfo album;
 	String collectionId;
 
-	public AlbumInArtist(Album a, String collectionId) {
+	public AlbumInArtist(AlbumInfo a, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.collectionId = collectionId;
 		this.album = a;
 
 		setImage();
-		albumNameLabel.setText(a.getInfo().getName());
+		albumNameLabel.setText(a.getName());
 		setClickTarget();
 	}
 	
@@ -42,7 +42,7 @@ public class AlbumInArtist extends Composite {
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
-		imageUrl.append(album.getInfo().getId());
+		imageUrl.append(album.getId());
 		
 		albumImage.setUrl(URL.encode(imageUrl.toString()));
 		albumImage.addErrorHandler(new ErrorHandler() {
@@ -63,7 +63,7 @@ public class AlbumInArtist extends Composite {
 		}
 		target.append(Constants.PARAM_ALBUM);
 		target.append("=");
-		target.append(album.getInfo().getId());
+		target.append(album.getId());
 		albumNameLabel.setTargetHistoryToken(target.toString());
 	}
 

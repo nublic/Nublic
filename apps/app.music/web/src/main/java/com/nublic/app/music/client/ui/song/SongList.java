@@ -19,10 +19,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.Song;
-import com.nublic.app.music.client.datamodel.handlers.SongsChangeHandler;
+import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
@@ -43,7 +43,7 @@ public class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
-	Album album = null;
+	AlbumInfo album = null;
 	Widget scrollPanel;
 	
 	SequenceIgnorer<Message> sendHelper = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
@@ -53,7 +53,7 @@ public class SongList extends Composite implements ScrollHandler {
 	
 
 	// Behaviour 1... inside an album...........................................................................
-	public SongList(Album a, Widget scrollPanel) {
+	public SongList(AlbumInfo a, Widget scrollPanel) {
 		// Scroll panel which we in are in to handle lazy loading
 		initWidget(uiBinder.createAndBindUi(this));
 		this.album = a;
@@ -61,25 +61,25 @@ public class SongList extends Composite implements ScrollHandler {
 		
 		prepareGrid();
 	
-		album.prepareToAddSongs();
-		album.addSongsChangeHandler(new SongsChangeHandler() {
-			@Override
-			public void onSongsChange(int from, int to) {
-				for (int i = from; i <= to; i++) {
-					setSong(i, album.getSong(i));
-					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition <= to
-					SongLocalizer loc = localizerIndex[i];
-					unloadedLocalizers.remove(loc);
-				}
-			}
-		});
-		
-		// Fake widgets which know if are being shown to be replaced onScroll
-		prepareLocalizers(album.getInfo().getNumberOfSongs());		
+//		album.prepareToAddSongs();
+//		album.addSongsChangeHandler(new SongsChangeHandler() {
+//			@Override
+//			public void onSongsChange(int from, int to) {
+//				for (int i = from; i <= to; i++) {
+//					setSong(i, album.getSong(i));
+//					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition <= to
+//					SongLocalizer loc = localizerIndex[i];
+//					unloadedLocalizers.remove(loc);
+//				}
+//			}
+//		});
+//		
+//		// Fake widgets which know if are being shown to be replaced onScroll
+//		prepareLocalizers(album.getInfo().getNumberOfSongs());		
 	}
 
 	private void prepareGrid() {
-		grid.resize(album.getInfo().getNumberOfSongs(), 2);
+		grid.resize(album.getNumberOfSongs(), 2);
 		grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
 	}
 
@@ -124,11 +124,11 @@ public class SongList extends Composite implements ScrollHandler {
 			}
 		}
 		if (needToLoad) {
-			for (Range r : rangeToAsk) {
-				SongMessage sm = new SongMessage(r.getFrom(), r.getTo(), album);
-				askedRanges.add(r);
-				sendHelper.send(sm, RequestBuilder.GET);
-			}
+//			for (Range r : rangeToAsk) {
+//				SongMessage sm = new SongMessage(r.getFrom(), r.getTo(), album);
+//				askedRanges.add(r);
+//				sendHelper.send(sm, RequestBuilder.GET);
+//			}
 		}
 	}
 	
@@ -136,7 +136,7 @@ public class SongList extends Composite implements ScrollHandler {
 		int unboundedFrom = position - Constants.PREVIOUS_SONGS_TO_ASK;
 		int from = unboundedFrom <= 0 ? 0 : unboundedFrom;
 		int unboundedTo = position + Constants.NEXT_SONGS_TO_ASK;
-		int to = unboundedTo >= album.getInfo().getNumberOfSongs() ? album.getInfo().getNumberOfSongs() -1 : unboundedTo;
+		int to = unboundedTo >= album.getNumberOfSongs() ? album.getNumberOfSongs() -1 : unboundedTo;
 		return new Range(from, to);
 	}
 	
@@ -148,7 +148,7 @@ public class SongList extends Composite implements ScrollHandler {
 
 	// TODO: make a function to invalid askedRange if request fails
 	
-	public void setSong(int row, Song s) {
+	public void setSong(int row, SongInfo s) {
 		// Column 0
 		String trackStr = s.getTrack() == -1 ? "-" : String.valueOf(s.getTrack());
 		Label trackNumLabel = new Label(trackStr);

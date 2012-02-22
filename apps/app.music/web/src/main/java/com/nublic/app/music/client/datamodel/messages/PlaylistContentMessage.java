@@ -31,9 +31,10 @@ public class PlaylistContentMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		model.setShowing(id, false);
-		model.setState(State.SONGS);
-		model.fireStateHandlers();
+		// TODO: something
+//		model.setShowing(id, false);
+//		model.setState(State.SONGS);
+//		model.fireStateHandlers();
 	}
 
 	@Override

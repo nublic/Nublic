@@ -13,18 +13,17 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.Playlist;
-import com.nublic.app.music.client.datamodel.State;
+import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.Tag;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
-import com.nublic.app.music.client.datamodel.handlers.StateChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
-import com.nublic.app.music.client.ui.song.SongPanel;
 import com.nublic.util.error.ErrorPopup;
 
 public class MainUi extends Composite {
@@ -178,6 +177,15 @@ public class MainUi extends Composite {
 		showingPlaylistWidget = newSelectedWidget;
 		newSelectedWidget.setSelected(true);
 	}
+	
+	public void setSelectedCollection(String collectionId) {
+		PlaylistWidget newSelected = tagIndex.get(collectionId);
+		if (newSelected == null) {
+			setSelectedWidget(allMusic);
+		} else {
+			setSelectedWidget(newSelected);
+		}
+	}
 
 //	public void refillCentralPanel() {
 //		State s = model.getState();
@@ -203,17 +211,27 @@ public class MainUi extends Composite {
 //	}
 //	
 	
-	public void showAlbumList(List<Album> albumList) {
-		AlbumPanel albPanel = new AlbumPanel(model);
-		albPanel.setAlbumList(model.getAlbumList());
+	public void showAlbumList(List<AlbumInfo> albumList, String artistId, String collectionId) {
+		AlbumPanel albPanel = new AlbumPanel(artistId, model.getArtistCache(), collectionId);
+		albPanel.setAlbumList(albumList);
 		mainPanel.setWidget(albPanel);
 	}
 	
-	public void playlistRefillCentralPanel() {
+	public void showArtistList(List<ArtistInfo> answerList, String collectionId) {
+		setSelectedCollection(collectionId);
 		
+		ArtistPanel artPanel = new ArtistPanel(model, collectionId, showingPlaylistWidget.getText());
+		artPanel.setArtistList(answerList);
+		mainPanel.setWidget(artPanel);
 	}
 	
+	public void showSongList(int from, int to, List<SongInfo> answerList) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void error(String message) {
 		ErrorPopup.showError(message);
 	}
+
 }

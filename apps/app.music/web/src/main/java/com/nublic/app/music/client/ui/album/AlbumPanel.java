@@ -11,9 +11,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -29,21 +28,20 @@ public class AlbumPanel extends Composite {
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
 	
-	List<Album> albumList;
-	DataModel model;
+	List<AlbumInfo> albumList;
 	ArtistInfo info;
+	String collectionId;
 
-	public AlbumPanel(DataModel model) {
+	public AlbumPanel(String artistId, Cache<String, ArtistInfo> artistCache, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.model = model;
+		this.collectionId = collectionId;
+	
 		// Get artist info (null means all artists)
-		String artistId = model.getShowingArtistId();
 		if (artistId == null) {
 			this.info = null;
 			titleLabel.setText("All artists");
 		} else {
-			Cache<String, ArtistInfo> artistCache = model.getArtistCache();
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
@@ -65,11 +63,11 @@ public class AlbumPanel extends Composite {
 		titlePanel.add(b);
 	}
 
-	public void setAlbumList(List<Album> albumList) {
+	public void setAlbumList(List<AlbumInfo> albumList) {
 		this.albumList = albumList;
 
-		for (Album a : albumList) {
-			AlbumWidget aw = new AlbumWidget(model, a, mainPanel);
+		for (AlbumInfo a : albumList) {
+			AlbumWidget aw = new AlbumWidget(a, collectionId, mainPanel);
 			mainPanel.add(aw);
 		}
 	}

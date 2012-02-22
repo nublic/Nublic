@@ -7,7 +7,7 @@ import com.google.gwt.i18n.client.NumberFormat;
 //        "artist-id": $artist-id,
 //        "album-id": $album-id,
 //        $extra_info }
-public class Song {
+public class SongInfo {
 	String id;
 	String title;
 	String artistId;
@@ -15,7 +15,7 @@ public class Song {
 	int track;
 	int length;
 	
-	public Song(String id, String title, String artistId, String albumId, int track, int length) {
+	public SongInfo(String id, String title, String artistId, String albumId, int track, int length) {
 		this.id = id;
 		this.title = title;
 		this.artistId = artistId;

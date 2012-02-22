@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.Song;
+import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -33,7 +33,7 @@ public class SongPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	@UiField Hyperlink subtitleLabel;
 	
-	List<Song> songList;
+	List<SongInfo> songList;
 	DataModel model;
 	AlbumInfo info;
 	String inCollection;
@@ -45,7 +45,8 @@ public class SongPanel extends Composite {
 		this.inCollection = inCollection;
 
 		// Get artist info (null means all albums)
-		String albumId = model.getShowingAlbumId();
+//		String albumId = model.getShowingAlbumId();
+		String albumId = null;
 		if (albumId == null) {
 			this.info = null;
 			titleLabel.setText("All albums");

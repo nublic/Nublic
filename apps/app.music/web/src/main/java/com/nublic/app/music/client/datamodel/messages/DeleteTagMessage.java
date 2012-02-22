@@ -30,7 +30,8 @@ public class DeleteTagMessage extends Message {
 		if (response.getStatusCode() == Response.SC_OK) {
 			model.removeTag(id);
 			model.fireTagsHandlers();
-			model.askForArtists();
+			// TODO: reload main ui
+//			model.askForArtists();
 		} else {
 			onError();
 		}

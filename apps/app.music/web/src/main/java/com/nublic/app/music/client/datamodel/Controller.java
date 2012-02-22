@@ -1,12 +1,15 @@
 package com.nublic.app.music.client.datamodel;
 
+import java.util.List;
+
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
+import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 
 public class Controller {
-
 	DataModel model;
 	MainUi ui;
 	
@@ -24,30 +27,58 @@ public class Controller {
 
 		if (collection != null) {
 			if (artist != null) {
-				model.askForAlbums(artist, collection, new MyAlbumHandler());
+				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection));
 			} else if (album != null) {
-				model.askForSongs(album, collection);
+				model.askForSongs(album, collection, new MySongHandler());
 			} else {
-				model.askForArtists(collection);
+				model.askForArtists(collection, new MyArtistHandler(collection));
 			}
 		} else if (playlist != null) {
-			model.askForPlaylistSongs(playlist);
+//			model.askForPlaylistSongs(playlist);
 		} else {
 			// All music
 			if (artist != null) {
-				model.askForAlbums(artist);
+				model.askForAlbums(artist, null, new MyAlbumHandler(artist, null));
 			} else if (album != null) {
-				model.askForSongs(album);
+				model.askForSongs(album, null, new MySongHandler());
 			} else {
-				model.askForArtists();
+				model.askForArtists(null, new MyArtistHandler(collection));
 			}
 		}
 	}
 	
-	class MyAlbumHandler implements AlbumHandler {
+	class MySongHandler implements SongHandler {
 		@Override
-		public void onAlbumChange() {
-			
+		public void onSongsChange(int from, int to, List<SongInfo> answerList) {
+			ui.showSongList(from, to, answerList);
+		}
+	}
+	
+	class MyAlbumHandler implements AlbumHandler {
+		String artistId;
+		String collectionId;	
+		
+		public MyAlbumHandler(String artist, String collection) {
+			artistId = artist;
+			collectionId = collection;
+		}
+		
+		@Override
+		public void onAlbumChange(List<AlbumInfo> answerList) {
+			ui.showAlbumList(answerList, artistId, collectionId);
+		}
+	}
+	
+	class MyArtistHandler implements ArtistHandler {
+		String collectionId;
+
+		public MyArtistHandler(String collection) {
+			collectionId = collection;
+		}
+
+		@Override
+		public void onArtistChange(List<ArtistInfo> answerList) {
+			ui.showArtistList(answerList, collectionId);
 		}
 	}
 

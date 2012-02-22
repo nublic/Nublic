@@ -9,13 +9,13 @@ package com.nublic.app.music.client.datamodel;
 public class ArtistInfo {
 	String id;
 	String name;
-	int numberOfDiscs;
+	int numberOfAlbums;
 	int numberOfSongs;
 
-	public ArtistInfo(String id, String name, int numberOfDiscs, int numberOfSongs) {
+	public ArtistInfo(String id, String name, int numberOfAlbums, int numberOfSongs) {
 		this.id = id;
 		this.name = name;
-		this.numberOfDiscs = numberOfDiscs;
+		this.numberOfAlbums = numberOfAlbums;
 		this.numberOfSongs = numberOfSongs;
 	}
 
@@ -24,8 +24,8 @@ public class ArtistInfo {
 	public void setId(String id) { this.id = id; }
 	public String getName() { return name; }
 	public void setName(String name) { this.name = name; }
-	public int getNumberOfDiscs() { return numberOfDiscs; }
-	public void setNumberOfDiscs(int numberOfDiscs) { this.numberOfDiscs = numberOfDiscs; }
+	public int getNumberOfAlbums() { return numberOfAlbums; }
+	public void setNumberOfAlbums(int numberOfAlbums) { this.numberOfAlbums = numberOfAlbums; }
 	public int getNumberOfSongs() { return numberOfSongs; }
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
 
