@@ -3,6 +3,7 @@ package com.nublic.app.music.client.datamodel.messages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.History;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
@@ -30,8 +31,8 @@ public class DeleteTagMessage extends Message {
 		if (response.getStatusCode() == Response.SC_OK) {
 			model.removeTag(id);
 			model.fireTagsHandlers();
-			// TODO: reload main ui
-//			model.askForArtists();
+			// reload main ui
+			History.newItem("");
 		} else {
 			onError();
 		}

@@ -37,6 +37,7 @@ public class SongList extends Composite implements ScrollHandler {
 	interface SongStyle extends CssResource {
 		String alignright();
 		String leftmargin();
+		String bottommargin();
 	}
 
 	@UiField SongStyle style;

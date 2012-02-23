@@ -25,24 +25,15 @@ public class Controller {
 		String artist = hmap.get(Constants.PARAM_ARTIST);
 		String album = hmap.get(Constants.PARAM_ALBUM);
 
-		if (collection != null) {
+		if (playlist != null) {
+//			model.askForPlaylistSongs(playlist);
+		} else {
 			if (album != null) {
 				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
 			} else if (artist != null) {
 				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
 			} else {
 				model.askForArtists(collection, new MyArtistHandler(collection), true);
-			}
-		} else if (playlist != null) {
-//			model.askForPlaylistSongs(playlist);
-		} else {
-			// All music
-			if (album != null) {
-				model.askForSongs(album, artist, null, new MySongHandler(album, null), true);
-			} else if (artist != null) {
-				model.askForAlbums(artist, null, new MyAlbumHandler(artist, null), true);
-			} else {
-				model.askForArtists(null, new MyArtistHandler(collection), true);
 			}
 		}
 	}

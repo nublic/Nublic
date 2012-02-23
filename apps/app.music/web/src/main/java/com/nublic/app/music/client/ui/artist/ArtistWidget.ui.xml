@@ -15,7 +15,7 @@
 			margin-left: 15px;
 		}
 		.minheight {
-			min-height: 173px;
+			min-height: 139px;
 		}
 	</ui:style>
 	
