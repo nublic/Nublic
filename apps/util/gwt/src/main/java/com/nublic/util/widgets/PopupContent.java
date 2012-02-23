@@ -36,9 +36,12 @@ public class PopupContent extends Composite {
 	HashMap<PopupButton, HasVisibility> buttons;
 	HashMultimap<PopupButton, PopupButtonHandler> handlers;
 	
+	int innerHeight = 180;
+	
 	static int TOP_HEIGHT = 36;
 	static int BOTTOM_HEIGHT = 45;
 	static int EXTRA_PADDING = 20;
+	static int INNER_PADDING = 10;
 
 	interface PopupContentUiBinder extends UiBinder<Widget, PopupContent> {
 	}
@@ -79,6 +82,7 @@ public class PopupContent extends Composite {
 	public void addWidget(Widget w) {
 		if (w != null) {
 			mainPanel.add(w);
+			setInnerHeight(innerHeight);
 		}
 	}
 
@@ -88,7 +92,19 @@ public class PopupContent extends Composite {
 	
 	public void setInnerHeight(int h) {
 		this.dockPanel.setHeight(String.valueOf(h) + "px");
-		this.mainPanel.setHeight(String.valueOf(h - TOP_HEIGHT - BOTTOM_HEIGHT - EXTRA_PADDING) + "px");
+		int panelHeight = h - TOP_HEIGHT - BOTTOM_HEIGHT - EXTRA_PADDING;
+		this.mainPanel.setHeight(String.valueOf(panelHeight) + "px");
+		
+		if (this.mainPanel.getWidgetCount() > 0) {
+			Widget w = this.mainPanel.getWidget(0);
+			int widgetHeight = panelHeight - INNER_PADDING;
+			int widgetWidth = 380 - INNER_PADDING;
+			
+			w.setHeight(String.valueOf(widgetHeight) + "px");
+			w.setWidth(String.valueOf(widgetWidth) + "px");
+		}
+		
+		this.innerHeight = h;
 	}
 	
 	private void handle(PopupButton button, ClickEvent event) {
