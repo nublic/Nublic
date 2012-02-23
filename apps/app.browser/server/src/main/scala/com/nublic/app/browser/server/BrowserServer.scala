@@ -178,37 +178,47 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
       if (!file.exists() || !user.canRead(file)) {
         halt(404)
       } else {
-        response.setContentType("image/png")
-        response.setDateHeader("Last-Modified", file.lastModified())
-        response.setDateHeader("Expires", file.lastModified() + ONE_HOUR_IN_MS)
-        
-        val thumb_file = FileFolder.getThumbnail(file.getPath())
-        if (thumb_file.exists()) {
-          thumb_file
-        } else {
-          Solr.getMimeType(file.getPath()) match {
-            case None => {
-              if (file.isDirectory()) {
-                ImageDatabase.getImageBytes(ImageDatabase.DIRECTORY_MIME)
-              } else {
-                ImageDatabase.getImageBytes("unknown")
+        val last_modified = request.getDateHeader("If-Modified-Since")
+        if (last_modified == -1 || last_modified < file.lastModified()) {
+          response.setContentType("image/png")
+          response.setDateHeader("Last-Modified", file.lastModified())
+          response.setDateHeader("Expires", file.lastModified() + ONE_HOUR_IN_MS)
+          
+          val thumb_file = FileFolder.getThumbnail(file.getPath())
+          if (thumb_file.exists()) {
+            thumb_file
+          } else {
+            Solr.getMimeType(file.getPath()) match {
+              case None => {
+                if (file.isDirectory()) {
+                  ImageDatabase.getImageBytes(ImageDatabase.DIRECTORY_MIME)
+                } else {
+                  ImageDatabase.getImageBytes("unknown")
+                }
+              }
+              case Some(mime) => {
+                ImageDatabase.getImageBytes(mime)
               }
             }
-            case Some(mime) => {
-              ImageDatabase.getImageBytes(mime)
-            }
           }
+        } else {
+          halt(304)
         }
       }
     }
   }
   
   get("/generic-thumbnail/*") {
-    val name = URIUtil.decode(params(THE_REST))
-    response.setContentType("image/png")
-    response.setDateHeader("Last-Modified", ImageDatabase.LAST_MODIFIED_DATE.getTime())
-    response.setDateHeader("Expires", (new Date()).getTime() + ONE_MONTH_IN_MS)
-    ImageDatabase.getImageBytes(name)
+    val last_modified = request.getDateHeader("If-Modified-Since")
+    if (last_modified == -1 || last_modified < ImageDatabase.LAST_MODIFIED_DATE.getTime()) {
+      val name = URIUtil.decode(params(THE_REST))
+      response.setContentType("image/png")
+      response.setDateHeader("Last-Modified", ImageDatabase.LAST_MODIFIED_DATE.getTime())
+      response.setDateHeader("Expires", (new Date()).getTime() + ONE_MONTH_IN_MS)
+      ImageDatabase.getImageBytes(name)
+    } else {
+      halt(304)
+    }
   }
   
   post("/rename") {
