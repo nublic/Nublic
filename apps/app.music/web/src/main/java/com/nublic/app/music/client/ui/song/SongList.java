@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
@@ -47,6 +48,7 @@ public class SongList extends Composite implements ScrollHandler {
 	String albumId;
 	String artistId;
 	String collectionId;
+	String playlistId = null;
 	int numberOfSongs;
 	
 	
@@ -55,10 +57,17 @@ public class SongList extends Composite implements ScrollHandler {
 	HashMap<Integer, SongLocalizer> localizerIndex;
 	List<Range> askedRanges = new ArrayList<Range>();
 	MySongHandler songHandler;
+	MyPlaylistHandler playlistHandler;
 
 	
 	public SongList(DataModel model, String albumId, String artistId, String collectionId, Widget scrollPanel) {
 		this(model, albumId, artistId, collectionId, -1, scrollPanel);
+	}
+	
+	public SongList(DataModel model, String playlistId, int numberOfSongs, Widget scrollPanel) {
+		this(model, null, null, null, numberOfSongs, scrollPanel);
+		this.playlistId = playlistId;
+		playlistHandler = new MyPlaylistHandler();
 	}
 	
 	// With numberOfSongs == -1 we'll get it from first request
@@ -88,6 +97,13 @@ public class SongList extends Composite implements ScrollHandler {
 					onScroll(null);
 				}
 			});
+		}
+	}
+	
+	private class MyPlaylistHandler implements PlaylistHandler {
+		@Override
+		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+			songHandler.onSongsChange(total, from, to, answerList);
 		}
 	}
 	
@@ -142,8 +158,8 @@ public class SongList extends Composite implements ScrollHandler {
 			SongLocalizer sl = unloadedLocalizers.get(i);
 //			if (sl.isInRange(panelTop, panelBottom)) {
 			if (!Range.contains(askedRanges, sl.getPosition()) && sl.isNearRange(panelTop, panelBottom)) {
-				needToLoad = true;
 				// If we find it we'll construct a request asking for the previous 10 to it and next 30 (if are unloaded and not waiting for answer)
+				needToLoad = true;
 				rangeToAsk.add(findRangeFromPosition(sl.getPosition()));
 				trimRangeToAsk(rangeToAsk);
 			}
@@ -151,7 +167,11 @@ public class SongList extends Composite implements ScrollHandler {
 		if (needToLoad) {
 			for (Range r : rangeToAsk) {
 				askedRanges.add(r);
-				model.askForSongs(r.getFrom(), r.getTo(), albumId, artistId, collectionId, songHandler);
+				if (playlistId == null) {
+					model.askForSongs(r.getFrom(), r.getTo(), albumId, artistId, collectionId, songHandler);
+				} else {
+					model.askForPlaylistSongs(r.getFrom(), r.getTo(), playlistId, playlistHandler);
+				}
 			}
 		}
 	}
