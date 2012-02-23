@@ -108,7 +108,7 @@
 	   					    <g:HTMLPanel addStyleNames="{style.margintop}" height="28px">
 		   						<div class="input">
 		   					    	<div class="input-prepend">
-		   					    		<span class="add-on"><g:Image url="images/filter.png"/></span>
+		   					    		<span class="add-on"><g:Image resource="{res.filter}"/></span>
 		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" addStyleNames="{style.filterwidth}" />
 		   					   		</div>
 		   					    </div>

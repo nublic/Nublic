@@ -711,32 +711,6 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showText(final String path) {
-		ScriptInjector.fromUrl("ace/ace.js").setCallback(new com.google.gwt.core.client.Callback<Void, Exception>() {
-			
-			@Override
-			public void onSuccess(Void result) {
-				ScriptInjector.fromUrl("ace/theme-eclipse.js").setCallback(new com.google.gwt.core.client.Callback<Void, Exception>() {
-					
-					@Override
-					public void onSuccess(Void result) {
-						showTextInternal(path);
-					}
-					
-					@Override
-					public void onFailure(Exception reason) {
-						Window.alert("Error loading text viewer");	
-					}
-				}).inject();
-			}
-			
-			@Override
-			public void onFailure(Exception reason) {
-				Window.alert("Error loading text viewer");
-			}
-		}).inject();
-	}
-	
-	private void showTextInternal(final String path) {
 		GWT.runAsync(new RunAsyncCallback() {
 			
 			@Override
