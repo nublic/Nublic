@@ -478,7 +478,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       	where(s.albumId === a.key and s.artistId === ar.id)
       	select(ar.id)
       )
-      query.toList
+      query.toList.removeDuplicates
     }
     JsonAlbum(a.key, a.measures._1, a.measures._2, artists)
   }
