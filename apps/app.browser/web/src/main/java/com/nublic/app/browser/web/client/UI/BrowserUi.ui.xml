@@ -55,11 +55,13 @@
 	    }
         @if user.agent safari {
 	        .filterwidth {
-	            width: 160px;
+	            height: 18px;
+	            width: 153px;
 	        } 
 	    } @else {
 	        .filterwidth {
-	            width: 163px;
+	            height: 18px;
+	            width: 153px;
             }
 	    }
 	</ui:style>
@@ -107,7 +109,7 @@
 		   						<div class="input">
 		   					    	<div class="input-prepend">
 		   					    		<span class="add-on"><g:Image url="images/filter.png"/></span>
-		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" height="100%" addStyleNames="{style.filterwidth}" />
+		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" addStyleNames="{style.filterwidth}" />
 		   					   		</div>
 		   					    </div>
 		   					</g:HTMLPanel>

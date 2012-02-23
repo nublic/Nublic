@@ -4,10 +4,13 @@ import java.io.InputStream
 import com.nublic.app.browser.server.filewatcher.workers._
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.commons.io.CopyUtils
+import java.util.Date
 
 object ImageDatabase {
   
   val DIRECTORY_MIME = "application/x-directory"
+  
+  val LAST_MODIFIED_DATE = new Date(112, 1, 22)
   
   def getImageBytes(mime: String): Array[Byte] = {
     val input = classOf[BrowserServer].getResourceAsStream(getImagePath(mime))

@@ -173,7 +173,8 @@ public class BrowserModel {
 			for (int i = 0; i < fileContentList.length(); i++) {
 				FileContent fileContent = fileContentList.get(i);
 				addFile(fileContent.getName(), fileContent.getMime(),	    fileContent.getView(),
-						fileContent.getSize(), fileContent.getLastUpdate(), fileContent.getWritable());
+						fileContent.getSize(), fileContent.getLastUpdate(), fileContent.getWritable(),
+						fileContent.hasThumbnail());
 			}
 		} else {
 			// The requested folder is empty
@@ -181,8 +182,8 @@ public class BrowserModel {
 		}
 	}
 	
-	public synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
-		FileNode file = new FileNode(name, mime, view, size, lastUpdate, writable);
+	public synchronized void addFile(String name, String mime, String view, double size, double lastUpdate, boolean writable, boolean has_thumbnail) {
+		FileNode file = new FileNode(name, mime, view, size, lastUpdate, writable, has_thumbnail);
 		fileList.add(file);
 	}
 	
