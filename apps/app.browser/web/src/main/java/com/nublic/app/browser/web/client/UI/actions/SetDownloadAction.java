@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI.actions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
 import com.nublic.util.messages.PostRedirectHelper;
@@ -10,7 +11,7 @@ import com.nublic.util.messages.PostRedirectHelper;
 public class SetDownloadAction extends ActionWidget {
 
 	public SetDownloadAction(BrowserUi stateProvider) {
-		super("images/download.png", "Download as zip", stateProvider);
+		super(Resources.INSTANCE.download(), "Download as zip", stateProvider);
 	}
 
 	@Override

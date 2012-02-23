@@ -11,6 +11,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
 import com.nublic.app.browser.web.client.model.FileNode;
@@ -24,7 +25,7 @@ import com.nublic.util.widgets.PopupButtonHandler;
 public class DeleteAction extends ActionWidget {
 
 	public DeleteAction(BrowserUi stateProvider) {
-		super("images/edit_delete.png", "Delete", stateProvider);
+		super(Resources.INSTANCE.editDelete(), "Delete", stateProvider);
 	}
 
 	@Override

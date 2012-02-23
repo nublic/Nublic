@@ -3,13 +3,14 @@ package com.nublic.app.browser.web.client.UI.actions;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
 
 public class CutAction extends ActionWidget {
 
 	public CutAction(BrowserUi stateProvider) {
-		super("images/edit_cut.png", "Cut", stateProvider);
+		super(Resources.INSTANCE.editCut(), "Cut", stateProvider);
 	}
 
 	@Override

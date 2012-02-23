@@ -3,13 +3,14 @@ package com.nublic.app.browser.web.client.UI.actions;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 
 
 public class CopyAction extends ActionWidget {
 
 	public CopyAction(BrowserUi stateProvider) {
-		super("images/edit_copy.png", "Copy", stateProvider);
+		super(Resources.INSTANCE.editCopy(), "Copy", stateProvider);
 	}
 
 	@Override

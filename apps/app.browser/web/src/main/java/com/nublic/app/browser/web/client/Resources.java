@@ -46,4 +46,46 @@ public interface Resources extends ClientBundle {
 	@Source("images/home.png")
 	ImageResource home();
 	
+	@Source("images/document_view.png")
+	ImageResource documentView();
+	
+	@Source("images/edit_clear.png")
+	ImageResource editClear();
+	
+	@Source("images/edit_copy.png")
+	ImageResource editCopy();
+	
+	@Source("images/edit_cut.png")
+	ImageResource editCut();
+	
+	@Source("images/edit_delete.png")
+	ImageResource editDelete();
+	
+	@Source("images/edit_paste.png")
+	ImageResource editPaste();
+	
+	@Source("images/filter.png")
+	ImageResource filter();
+	
+	@Source("images/folder_download.png")
+	ImageResource folderDownload();
+	
+	@Source("images/image_view.png")
+	ImageResource imageView();
+	
+	@Source("images/music_view.png")
+	ImageResource musicView();
+	
+	@Source("images/select_all.png")
+	ImageResource selectAll();
+	
+	@Source("images/text_view.png")
+	ImageResource textView();
+	
+	@Source("images/unselect_all.png")
+	ImageResource unselectAll();
+	
+	@Source("images/video_view.png")
+	ImageResource videoView();
+	
 }
