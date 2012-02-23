@@ -79,7 +79,8 @@ public class ChangesMessage extends Message {
 		for (int i = 0; i < newFiles.length() ; i++) {
 			FileNode n = new FileNode(newFiles.get(i).getName(),	   newFiles.get(i).getMime(),
 									  newFiles.get(i).getView(),	   newFiles.get(i).getSize(),
-									  newFiles.get(i).getLastUpdate(), newFiles.get(i).getWritable());
+									  newFiles.get(i).getLastUpdate(), newFiles.get(i).getWritable(),
+									  newFiles.get(i).hasThumbnail());
 			retList.add(n);
 		}
 		return retList;
@@ -89,7 +90,7 @@ public class ChangesMessage extends Message {
 	private List<FileNode> convertDeletesFiles(JsArrayString deletedFiles) {
 		List<FileNode> retList = new ArrayList<FileNode>();
 		for (int i = 0; i < deletedFiles.length() ; i++) {
-			FileNode n = new FileNode(deletedFiles.get(i), null, null, 0, 0, false);
+			FileNode n = new FileNode(deletedFiles.get(i), null, null, 0, 0, false, false);
 			retList.add(n);
 		}
 		return retList;

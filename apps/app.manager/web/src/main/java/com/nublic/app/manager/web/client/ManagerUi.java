@@ -102,7 +102,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		}
 		
 		if (!History.getToken().equals(appId) && !History.getToken().startsWith(appId + "/")) {
-			Location.replace("#" + appId);
+			Location.replace(GWT.getHostPageBaseURL() + "#" + appId);
 		}
 		
 		tabChange(path);

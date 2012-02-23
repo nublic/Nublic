@@ -14,6 +14,7 @@ public class FileNode {
 	double size;
 	double lastUpdate;
 	boolean writable;
+	boolean has_thumbnail;
 	String importantLink = null;
 	ImageResource importantThumbnail = null;
 
@@ -66,15 +67,18 @@ public class FileNode {
 		view = null;
 		size = 0;
 		lastUpdate = 0;
+		writable = false;
+		has_thumbnail = false;
 	}
 
-	public FileNode(String name, String mime, String view, double size, double lastUpdate, boolean writable) {
+	public FileNode(String name, String mime, String view, double size, double lastUpdate, boolean writable, boolean has_thumbnail) {
 		this.name = name;
 		this.mime = mime;
 		this.view = view;
 		this.size = size;
 		this.lastUpdate = lastUpdate;
 		this.writable = writable;
+		this.has_thumbnail = has_thumbnail;
 	}
 	
 	// Comparators
@@ -174,6 +178,10 @@ public class FileNode {
 	
 	public boolean isWritable() {
 		return writable;
+	}
+	
+	public boolean hasThumbnail() {
+		return has_thumbnail;
 	}
 
 	public String getImportantLink() {

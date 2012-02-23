@@ -19,6 +19,7 @@ import java.nio.file.FileSystems
 import java.nio.file.Files
 import scala.collection.JavaConversions._
 import org.scalatra.fileupload.FileUploadSupport
+import java.util.Date
 
 class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -168,19 +169,25 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     }
   }
   
+  val ONE_MONTH_IN_MS = 30 * ONE_DAY_IN_MS
+  val ONE_DAY_IN_MS = 24 * ONE_HOUR_IN_MS
+  val ONE_HOUR_IN_MS = 1 * 3600 * 1000
+  
   get("/thumbnail/*") {
     withUserAndRestPath(false) { user => file =>
       if (!file.exists() || !user.canRead(file)) {
         halt(404)
       } else {
+        response.setContentType("image/png")
+        response.setDateHeader("Last-Modified", file.lastModified())
+        response.setDateHeader("Expires", file.lastModified() + ONE_HOUR_IN_MS)
+        
         val thumb_file = FileFolder.getThumbnail(file.getPath())
         if (thumb_file.exists()) {
-          response.setContentType("image/png")
           thumb_file
         } else {
           Solr.getMimeType(file.getPath()) match {
             case None => {
-              response.setContentType("image/png")
               if (file.isDirectory()) {
                 ImageDatabase.getImageBytes(ImageDatabase.DIRECTORY_MIME)
               } else {
@@ -188,7 +195,6 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
               }
             }
             case Some(mime) => {
-              response.setContentType("image/png")
               ImageDatabase.getImageBytes(mime)
             }
           }
@@ -200,6 +206,8 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   get("/generic-thumbnail/*") {
     val name = URIUtil.decode(params(THE_REST))
     response.setContentType("image/png")
+    response.setDateHeader("Last-Modified", ImageDatabase.LAST_MODIFIED_DATE.getTime())
+    response.setDateHeader("Expires", (new Date()).getTime() + ONE_MONTH_IN_MS)
     ImageDatabase.getImageBytes(name)
   }
   
@@ -392,8 +400,9 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
           if (new_file.exists()) {
             throw new Exception("a file with that name already exists")
           } else {
-            file.write(new_file)
+            FileUtils.touch(new_file)
             user.assignFile(new_file)
+            file.write(new_file)
             halt(200)
           }
         } 
@@ -439,17 +448,20 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
         }
         if (file.isDirectory()) {
           BrowserFile(file.getName(), "application/x-directory", null,
-            file.length(), file.lastModified(), user.canWrite(file))
+            file.length(), file.lastModified(), user.canWrite(file), false)
         } else {
           // Return unknown as mimetype
           BrowserFile(file.getName(), "unknown", null,
-            file.length(), file.lastModified(), user.canWrite(file))
+            file.length(), file.lastModified(), user.canWrite(file), false)
         }
       }
-      case Some(mime) => 
+      case Some(mime) => {
+        val thumb_file = FileFolder.getThumbnail(file.getPath())
         BrowserFile(file.getName(), mime,
             find_view(file.getAbsolutePath(), mime),
-            file.length(), file.lastModified(), user.canWrite(file))
+            file.length(), file.lastModified(), user.canWrite(file),
+            thumb_file.exists())
+      }
     }
   }
   

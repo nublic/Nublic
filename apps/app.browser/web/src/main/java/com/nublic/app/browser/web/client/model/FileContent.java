@@ -29,5 +29,9 @@ public class FileContent extends JavaScriptObject {
 	public final native boolean getWritable() /*-{
 		return this.writable;
 	}-*/;
+	
+	public final native boolean hasThumbnail() /*-{
+		return this.thumb;
+	}-*/;
 
 }

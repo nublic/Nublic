@@ -1,10 +1,12 @@
 package com.nublic.app.browser.web.client.UI.actions;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
@@ -15,6 +17,9 @@ import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.widgets.MessagePopup;
+import com.nublic.util.widgets.PopupButton;
+import com.nublic.util.widgets.PopupButtonHandler;
 
 public class DeleteAction extends ActionWidget {
 
@@ -24,44 +29,59 @@ public class DeleteAction extends ActionWidget {
 
 	@Override
 	public void executeAction() {
-		// final variables to check and give feedback on response
-		final String pathFrom = stateProvider.getShowingPath();
-		final List<FileNode> removedFiles = new ArrayList<FileNode>();
-		// Create the parameters to the request
-		StringBuilder setOfFiles = new StringBuilder();
-		for (Widget w : stateProvider.getSelectedFiles()) {
-			FileWidget fw = (FileWidget) w;
-			if (setOfFiles.length() != 0) {
-				setOfFiles.append(":");
-			}
-			setOfFiles.append(fw.getPath());
-			removedFiles.add(fw.getNode());
-		}
 		
-		Message m = new Message() {
+		final MessagePopup popup = new MessagePopup("Confirm deletion",
+				"Do you really want to delete the selected files?",
+				EnumSet.of(PopupButton.CANCEL, PopupButton.DELETE));
+		
+		popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
+			
 			@Override
-			public void onSuccess(Response response) {
-				if (response.getStatusCode() == Response.SC_OK) {
-					if (pathFrom.equals(stateProvider.getShowingPath())) {
-						stateProvider.getModel().removeFiles(removedFiles);
-						stateProvider.getModel().fireFilesUpdateHandlers(false, false);
+			public void onClicked(PopupButton button, ClickEvent event) {
+				// final variables to check and give feedback on response
+				final String pathFrom = stateProvider.getShowingPath();
+				final List<FileNode> removedFiles = new ArrayList<FileNode>();
+				// Create the parameters to the request
+				StringBuilder setOfFiles = new StringBuilder();
+				for (Widget w : stateProvider.getSelectedFiles()) {
+					FileWidget fw = (FileWidget) w;
+					if (setOfFiles.length() != 0) {
+						setOfFiles.append(":");
 					}
-				} else {
-					ErrorPopup.showError("Could not delete files");
+					setOfFiles.append(fw.getPath());
+					removedFiles.add(fw.getNode());
 				}
-			}
-			@Override
-			public void onError() {
-				ErrorPopup.showError("Could not delete files");
-			}
-			@Override
-			public String getURL() {
-				return URL.encode(GWT.getHostPageBaseURL() + "server/delete");
-			}
-		};
+				
+				Message m = new Message() {
+					@Override
+					public void onSuccess(Response response) {
+						if (response.getStatusCode() == Response.SC_OK) {
+							if (pathFrom.equals(stateProvider.getShowingPath())) {
+								stateProvider.getModel().removeFiles(removedFiles);
+								stateProvider.getModel().fireFilesUpdateHandlers(false, false);
+							}
+						} else {
+							ErrorPopup.showError("Could not delete files");
+						}
+					}
+					@Override
+					public void onError() {
+						ErrorPopup.showError("Could not delete files");
+					}
+					@Override
+					public String getURL() {
+						return URL.encode(GWT.getHostPageBaseURL() + "server/delete");
+					}
+				};
 
-		m.addParam("files", setOfFiles.toString());
-		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
+				m.addParam("files", setOfFiles.toString());
+				SequenceHelper.sendJustOne(m, RequestBuilder.POST);
+				
+				popup.hide();
+			}
+		});
+		
+		popup.center();
 	}
 
 	@Override

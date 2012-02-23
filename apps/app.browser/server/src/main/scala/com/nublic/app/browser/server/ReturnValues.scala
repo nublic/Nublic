@@ -3,7 +3,7 @@ package com.nublic.app.browser.server
 case class BrowserFolder(val name: String, val subfolders: List[BrowserFolder], val writable: Boolean)
 
 case class BrowserFile(val name: String, val mime: String, val view: String,
-  val size: Long, val last_update: Long, val writable: Boolean) {
+  val size: Long, val last_update: Long, val writable: Boolean, val thumb: Boolean) {
   def isDirectory = mime == "application/x-directory"
 }
 

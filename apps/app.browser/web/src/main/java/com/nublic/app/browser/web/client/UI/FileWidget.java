@@ -90,6 +90,9 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		
 		// Gets the thumbnail of the file
 		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
+		if (!n.hasThumbnail()) {
+			url = URL.encode(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + n.getMime());
+		}
 
 		
 		String viewType = node.getView();

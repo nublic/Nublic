@@ -32,7 +32,6 @@
 		}
 		.topelements {
 			width: 150px;
-			height: 28px;
 		}
 		.nobackground {
 			background: transparent;
@@ -53,6 +52,17 @@
 		}
 	    .showinline {
 	        display: inline;
+	    }
+        @if user.agent safari {
+	        .filterwidth {
+	            height: 18px;
+	            width: 153px;
+	        } 
+	    } @else {
+	        .filterwidth {
+	            height: 18px;
+	            width: 153px;
+            }
 	    }
 	</ui:style>
 	
@@ -94,12 +104,12 @@
 							<my:NavigationBar ui:field="navigationBar">
 							</my:NavigationBar>
 	   					</g:north>
-	   					<g:east size="181">
-	   					    <g:HTMLPanel addStyleNames="{style.margintop}">
+	   					<g:east size="196">
+	   					    <g:HTMLPanel addStyleNames="{style.margintop}" height="28px">
 		   						<div class="input">
 		   					    	<div class="input-prepend">
 		   					    		<span class="add-on"><g:Image url="images/filter.png"/></span>
-		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" />
+		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" addStyleNames="{style.filterwidth}" />
 		   					   		</div>
 		   					    </div>
 		   					</g:HTMLPanel>
