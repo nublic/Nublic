@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
 
@@ -12,7 +13,7 @@ public class PreviewTextAction extends ActionWidget {
 	FileWidget textToShow = null;
 
 	public PreviewTextAction(BrowserUi stateProvider) {
-		super("images/text_view.png", "Preview plain text", stateProvider);
+		super(Resources.INSTANCE.textView(), "Preview plain text", stateProvider);
 	}
 
 	@Override

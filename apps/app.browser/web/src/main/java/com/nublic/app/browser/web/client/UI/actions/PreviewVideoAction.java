@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
 
@@ -12,7 +13,7 @@ public class PreviewVideoAction extends ActionWidget {
 	FileWidget videoToShow = null;
 
 	public PreviewVideoAction(BrowserUi stateProvider) {
-		super("images/video_view.png", "Preview video", stateProvider);
+		super(Resources.INSTANCE.videoView(), "Preview video", stateProvider);
 	}
 
 	@Override

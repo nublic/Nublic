@@ -5,6 +5,7 @@ import java.util.Set;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
 
@@ -12,7 +13,7 @@ public class PreviewDocumentAction extends ActionWidget {
 	FileWidget docToShow = null;
 
 	public PreviewDocumentAction(BrowserUi stateProvider) {
-		super("images/document_view.png", "Preview document", stateProvider);
+		super(Resources.INSTANCE.documentView(), "Preview document", stateProvider);
 	}
 
 	@Override

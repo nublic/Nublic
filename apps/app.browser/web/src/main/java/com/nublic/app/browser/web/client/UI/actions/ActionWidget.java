@@ -39,6 +39,7 @@ public abstract class ActionWidget extends Composite implements ContextChangeHan
 	boolean hasHandler;
 	
 	// TODO: mark this as Deprecated and solve problems..
+	@Deprecated
 	public ActionWidget(String imageURL, String actionText, BrowserUi stateProvider) {
 		this(new Image(imageURL), actionText, stateProvider);
 	}

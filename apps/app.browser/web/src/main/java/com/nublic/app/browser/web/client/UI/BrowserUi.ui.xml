@@ -55,7 +55,7 @@
 	    }
         @if user.agent safari {
 	        .filterwidth {
-	            height: 18px;
+	            height: 100%;
 	            width: 153px;
 	        } 
 	    } @else {

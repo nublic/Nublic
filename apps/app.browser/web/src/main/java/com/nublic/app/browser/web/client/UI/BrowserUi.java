@@ -16,6 +16,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.core.client.ScriptInjector;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -709,42 +711,79 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showText(final String path) {
-		final AceEditor editor = new AceEditor();
-		// Get text
-		Message m = new Message() {
+		ScriptInjector.fromUrl("ace/ace.js").setCallback(new com.google.gwt.core.client.Callback<Void, Exception>() {
+			
 			@Override
-			public void onSuccess(Response response) {
-				editor.setText(response.getText());
+			public void onSuccess(Void result) {
+				ScriptInjector.fromUrl("ace/theme-eclipse.js").setCallback(new com.google.gwt.core.client.Callback<Void, Exception>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						showTextInternal(path);
+					}
+					
+					@Override
+					public void onFailure(Exception reason) {
+						Window.alert("Error loading text viewer");	
+					}
+				}).inject();
 			}
+			
 			@Override
-			public void onError() {
-				ErrorPopup.showError("Error reading text file");
+			public void onFailure(Exception reason) {
+				Window.alert("Error loading text viewer");
 			}
+		}).inject();
+	}
+	
+	private void showTextInternal(final String path) {
+		GWT.runAsync(new RunAsyncCallback() {
+			
 			@Override
-			public String getURL() {
-				return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
-			}
-		};
-		SequenceHelper.sendJustOne(m, RequestBuilder.GET);
+			public void onSuccess() {
+				final AceEditor editor = new AceEditor();
+				// Get text
+				Message m = new Message() {
+					@Override
+					public void onSuccess(Response response) {
+						editor.setText(response.getText());
+					}
+					@Override
+					public void onError() {
+						ErrorPopup.showError("Error reading text file");
+					}
+					@Override
+					public String getURL() {
+						return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
+					}
+				};
+				SequenceHelper.sendJustOne(m, RequestBuilder.GET);
 
-		// Show the widget
-		setContentOfPopUp(editor, path);
-		popUpBox.show();
-		editor.startEditor();
-		editor.setTheme(AceEditorTheme.ECLIPSE);
-		editor.setReadOnly(true);
-		editor.setShowPrintMargin(false);
-		editor.setUseWrapMode(true);
+				// Show the widget
+				setContentOfPopUp(editor, path);
+				popUpBox.show();
+				editor.startEditor();
+				editor.setTheme(AceEditorTheme.ECLIPSE);
+				editor.setReadOnly(true);
+				editor.setShowPrintMargin(false);
+				editor.setUseWrapMode(true);
 
-		final AceEditorMode mode = AceEditorMode.fromPath(path);
-		if (mode != null) {
-			loader.loadJS(GWT.getHostPageBaseURL() + "browserapp/ace/mode-" + mode.getName() + ".js", new Callback<Event>() {
-				@Override
-				public void execute(Event t) {
-					editor.setMode(mode);
+				final AceEditorMode mode = AceEditorMode.fromPath(path);
+				if (mode != null) {
+					loader.loadJS(GWT.getHostPageBaseURL() + "browserapp/ace/mode-" + mode.getName() + ".js", new Callback<Event>() {
+						@Override
+						public void execute(Event t) {
+							editor.setMode(mode);
+						}
+					});
 				}
-			});
-		}
+			}
+			
+			@Override
+			public void onFailure(Throwable reason) {
+				Window.alert("Error loading text viewer");
+			}
+		});
 	}
 
 	@Override
