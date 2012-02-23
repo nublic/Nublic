@@ -11,11 +11,13 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.nublic.app.music.client.datamodel.Artist;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
@@ -24,8 +26,6 @@ import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.popup.ConfirmDeletionPanel;
 import com.nublic.app.music.client.ui.popup.DeleteHandler;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 
 public class ArtistPanel extends Composite implements ScrollHandler {
 	private static ArtistPanelUiBinder uiBinder = GWT.create(ArtistPanelUiBinder.class);
@@ -39,7 +39,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	String collectionId;
 	String collectionName;
 	Set<ArtistWidget> unloadedWidgets = new HashSet<ArtistWidget>();
-	List<Artist> artistList;
+	List<ArtistInfo> artistList;
 	ConfirmDeletionPanel cdp = new ConfirmDeletionPanel(new DeleteHandler() {
 		@Override
 		public void onDelete() {
@@ -91,11 +91,11 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		unloadedWidgets.removeAll(loadedInThisScroll);
 	}
 
-	public void setArtistList(List<Artist> artistList) {
+	public void setArtistList(List<ArtistInfo> artistList) {
 		this.artistList = artistList;
 		
-		for (Artist a : artistList) {
-			ArtistWidget aw = new ArtistWidget(model, a);
+		for (ArtistInfo a : artistList) {
+			ArtistWidget aw = new ArtistWidget(model, a, collectionId);
 			unloadedWidgets.add(aw); // for handling lazy scroll loading
 			mainPanel.add(aw);
 		}

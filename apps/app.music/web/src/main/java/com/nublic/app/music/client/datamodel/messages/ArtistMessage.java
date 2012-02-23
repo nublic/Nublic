@@ -1,14 +1,16 @@
 package com.nublic.app.music.client.datamodel.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.State;
+import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.js.JSArtist;
 import com.nublic.app.music.client.datamodel.js.JSArtistResponse;
 import com.nublic.util.error.ErrorPopup;
@@ -26,15 +28,19 @@ import com.nublic.util.messages.Message;
 //                       $extra_info }
 public class ArtistMessage extends Message {
 	String collectionId;
+	
+	// Handler handling
+	ArtistHandler artistHandler;
+	// Necessary to know if handler must be called
+	int targetScreen;
 	DataModel model;
 	
-	public ArtistMessage(DataModel model) {
-		this(model, null);
-	}
 
-	public ArtistMessage(DataModel model, String collection) {
-		this.model = model;
+	public ArtistMessage(String collection, ArtistHandler ah, int currentScreen, DataModel model) {
 		collectionId = collection;
+		artistHandler = ah;
+		this.targetScreen = currentScreen;
+		this.model = model;
 	}
 
 	@Override
@@ -51,39 +57,33 @@ public class ArtistMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		// Fill artists list in model with the new info
-		model.clearArtistList();
-
-		// Commented for response including row count.
-		JSArtistResponse jsResponse = null;
+		
 		if (response.getStatusCode() == Response.SC_OK) {
+			JSArtistResponse jsResponse = null;
 			String text = response.getText();
 			jsResponse = JsonUtils.safeEval(text);
 
 			if (jsResponse == null) {
 				onError();
 			} else {
+				List<ArtistInfo> answerList = new ArrayList<ArtistInfo>(); // To be filled and returned
 				JsArray<JSArtist> artistList = jsResponse.getArtists();
 				for (int i = 0; i < artistList.length(); i++) {
 					JSArtist artist = artistList.get(i);
-					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getDiscs(), artist.getSongs());
-					model.addArtist(new Artist(info, collectionId));
-					model.getArtistCache().put(artist.getId(), info);
+					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
+					answerList.add(info);
+					// We take the opportunity to add the artist to the model cache
+					model.getArtistCache().put(info.getId(), info);
+				}
+				
+				// Only if the message arrives on time to fill the screen it was meant for
+				if (targetScreen == model.getCurrentScreen()) {
+					artistHandler.onArtistChange(answerList);
 				}
 			}
 		} else {
 			onError();
 		}
-			
-		// Set the selected collection which is being shown
-		if (collectionId == null) {
-			// All music
-			model.setShowing();
-		} else {
-			model.setShowing(collectionId, true);
-		}
-		model.setState(State.ARTIST_ALBUMS);		
-		model.fireStateHandlers();		
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class ArtistMessage extends Message {
 		String text = r.getText();
 		JSArtist artist = JsonUtils.safeEval(text);
 		
-		return new ArtistInfo(artist.getId(), artist.getName(), artist.getDiscs(), artist.getSongs());
+		return new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
 	}
 
 }

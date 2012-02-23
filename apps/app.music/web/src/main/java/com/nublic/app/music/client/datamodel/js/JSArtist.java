@@ -23,8 +23,8 @@ public class JSArtist extends JavaScriptObject {
 		return this.name;
     }-*/;
 
-	public final native int getDiscs() /*-{
-		return this.discs;
+	public final native int getAlbums() /*-{
+		return this.albums;
 	}-*/;
 	
 	public final native int getSongs() /*-{

@@ -1,18 +1,18 @@
 package com.nublic.app.music.client.datamodel.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.music.client.datamodel.Album;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
-import com.nublic.app.music.client.datamodel.Artist;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.State;
+import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.js.JSAlbum;
 import com.nublic.app.music.client.datamodel.js.JSAlbumResponse;
-import com.nublic.util.cache.Cache;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
@@ -27,32 +27,21 @@ import com.nublic.util.messages.Message;
 //                       "songs": $number_of_songs,
 //                       $extra_info }
 public class AlbumMessage extends Message {
-	// One of this groups..
-	// Artist
-	Artist artist = null;
-	Cache<String, AlbumInfo> albumCache = null;
-	// Or model, id and collection (where artist and collection can be null)
-	DataModel model = null;
-	String artistId = null;
-	String inCollection = null;
+	String artistId;
+	String inCollection;
 	
-	public AlbumMessage(DataModel model, String artistId, String inCollection) {
-		this.model = model;
+	// Handler handling
+	AlbumHandler albumHandler;
+	// Necessary to know if handler must be called
+	int targetScreen;
+	DataModel model;
+
+	public AlbumMessage(String artistId, String inCollection, AlbumHandler ah, int currentScreen, DataModel model) {
 		this.artistId = artistId;
 		this.inCollection = inCollection;
-	}
-	
-	public AlbumMessage(DataModel model, String artistId) {
-		this(model, artistId, null);
-	}
-	
-	public AlbumMessage(DataModel model) {
-		this(model, null, null);
-	}
-
-	public AlbumMessage(Artist a, Cache<String, AlbumInfo> albumCache) {
-		artist = a;
-		this.albumCache = albumCache;
+		this.albumHandler = ah;
+		this.targetScreen = currentScreen;
+		this.model = model;
 	}
 
 	@Override
@@ -61,18 +50,14 @@ public class AlbumMessage extends Message {
 		url.append(GWT.getHostPageBaseURL());
 		url.append("server/albums/");
 		// Add possible artist filter
-		if (artist != null) {
-			url.append(artist.getInfo().getId());
-		} else if (artistId != null) {
+		if (artistId != null) {
 			url.append(artistId);
 		} else {
 			url.append("all");
 		}
 		url.append("/desc/0/32000/");
 		// Add possible collection filter
-		if (artist != null && artist.getInCollection() != null) {
-			url.append(artist.getInCollection());
-		} else if (inCollection != null) {
+		if (inCollection != null) {
 			url.append(inCollection);
 		}
 		
@@ -86,54 +71,25 @@ public class AlbumMessage extends Message {
 			JSAlbumResponse jsResponse = null;
 			String text = response.getText();
 			jsResponse = JsonUtils.safeEval(text);
-			if (artist == null) {
-				// For album messages directly for data model
-				if (jsResponse == null) {
-					onError();
-				} else {
-					insertResponseInModel(jsResponse);
-				}
-			} else {
-				// For album messages filling some artist
-				if (jsResponse == null) {
-					onError();
-				} else {
-					insertResponseInArtist(jsResponse);
-				}
+			
+			List<AlbumInfo> answerList = new ArrayList<AlbumInfo>(); // To be filled and returned
+			JsArray<JSAlbum> albumList = jsResponse.getAlbums();
+			for (int i = 0; i < albumList.length(); i++) {
+				JSAlbum album = albumList.get(i);
+
+				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+				answerList.add(info);
+				// We take the opportunity to add the album to the model cache
+				model.getAlbumCache().put(info.getId(), info);
+			}
+
+			// Only if the message arrives on time to fill the screen it was meant for
+			if (targetScreen == model.getCurrentScreen()) {
+				albumHandler.onAlbumChange(answerList);
 			}
 		} else {
 			onError();
 		}
-	}
-
-	private void insertResponseInArtist(JSAlbumResponse jsResponse) {
-		artist.clearAlbumList();
-		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
-		for (int i = 0; i < albumList.length(); i++) {
-			JSAlbum album = albumList.get(i);
-
-			AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
-			artist.addAlbum(new Album(info));
-			albumCache.put(album.getId(), info);
-		}
-		artist.fireAlbumsHandler();
-		
-	}
-
-	private void insertResponseInModel(JSAlbumResponse jsResponse) {
-		model.clearAlbumList();
-		JsArray<JSAlbum> albumList = jsResponse.getAlbums();
-		for (int i = 0; i < albumList.length(); i++) {
-			JSAlbum album = albumList.get(i);
-
-			AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
-			model.addAlbum(new Album(info));
-			model.getAlbumCache().put(album.getId(), info);
-		}
-		model.setState(State.ALBUM_SONGS);
-		model.setShowingArtistId(artistId);
-		model.fireStateHandlers();
-		// TODO: ask for songs if proceeds (if not using async data provider lists)
 	}
 	
 	@Override

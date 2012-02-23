@@ -15,12 +15,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.Song;
+import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
 public class SongPanel extends Composite {
@@ -33,38 +32,34 @@ public class SongPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	@UiField Hyperlink subtitleLabel;
 	
-	List<Song> songList;
 	DataModel model;
-	AlbumInfo info;
 	String inCollection;
-	
-	public SongPanel(DataModel model, String inCollection) {
+	String albumId;
+
+	public SongPanel(DataModel model, String albumId, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		this.model = model;
-		this.inCollection = inCollection;
+		this.albumId = albumId;
+		this.inCollection = collectionId;
 
 		// Get artist info (null means all albums)
-		String albumId = model.getShowingAlbumId();
 		if (albumId == null) {
-			this.info = null;
 			titleLabel.setText("All albums");
 			byLabel.setVisible(false);
 			subtitleLabel.setVisible(false);
 		} else {
-			Cache<String, AlbumInfo> albumCache = model.getAlbumCache();
-			albumCache.addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
+			model.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {
-					info = v;
-					titleLabel.setText(info.getName());
+					titleLabel.setText(v.getName());
 					byLabel.setVisible(true);
 					subtitleLabel.setVisible(true);
 					subtitleLabel.setText("some artist");
 					setSubtitleTarget();
 				}
 			});
-			albumCache.obtain(albumId);
+			model.getAlbumCache().obtain(albumId);
 		}
 
 		// Create button line
@@ -79,10 +74,12 @@ public class SongPanel extends Composite {
 		
 	}
 	
-//	public void setSongList(List<Song> songList) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
+		SongList sl = new SongList(model, albumId, null, collectionId, total, mainPanel);
+		sl.addSongs(total, from, to, answerList);
+
+		mainPanel.add(sl);
+	}
 	
 	public void setSubtitleTarget() {
 		StringBuilder target = new StringBuilder();		
@@ -116,7 +113,5 @@ public class SongPanel extends Composite {
 			}
 		});
 	}
-
-
 
 }

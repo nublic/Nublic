@@ -40,22 +40,20 @@ public abstract class Cache<Key, Value> {
 					Message m = new Message() {
 						@Override
 						public void onSuccess(Response response) {
-//							if (response.getStatusCode() == Response.SC_OK) {
+							if (response.getStatusCode() == Response.SC_OK) {
 								synchronized (synchronizeKeys) {
 									keysBeingAsked.remove(k);
 									Value v = getValue(response);
 									cache.put(k, v);
 									callHandlers(k, v);
 								}
-//							} else {
-//								error(k);
-//							}
+							} else {
+								error(k);
+							}
 						}
 						@Override
 						public void onError() {
-							// TODO: real things
-//							error(k);
-							onSuccess(null);
+							error(k);
 						}
 						@Override
 						public String getURL() {
@@ -70,12 +68,12 @@ public abstract class Cache<Key, Value> {
 		}
 	}
 	
-//	private void error(Key k) {
-//		synchronized (synchronizeKeys) {
-//			keysBeingAsked.remove(k);
-//			throw new IllegalArgumentException();
-//		}
-//	}
+	private void error(Key k) {
+		synchronized (synchronizeKeys) {
+			keysBeingAsked.remove(k);
+			throw new IllegalArgumentException();
+		}
+	}
 	
 	private void callHandlers(Key k, Value v) {
 		synchronized (synchronizeHandlers) {

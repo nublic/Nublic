@@ -11,14 +11,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
 public class AlbumPanel extends Composite {
@@ -29,29 +28,29 @@ public class AlbumPanel extends Composite {
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
 	
-	List<Album> albumList;
+	List<AlbumInfo> albumList;
 	DataModel model;
-	ArtistInfo info;
+	String artistId;
+	String collectionId;
 
-	public AlbumPanel(DataModel model) {
+	public AlbumPanel(DataModel model, String artistId, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		this.collectionId = collectionId;
 		this.model = model;
+		this.artistId = artistId;
+	
 		// Get artist info (null means all artists)
-		String artistId = model.getShowingArtistId();
 		if (artistId == null) {
-			this.info = null;
 			titleLabel.setText("All artists");
 		} else {
-			Cache<String, ArtistInfo> artistCache = model.getArtistCache();
-			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+			model.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
-					info = v;
-					titleLabel.setText(info.getName());
+					titleLabel.setText(v.getName());
 				}
 			});
-			artistCache.obtain(artistId);
+			model.getArtistCache().obtain(artistId);
 		}
 
 		// Create button line
@@ -65,11 +64,11 @@ public class AlbumPanel extends Composite {
 		titlePanel.add(b);
 	}
 
-	public void setAlbumList(List<Album> albumList) {
+	public void setAlbumList(List<AlbumInfo> albumList) {
 		this.albumList = albumList;
 
-		for (Album a : albumList) {
-			AlbumWidget aw = new AlbumWidget(model, a, mainPanel);
+		for (AlbumInfo a : albumList) {
+			AlbumWidget aw = new AlbumWidget(model, a, artistId, collectionId, mainPanel);
 			mainPanel.add(aw);
 		}
 	}

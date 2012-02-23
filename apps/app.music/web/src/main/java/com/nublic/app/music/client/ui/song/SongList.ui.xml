@@ -8,8 +8,11 @@
 		.leftmargin {
 			margin-left: 15px;
 		}
+		.bottommargin {
+			margin-bottom: 15px;
+		}
 	</ui:style>
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.bottommargin}">
 		<g:Grid ui:field="grid">
 		</g:Grid>
 	</g:FlowPanel>

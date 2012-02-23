@@ -9,12 +9,14 @@ import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
-import com.nublic.app.music.client.datamodel.Album;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
@@ -22,8 +24,6 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.song.SongList;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.FlowPanel;
 
 //GET /album-art/:album-id
 //* Retrieve the image associated with an album
@@ -37,16 +37,16 @@ public class AlbumWidget extends Composite {
 	@UiField Hyperlink albumNameLabel;
 	@UiField Image albumImage;
 	@UiField FlowPanel songsPanel;
-	Album album;
+	AlbumInfo album;
 	
-	public AlbumWidget(DataModel model, Album a, Widget inPanel) {
+	public AlbumWidget(DataModel model, AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		album = a;
 
 		setImage();
 
-		albumNameLabel.setText(album.getInfo().getName());
-		setClickTarget();
+		albumNameLabel.setText(album.getName());
+		setClickTarget(collectionId);
 		
 		// Add button line
 		ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
@@ -58,7 +58,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new SongList(album, inPanel)); // Needs the model to access cache
+		songsPanel.add(new SongList(model, album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
 	}
 
 	private void setImage() {
@@ -66,7 +66,7 @@ public class AlbumWidget extends Composite {
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
-		imageUrl.append(album.getInfo().getId());
+		imageUrl.append(album.getId());
 
 		albumImage.addErrorHandler(new ErrorHandler() {
 			@Override
@@ -78,17 +78,17 @@ public class AlbumWidget extends Composite {
 		albumImage.setUrl(URL.encode(imageUrl.toString()));
 	}
 
-	private void setClickTarget() {
+	private void setClickTarget(String collectionId) {
 		StringBuilder target = new StringBuilder();		
-		if (album.getInCollection() != null) {
+		if (collectionId != null) {
 			target.append(Constants.PARAM_COLLECTION);
 			target.append("=");
-			target.append(album.getInCollection());
+			target.append(collectionId);
 			target.append("&");
 		}
 		target.append(Constants.PARAM_ALBUM);
 		target.append("=");
-		target.append(album.getInfo().getId());
+		target.append(album.getId());
 		albumNameLabel.setTargetHistoryToken(target.toString());
 	}
 	

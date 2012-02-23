@@ -4,7 +4,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
-import com.nublic.app.music.client.datamodel.State;
 import com.nublic.util.messages.Message;
 
 //GET /playlist/:id/:order/:asc-desc/:start/:length
@@ -31,9 +30,10 @@ public class PlaylistContentMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		model.setShowing(id, false);
-		model.setState(State.SONGS);
-		model.fireStateHandlers();
+		// TODO: something
+//		model.setShowing(id, false);
+//		model.setState(State.SONGS);
+//		model.fireStateHandlers();
 	}
 
 	@Override

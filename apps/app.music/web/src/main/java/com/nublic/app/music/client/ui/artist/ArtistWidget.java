@@ -18,8 +18,8 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
-import com.nublic.app.music.client.datamodel.Album;
-import com.nublic.app.music.client.datamodel.Artist;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
@@ -52,16 +52,18 @@ public class ArtistWidget extends Composite {
 	@UiField HorizontalPanel labelAndButtonsPanel;
 	
 	DataModel model;
-	Artist artist;
+	ArtistInfo artist;
+	String collectionId;
 	boolean loaded = false;
 
-	public ArtistWidget(DataModel model, Artist art) {
+	public ArtistWidget(DataModel model, ArtistInfo art, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.model = model;
 		this.artist = art;
+		this.collectionId = collectionId;
 		
-		artistNameLabel.setText(artist.getInfo().getName());
+		artistNameLabel.setText(artist.getName());
 //		lazyLoad();
 	}
 
@@ -89,7 +91,7 @@ public class ArtistWidget extends Composite {
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/artist-art/");
-		imageUrl.append(artist.getInfo().getId());
+		imageUrl.append(artist.getId());
 
 		artistImage.setUrl(URL.encode(imageUrl.toString()));
 		artistImage.addErrorHandler(new ErrorHandler() {
@@ -102,32 +104,30 @@ public class ArtistWidget extends Composite {
 
 	private void setClickTarget() {
 		StringBuilder target = new StringBuilder();		
-		if (artist.getInCollection() != null) {
+		if (collectionId != null) {
 			target.append(Constants.PARAM_COLLECTION);
 			target.append("=");
-			target.append(artist.getInCollection());
+			target.append(collectionId);
 			target.append("&");
 		}
 		target.append(Constants.PARAM_ARTIST);
 		target.append("=");
-		target.append(artist.getInfo().getId());
+		target.append(artist.getId());
 		artistNameLabel.setTargetHistoryToken(target.toString());
 	}
 
 	// To handle answers to album messages and add album widgets
 	private void setMyselfAsAlbumHandler() {
-		artist.setAlbumsHandler(new AlbumHandler() {
+		model.askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
 			@Override
-			public void onAlbumChange() {
-				List<Album> albumList = artist.getAlbumList();
-				for (Album a : albumList) {
-					AlbumInArtist aw = new AlbumInArtist(a, artist.getInCollection());
+			public void onAlbumChange(List<AlbumInfo> answerList) {
+				for (AlbumInfo a : answerList) {
+					AlbumInArtist aw = new AlbumInArtist(a, collectionId);
 					aw.getElement().addClassName(style.inlineblock());
 					albumsPanel.add(aw);
 				}
 			}
 		});
-		artist.askForAlbums(model.getAlbumCache());
 	}
 	
 	// Handlers for button line
