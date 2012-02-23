@@ -43,9 +43,9 @@ public class SongPanel extends Composite {
 		this.albumId = albumId;
 		this.inCollection = collectionId;
 
-		// Get artist info (null means all albums)
+		// Get album info (null means all songs)
 		if (albumId == null) {
-			titleLabel.setText("All albums");
+			titleLabel.setText("All songs");
 			byLabel.setVisible(false);
 			subtitleLabel.setVisible(false);
 		} else {

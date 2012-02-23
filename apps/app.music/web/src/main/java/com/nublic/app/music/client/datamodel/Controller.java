@@ -6,6 +6,7 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 
@@ -26,7 +27,7 @@ public class Controller {
 		String album = hmap.get(Constants.PARAM_ALBUM);
 
 		if (playlist != null) {
-//			model.askForPlaylistSongs(playlist);
+			model.askForPlaylistSongs(playlist, new MyPlaylistHandler(playlist), true);
 		} else {
 			if (album != null) {
 				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
@@ -38,48 +39,56 @@ public class Controller {
 		}
 	}
 	
+	// Song
 	class MySongHandler implements SongHandler {
 		String albumId;
 		String collectionId;	
-		
 		public MySongHandler(String albumId, String collection) {
 			this.albumId = albumId;
 			this.collectionId = collection;
 		}
-		
 		@Override
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
 			ui.showSongList(total, from, to, answerList, albumId, collectionId);
 		}
 	}
 	
+	// Album
 	class MyAlbumHandler implements AlbumHandler {
 		String artistId;
 		String collectionId;	
-		
 		public MyAlbumHandler(String artist, String collection) {
 			artistId = artist;
 			collectionId = collection;
 		}
-		
 		@Override
 		public void onAlbumChange(List<AlbumInfo> answerList) {
 			ui.showAlbumList(answerList, artistId, collectionId);
 		}
 	}
 	
+	// Artist
 	class MyArtistHandler implements ArtistHandler {
 		String collectionId;
-
 		public MyArtistHandler(String collection) {
 			collectionId = collection;
 		}
-
 		@Override
 		public void onArtistChange(List<ArtistInfo> answerList) {
 			ui.showArtistList(answerList, collectionId);
 		}
 	}
 
+	// Playlist
+	class MyPlaylistHandler implements PlaylistHandler {
+		String playlistId;
+		public MyPlaylistHandler(String playlistId) {
+			this.playlistId = playlistId;
+		}
+		@Override
+		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+			ui.showPlaylist(total, from, to, answerList, playlistId);
+		}
+	}
 
 }

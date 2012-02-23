@@ -24,6 +24,7 @@ import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
+import com.nublic.app.music.client.ui.playlist.PlaylistPanel;
 import com.nublic.app.music.client.ui.song.SongPanel;
 import com.nublic.util.error.ErrorPopup;
 
@@ -51,7 +52,6 @@ public class MainUi extends Composite {
 		showingPlaylistWidget = allMusic;
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
-//		addStateChangeHandler(); 
 		addPutTagHandler();
 	}
 
@@ -116,46 +116,6 @@ public class MainUi extends Composite {
 			}
 		});
 	}
-
-	// Handler to handle changes in model states, which derive in showing different screens
-//	private void addStateChangeHandler() {
-//		model.addStateChangeHandler(new StateChangeHandler() {
-//			@Override
-//			public void onStateChange() {
-//				Tag showingTag = model.getShowingTag();
-//				Playlist showingPlaylist = model.getShowingPlaylist();
-//				if (showingTag != null) {
-//					// A tag is selected in the model, lets find which one
-//					PlaylistWidget selectedTag = tagIndex.get(showingTag.getId());
-//					if (selectedTag != null) {
-//						if (showingPlaylistWidget != selectedTag) {
-//							setSelectedWidget(selectedTag);
-//						}
-//						refillCentralPanel();
-//					} else {
-//						error("Couldn't find collection");
-//					}
-//				} else if (showingPlaylist != null) {
-//					// A playlist is selected in the model, lets find which one
-//					PlaylistWidget selectedPlaylist = playlistIndex.get(showingPlaylist.getId());
-//					if (selectedPlaylist != null) {
-//						if (showingPlaylistWidget != selectedPlaylist) {
-//							setSelectedWidget(selectedPlaylist);
-//						}
-//						playlistRefillCentralPanel();
-//					} else {
-//						error("Couldn't find playlist");
-//					}
-//				} else {
-//					// "All music" is selected
-//					if (showingPlaylistWidget != allMusic) {
-//						setSelectedWidget(allMusic);
-//					}
-//					refillCentralPanel();
-//				}
-//			}
-//		});
-//	}
 	
 	// Handler to notify model that the user has added a tag
 	private void addPutTagHandler() {
@@ -172,13 +132,12 @@ public class MainUi extends Composite {
 			}
 		});
 	}
-	
+
 	public void setSelectedWidget(PlaylistWidget newSelectedWidget) {
 		showingPlaylistWidget.setSelected(false);
 		showingPlaylistWidget = newSelectedWidget;
 		newSelectedWidget.setSelected(true);
 	}
-	
 	public void setSelectedCollection(String collectionId) {
 		PlaylistWidget newSelected = tagIndex.get(collectionId);
 		if (newSelected == null) {
@@ -187,30 +146,14 @@ public class MainUi extends Composite {
 			setSelectedWidget(newSelected);
 		}
 	}
-
-//	public void refillCentralPanel() {
-//		State s = model.getState();
-//		
-//		switch (s) {
-//		case ARTIST_ALBUMS:
-//			ArtistPanel artPanel = new ArtistPanel(model, showingPlaylistWidget.getId(), showingPlaylistWidget.getText());
-//			artPanel.setArtistList(model.getArtistList());
-//			mainPanel.setWidget(artPanel);
-//			break;
-//		case ALBUM_SONGS:
-//			AlbumPanel albPanel = new AlbumPanel(model);
-//			albPanel.setAlbumList(model.getAlbumList());
-//			mainPanel.setWidget(albPanel);
-//			break;
-//		case SONGS:
-//			String collectionId = model.getShowingTag() == null ? null : model.getShowingTag().getId();
-//			SongPanel songPanel = new SongPanel(model, collectionId);
-////			songPanel.setSongList(model.getSongList());
-//			mainPanel.setWidget(songPanel);
-//			break;
-//		}
-//	}
-//	
+	private void setSelectedPlaylist(String playlistId) {
+		PlaylistWidget newSelected = playlistIndex.get(playlistId);
+		if (newSelected == null) {
+			setSelectedWidget(allMusic);
+		} else {
+			setSelectedWidget(newSelected);
+		}
+	}
 	
 	public void showAlbumList(List<AlbumInfo> albumList, String artistId, String collectionId) {
 		AlbumPanel albPanel = new AlbumPanel(model, artistId, collectionId);
@@ -231,9 +174,19 @@ public class MainUi extends Composite {
 		songPanel.setSongList(total, from, to, answerList, albumId, collectionId);
 		mainPanel.setWidget(songPanel);
 	}
+	
+	public void showPlaylist(int total, int from, int to, List<SongInfo> answerList, String playlistId) {
+		setSelectedPlaylist(playlistId);
+		
+		PlaylistPanel plPanel = new PlaylistPanel(model, playlistId, showingPlaylistWidget.getText());
+		plPanel.setSongList(total, from, to, answerList, playlistId);
+		mainPanel.setWidget(plPanel);
+	}
 
 	public void error(String message) {
 		ErrorPopup.showError(message);
 	}
+
+
 
 }

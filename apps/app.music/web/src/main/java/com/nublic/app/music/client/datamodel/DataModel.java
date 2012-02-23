@@ -11,6 +11,7 @@ import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
@@ -19,6 +20,7 @@ import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
+import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
@@ -49,7 +51,6 @@ public class DataModel {
 
 	// Sending messages
 	int currentScreen = 0;
-//	SequenceIgnorer<Message> messageSender = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	
 	// Caches to archive albums and artists
 	Cache<String, AlbumInfo> albumCache;
@@ -57,6 +58,13 @@ public class DataModel {
 	
 	public DataModel() {
 		// Initialize variables
+		initAlbumCache();
+		initAristCache();
+				
+		sendInitialMessages();
+	}
+	
+	private void initAlbumCache() {
 		albumCache = new Cache<String, AlbumInfo>() {
 			@Override
 			public String getURL(String albumId) {
@@ -73,6 +81,9 @@ public class DataModel {
 				}
 			}
 		};
+	}
+
+	private void initAristCache() {
 		artistCache = new Cache<String, ArtistInfo>() {
 			@Override
 			public String getURL(String artistId) {
@@ -89,8 +100,6 @@ public class DataModel {
 				}
 			}
 		};
-		
-		sendInitialMessages();
 	}
 	
 	private void sendInitialMessages() {
@@ -149,15 +158,12 @@ public class DataModel {
 	public void askForSongs(String album, String artist, String collection, SongHandler sh) {
 		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, artist, collection, sh, false);
 	}
-	
 	public void askForSongs(String album, String artist, String collection, SongHandler sh, boolean newScreen) {
 		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, artist, collection, sh, false);
 	}
-	
 	public void askForSongs(int from, int to, String album, String artist, String collection, SongHandler sh) {
 		askForSongs(from, to, album, artist, collection, sh, false);
 	}
-	
 	public void askForSongs(int from, int to, String album, String artist, String collection, SongHandler sh, boolean newScreen) {
 		if (newScreen) {
 			currentScreen++;
@@ -166,11 +172,29 @@ public class DataModel {
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	
+	// Playlists songs
+	public void askForPlaylistSongs(String playlist, PlaylistHandler ph) {
+		askForPlaylistSongs(0, Constants.NEXT_SONGS_TO_ASK, playlist, ph, false);
+	}
+	public void askForPlaylistSongs(String playlist, PlaylistHandler ph, boolean newScreen) {
+		askForPlaylistSongs(0, Constants.NEXT_SONGS_TO_ASK, playlist, ph, newScreen);
+	}
+	public void askForPlaylistSongs(int from, int to, String playlist, PlaylistHandler ph) {
+		askForPlaylistSongs(from, to, playlist, ph, false);
+	}
+	public void askForPlaylistSongs(int from, int to, String playlist, PlaylistHandler ph, boolean newScreen) {
+		if (newScreen) {
+			currentScreen++;
+		}
+		PlaylistContentMessage pm = new PlaylistContentMessage(from, to, playlist, ph, currentScreen, this);
+		SequenceHelper.sendJustOne(pm, RequestBuilder.GET);
+	}
+	
+	
 	// Albums
 	public void askForAlbums(String artist, String collection, AlbumHandler ah) {
 		askForAlbums(artist, collection, ah, false);
 	}
-	
 	public void askForAlbums(String artist, String collection, AlbumHandler ah, boolean newScreen) {
 		if (newScreen) {
 			currentScreen++;
@@ -183,7 +207,6 @@ public class DataModel {
 	public void askForArtists(String collection, ArtistHandler ah) {
 		askForArtists(collection, ah, false);
 	}
-
 	public void askForArtists(String collection, ArtistHandler ah, boolean newScreen) {
 		if (newScreen) {
 			currentScreen++;
