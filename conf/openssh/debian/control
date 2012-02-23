@@ -1,0 +1,13 @@
+Source: nublic-openssh-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-openssh-config
+Architecture: all
+Depends: ${misc:Depends}, openssh-server
+Description: Nublic OpenSSH configuration files
+ Nublic OpenSSH configuration files

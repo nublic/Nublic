@@ -181,6 +181,7 @@ build_deb_package conf/tomcat6
 build_deb_package conf/minidlna
 build_deb_package conf/upstart
 build_deb_package conf/lshell
+build_deb_package conf/openssh
 build_deb_package conf/nublic
 create_repo
 # create_repo_cd
