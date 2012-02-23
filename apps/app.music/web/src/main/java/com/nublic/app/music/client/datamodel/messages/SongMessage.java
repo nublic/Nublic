@@ -46,8 +46,9 @@ public class SongMessage extends Message {
 	int targetScreen;
 	DataModel model;
 	
-	public SongMessage(int from, int to, String album, String collection, SongHandler sh, int currentScreen, DataModel model) {
+	public SongMessage(int from, int to, String album, String artist, String collection, SongHandler sh, int currentScreen, DataModel model) {
 		this.albumId = album;
+		this.artistId = artist;
 		this.inCollection = collection;
 		this.songHandler = sh;
 		this.targetScreen = currentScreen;

@@ -30,7 +30,7 @@ public class AlbumPanel extends Composite {
 	
 	List<AlbumInfo> albumList;
 	DataModel model;
-	ArtistInfo info;
+	String artistId;
 	String collectionId;
 
 	public AlbumPanel(DataModel model, String artistId, String collectionId) {
@@ -38,17 +38,16 @@ public class AlbumPanel extends Composite {
 		
 		this.collectionId = collectionId;
 		this.model = model;
+		this.artistId = artistId;
 	
 		// Get artist info (null means all artists)
 		if (artistId == null) {
-			this.info = null;
 			titleLabel.setText("All artists");
 		} else {
 			model.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
-					info = v;
-					titleLabel.setText(info.getName());
+					titleLabel.setText(v.getName());
 				}
 			});
 			model.getArtistCache().obtain(artistId);
@@ -69,7 +68,7 @@ public class AlbumPanel extends Composite {
 		this.albumList = albumList;
 
 		for (AlbumInfo a : albumList) {
-			AlbumWidget aw = new AlbumWidget(model, a, collectionId, mainPanel);
+			AlbumWidget aw = new AlbumWidget(model, a, artistId, collectionId, mainPanel);
 			mainPanel.add(aw);
 		}
 	}

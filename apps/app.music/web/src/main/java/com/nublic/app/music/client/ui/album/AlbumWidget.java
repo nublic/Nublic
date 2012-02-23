@@ -39,7 +39,7 @@ public class AlbumWidget extends Composite {
 	@UiField FlowPanel songsPanel;
 	AlbumInfo album;
 	
-	public AlbumWidget(DataModel model, AlbumInfo a, String collectionId, Widget inPanel) {
+	public AlbumWidget(DataModel model, AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		album = a;
 
@@ -58,7 +58,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new SongList(model, album.getId(), null, collectionId, album.getNumberOfSongs(), inPanel));
+		songsPanel.add(new SongList(model, album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
 	}
 
 	private void setImage() {

@@ -150,7 +150,7 @@ public class SongList extends Composite implements ScrollHandler {
 		if (needToLoad) {
 			for (Range r : rangeToAsk) {
 				askedRanges.add(r);
-				model.askForSongs(r.getFrom(), r.getTo(), albumId, collectionId, songHandler);
+				model.askForSongs(r.getFrom(), r.getTo(), albumId, artistId, collectionId, songHandler);
 			}
 		}
 	}

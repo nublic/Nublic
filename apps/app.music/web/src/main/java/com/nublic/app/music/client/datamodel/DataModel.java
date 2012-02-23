@@ -146,23 +146,23 @@ public class DataModel {
 	
 	// methods to make requests to server
 	// Songs
-	public void askForSongs(String album, String collection, SongHandler sh) {
-		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, collection, sh, false);
+	public void askForSongs(String album, String artist, String collection, SongHandler sh) {
+		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, artist, collection, sh, false);
 	}
 	
-	public void askForSongs(String album, String collection, SongHandler sh, boolean newScreen) {
-		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, collection, sh, false);
+	public void askForSongs(String album, String artist, String collection, SongHandler sh, boolean newScreen) {
+		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, artist, collection, sh, false);
 	}
 	
-	public void askForSongs(int from, int to, String album, String collection, SongHandler sh) {
-		askForSongs(from, to, album, collection, sh, false);
+	public void askForSongs(int from, int to, String album, String artist, String collection, SongHandler sh) {
+		askForSongs(from, to, album, artist, collection, sh, false);
 	}
 	
-	public void askForSongs(int from, int to, String album, String collection, SongHandler sh, boolean newScreen) {
+	public void askForSongs(int from, int to, String album, String artist, String collection, SongHandler sh, boolean newScreen) {
 		if (newScreen) {
 			currentScreen++;
 		}
-		SongMessage am = new SongMessage(from, to, album, collection, sh, currentScreen, this);
+		SongMessage am = new SongMessage(from, to, album, artist, collection, sh, currentScreen, this);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	
