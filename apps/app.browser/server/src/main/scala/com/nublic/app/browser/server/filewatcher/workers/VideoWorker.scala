@@ -94,6 +94,7 @@ object VideoWorker extends DocumentWorker {
     val op = new IMOperation() 
     op.addImage(thumbTempFile.getAbsolutePath())
     op.resize(FileFolder.THUMBNAIL_SIZE, FileFolder.THUMBNAIL_SIZE)
+    op.interlace("plane")
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
     // Delete temporal thumbnail
