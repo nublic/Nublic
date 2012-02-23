@@ -79,6 +79,8 @@ public class AlbumMessage extends Message {
 
 				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
 				answerList.add(info);
+				// We take the opportunity to add the album to the model cache
+				model.getAlbumCache().put(info.getId(), info);
 			}
 
 			// Only if the message arrives on time to fill the screen it was meant for

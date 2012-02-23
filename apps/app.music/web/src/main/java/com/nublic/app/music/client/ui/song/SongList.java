@@ -2,6 +2,7 @@ package com.nublic.app.music.client.ui.song;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -9,7 +10,6 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
-import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
@@ -19,11 +19,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
-import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.util.messages.DefaultComparator;
@@ -43,66 +41,92 @@ public class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
-	AlbumInfo album = null;
+	DataModel model;
 	Widget scrollPanel;
+	String albumId;
+	String artistId;
+	String collectionId;
+	int numberOfSongs;
+	
 	
 	SequenceIgnorer<Message> sendHelper = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	List<SongLocalizer> unloadedLocalizers;
-	SongLocalizer[] localizerIndex;
+	HashMap<Integer, SongLocalizer> localizerIndex;
 	List<Range> askedRanges = new ArrayList<Range>();
-	
+	MySongHandler songHandler;
 
-	// Behaviour 1... inside an album...........................................................................
-	public SongList(AlbumInfo a, Widget scrollPanel) {
-		// Scroll panel which we in are in to handle lazy loading
-		initWidget(uiBinder.createAndBindUi(this));
-		this.album = a;
-		this.scrollPanel = scrollPanel;
-		
-		prepareGrid();
 	
-//		album.prepareToAddSongs();
-//		album.addSongsChangeHandler(new SongsChangeHandler() {
-//			@Override
-//			public void onSongsChange(int from, int to) {
-//				for (int i = from; i <= to; i++) {
-//					setSong(i, album.getSong(i));
-//					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition <= to
-//					SongLocalizer loc = localizerIndex[i];
-//					unloadedLocalizers.remove(loc);
-//				}
-//			}
-//		});
-//		
-//		// Fake widgets which know if are being shown to be replaced onScroll
-//		prepareLocalizers(album.getInfo().getNumberOfSongs());		
+	public SongList(DataModel model, String albumId, String artistId, String collectionId, Widget scrollPanel) {
+		this(model, albumId, artistId, collectionId, -1, scrollPanel);
+	}
+	
+	// With numberOfSongs == -1 we'll get it from first request
+	// Scroll panel which we in are in to handle lazy loading
+	public SongList(DataModel model, String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
+		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.model = model;
+		this.albumId = albumId;
+		this.artistId = artistId;
+		this.collectionId = collectionId;
+		this.numberOfSongs = numberOfSongs;
+		this.scrollPanel = scrollPanel;
+
+		songHandler = new MySongHandler();
+		
+		if (numberOfSongs == -1) {
+			
+		} else {
+			prepareGrid();
+			prepareLocalizers(numberOfSongs);
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				@Override
+				public void execute() {
+					// This is executed when current events stack empties
+					// Call onScroll when the widgets are loaded, so content of shown ones can be lazy loaded
+					onScroll(null);
+				}
+			});
+		}
+	}
+	
+	private class MySongHandler implements SongHandler {
+		@Override
+		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+			if (total != SongList.this.numberOfSongs) {
+				// TODO: rescale songlist
+			} else {
+				int currentSong = from;
+				for (SongInfo s : answerList) {
+					setSong(currentSong, s);
+					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition <= to
+					SongLocalizer loc = localizerIndex.get(currentSong);
+					unloadedLocalizers.remove(loc);
+					currentSong++;
+				}
+			}
+		}
+	}
+	
+	public void addSongs(int total, int from, int to, List<SongInfo> songList) {
+		songHandler.onSongsChange(total, from, to, songList);
 	}
 
 	private void prepareGrid() {
-		grid.resize(album.getNumberOfSongs(), 2);
+		grid.resize(numberOfSongs, 2);
 		grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
 	}
 
 	private void prepareLocalizers(int amount) {
-		localizerIndex = new SongLocalizer[amount];
+		localizerIndex = new HashMap<Integer, SongLocalizer>(amount);
 		unloadedLocalizers = new ArrayList<SongLocalizer>(amount);
 		for (int i = 0; i < amount; i++) {
 			SongLocalizer loc = new SongLocalizer(i);
 			unloadedLocalizers.add(loc);
-			localizerIndex[i] = loc;
+			localizerIndex.put(i, loc);
 			grid.setWidget(i, 0, loc);
 		}
 		scrollPanel.addDomHandler(this, ScrollEvent.getType());
-		
-		// Couldn't find a way to do it on some widget event in Artist Widget (attachedHandler and LoadHandler don't work)
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			@Override
-			public void execute() {
-				// This is executed when current events stack empties
-				// Call onScroll when the widgets are loaded, so content of shown ones can be lazy loaded
-				onScroll(null);
-			}
-		});
 	}
 
 	@Override
@@ -124,11 +148,10 @@ public class SongList extends Composite implements ScrollHandler {
 			}
 		}
 		if (needToLoad) {
-//			for (Range r : rangeToAsk) {
-//				SongMessage sm = new SongMessage(r.getFrom(), r.getTo(), album);
-//				askedRanges.add(r);
-//				sendHelper.send(sm, RequestBuilder.GET);
-//			}
+			for (Range r : rangeToAsk) {
+				askedRanges.add(r);
+				model.askForSongs(r.getFrom(), r.getTo(), albumId, collectionId, songHandler);
+			}
 		}
 	}
 	
@@ -136,7 +159,7 @@ public class SongList extends Composite implements ScrollHandler {
 		int unboundedFrom = position - Constants.PREVIOUS_SONGS_TO_ASK;
 		int from = unboundedFrom <= 0 ? 0 : unboundedFrom;
 		int unboundedTo = position + Constants.NEXT_SONGS_TO_ASK;
-		int to = unboundedTo >= album.getNumberOfSongs() ? album.getNumberOfSongs() -1 : unboundedTo;
+		int to = unboundedTo >= numberOfSongs ? numberOfSongs -1 : unboundedTo;
 		return new Range(from, to);
 	}
 	
@@ -193,21 +216,6 @@ public class SongList extends Composite implements ScrollHandler {
 //		model.getArtistCache().obtain(s.getArtistId());
 //		grid.setWidget(row, 2, artistLabel);
 	}
-	
-	// Behaviour 2... directly on model...........................................................................
-	DataModel model;
-	int numberOfSongs;
-	
-	public SongList(DataModel model, Widget scrollPanel, String artistId, String albumId, String collectionId, int numberOfSongs) {
-		initWidget(uiBinder.createAndBindUi(this));
-		this.model = model;
-		this.numberOfSongs = numberOfSongs;
-		
-		if (numberOfSongs == -1) {
-			
-		} else {
-			
-		}
-	}
+
 
 }

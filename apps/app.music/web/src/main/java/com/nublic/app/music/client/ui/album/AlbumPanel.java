@@ -13,11 +13,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
 public class AlbumPanel extends Composite {
@@ -29,27 +29,29 @@ public class AlbumPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	
 	List<AlbumInfo> albumList;
+	DataModel model;
 	ArtistInfo info;
 	String collectionId;
 
-	public AlbumPanel(String artistId, Cache<String, ArtistInfo> artistCache, String collectionId) {
+	public AlbumPanel(DataModel model, String artistId, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.collectionId = collectionId;
+		this.model = model;
 	
 		// Get artist info (null means all artists)
 		if (artistId == null) {
 			this.info = null;
 			titleLabel.setText("All artists");
 		} else {
-			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+			model.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
 					info = v;
 					titleLabel.setText(info.getName());
 				}
 			});
-			artistCache.obtain(artistId);
+			model.getArtistCache().obtain(artistId);
 		}
 
 		// Create button line
@@ -67,7 +69,7 @@ public class AlbumPanel extends Composite {
 		this.albumList = albumList;
 
 		for (AlbumInfo a : albumList) {
-			AlbumWidget aw = new AlbumWidget(a, collectionId, mainPanel);
+			AlbumWidget aw = new AlbumWidget(model, a, collectionId, mainPanel);
 			mainPanel.add(aw);
 		}
 	}

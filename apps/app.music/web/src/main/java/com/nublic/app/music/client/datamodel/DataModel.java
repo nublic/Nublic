@@ -145,16 +145,30 @@ public class DataModel {
 	}
 	
 	// methods to make requests to server
+	// Songs
+	public void askForSongs(String album, String collection, SongHandler sh) {
+		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, collection, sh, false);
+	}
+	
 	public void askForSongs(String album, String collection, SongHandler sh, boolean newScreen) {
+		askForSongs(0, Constants.NEXT_SONGS_TO_ASK, album, collection, sh, false);
+	}
+	
+	public void askForSongs(int from, int to, String album, String collection, SongHandler sh) {
+		askForSongs(from, to, album, collection, sh, false);
+	}
+	
+	public void askForSongs(int from, int to, String album, String collection, SongHandler sh, boolean newScreen) {
 		if (newScreen) {
 			currentScreen++;
 		}
-		SongMessage am = new SongMessage(album, collection, sh, currentScreen, this);
+		SongMessage am = new SongMessage(from, to, album, collection, sh, currentScreen, this);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	
-	public void askForSongs(String album, String collection, SongHandler sh) {
-		askForSongs(album, collection, sh, false);
+	// Albums
+	public void askForAlbums(String artist, String collection, AlbumHandler ah) {
+		askForAlbums(artist, collection, ah, false);
 	}
 	
 	public void askForAlbums(String artist, String collection, AlbumHandler ah, boolean newScreen) {
@@ -164,12 +178,12 @@ public class DataModel {
 		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen, this);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
-
-
-	public void askForAlbums(String artist, String collection, AlbumHandler ah) {
-		askForAlbums(artist, collection, ah, false);
-	}
 	
+	// Artists
+	public void askForArtists(String collection, ArtistHandler ah) {
+		askForArtists(collection, ah, false);
+	}
+
 	public void askForArtists(String collection, ArtistHandler ah, boolean newScreen) {
 		if (newScreen) {
 			currentScreen++;
@@ -178,10 +192,6 @@ public class DataModel {
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 
-	public void askForArtists(String collection, ArtistHandler ah) {
-		askForArtists(collection, ah, false);
-	}
-	
 	// Control current screen
 	public int getCurrentScreen() { return currentScreen; }
 

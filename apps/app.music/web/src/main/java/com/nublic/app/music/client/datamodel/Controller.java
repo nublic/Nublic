@@ -27,30 +27,38 @@ public class Controller {
 
 		if (collection != null) {
 			if (artist != null) {
-				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection));
+				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
 			} else if (album != null) {
-				model.askForSongs(album, collection, new MySongHandler());
+				model.askForSongs(album, collection, new MySongHandler(album, collection), true);
 			} else {
-				model.askForArtists(collection, new MyArtistHandler(collection));
+				model.askForArtists(collection, new MyArtistHandler(collection), true);
 			}
 		} else if (playlist != null) {
 //			model.askForPlaylistSongs(playlist);
 		} else {
 			// All music
 			if (artist != null) {
-				model.askForAlbums(artist, null, new MyAlbumHandler(artist, null));
+				model.askForAlbums(artist, null, new MyAlbumHandler(artist, null), true);
 			} else if (album != null) {
-				model.askForSongs(album, null, new MySongHandler());
+				model.askForSongs(album, null, new MySongHandler(album, null), true);
 			} else {
-				model.askForArtists(null, new MyArtistHandler(collection));
+				model.askForArtists(null, new MyArtistHandler(collection), true);
 			}
 		}
 	}
 	
 	class MySongHandler implements SongHandler {
+		String albumId;
+		String collectionId;	
+		
+		public MySongHandler(String albumId, String collection) {
+			this.albumId = albumId;
+			this.collectionId = collection;
+		}
+		
 		@Override
-		public void onSongsChange(int from, int to, List<SongInfo> answerList) {
-			ui.showSongList(from, to, answerList);
+		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+			ui.showSongList(total, from, to, answerList, albumId, collectionId);
 		}
 	}
 	

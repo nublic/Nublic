@@ -24,6 +24,7 @@ import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
+import com.nublic.app.music.client.ui.song.SongPanel;
 import com.nublic.util.error.ErrorPopup;
 
 public class MainUi extends Composite {
@@ -212,7 +213,7 @@ public class MainUi extends Composite {
 //	
 	
 	public void showAlbumList(List<AlbumInfo> albumList, String artistId, String collectionId) {
-		AlbumPanel albPanel = new AlbumPanel(artistId, model.getArtistCache(), collectionId);
+		AlbumPanel albPanel = new AlbumPanel(model, artistId, collectionId);
 		albPanel.setAlbumList(albumList);
 		mainPanel.setWidget(albPanel);
 	}
@@ -225,9 +226,10 @@ public class MainUi extends Composite {
 		mainPanel.setWidget(artPanel);
 	}
 	
-	public void showSongList(int from, int to, List<SongInfo> answerList) {
-		// TODO Auto-generated method stub
-		
+	public void showSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
+		SongPanel songPanel = new SongPanel(model, albumId, collectionId);
+		songPanel.setSongList(total, from, to, answerList, albumId, collectionId);
+		mainPanel.setWidget(songPanel);
 	}
 
 	public void error(String message) {

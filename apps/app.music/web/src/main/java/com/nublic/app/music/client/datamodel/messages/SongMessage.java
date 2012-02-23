@@ -37,8 +37,8 @@ public class SongMessage extends Message {
 	String artistId = null;
 	String albumId = null;
 	String inCollection = null;
-	int from = 0;
-	int to = 25;
+	int from;
+	int to;
 
 	// Handler handling
 	SongHandler songHandler;
@@ -46,19 +46,15 @@ public class SongMessage extends Message {
 	int targetScreen;
 	DataModel model;
 	
-	public SongMessage(String album, String collection, SongHandler sh, int currentScreen, DataModel model) {
+	public SongMessage(int from, int to, String album, String collection, SongHandler sh, int currentScreen, DataModel model) {
 		this.albumId = album;
 		this.inCollection = collection;
 		this.songHandler = sh;
 		this.targetScreen = currentScreen;
 		this.model = model;
+		this.from = from;
+		this.to = to;
 	}
-	
-//	public SongMessage(int from, int to, AlbumInfo a) {
-//		this.from = from;
-//		this.to = to;
-//		album = a;
-//	}
 
 	@Override
 	public String getURL() {
@@ -119,7 +115,7 @@ public class SongMessage extends Message {
 				}
 				// Only if the message arrives on time to fill the screen it was meant for
 				if (targetScreen == model.getCurrentScreen()) {
-					songHandler.onSongsChange(from, to, answerList);
+					songHandler.onSongsChange(jsResponse.getRowCount(), from, to, answerList);
 				}
 			}
 		} else {

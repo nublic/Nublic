@@ -72,6 +72,8 @@ public class ArtistMessage extends Message {
 					JSArtist artist = artistList.get(i);
 					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
 					answerList.add(info);
+					// We take the opportunity to add the artist to the model cache
+					model.getArtistCache().put(info.getId(), info);
 				}
 				
 				// Only if the message arrives on time to fill the screen it was meant for
