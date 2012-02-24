@@ -9,6 +9,10 @@
 			<div class="row">
 				<div class="span6">
 				   <h1 style="padding-top: 10px;"><g:Label text="Welcome to Nublic!" ui:field="welcomeLabel" /></h1>
+				   <p></p>
+				   <p>Thanks for testing Nublic! :)</p>
+				   <p>Your feedback is very welcome. You can tell us about any issue you encounter in the 
+				   <a href="http://code.google.com/p/nublic-test/issues/list" target="_blank">Nublic Test Issues Page</a>.</p>
 				</div>
 				<div class="span6">
 				  <div class="page-header">
