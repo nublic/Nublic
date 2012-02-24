@@ -296,26 +296,18 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     if (!is_of_user) {
       halt(500)
     } else {
-      val songs = params("songs").split(",").toList.map(Long.parseLong(_))
+      val positions = params("positions").split(",").toList.map(Long.parseLong(_))
       transaction {
-        Database.playlists.lookup(id).map(pl =>
-          songs.map(songId => {
-            Database.songPlaylists.lookup(compositeKey(songId, pl.id)) match {
-              case None     => { /* It's not there, so do nothing */ }
-              case Some(sp) => {
-                val position = sp.position
-                // Delete the song
-                Database.songPlaylists.deleteWhere(x =>
-                  x.playlistId === pl.id and x.songId === songId)
-                // Update the position of following songs
-                update(Database.songPlaylists)(sp =>
-                  where(sp.playlistId === pl.id and sp.position > position)
-                  set(sp.position := sp.position - 1)
-                )
-              }
-            }
-          })
-          
+        positions.map(position => {
+            // Delete the song
+            Database.songPlaylists.deleteWhere(x =>
+              x.playlistId === id and x.position === position)
+            // Update the position of following songs
+            update(Database.songPlaylists)(sp =>
+              where(sp.playlistId === id.~ and sp.position > position.~)
+              set(sp.position := sp.position - 1)
+            )
+          }
         )
       }
       halt(200)
