@@ -201,7 +201,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/playlists") { user =>
     val id = Long.parseLong(extraParams("id"))
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       transaction {
@@ -219,7 +222,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   putUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
@@ -284,7 +290,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       val songs = params("songs").split(",").toList.map(Long.parseLong(_))
@@ -571,7 +580,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get playlist id
     val id = Long.parseLong(params("id"))
     // Cehck if user has access
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       // Get start and length
