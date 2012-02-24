@@ -40,7 +40,7 @@ ListenAddress ::
 # See /usr/share/doc/openssh-server/README.Debian.gz.
 PermitRootLogin no
 #StrictModes yes
-MaxAuthTries 3
+MaxAuthTries 10
 MaxSessions 15
 
 #RSAAuthentication yes
