@@ -237,21 +237,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
             val songId = sp._1
             val position = sp._2
             Database.songs.lookup(songId).map(song => {
-              /* First remove the song if it was already there */
-              Database.songPlaylists.lookup(compositeKey(song.id, pl.id)) match {
-                case Some(sp) => {
-                  val position = sp.position
-                  /* Remove first */
-                  Database.songPlaylists.deleteWhere(x =>
-                    x.playlistId === pl.id and x.songId === song.id)
-                  /* Update the positions */
-                  update(Database.songPlaylists)(sp =>
-                    where(sp.playlistId === pl.id and sp.position > position)
-                    set(sp.position := sp.position - 1)
-                  )
-                }
-                case None    => { /* It's not yet in database */ }
-              }
               /* Now we have to add the element */
               val db_pos = pl.songs.count(_ => true)
               position match {
