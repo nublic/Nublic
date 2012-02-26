@@ -44,6 +44,7 @@ import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
@@ -129,6 +130,8 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //	@UiField NewFolderAction folderAction;
 //	@UiField UploadAction upAction;
 //	@UiField PasteAction pasteAction;
+	@UiField HTMLPanel workFolderPanel;
+	@UiField TextBox workFolderURL;
 	
 	FixedPopup popUpBox;
 
@@ -223,6 +226,21 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					allSelectedBox.setValue(true, false);
 					allSelectedBox.setTitle("Unselect all");
 					infoWidget.changeInfo(selectedFiles);
+				}
+				// Working folders
+				if (getShowingPath().startsWith(Constants.KIND_SYNCED_FOLDER)) {
+					workFolderPanel.setVisible(true);
+					// Get folder id
+					String withoutInit = getShowingPath().substring(Constants.KIND_SYNCED_FOLDER.length() + 1);
+					String syncedId = withoutInit;
+					int slashPoint = withoutInit.indexOf('/');
+					if (slashPoint != -1) {
+						syncedId = syncedId.substring(0, slashPoint);
+					}
+					workFolderURL.setText(Constants.KIND_SYNCED_URL + syncedId);
+					workFolderURL.setReadOnly(true);
+				} else {
+					workFolderPanel.setVisible(false);
 				}
 				// Upper buttons
 				if (pasteAction.getAvailability() == Availability.AVAILABLE) {

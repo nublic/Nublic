@@ -38,6 +38,8 @@ public class Constants {
 	public final static String KIND_SYNCED_FOLDER = "work-folders";
 	public final static String KIND_MEDIA_FOLDER  = "media";
 	
+	public final static String KIND_SYNCED_URL = "ssh://{username}@{host}/var/nublic/work-folders/";
+	
 	public final static String getView(String type) {
 		String retStr = null;
 		if (type.equals(Constants.IMAGE_TYPE)) {
