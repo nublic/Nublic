@@ -121,7 +121,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   get("/mirrors") { withUser { user =>
     write(user.getOwnedMirrors().toList.map(mirror =>
       ReturnMirror(mirror.getId(), mirror.getName())
-    ))
+    ).sortBy(_.name))
   } }
   
   put2("/mirrors") { withUser { user =>
@@ -156,7 +156,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   get("/synceds") { withUser { user =>
     write(user.getOwnedSyncedFolders().toList.map(mirror =>
       ReturnSyncedFolder(mirror.getId(), mirror.getName())
-    ))
+    ).sortBy(_.name))
   } }
   
   put2("/synceds") {  withUser { user =>
@@ -166,7 +166,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   } }
   
   delete2("/synceds") { withUser { user =>
-    val mid = Integer.parseInt(extraParams("iid"))
+    val mid = Integer.parseInt(extraParams("id"))
     val m = new SyncedFolder(mid)
     if (m.exists() && m.getOwner().getUsername() == user.getUsername()) {
       m.delete(false)

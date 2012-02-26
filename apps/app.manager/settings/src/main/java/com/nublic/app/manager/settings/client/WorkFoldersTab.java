@@ -1,10 +1,13 @@
 package com.nublic.app.manager.settings.client;
 
+import java.util.EnumSet;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
@@ -19,6 +22,10 @@ import com.nublic.app.manager.settings.client.comm.NublicSyncedFolder;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.widgets.MessagePopup;
+import com.nublic.util.widgets.PopupButton;
+import com.nublic.util.widgets.PopupButtonHandler;
+import com.nublic.util.widgets.TextPopup;
 
 public class WorkFoldersTab extends Composite {
 
@@ -64,7 +71,7 @@ public class WorkFoldersTab extends Composite {
 	void onBrowseButtonClick(ClickEvent event) {
 		if (list.getSelectedIndex() >= 0) {
 			String value = list.getValue(list.getSelectedIndex());
-			Window.open("/browser/#browser?path=synced/" + value, "_blank", "");
+			Window.open(Location.getProtocol() + "//" + Location.getHostName() + "/#browser/#browser?path=synced/" + value, "_blank", "");
 		}
 	}
 	
@@ -75,13 +82,144 @@ public class WorkFoldersTab extends Composite {
 
 	@UiHandler("addButton")
 	void onAddButtonClick(ClickEvent event) {
+		final TextPopup popup = new TextPopup("New work folder name",
+				EnumSet.of(PopupButton.ADD, PopupButton.CANCEL));
+		
+		popup.addButtonHandler(PopupButton.ADD, new PopupButtonHandler() {
+			
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
+				final String name = popup.getText().trim();
+				if (name.isEmpty())
+					return;
+				
+				Message m = new Message() {
+					@Override
+					public String getURL() {
+						return LocationUtil.getHostBaseUrl() + "manager/server/synceds";
+					}
+					@Override
+					public void onSuccess(Response response) {
+						if (response.getStatusCode() == Response.SC_OK) {
+							list.addItem(name, response.getText());
+						} else {
+							onError();
+						}
+					}
+					@Override
+					public void onError() {
+						MessagePopup msg = new MessagePopup("Error creating work folder", 
+								"Something bad happened while creating the new work folder");
+						msg.center();
+					}
+				};
+				m.addParam("name", name);
+				SequenceHelper.sendJustOne(m, RequestBuilder.PUT);
+				
+				popup.hide();
+			}
+		});
+		
+		popup.center();
 	}
 
 	@UiHandler("removeButton")
 	void onRemoveButtonClick(ClickEvent event) {
+		if (list.getSelectedIndex() >= 0) {
+			final String name = list.getItemText(list.getSelectedIndex());
+			final String value = list.getValue(list.getSelectedIndex());
+			
+			final TextPopup popup = new TextPopup("Do you really want to remove \"" 
+					+ name + "\" from your Nublic?",
+					EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL));
+			
+			popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
+				
+				@Override
+				public void onClicked(PopupButton button, ClickEvent event) {
+					final String name = popup.getText().trim();
+					if (name.isEmpty())
+						return;
+					
+					Message m = new Message() {
+						@Override
+						public String getURL() {
+							return LocationUtil.getHostBaseUrl() + "manager/server/synceds";
+						}
+						@Override
+						public void onSuccess(Response response) {
+							if (response.getStatusCode() == Response.SC_OK) {
+								list.removeItem(list.getSelectedIndex());
+							} else {
+								onError();
+							}
+						}
+						@Override
+						public void onError() {
+							MessagePopup msg = new MessagePopup("Error removing work folder", 
+									"Something bad happened while removing the work folder");
+							msg.center();
+						}
+					};
+					m.addParam("id", value);
+					SequenceHelper.sendJustOne(m, RequestBuilder.DELETE);
+					
+					popup.hide();
+				}
+			});
+			
+			popup.center();
+		}
 	}
 
 	@UiHandler("changeNameButton")
 	void onChangeNameButtonClick(ClickEvent event) {
+		if (list.getSelectedIndex() >= 0) {
+			final String name = list.getItemText(list.getSelectedIndex());
+			final String value = list.getValue(list.getSelectedIndex());
+			
+			final TextPopup popup = new TextPopup("Change work folder name",
+					EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL),
+					"Change name");
+			popup.setText(name);
+			
+			popup.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
+				
+				@Override
+				public void onClicked(PopupButton button, ClickEvent event) {
+					final String name = popup.getText().trim();
+					if (name.isEmpty())
+						return;
+					
+					Message m = new Message() {
+						@Override
+						public String getURL() {
+							return LocationUtil.getHostBaseUrl() + "manager/server/synced-name";
+						}
+						@Override
+						public void onSuccess(Response response) {
+							if (response.getStatusCode() == Response.SC_OK) {
+								list.setItemText(list.getSelectedIndex(), name);
+							} else {
+								onError();
+							}
+						}
+						@Override
+						public void onError() {
+							MessagePopup msg = new MessagePopup("Error changing work folder name", 
+									"Something bad happened while changing the work folder name");
+							msg.center();
+						}
+					};
+					m.addParam("id", value);
+					m.addParam("name", name);
+					SequenceHelper.sendJustOne(m, RequestBuilder.PUT);
+					
+					popup.hide();
+				}
+			});
+			
+			popup.center();
+		}
 	}
 }
