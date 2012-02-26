@@ -6,7 +6,7 @@ import java.util.List;
 import org.freedesktop.dbus.exceptions.DBusException;
 
 public class SyncedFolder extends Folder {
-	static String DATA_ROOT = "/var/nublic/data/synced/";
+	static String DATA_ROOT = "/var/nublic/data/work-folders/";
 	int id;
 	
 	public SyncedFolder(int id) {

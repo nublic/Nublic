@@ -71,7 +71,7 @@ public class WorkFoldersTab extends Composite {
 	void onBrowseButtonClick(ClickEvent event) {
 		if (list.getSelectedIndex() >= 0) {
 			String value = list.getValue(list.getSelectedIndex());
-			Window.open(Location.getProtocol() + "//" + Location.getHostName() + "/#browser/#browser?path=synced/" + value, "_blank", "");
+			Window.open(Location.getProtocol() + "//" + Location.getHostName() + "/#browser/#browser?path=work-folders/" + value, "_blank", "");
 		}
 	}
 	
