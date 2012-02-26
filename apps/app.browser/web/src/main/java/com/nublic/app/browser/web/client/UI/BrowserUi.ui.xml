@@ -30,6 +30,10 @@
 	        overflow-x: hidden;
 			overflow-y: auto;
 		}
+		.allscroll {
+            overflow-x: auto;
+            overflow-y: auto;
+        }
 		.topelements {
 			width: 150px;
 		}
@@ -72,7 +76,7 @@
 		<!-- Panel for the navigator tree -->
 	   	<g:west size="176">
 <!-- 		<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/> -->
-	   		<g:SimplePanel addStyleNames="{style.horizontalpadding}">
+	   		<g:SimplePanel addStyleNames="{style.horizontalpadding} {style.allscroll}">
 	   			<g:Tree ui:field="treeView"/>
 	   		</g:SimplePanel>
 	   	</g:west>
