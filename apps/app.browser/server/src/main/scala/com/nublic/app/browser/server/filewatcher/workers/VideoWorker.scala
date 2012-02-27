@@ -95,6 +95,7 @@ object VideoWorker extends DocumentWorker {
     op.addImage(thumbTempFile.getAbsolutePath())
     op.resize(FileFolder.THUMBNAIL_SIZE, FileFolder.THUMBNAIL_SIZE)
     op.interlace("plane")
+    op.quality(5); // Huffmann compresion + adaptive filter
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
     // Delete temporal thumbnail

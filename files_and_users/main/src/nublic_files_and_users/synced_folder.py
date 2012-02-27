@@ -7,7 +7,8 @@ import shutil
 from elixir import *
 from model import *
 
-SYNCED_ROOT = '/var/nublic/data/synced/'
+SYNCED_REPO_ROOT = '/var/nublic/work-folders'
+SYNCED_ROOT = '/var/nublic/data/work-folders'
 
 class SyncedFolderDBus(dbus.service.Object):
     def __init__(self, user_dbus, loop = None):
@@ -58,18 +59,42 @@ class SyncedFolderDBus(dbus.service.Object):
         session.add(m)
         session.commit()
         # create in filesystem
-        path = SYNCED_ROOT + str(m.id)
-        os.makedirs(path, 0755)
-        pexpect.run("git init", cwd=path)
-        # change owner
-        os.chown(path, user.uid, -1)
-        for (dirpath, dirnames, filenames) in os.walk(path):
-            for dirname in dirnames:
-                c_path = os.path.join(dirpath, dirname)
-                os.chown(c_path, user.uid, -1)
-            for filename in filenames:
-                c_path = os.path.join(dirpath, filename)
-                os.chown(c_path, user.uid, -1)
+        # first, create bare repo
+        repo_path = SYNCED_REPO_ROOT + '/' + str(m.id)
+        os.makedirs(repo_path, 0755)
+        pexpect.run("git --bare init", cwd=repo_path)
+        # now create the inner clone
+        clone_path = SYNCED_ROOT + '/' + str(m.id)
+        pexpect.run("git clone " + repo_path, cwd=SYNCED_ROOT)
+        # create info
+        info_path = clone_path + '/INFO'
+        info_file = open(info_path, 'w')
+        info_file.write("This is a new Nublic work folder.\nYou may safely remove this file.")
+        info_file.flush()
+        info_file.close()
+        # add to repo and push
+        pexpect.run('git --git-dir=' + clone_path + '/.git --work-tree=' + clone_path + ' add INFO', cwd=clone_path)
+        pexpect.run('git --git-dir=' + clone_path + '/.git --work-tree=' + clone_path + ' -c user.name=' + owner + ' commit -m "Initial commit"', cwd=clone_path)
+        pexpect.run('git --git-dir=' + clone_path + '/.git --work-tree=' + clone_path + ' push --all', cwd=clone_path)
+        # create hook in server
+        hook_path = repo_path + "/hooks/post-receive"
+        hook_file = open(hook_path, 'w')
+        hook_file.write("#!/bin/sh\n")
+        hook_file.write("git --git-dir=" + clone_path + "/.git fetch\n")
+        hook_file.write("git --git-dir=" + clone_path + "/.git --work-tree=" + clone_path + " merge origin/master\n")
+        hook_file.flush()
+        hook_file.close()
+        os.chmod(hook_path, 0777)
+        # change owners
+        for path in [repo_path, clone_path]:
+            os.chown(path, user.uid, -1)
+            for (dirpath, dirnames, filenames) in os.walk(path):
+                for dirname in dirnames:
+                    c_path = os.path.join(dirpath, dirname)
+                    os.chown(c_path, user.uid, -1)
+                for filename in filenames:
+                    c_path = os.path.join(dirpath, filename)
+                    os.chown(c_path, user.uid, -1)
         # return path id
         return m.id
     

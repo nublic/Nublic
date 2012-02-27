@@ -32,14 +32,18 @@ object ImageWorker extends DocumentWorker {
     op.addImage(file)
     op.resize(FileFolder.THUMBNAIL_SIZE, FileFolder.THUMBNAIL_SIZE)
     op.interlace("plane")
+    op.quality(5); // Huffmann compresion + adaptive filter
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
+    
     // And now the same image in png
     val png_file = new File(folder, PNG_FILENAME)
     val magick2 = new ConvertCmd()
     val op2 = new IMOperation() 
     op2.addImage(file)
-    op.interlace("plane")
+    op.resize(FileFolder.MAX_IMAGE_WIDTH, FileFolder.MAX_IMAGE_HEIGHT, '>')
+    op2.interlace("plane")
+    op2.quality(5); // Huffmann compresion + adaptive filter
     op2.addImage(png_file.getAbsolutePath())
     magick2.run(op2)
   }

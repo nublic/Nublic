@@ -35,8 +35,10 @@ public class Constants {
 	public final static String NUBLIC_ONLY = "nublic-only";
 	public final static String NUBLIC_ONLY_NAME = "Nublic files";
 	public final static String KIND_MIRROR_FOLDER = "mirrors";
-	public final static String KIND_SYNCED_FOLDER = "synced";
+	public final static String KIND_SYNCED_FOLDER = "work-folders";
 	public final static String KIND_MEDIA_FOLDER  = "media";
+	
+	public final static String KIND_SYNCED_URL = "ssh://{username}@{host}/var/nublic/work-folders/";
 	
 	public final static String getView(String type) {
 		String retStr = null;

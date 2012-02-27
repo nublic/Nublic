@@ -35,7 +35,7 @@
 				</div>
 				<div class="span8">
 					<g:TabLayoutPanel ui:field="tabs" width="100%"
-						height="95%" barHeight="0" barUnit="PX" addStyleNames="{style.tabInner}">
+						height="200px" barHeight="0" barUnit="PX" addStyleNames="{style.tabInner}">
 						<g:tab>
 							<g:header size='0'>User</g:header>
 							<settings:UserSettingsTab />

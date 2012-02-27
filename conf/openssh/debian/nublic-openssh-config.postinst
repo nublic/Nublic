@@ -1,0 +1,3 @@
+#!/bin/bash -e
+ufw enable OpenSSH
+ufw allow OpenSSH

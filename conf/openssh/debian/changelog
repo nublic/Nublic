@@ -1,0 +1,17 @@
+nublic-openssh-config (2012-02-23-21-35) oneiric; urgency=low
+
+  * Building on jue feb 23 21:35:30 CET 2012
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Thu, 23 Feb 2012 21:35:30 +0100
+
+nublic-openssh-config (2012-02-23-21-29) oneiric; urgency=low
+
+  * Building on jue feb 23 21:29:44 CET 2012
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Thu, 23 Feb 2012 21:29:45 +0100
+
+nublic-openssh-config (0.0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Thu, 23 Feb 2012 21:24:48 +0200

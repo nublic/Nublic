@@ -39,6 +39,7 @@ object DviPsWorker extends DocumentWorker {
     op.addImage(pdfFile.getAbsolutePath() + "[0]")
     op.resize(FileFolder.THUMBNAIL_SIZE, FileFolder.THUMBNAIL_SIZE)
     op.interlace("plane")
+    op.quality(5); // Huffmann compresion + adaptive filter
     op.addImage(thumb_file.getAbsolutePath())
     magick.run(op)
   }

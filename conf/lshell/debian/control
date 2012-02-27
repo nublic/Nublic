@@ -1,0 +1,14 @@
+Source: nublic-lshell-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-lshell-config
+Architecture: all
+Depends: ${misc:Depends}, lshell, libuser
+Replaces: lshell
+Description: Nublic lshell configuration files
+ Nublic lshell configuration files

@@ -30,6 +30,10 @@
 	        overflow-x: hidden;
 			overflow-y: auto;
 		}
+		.allscroll {
+            overflow-x: auto;
+            overflow-y: auto;
+        }
 		.topelements {
 			width: 150px;
 		}
@@ -70,9 +74,9 @@
 
 	<g:DockLayoutPanel>
 		<!-- Panel for the navigator tree -->
-	   	<g:west size="176">
+	   	<g:west size="190">
 <!-- 		<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/> -->
-	   		<g:SimplePanel addStyleNames="{style.horizontalpadding}">
+	   		<g:SimplePanel addStyleNames="{style.horizontalpadding} {style.allscroll}">
 	   			<g:Tree ui:field="treeView"/>
 	   		</g:SimplePanel>
 	   	</g:west>
@@ -81,7 +85,20 @@
 	   	<g:east size="176">
 			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
 				<my:SelectionDetails ui:field="infoWidget" addStyleNames="{style.marginbottom}"/>
-	   			<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Actions</h3></div></g:HTMLPanel>
+				<g:HTMLPanel ui:field="workFolderPanel">
+				  <div class="page-header" style="margin-bottom: 6px;">
+                     <h3 style="line-height: 28px;">Work folder</h3>
+                  </div>
+                  <p>To synchronize this folder in your computer, install
+                  <a href="http://sparkleshare.org/">SparkleShare</a>
+                  and use the following repository URL:</p>
+                  <g:TextBox ui:field="workFolderURL" width="150px"></g:TextBox>
+				</g:HTMLPanel>
+	   			<g:HTMLPanel>
+	   			  <div class="page-header" style="margin-bottom: 6px;">
+	   			     <h3 style="line-height: 28px;">Actions</h3>
+	   			  </div>
+	   			</g:HTMLPanel>
 <!-- 	   			<acts:FolderDownloadAction/> -->
 <!-- 	   			<acts:SingleDownloadAction/> -->
 <!-- 	   			<acts:NewFolderAction ui:field="folderAction"/> -->
@@ -108,7 +125,7 @@
 	   					    <g:HTMLPanel addStyleNames="{style.margintop}" height="28px">
 		   						<div class="input">
 		   					    	<div class="input-prepend">
-		   					    		<span class="add-on"><g:Image url="images/filter.png"/></span>
+		   					    		<span class="add-on"><g:Image resource="{res.filter}"/></span>
 		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" addStyleNames="{style.filterwidth}" />
 		   					   		</div>
 		   					    </div>

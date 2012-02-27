@@ -201,7 +201,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/playlists") { user =>
     val id = Long.parseLong(extraParams("id"))
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       transaction {
@@ -219,7 +222,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   putUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
@@ -231,21 +237,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
             val songId = sp._1
             val position = sp._2
             Database.songs.lookup(songId).map(song => {
-              /* First remove the song if it was already there */
-              Database.songPlaylists.lookup(compositeKey(song.id, pl.id)) match {
-                case Some(sp) => {
-                  val position = sp.position
-                  /* Remove first */
-                  Database.songPlaylists.deleteWhere(x =>
-                    x.playlistId === pl.id and x.songId === song.id)
-                  /* Update the positions */
-                  update(Database.songPlaylists)(sp =>
-                    where(sp.playlistId === pl.id and sp.position > position)
-                    set(sp.position := sp.position - 1)
-                  )
-                }
-                case None    => { /* It's not yet in database */ }
-              }
               /* Now we have to add the element */
               val db_pos = pl.songs.count(_ => true)
               position match {
@@ -284,29 +275,24 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
-      val songs = params("songs").split(",").toList.map(Long.parseLong(_))
+      val positions = params("positions").split(",").toList.map(Long.parseLong(_))
       transaction {
-        Database.playlists.lookup(id).map(pl =>
-          songs.map(songId => {
-            Database.songPlaylists.lookup(compositeKey(songId, pl.id)) match {
-              case None     => { /* It's not there, so do nothing */ }
-              case Some(sp) => {
-                val position = sp.position
-                // Delete the song
-                Database.songPlaylists.deleteWhere(x =>
-                  x.playlistId === pl.id and x.songId === songId)
-                // Update the position of following songs
-                update(Database.songPlaylists)(sp =>
-                  where(sp.playlistId === pl.id and sp.position > position)
-                  set(sp.position := sp.position - 1)
-                )
-              }
-            }
-          })
-          
+        positions.map(position => {
+            // Delete the song
+            Database.songPlaylists.deleteWhere(x =>
+              x.playlistId === id and x.position === position)
+            // Update the position of following songs
+            update(Database.songPlaylists)(sp =>
+              where(sp.playlistId === id.~ and sp.position > position.~)
+              set(sp.position := sp.position - 1)
+            )
+          }
         )
       }
       halt(200)
@@ -571,7 +557,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get playlist id
     val id = Long.parseLong(params("id"))
     // Cehck if user has access
-    if (!Database.isPlaylistOfUser(id, user.getUsername())) {
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    if (!is_of_user) {
       halt(500)
     } else {
       // Get start and length

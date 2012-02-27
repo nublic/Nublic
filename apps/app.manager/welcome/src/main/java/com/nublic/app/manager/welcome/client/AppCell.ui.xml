@@ -8,14 +8,12 @@
 	   .margined {
 	       margin: 5px;
 	       min-height: 32px;
-	       min-width: 40px;
+	       min-width: 32px;
 	   }
 	</ui:style>
 	<g:HorizontalPanel height="32" verticalAlignment="ALIGN_MIDDLE">
         <!-- <g:Image height="32" width="32" ui:field="star" url="images/fav-not-selected.png" addStyleNames="{style.margined}"/> -->
 		<g:Image width="32" height="32" ui:field="image" addStyleNames="{style.margined}"/>
-		<g:Cell width="100%">
-			<g:Anchor text="App" ui:field="name" styleName="{style.appName}" addStyleNames="{style.margined}" />
-		</g:Cell>
+		<g:Anchor text="App" ui:field="name" styleName="{style.appName}" addStyleNames="{style.margined}" />
 	</g:HorizontalPanel>
 </ui:UiBinder> 
