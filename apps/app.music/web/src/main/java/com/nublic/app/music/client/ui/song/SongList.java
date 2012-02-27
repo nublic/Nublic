@@ -219,52 +219,36 @@ public class SongList extends Composite implements ScrollHandler {
 	}
 	
 	private void setAlbumSong(int row, SongInfo s) {
-		// Column 0
-		setTrackNumber(row, 0, s.getTrack());
-		// Column 1
-		setTitleLenght(row, 1, s);
+		setTrackNumber(row, 0, s.getTrack()); 		// Column 0
+		setTitleLenght(row, 1, s);					// Column 1
 	}
 
 	private void setPlaylistSong(int row, SongInfo s) {
-		// Column 0
-		setButtons(row, 0, s);
-		// Column 1
-		setTrackNumber(row, 1, s.getTrack());
-		// Column 2
-		setTitle(row, 2, s.getTitle());
-		// Column 3
-		setLenght(row, 3, s.getFormattedLength());
-		// Column 4		
-		setAlbum(row, 4, s);
-		// Column 5
-		setArtist(row, 5, s);
+		setButtons(row, 0, s);						// Column 0
+		setTrackNumber(row, 1, s.getTrack());		// Column 1
+		setTitle(row, 2, s.getTitle());				// Column 2
+		setLenght(row, 3, s.getFormattedLength());	// Column 3
+		setAlbum(row, 4, s);						// Column 4
+		setArtist(row, 5, s);						// Column 5
 	}
-	
+
+	// Methods to fill the grid
 	private void setLenght(int row, int column, String formattedLength) {
 		Label titleLabel = new Label(formattedLength);
-		HorizontalPanel h = new HorizontalPanel();
-		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-		h.add(titleLabel);
-		h.getElement().addClassName(style.leftmargin());
-		grid.setWidget(row, column, h);
+		titleLabel.getElement().addClassName(style.leftmargin());
+		grid.setWidget(row, column, titleLabel);
 	}
 
 	private void setTitle(int row, int column, String title) {
 		Label titleLabel = new Label(title);
-		HorizontalPanel h = new HorizontalPanel();
-		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-		h.add(titleLabel);
-		h.getElement().addClassName(style.leftmargin());
-		grid.setWidget(row, column, h);
+		titleLabel.getElement().addClassName(style.leftmargin());
+		grid.setWidget(row, column, titleLabel);
 	}
 
 	private void setButtons(int row, int column, SongInfo s) {
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
-		HorizontalPanel h = new HorizontalPanel();
-		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-		h.add(buttonLine);
-		h.getElement().addClassName(style.rightmargin());
-		grid.setWidget(row, column, h);
+		buttonLine.getElement().addClassName(style.rightmargin());
+		grid.setWidget(row, column, buttonLine);
 	}
 
 	private void setTrackNumber(int row, int column, int track) {
@@ -318,6 +302,7 @@ public class SongList extends Composite implements ScrollHandler {
 	}
 	
 	
+	// Handlers
 	private class MyAddAtEndHandler implements AddAtEndButtonHandler {
 		SongInfo song;
 		public MyAddAtEndHandler(SongInfo s) {
