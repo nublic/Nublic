@@ -27,10 +27,22 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/delete.png")
 	ImageResource delete();
-	
+
 	@Source("images/artist.png")
 	ImageResource artist();
-	
+
 	@Source("images/album.png")
 	ImageResource album();
+
+	@Source("images/player_next.png")
+	ImageResource playerNext();
+
+	@Source("images/player_pause.png")
+	ImageResource playerPause();
+
+	@Source("images/player_play.png")
+	ImageResource playerPlay();
+
+	@Source("images/player_prev.png")
+	ImageResource playerPrev();
 }

@@ -213,9 +213,9 @@ public class SongList extends Composite implements ScrollHandler {
 			break;
 		case SONG_IN_ALBUM:
 			grid.resize(numberOfSongs, 2);
+			grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
 			break;
 		}
-		grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
 	}
 	
 	private void setAlbumSong(int row, SongInfo s) {
@@ -300,7 +300,6 @@ public class SongList extends Composite implements ScrollHandler {
 		model.getArtistCache().obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
 	}
-	
 	
 	// Handlers
 	private class MyAddAtEndHandler implements AddAtEndButtonHandler {

@@ -1,0 +1,52 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:com.bramosystems.oss.player.core.client.skin">
+	<ui:style>
+		.nobackground {
+			background: transparent;
+			padding: 5px 5px 0px 5px;
+			margin: 10px 2px 10px 2px;
+		}
+		.marginleft {
+			margin-left: 10px;
+		}
+		.smallround {
+			-webkit-border-radius: 17px;
+			-moz-border-radius: 17px;
+			border-radius: 17px;
+		}
+		.biground {
+			-webkit-border-radius: 21px;
+			-moz-border-radius: 21px;
+			border-radius: 21px;
+		}
+		.glow:hover {
+			border-color: rgba(82, 168, 236, 0.8);
+			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			outline: 0;
+			outline: thin dotted 9;
+		}
+	</ui:style>
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
+	
+	<g:HorizontalPanel verticalAlignment="middle">
+		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow} {style.marginleft}" ui:field="prevButton">
+			<g:upFace image="{res.playerPrev}"/>
+		</g:PushButton>
+		<g:PushButton addStyleNames="{style.nobackground} {style.biground} {style.glow}" ui:field="playButton">
+			<g:upFace image="{res.playerPlay}"/>
+		</g:PushButton>
+		<g:PushButton addStyleNames="{style.nobackground} {style.biground} {style.glow}" ui:field="pauseButton">
+			<g:upFace image="{res.playerPause}"/>
+		</g:PushButton>
+		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow}" ui:field="nextButton">
+			<g:upFace image="{res.playerNext}"/>
+		</g:PushButton>
+		<g:VerticalPanel width="300px">
+			<b:CSSSeekBar ui:field="seekBar" addStyleNames="{style.glow} {style.marginleft}"/>
+		</g:VerticalPanel>
+	</g:HorizontalPanel>
+</ui:UiBinder> 
