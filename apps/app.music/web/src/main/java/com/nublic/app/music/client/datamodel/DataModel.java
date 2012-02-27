@@ -32,13 +32,14 @@ public class DataModel {
 	// Independent things
 	List<Tag> tagList = new ArrayList<Tag>();
 	List<Playlist> playlistList = new ArrayList<Playlist>();
-	Playlist currentList = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
+//	Playlist currentList = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
 	HashMap<String, Tag> tagIndex = new HashMap<String, Tag>();
 	HashMap<String, Playlist> playlistIndex = new HashMap<String, Playlist>();
 
 	// Depending on what is being played
-	Playlist currentPlayingList;
-	int currentSongInPlaylist;
+	List<SongInfo> currentPlaylist = new ArrayList<SongInfo>();
+//	Playlist currentPlayingList;
+//	int currentSongInPlaylist;
 	
 	// Depending on what is being shown
 	Playlist showingPlaylist = null; // null if a tag is being shown
@@ -166,7 +167,7 @@ public class DataModel {
 	}
 	public void askForSongs(int from, int to, String album, String artist, String collection, SongHandler sh, boolean newScreen) {
 		if (newScreen) {
-			currentScreen++;
+			increaseCurrentScreen();
 		}
 		SongMessage am = new SongMessage(from, to, album, artist, collection, sh, currentScreen, this);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
@@ -184,12 +185,23 @@ public class DataModel {
 	}
 	public void askForPlaylistSongs(int from, int to, String playlist, PlaylistHandler ph, boolean newScreen) {
 		if (newScreen) {
-			currentScreen++;
+			increaseCurrentScreen();
 		}
-		PlaylistContentMessage pm = new PlaylistContentMessage(from, to, playlist, ph, currentScreen, this);
-		SequenceHelper.sendJustOne(pm, RequestBuilder.GET);
+		if (playlist.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			int realTo = to;
+			if (to >= currentPlaylist.size()) {
+				realTo = currentPlaylist.size() -1;
+			}
+			if (currentPlaylist.size() == 0) {
+				ph.onSongsChange(0, 0, 0, currentPlaylist);
+			} else if (from < currentPlaylist.size()) {
+				ph.onSongsChange(currentPlaylist.size(), from, realTo, currentPlaylist.subList(from, realTo + 1));
+			}
+		} else {
+			PlaylistContentMessage pm = new PlaylistContentMessage(from, to, playlist, ph, currentScreen, this);
+			SequenceHelper.sendJustOne(pm, RequestBuilder.GET);
+		}
 	}
-	
 	
 	// Albums
 	public void askForAlbums(String artist, String collection, AlbumHandler ah) {
@@ -197,7 +209,7 @@ public class DataModel {
 	}
 	public void askForAlbums(String artist, String collection, AlbumHandler ah, boolean newScreen) {
 		if (newScreen) {
-			currentScreen++;
+			increaseCurrentScreen();
 		}
 		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen, this);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
@@ -209,7 +221,7 @@ public class DataModel {
 	}
 	public void askForArtists(String collection, ArtistHandler ah, boolean newScreen) {
 		if (newScreen) {
-			currentScreen++;
+			increaseCurrentScreen();
 		}
 		ArtistMessage am = new ArtistMessage(collection, ah, currentScreen, this);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
@@ -217,6 +229,9 @@ public class DataModel {
 
 	// Control current screen
 	public int getCurrentScreen() { return currentScreen; }
+	private void increaseCurrentScreen() {
+		currentScreen++;
+	}
 
 	
 	// methods to change the data in server and where proceeds
@@ -233,6 +248,17 @@ public class DataModel {
 	public void deleteTag(String tagId) {
 		DeleteTagMessage dtm = new DeleteTagMessage(tagId, this);
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
+	}
+	
+	// addToPlaylist methods
+	public void addToCurrentPlaylist(SongInfo s) {
+		currentPlaylist.add(s);
+	}
+	
+	public void addToCurrentPlaylist(List<SongInfo> songList) {
+		for (SongInfo s : songList) {
+			addToCurrentPlaylist(s);
+		}
 	}
 
 }

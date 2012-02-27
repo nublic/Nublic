@@ -42,7 +42,7 @@ public class PlaylistContentMessage extends Message {
 		url.append(GWT.getHostPageBaseURL());
 		url.append("server/playlist/");
 		url.append(id);
-		url.append("/desc/");
+		url.append("/playlist/desc/");
 		url.append(from);
 		url.append("/");
 		url.append(to - from + 1);

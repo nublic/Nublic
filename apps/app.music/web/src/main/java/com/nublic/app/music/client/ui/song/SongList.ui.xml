@@ -8,6 +8,9 @@
 		.leftmargin {
 			margin-left: 15px;
 		}
+		.rightmargin {
+			margin-right: 15px;
+		}
 		.bottommargin {
 			margin-bottom: 15px;
 		}
