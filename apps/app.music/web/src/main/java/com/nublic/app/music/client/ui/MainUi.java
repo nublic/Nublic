@@ -24,6 +24,7 @@ import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.ui.album.AlbumPanel;
 import com.nublic.app.music.client.ui.artist.ArtistPanel;
+import com.nublic.app.music.client.ui.player.NublicPlayer;
 import com.nublic.app.music.client.ui.playlist.PlaylistPanel;
 import com.nublic.app.music.client.ui.song.SongPanel;
 import com.nublic.util.error.ErrorPopup;
@@ -38,12 +39,17 @@ public class MainUi extends Composite {
 	@UiField PlaylistWidget allMusic;
 	@UiField AddTagWidget addTagWidget;
 	@UiField AddTagWidget addPlaylistWidget;
+	@UiField(provided=true) Widget _player = NublicPlayer.create();
+	NublicPlayer player;
 	HashMap<String, PlaylistWidget> tagIndex = new HashMap<String, PlaylistWidget>();
 	HashMap<String, PlaylistWidget> playlistIndex = new HashMap<String, PlaylistWidget>();
 	PlaylistWidget showingPlaylistWidget;
 	DataModel model;
 
 	public MainUi(DataModel model) {
+		_player = NublicPlayer.create();
+		player = _player instanceof NublicPlayer ? null : (NublicPlayer)_player;
+
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.model = model;

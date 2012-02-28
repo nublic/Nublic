@@ -28,7 +28,7 @@
 		</g:west>
 		<g:north size="70">
 			<g:HorizontalPanel>
-				<myplayer:PlayerLayout/>
+				<g:Widget ui:field="_player"/>
 			</g:HorizontalPanel>
 		</g:north>
 		<g:center>
