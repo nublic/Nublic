@@ -26,7 +26,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	public NublicPlayer(Plugin p) throws PluginNotFoundException, PluginVersionException, LoadException {
-		super(p, "", false, "65px", "460px");
+		super(p, "", false, "65px", "500px");
 
 		setPlayerControlWidget(new PlayerLayout());
 //		loadMedia(mediaURL);

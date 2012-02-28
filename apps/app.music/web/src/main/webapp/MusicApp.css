@@ -47,10 +47,10 @@ h1 {
 
 
 /** progress bar */
- /** the seekbar itself */ 
+ /** the seekbar itself */
 .player-CSSSeekBar {
 	background-color: #AAAAAA;
-	border: 2px solid lightBlue;
+	border: 1px solid #888888;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;

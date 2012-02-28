@@ -48,5 +48,6 @@
 		<g:VerticalPanel width="300px">
 			<b:CSSSeekBar ui:field="seekBar" addStyleNames="{style.glow} {style.marginleft}"/>
 		</g:VerticalPanel>
+		<g:VerticalPanel width="100px"/>
 	</g:HorizontalPanel>
-</ui:UiBinder> 
+</ui:UiBinder>
