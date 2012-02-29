@@ -228,4 +228,12 @@ public class User {
 	public Collection<SyncedFolder> getAccessibleSyncedFolders() throws FileQueryException {
 		return getAccessible(SyncedFolder.getAll());
 	}
+	
+	public void addPublicKey(String key) throws UserQueryException {
+		try {
+			Singletons.getUsers().add_public_key(username, key);
+		} catch(DBusException e) {
+			throw new UserQueryException();
+		}
+	}
 }

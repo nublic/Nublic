@@ -86,7 +86,8 @@ class UserDBus(dbus.service.Object):
         print("Added in htpasswd")
         # ssh
         uid = self.get_user_uid(username)
-        ssh_folder = '/home/' + username + '/.ssh'
+        home_folder = '/home/' + username
+        ssh_folder = home_folder + '/.ssh'
         os.mkdir(ssh_folder)
         os.chown(ssh_folder, uid, self.get_nublic_gid())
         os.chmod(ssh_folder, 0700)
@@ -94,7 +95,6 @@ class UserDBus(dbus.service.Object):
         self.touch(ssh_file)
         os.chown(ssh_file, uid, self.get_nublic_gid())
         os.chmod(ssh_file, 0600)
-        pexpect.run('setfacl -m u:tomcat6:rwx "' + ssh_file + '"')
         # database
         usr = User(username=username, uid=uid, name=name)
         session.add(usr)
@@ -192,3 +192,16 @@ class UserDBus(dbus.service.Object):
         real_path = DATA_ROOT + path
         os.chown(real_path, user.uid, self.get_nublic_gid())
         pexpect.run('setfacl -m u:tomcat6:rwx "' + real_path + '"')
+    
+    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
+    def add_public_key(self, username, key):
+        # Get user id
+        user = User.get_by(username=username)
+        if user is None:
+            raise NameError()
+        # Make chown
+        ssh_file = '/home/' + username + '/.ssh/authorized_keys'
+        f = open(ssh_file, 'a')
+        f.write(key + '\n')
+        f.close()
+        os.chmod(ssh_file, 0600)

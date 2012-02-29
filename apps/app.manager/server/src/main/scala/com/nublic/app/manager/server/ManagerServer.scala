@@ -179,7 +179,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     }
   } }
   
-  var current_upload_keys = scala.collection.mutable.Map[Long, Tuple2[User, Long]]()
+  var current_upload_keys = scala.collection.mutable.Map[Long, Tuple3[User, Long, SyncedFolder]]()
   
   def prune_old_upload_keys = {
     // Prune those older than 5 minutes
@@ -193,7 +193,13 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   
   post("/synced-upload-key/:id") {
     val id = java.lang.Long.parseLong(params("id"))
+    // Create the correct pubkey
     val pubkey = params("pubkey")
+    val token_list = pubkey.split(" ").toList
+    val ssh_initial = token_list.head
+    val ssh_name = token_list.last
+    val ssh_rest = token_list.tail.init
+    val real_key = ssh_initial + " " + ssh_rest.reduce((a, b) => a + "+" + b) + " " + ssh_name
     // Prune old elements
     prune_old_upload_keys
     // Try to find ours
@@ -201,35 +207,44 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
       case None    => halt(500)
       case Some(v) => {
         val user = v._1
-        // Append the key to authorized_keys
-        val akeys_file = "/home/" + user.getUsername() + "/.ssh/authorized_keys"
-        val fw = new FileWriter(akeys_file, true)
-        val pw = new PrintWriter(fw)
-        pw.println(pubkey)
-        pw.close()
-        fw.close()
+        user.addPublicKey(pubkey)
       }
     }
   }
   
-  get("/synced-invite/:id") { withUser { user =>
+  get("/synced-invite/:id") { 
+    val id = java.lang.Long.parseLong(params("id"))
+    // Prune old elements
+    prune_old_upload_keys
+    // Try to find ours
+    current_upload_keys.get(id) match {
+      case None    => halt(500)
+      case Some(v) => {
+        val user = v._1
+        val m = v._3
+        // Generate invite
+        val server = request.getServerName()
+        val xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                  "<sparkleshare>\n" +
+                  "  <invite>\n" +
+                  "    <address>ssh://" + user.getUsername() + "@" + server + "/</address>\n" +
+                  "    <remote_path>/var/nublic/work-folders/" + m.getId().toString() + "</remote_path>\n" +
+                  "    <accept_url>http://" + server + "/manager/server/synced-upload-key/" + id.toString() + "</accept_url>\n" +
+                  "  </invite>\n" +
+                  "</sparkleshare>"
+        xml
+      }
+    }
+  }
+  
+  get("/synced-generate-invite/:id") { withUser { user =>
     val mid = Integer.parseInt(params("id"))
     val m = new SyncedFolder(mid)
     if (m.exists() && user.canRead(m)) {
       // Generate new id for key uploading
       val upload_key_id = Random.nextLong().abs
-      current_upload_keys += upload_key_id -> ( user, (new Date()).getTime() )
-      // Generate invitation
-      val server = request.getServerName()
-      val xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<sparkleshare>\n" +
-                "  <invite>\n" +
-                "    <address>ssh://" + user.getUsername() + "@" + server + "/</address>\n" +
-                "    <remote_path>/var/nublic/work-folders/" + mid.toString() + "</remote_path>\n" +
-                "    <accept_url>http://" + server + "/manager/server/synced-upload-key/" + upload_key_id.toString() + "</accept_url>\n" +
-                "  </invite>\n" +
-                "</sparkleshare>"
-      xml
+      current_upload_keys += upload_key_id -> ( user, (new Date()).getTime(), m )
+      upload_key_id.toString()
     } else {
       halt(500)
     }

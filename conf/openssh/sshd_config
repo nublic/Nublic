@@ -43,9 +43,9 @@ PermitRootLogin no
 MaxAuthTries 10
 MaxSessions 15
 
-#RSAAuthentication yes
-#PubkeyAuthentication yes
-#AuthorizedKeysFile	.ssh/authorized_keys
+RSAAuthentication yes
+PubkeyAuthentication yes
+AuthorizedKeysFile	.ssh/authorized_keys
 
 # For this to work you will also need host keys in /etc/ssh/ssh_known_hosts
 #RhostsRSAAuthentication no
@@ -58,8 +58,8 @@ MaxSessions 15
 #IgnoreRhosts yes
 
 # To disable tunneled clear text passwords, change to no here!
-PasswordAuthentication yes
-PermitEmptyPasswords no
+PasswordAuthentication no
+#PermitEmptyPasswords no
 
 # Change to no to disable s/key passwords
 #ChallengeResponseAuthentication yes
