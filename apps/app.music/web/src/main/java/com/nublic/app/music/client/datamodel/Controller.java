@@ -9,14 +9,26 @@ import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
+import com.nublic.app.music.client.ui.player.NublicPlayer;
 
 public class Controller {
+	static NublicPlayer player;
 	DataModel model;
 	MainUi ui;
 	
 	public Controller(DataModel model, MainUi ui) {
 		this.model = model;
 		this.ui = ui;
+		
+		Controller.setPlayer(ui.getPlayer());
+	}
+	
+	public static NublicPlayer getPlayer() {
+		return player;
+	}
+	
+	public static void setPlayer(NublicPlayer p) {
+		player = p;
 	}
 
 	// When URL changes this method is called

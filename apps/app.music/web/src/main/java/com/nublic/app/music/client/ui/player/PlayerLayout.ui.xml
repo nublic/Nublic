@@ -45,8 +45,13 @@
 		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow}" ui:field="nextButton">
 			<g:upFace image="{res.playerNext}"/>
 		</g:PushButton>
-		<g:VerticalPanel width="300px">
+		<g:VerticalPanel width="300px" horizontalAlignment="right">
 			<b:CSSSeekBar ui:field="seekBar" addStyleNames="{style.glow} {style.marginleft}"/>
+			<g:HorizontalPanel>
+				<g:Label ui:field="currentTime" text="0:00"/>
+				<g:Label text="/"/>
+				<g:Label ui:field="totalDurationLabel" text="0:00"/>
+			</g:HorizontalPanel>
 		</g:VerticalPanel>
 		<g:VerticalPanel width="100px"/>
 	</g:HorizontalPanel>

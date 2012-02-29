@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 
+import com.bramosystems.oss.player.core.client.LoadException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -21,6 +22,7 @@ import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
@@ -311,6 +313,12 @@ public class SongList extends Composite implements ScrollHandler {
 		@Override
 		public void onAddAtEnd() {
 			model.addToCurrentPlaylist(song);
+			Controller.getPlayer().clearPlaylist();
+			Controller.getPlayer().addToPlaylist(song.getUrl());
+//				Controller.getPlayer().play
+				//Controller.getPlayer().loadMedia(song.getUrl());
+//				Controller.getPlayer().playNext();
+
 		}
 	}
 

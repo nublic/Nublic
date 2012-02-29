@@ -1,5 +1,7 @@
 package com.nublic.app.music.client.datamodel;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.NumberFormat;
 
 //song   ::= { "id": $song-id,
@@ -45,6 +47,13 @@ public class SongInfo {
 		sb.append(NumberFormat.getFormat("00").format(length%60));
 		return sb.toString();
 //		return String.format("%d:%d", getLenght()/60, getLenght()%60);
+	}
+	
+	// GET /view/:song-id.mp3
+	// * Return: raw data of the song converted to MP3 128 kbps
+	
+	public String getUrl() {
+		return URL.encode(GWT.getHostPageBaseURL() + "server/view/" + id + ".mp3");
 	}
 	
 }

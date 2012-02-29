@@ -48,7 +48,7 @@ public class MainUi extends Composite {
 
 	public MainUi(DataModel model) {
 		_player = NublicPlayer.create();
-		player = _player instanceof NublicPlayer ? null : (NublicPlayer)_player;
+		player = _player instanceof NublicPlayer ? (NublicPlayer)_player : null;
 
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -187,6 +187,13 @@ public class MainUi extends Composite {
 		PlaylistPanel plPanel = new PlaylistPanel(model, playlistId, showingPlaylistWidget.getText());
 		plPanel.setSongList(total, from, to, answerList, playlistId);
 		mainPanel.setWidget(plPanel);
+	}
+	
+	public NublicPlayer getPlayer() {
+		if (player == null) {
+			error("No player plugin available");
+		}
+		return player;		
 	}
 
 	public void error(String message) {

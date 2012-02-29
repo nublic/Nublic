@@ -8,6 +8,7 @@ import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.PushButton;
@@ -23,7 +24,9 @@ public class PlayerLayout extends Composite {
 	@UiField PushButton pauseButton;
 	@UiField PushButton nextButton;
 	@UiField(provided=true) CSSSeekBar seekBar = new CSSSeekBar(10);
-	
+	@UiField Label currentTime;
+	@UiField Label totalDurationLabel;
+	double totalDuration = 0;
 
 	// Handlers
 	List<PlayHandler> playHandlers = new ArrayList<PlayHandler>();
@@ -37,12 +40,31 @@ public class PlayerLayout extends Composite {
 		
 		setPlaying(false);
 		 // create a seekbar with CSS styling ...
-
 	}
 	
 	public void setPlaying(boolean p) {
 		playButton.setVisible(!p);
 		pauseButton.setVisible(p);
+	}
+	
+	public void setLoadingProgress(double progress) {
+		seekBar.setLoadingProgress(progress);		
+	}
+	
+	public void setCurrentProgress(double playPosition) {
+		if (totalDuration > 1) {
+			seekBar.setPlayingProgress(playPosition / totalDuration);
+			currentTime.setText(String.valueOf(playPosition/1000));
+		} else {
+			totalDurationLabel.setText("0:00");
+			currentTime.setText("0:00");
+		}
+
+	}
+	
+	public void setTotalTime(double totalTime) {
+		totalDuration = totalTime;
+		totalDurationLabel.setText(String.valueOf(totalTime/1000));
 	}
 
 	// Add handlers
