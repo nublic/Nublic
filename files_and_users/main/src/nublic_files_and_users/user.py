@@ -60,7 +60,7 @@ class UserDBus(dbus.service.Object):
         if ' ' in username or self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # passwd
-        pexpect.run('useradd -s /usr/bin/lshell -M -G nublic -N ' + username)
+        pexpect.run('useradd -s /usr/bin/lshell -m -G nublic -N ' + username)
         passwd_child = pexpect.spawn('passwd ' + username)
         passwd_child.expect('.*:')
         passwd_child.sendline(password)
@@ -84,13 +84,27 @@ class UserDBus(dbus.service.Object):
         htpasswd_child.expect('.*:')
         htpasswd_child.sendline(password)
         print("Added in htpasswd")
-        # database
+        # ssh
         uid = self.get_user_uid(username)
+        ssh_folder = '/home/' + username + '/.ssh'
+        os.mkdir(ssh_folder)
+        os.chown(ssh_folder, uid, self.get_nublic_gid())
+        os.chmod(ssh_folder, 0700)
+        ssh_file = ssh_folder + '/authorized_keys'
+        self.touch(ssh_file)
+        os.chown(ssh_file, uid, self.get_nublic_gid())
+        os.chmod(ssh_file, 0600)
+        pexpect.run('setfacl -m u:tomcat6:rwx "' + ssh_file + '"')
+        # database
         usr = User(username=username, uid=uid, name=name)
         session.add(usr)
         session.commit()
         # Notify
         self.user_created(username, name)
+    
+    def touch(self, fname, times = None):
+        with file(fname, 'a'):
+            os.utime(fname, times)
     
     @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def change_user_password(self, username, old_password, new_password):

@@ -16,6 +16,9 @@ import javax.servlet.http.HttpUtils
 import java.util.Hashtable
 import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
+import scala.util.Random
+import java.util.Date
+import java.io.PrintWriter
 
 class ManagerServer extends ScalatraFilter with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -173,6 +176,62 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
       halt(200)
     } else {
       halt(403)
+    }
+  } }
+  
+  var current_upload_keys = scala.collection.mutable.Map[Long, Tuple2[User, Long]]()
+  
+  def prune_old_upload_keys = {
+    // Prune those older than 5 minutes
+    val end_time = (new Date()).getTime() - 5 * 60 * 1000 /* 5 minutes */
+    current_upload_keys = current_upload_keys.filter(kv => kv._2._2 > end_time)
+  }
+  
+  get("/synced-upload-key/:id") {
+    write("Use POST for uploading keys")
+  }
+  
+  post("/synced-upload-key/:id") {
+    val id = java.lang.Long.parseLong(params("id"))
+    val pubkey = params("pubkey")
+    // Prune old elements
+    prune_old_upload_keys
+    // Try to find ours
+    current_upload_keys.get(id) match {
+      case None    => halt(500)
+      case Some(v) => {
+        val user = v._1
+        // Append the key to authorized_keys
+        val akeys_file = "/home/" + user.getUsername() + "/.ssh/authorized_keys"
+        val fw = new FileWriter(akeys_file, true)
+        val pw = new PrintWriter(fw)
+        pw.println(pubkey)
+        pw.close()
+        fw.close()
+      }
+    }
+  }
+  
+  get("/synced-invite/:id") { withUser { user =>
+    val mid = Integer.parseInt(params("id"))
+    val m = new SyncedFolder(mid)
+    if (m.exists() && user.canRead(m)) {
+      // Generate new id for key uploading
+      val upload_key_id = Random.nextLong().abs
+      current_upload_keys += upload_key_id -> ( user, (new Date()).getTime() )
+      // Generate invitation
+      val server = request.getServerName()
+      val xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<sparkleshare>\n" +
+                "  <invite>\n" +
+                "    <address>ssh://" + user.getUsername() + "@" + server + "/</address>\n" +
+                "    <remote_path>/var/nublic/work-folders/" + mid.toString() + "</remote_path>\n" +
+                "    <accept_url>http://" + server + "/manager/server/synced-upload-key/" + upload_key_id.toString() + "</accept_url>\n" +
+                "  </invite>\n" +
+                "</sparkleshare>"
+      xml
+    } else {
+      halt(500)
     }
   } }
   
