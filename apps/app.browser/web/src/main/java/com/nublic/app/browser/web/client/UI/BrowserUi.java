@@ -40,6 +40,8 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.Location;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -79,6 +81,7 @@ import com.nublic.theme.tree.GoogleLikeTreeResources;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.Callback;
 import com.nublic.util.gwt.LazyLoader;
+import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 import com.nublic.util.widgets.PopupButton;
@@ -131,7 +134,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //	@UiField UploadAction upAction;
 //	@UiField PasteAction pasteAction;
 	@UiField HTMLPanel workFolderPanel;
-	@UiField TextBox workFolderURL;
+	@UiField Button workFolderURL;
 	
 	FixedPopup popUpBox;
 
@@ -228,20 +231,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					infoWidget.changeInfo(selectedFiles);
 				}
 				// Working folders
-				if (getShowingPath().startsWith(Constants.KIND_SYNCED_FOLDER)) {
-					workFolderPanel.setVisible(true);
-					// Get folder id
-					String withoutInit = getShowingPath().substring(Constants.KIND_SYNCED_FOLDER.length() + 1);
-					String syncedId = withoutInit;
-					int slashPoint = withoutInit.indexOf('/');
-					if (slashPoint != -1) {
-						syncedId = syncedId.substring(0, slashPoint);
-					}
-					workFolderURL.setText(Constants.KIND_SYNCED_URL + syncedId);
-					workFolderURL.setReadOnly(true);
-				} else {
-					workFolderPanel.setVisible(false);
-				}
+				workFolderPanel.setVisible(getShowingPath().startsWith(Constants.KIND_SYNCED_FOLDER));
 				// Upper buttons
 				if (pasteAction.getAvailability() == Availability.AVAILABLE) {
 					pasteTopButton.setEnabled(true);
@@ -262,6 +252,44 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				}
 			}
 		});
+	}
+	
+	@UiHandler("workFolderURL")
+	void onWorkFolderURLClick(ClickEvent event) {
+		// Working folders
+		if (getShowingPath().startsWith(Constants.KIND_SYNCED_FOLDER)) {
+			workFolderPanel.setVisible(true);
+			// Get folder id
+			String withoutInit = getShowingPath().substring(Constants.KIND_SYNCED_FOLDER.length() + 1);
+			String syncedId = withoutInit;
+			int slashPoint = withoutInit.indexOf('/');
+			if (slashPoint != -1) {
+				syncedId = syncedId.substring(0, slashPoint);
+			}
+			final String syncedIdForSending = syncedId;
+			SequenceHelper.sendJustOne(new Message() {
+				@Override
+				public String getURL() {
+					return LocationUtil.getHostBaseUrl() + "manager/server/synced-generate-invite/" + syncedIdForSending;
+				}
+
+				@Override
+				public void onSuccess(Response response) {
+					if (response.getStatusCode() == Response.SC_OK) {
+						String linkUrl = "sparkleshare://" + Location.getHost() + 
+								"/manager/server/synced-invite/" + response.getText();
+						Location.replace(linkUrl);
+						// Window.open(linkUrl, null, "");
+					}
+				}
+
+				@Override
+				public void onError() {
+					// Do nothing
+				}
+				
+			}, RequestBuilder.GET);
+		}
 	}
 
 	// ContextChangeHandler
@@ -882,5 +910,4 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		
 		popup.center();
 	}
-
 }
