@@ -750,7 +750,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 
 
 	public void showPDF(String path) {
-		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.DOCUMENT_TYPE);
+		Frame frame = new Frame(GWT.getHostPageBaseURL() + "server/view/" + LocationUtil.replaceQuestionMarks(path) + "." + Constants.DOCUMENT_TYPE);
 		setContentOfPopUp(frame, path);
 		popUpBox.show();
 	}
@@ -773,7 +773,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					}
 					@Override
 					public String getURL() {
-						return GWT.getHostPageBaseURL() + "server/view/" + path + "." + Constants.TEXT_TYPE;
+						return GWT.getHostPageBaseURL() + "server/view/" + LocationUtil.replaceQuestionMarks(path) + "." + Constants.TEXT_TYPE;
 					}
 				};
 				SequenceHelper.sendJustOne(m, RequestBuilder.GET);
