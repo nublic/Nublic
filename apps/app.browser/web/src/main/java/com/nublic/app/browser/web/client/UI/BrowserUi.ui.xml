@@ -89,10 +89,10 @@
 				  <div class="page-header" style="margin-bottom: 6px;">
                      <h3 style="line-height: 28px;">Work folder</h3>
                   </div>
-                  <p>To synchronize this folder in your computer, install
-                  <a href="http://sparkleshare.org/">SparkleShare</a>
-                  and use the following repository URL:</p>
-                  <g:TextBox ui:field="workFolderURL" width="150px"></g:TextBox>
+                  <p>To synchronize this folder, install
+                  <a href="http://sparkleshare.org/" target="_blank">SparkleShare</a>
+                  and click the invite:</p>
+                  <g:Button ui:field="workFolderURL">Sync with SparkleShare</g:Button>
 				</g:HTMLPanel>
 	   			<g:HTMLPanel>
 	   			  <div class="page-header" style="margin-bottom: 6px;">

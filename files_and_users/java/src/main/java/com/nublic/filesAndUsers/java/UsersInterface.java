@@ -22,6 +22,7 @@ interface UsersInterface extends DBusInterface {
 	public void change_user_shown_name(String username, String name);
 	public void delete_user(String username);
 	public void assign_file(String username, String path);
+	public void add_public_key(String username, String key);
 	
 	public static class user_created extends DBusSignal {
 		String object_path;

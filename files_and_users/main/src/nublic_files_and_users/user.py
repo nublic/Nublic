@@ -60,7 +60,7 @@ class UserDBus(dbus.service.Object):
         if ' ' in username or self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # passwd
-        pexpect.run('useradd -s /usr/bin/lshell -M -G nublic -N ' + username)
+        pexpect.run('useradd -s /usr/bin/lshell -m -G nublic -N ' + username)
         passwd_child = pexpect.spawn('passwd ' + username)
         passwd_child.expect('.*:')
         passwd_child.sendline(password)
@@ -84,13 +84,27 @@ class UserDBus(dbus.service.Object):
         htpasswd_child.expect('.*:')
         htpasswd_child.sendline(password)
         print("Added in htpasswd")
-        # database
+        # ssh
         uid = self.get_user_uid(username)
+        home_folder = '/home/' + username
+        ssh_folder = home_folder + '/.ssh'
+        os.mkdir(ssh_folder)
+        os.chown(ssh_folder, uid, self.get_nublic_gid())
+        os.chmod(ssh_folder, 0700)
+        ssh_file = ssh_folder + '/authorized_keys'
+        self.touch(ssh_file)
+        os.chown(ssh_file, uid, self.get_nublic_gid())
+        os.chmod(ssh_file, 0600)
+        # database
         usr = User(username=username, uid=uid, name=name)
         session.add(usr)
         session.commit()
         # Notify
         self.user_created(username, name)
+    
+    def touch(self, fname, times = None):
+        with file(fname, 'a'):
+            os.utime(fname, times)
     
     @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def change_user_password(self, username, old_password, new_password):
@@ -178,3 +192,16 @@ class UserDBus(dbus.service.Object):
         real_path = DATA_ROOT + path
         os.chown(real_path, user.uid, self.get_nublic_gid())
         pexpect.run('setfacl -m u:tomcat6:rwx "' + real_path + '"')
+    
+    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
+    def add_public_key(self, username, key):
+        # Get user id
+        user = User.get_by(username=username)
+        if user is None:
+            raise NameError()
+        # Make chown
+        ssh_file = '/home/' + username + '/.ssh/authorized_keys'
+        f = open(ssh_file, 'a')
+        f.write(key + '\n')
+        f.close()
+        os.chmod(ssh_file, 0600)
