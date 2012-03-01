@@ -10,6 +10,7 @@ import com.google.gwt.core.client.JsArrayString;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 import com.nublic.util.messages.Message;
@@ -48,6 +49,7 @@ public class ChangesMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		ChangesContent changesContent = null;
+		final FolderNode showingNode = model.getShowingFolder();
 		
 		if (response.getStatusCode() == Response.SC_OK) {
 			// When the call is successful
@@ -64,6 +66,28 @@ public class ChangesMessage extends Message {
 			}
 			if (!addedFiles.isEmpty() || !deletedFiles.isEmpty()) {
 				model.fireFilesUpdateHandlers(false, false);
+			}
+			// Special handling for folders
+			boolean foldersChanged = false;
+			for (FileNode n : addedFiles) {
+				if (n.getMime().equals(Constants.FOLDER_MIME) && 
+						showingNode.getChild(n.getName()) == null) {
+					FolderNode childN = new FolderNode(showingNode, n.getName(), n.isWritable());
+					showingNode.addChild(childN);
+					foldersChanged = true;
+				}
+			}
+			for (FileNode n : deletedFiles) {
+				if (n.getMime().equals(Constants.FOLDER_MIME)) {
+					FolderNode childN = showingNode.getChild(n.getName());
+					if (childN != null) {
+						showingNode.removeChild(childN);
+						foldersChanged = true;
+					}
+				}
+			}
+			if (foldersChanged) {
+				model.fireFolderUpdateHandlers(showingNode);
 			}
 
 			model.scheduleNewTimer();
