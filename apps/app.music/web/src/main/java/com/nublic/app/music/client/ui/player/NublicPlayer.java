@@ -29,6 +29,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
+	int lastPlayIndex;
 	
 	public static Widget create() {
 		try {
@@ -45,17 +46,18 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	public NublicPlayer(Plugin p) throws PluginNotFoundException, PluginVersionException, LoadException {
-		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "500px");
+		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "800px");
 
 		controls = new PlayerLayout();
-		addControlHandlers();
-		setPlayerControlWidget(controls);
-		addPlayHandler();
-		addLoadingHandler();
-		// monitor playing progress & update timer display ...
-		setTimer();
-		
-		showLogger(true);
+		addControlHandlers();				// For buttons clicks
+		setPlayerControlWidget(controls);	// Set player widget showing
+		addPlayHandler();					// Control what happens when state changes (stop, play, ..)
+		addLoadingHandler();				// Update the view with progress of the song
+		setTimer();							// Monitor playing progress & update timer display ...
+		addPlayerHandler();					// Clear the initial playlist
+	}
+	
+	private void addPlayerHandler() {
 		addPlayerStateHandler(new PlayerStateHandler() {
 			@Override
 			public void onPlayerStateChanged(PlayerStateEvent event) {
@@ -65,7 +67,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			}
 		});
 	}
-	
+
 	public void addSongToPlaylist(SongInfo song) {
 		playlist.add(song);
 		if (getPlaylistSize() == 0) {
@@ -79,7 +81,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 			addToPlaylist(song.getUrl());
 		}
 	}
-	
 
 	private void setTimer() {
         timer = new Timer() {
@@ -106,6 +107,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             @Override
             public void onPlayStateChanged(PlayStateEvent event) {
             	SongInfo song = playlist.get(event.getItemIndex());
+            	lastPlayIndex = event.getItemIndex();
             	switch(event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
@@ -113,7 +115,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             		break;
             	case Started:
             		controls.setPlaying(true);
-            		controls.setTotalTime(song.getLength()*1000);
+            		controls.setSongInfo(song);
             		timer.scheduleRepeating(900);
             		break;
             	case Stopped:
@@ -154,7 +156,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onNext() {
 				try {
-					playNext();
+					if (lastPlayIndex != getPlaylistSize() - 1) {
+						playNext();
+					}
 				} catch (PlayException e) {
 					ErrorPopup.showError(e.getMessage());
 					e.printStackTrace();
@@ -165,7 +169,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPrev() {
 				try {
-					playPrevious();
+					if (lastPlayIndex != 0) {
+						playPrevious();
+					}
 				} catch (PlayException e) {
 					ErrorPopup.showError(e.getMessage());
 					e.printStackTrace();

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
@@ -49,7 +50,8 @@ public class SongPanel extends Composite {
 			byLabel.setVisible(false);
 			subtitleLabel.setVisible(false);
 		} else {
-			model.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
+			Controller.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
+//			model.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {
 					titleLabel.setText(v.getName());
@@ -59,7 +61,8 @@ public class SongPanel extends Composite {
 					setSubtitleTarget();
 				}
 			});
-			model.getAlbumCache().obtain(albumId);
+			Controller.getAlbumCache().obtain(albumId);
+//			model.getAlbumCache().obtain(albumId);
 		}
 
 		// Create button line

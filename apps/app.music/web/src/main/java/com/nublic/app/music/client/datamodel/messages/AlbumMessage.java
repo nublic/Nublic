@@ -9,6 +9,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.js.JSAlbum;
@@ -80,7 +81,7 @@ public class AlbumMessage extends Message {
 				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
 				answerList.add(info);
 				// We take the opportunity to add the album to the model cache
-				model.getAlbumCache().put(info.getId(), info);
+				Controller.getAlbumCache().put(info.getId(), info);
 			}
 
 			// Only if the message arrives on time to fill the screen it was meant for

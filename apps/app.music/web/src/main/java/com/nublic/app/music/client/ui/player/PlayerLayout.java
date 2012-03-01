@@ -14,7 +14,18 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ErrorEvent;
+import com.google.gwt.event.dom.client.ErrorHandler;
+import com.google.gwt.event.dom.client.LoadEvent;
+import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Resources;
+import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.util.cache.CacheHandler;
+import com.google.gwt.user.client.ui.Image;
 
 public class PlayerLayout extends Composite {
 	private static PlayerLayoutUiBinder uiBinder = GWT.create(PlayerLayoutUiBinder.class);
@@ -27,6 +38,10 @@ public class PlayerLayout extends Composite {
 	@UiField(provided=true) CSSSeekBar seekBar = new CSSSeekBar(10); // create a seekbar with CSS styling ...
 	@UiField Label currentTime;
 	@UiField Label totalDurationLabel;
+	@UiField Label artistLabel;
+	@UiField Label albumLabel;
+	@UiField Label songLabel;
+	@UiField Image albumArt;
 	double totalDuration = 0;
 
 	// Handlers
@@ -62,6 +77,65 @@ public class PlayerLayout extends Composite {
 
 	}
 	
+	public void setSongInfo(SongInfo s) {
+		if (s == null) {
+			setTotalTime(0);
+			artistLabel.setVisible(false);
+			albumLabel.setVisible(false);
+			songLabel.setVisible(false);
+			albumArt.setVisible(false);
+		} else {
+			setTotalTime(s.getLength() * 1000);
+			Controller.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+				@Override
+				public void onCacheUpdated(String k, ArtistInfo v) {
+					artistLabel.setText(v.getName());
+					artistLabel.setVisible(true);
+				}
+			});
+			Controller.getArtistCache().obtain(s.getArtistId());
+			Controller.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+				@Override
+				public void onCacheUpdated(String k, AlbumInfo v) {
+					albumLabel.setText(v.getName());
+					albumLabel.setVisible(true);
+				}
+			});
+			Controller.getAlbumCache().obtain(s.getAlbumId());
+			songLabel.setText(s.getTitle());
+			songLabel.setVisible(true);
+			setImage(s.getAlbumId());
+		}
+	}
+	
+	private void setImage(String albumId) {
+		if (albumId == null) {
+			albumArt.setVisible(false);
+		} else {
+			// building imageUrl as /album-art/:album-id
+			StringBuilder imageUrl = new StringBuilder();
+			imageUrl.append(GWT.getHostPageBaseURL());
+			imageUrl.append("server/album-art/");
+			imageUrl.append(albumId);
+	
+			albumArt.addErrorHandler(new ErrorHandler() {
+				@Override
+				public void onError(ErrorEvent event) {
+					albumArt.setResource(Resources.INSTANCE.album());
+					albumArt.setVisible(true);
+				}
+			});
+			albumArt.addLoadHandler(new LoadHandler() {
+				@Override
+				public void onLoad(LoadEvent event) {
+					albumArt.setVisible(true);					
+				}
+			});
+			
+			albumArt.setUrl(URL.encode(imageUrl.toString()));
+		}
+	}
+
 	public void setTotalTime(double totalTime) {
 		totalDuration = totalTime;
 		totalDurationLabel.setText(SongInfo.getFormattedLength(totalTime/1000));

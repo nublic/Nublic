@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -44,21 +45,21 @@ public class AlbumPanel extends Composite {
 		if (artistId == null) {
 			titleLabel.setText("All artists");
 		} else {
-			model.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+			Controller.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+//			model.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
 					titleLabel.setText(v.getName());
 				}
 			});
-			model.getArtistCache().obtain(artistId);
+			Controller.getArtistCache().obtain(artistId);
+//			model.getArtistCache().obtain(artistId);
 		}
 
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
 														ButtonLineParam.PLAY);
-//		buttonSet.add(ButtonLineParam.DELETE);
 		ButtonLine b = new ButtonLine(buttonSet);
-//		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.add(b);

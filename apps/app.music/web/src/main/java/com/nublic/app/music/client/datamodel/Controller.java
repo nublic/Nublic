@@ -10,9 +10,12 @@ import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
+import com.nublic.util.cache.Cache;
 
 public class Controller {
 	static NublicPlayer player;
+	static Cache<String, AlbumInfo> albumCache;
+	static Cache<String, ArtistInfo> artistCache;
 	DataModel model;
 	MainUi ui;
 	
@@ -21,15 +24,17 @@ public class Controller {
 		this.ui = ui;
 		
 		Controller.setPlayer(ui.getPlayer());
+		Controller.setAlbumCache(model.getAlbumCache());
+		Controller.setArtistCache(model.getArtistCache());
 	}
 	
-	public static NublicPlayer getPlayer() {
-		return player;
-	}
-	
-	public static void setPlayer(NublicPlayer p) {
-		player = p;
-	}
+	// Getters and setters of singletones
+	public static NublicPlayer getPlayer() { return player; }
+	public static void setPlayer(NublicPlayer p) { player = p; }
+	public static Cache<String, AlbumInfo> getAlbumCache() { return albumCache; }
+	public static void setAlbumCache(Cache<String, AlbumInfo> albumCache) {	Controller.albumCache = albumCache; }
+	public static Cache<String, ArtistInfo> getArtistCache() { return artistCache; }
+	public static void setArtistCache(Cache<String, ArtistInfo> artistCache) { Controller.artistCache = artistCache; }
 
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {

@@ -11,6 +11,9 @@
 		.marginleft {
 			margin-left: 10px;
 		}
+		.moremarginleft {
+			margin-left: 40px;
+		}
 		.smallround {
 			-webkit-border-radius: 17px;
 			-moz-border-radius: 17px;
@@ -33,6 +36,7 @@
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 	
 	<g:HorizontalPanel verticalAlignment="middle">
+		<!-- Player controls -->
 		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow} {style.marginleft}" ui:field="prevButton">
 			<g:upFace image="{res.playerPrev}"/>
 		</g:PushButton>
@@ -45,6 +49,8 @@
 		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow}" ui:field="nextButton">
 			<g:upFace image="{res.playerNext}"/>
 		</g:PushButton>
+		
+		<!-- Progress bar -->
 		<g:VerticalPanel width="300px" horizontalAlignment="right">
 			<b:CSSSeekBar ui:field="seekBar" addStyleNames="{style.glow} {style.marginleft}"/>
 			<g:HorizontalPanel>
@@ -53,6 +59,18 @@
 				<g:Label ui:field="totalDurationLabel" text="0:00"/>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>
-		<g:VerticalPanel width="100px"/>
+
+		<!-- Info panel -->
+		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle">
+			<g:Image ui:field="albumArt"/>
+			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}">
+				<g:Label ui:field="artistLabel"/>
+				<g:Label ui:field="albumLabel"/>
+				<g:Label ui:field="songLabel"/>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+		
+		<!-- Hack to align inside the CustomAudioPlayer -->
+		<g:VerticalPanel width="500px"/>
 	</g:HorizontalPanel>
 </ui:UiBinder>
