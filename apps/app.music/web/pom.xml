@@ -66,6 +66,12 @@
 			<artifactId>guava-gwt</artifactId>
 			<version>10.0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.bramosystems.oss.player</groupId>
+			<artifactId>bst-player-api</artifactId>
+			<version>1.2.1</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -212,4 +218,11 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>bramosystems-releases</id>
+			<name>Bramosystems Release Repository</name>
+			<url>http://downloads.bramosystems.com/maven2/releases</url>
+		</repository>
+	</repositories>
 </project>

@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:my="urn:import:com.nublic.app.music.client.ui">
+	xmlns:my="urn:import:com.nublic.app.music.client.ui"
+	xmlns:myplayer="urn:import:com.nublic.app.music.client.ui.player">
 	<ui:style>
 		.padding {
 			padding: 10px;
@@ -25,9 +26,9 @@
 				<my:AddTagWidget ui:field="addPlaylistWidget"/>
 			</g:FlowPanel>
 		</g:west>
-		<g:north size="50">
+		<g:north size="70">
 			<g:HorizontalPanel>
-				<g:Label text="player"/>
+				<g:Widget ui:field="_player"/>
 			</g:HorizontalPanel>
 		</g:north>
 		<g:center>
