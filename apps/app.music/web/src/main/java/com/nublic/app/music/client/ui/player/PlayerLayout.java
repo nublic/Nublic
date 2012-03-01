@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.nublic.app.music.client.datamodel.SongInfo;
 
 public class PlayerLayout extends Composite {
 	private static PlayerLayoutUiBinder uiBinder = GWT.create(PlayerLayoutUiBinder.class);
@@ -23,7 +24,7 @@ public class PlayerLayout extends Composite {
 	@UiField PushButton playButton;
 	@UiField PushButton pauseButton;
 	@UiField PushButton nextButton;
-	@UiField(provided=true) CSSSeekBar seekBar = new CSSSeekBar(10);
+	@UiField(provided=true) CSSSeekBar seekBar = new CSSSeekBar(10); // create a seekbar with CSS styling ...
 	@UiField Label currentTime;
 	@UiField Label totalDurationLabel;
 	double totalDuration = 0;
@@ -39,7 +40,6 @@ public class PlayerLayout extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		setPlaying(false);
-		 // create a seekbar with CSS styling ...
 	}
 	
 	public void setPlaying(boolean p) {
@@ -54,7 +54,7 @@ public class PlayerLayout extends Composite {
 	public void setCurrentProgress(double playPosition) {
 		if (totalDuration > 1) {
 			seekBar.setPlayingProgress(playPosition / totalDuration);
-			currentTime.setText(String.valueOf(playPosition/1000));
+			currentTime.setText(SongInfo.getFormattedLength(playPosition/1000));
 		} else {
 			totalDurationLabel.setText("0:00");
 			currentTime.setText("0:00");
@@ -64,7 +64,7 @@ public class PlayerLayout extends Composite {
 	
 	public void setTotalTime(double totalTime) {
 		totalDuration = totalTime;
-		totalDurationLabel.setText(String.valueOf(totalTime/1000));
+		totalDurationLabel.setText(SongInfo.getFormattedLength(totalTime/1000));
 	}
 
 	// Add handlers

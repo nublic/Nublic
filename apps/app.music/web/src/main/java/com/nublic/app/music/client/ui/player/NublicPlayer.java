@@ -1,5 +1,8 @@
 package com.nublic.app.music.client.ui.player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.bramosystems.oss.player.core.client.LoadException;
 import com.bramosystems.oss.player.core.client.PlayException;
 import com.bramosystems.oss.player.core.client.PlayerUtil;
@@ -12,22 +15,27 @@ import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayerStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.util.error.ErrorPopup;
 
 
 public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
+	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
 	
 	public static Widget create() {
 		try {
-			return new NublicPlayer(Plugin.Native);
+			return new NublicPlayer(Plugin.FlashPlayer);
 		} catch (Exception e) {
 			try {
-				return new NublicPlayer(Plugin.FlashPlayer);
+				return new NublicPlayer(Plugin.Native);
 			} catch (PluginNotFoundException e2) {
 				return PlayerUtil.getMissingPluginNotice(e2.getPlugin());
 			} catch (Exception e3) {
@@ -37,7 +45,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	public NublicPlayer(Plugin p) throws PluginNotFoundException, PluginVersionException, LoadException {
-		super(p, "", false, "65px", "500px");
+		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "500px");
 
 		controls = new PlayerLayout();
 		addControlHandlers();
@@ -46,17 +54,37 @@ public class NublicPlayer extends CustomAudioPlayer {
 		addLoadingHandler();
 		// monitor playing progress & update timer display ...
 		setTimer();
-
+		
 		showLogger(true);
-
-//		loadMedia(mediaURL);
+		addPlayerStateHandler(new PlayerStateHandler() {
+			@Override
+			public void onPlayerStateChanged(PlayerStateEvent event) {
+				if (event.getPlayerState() == State.Ready) {
+					clearPlaylist();
+				}
+			}
+		});
 	}
+	
+	public void addSongToPlaylist(SongInfo song) {
+		playlist.add(song);
+		if (getPlaylistSize() == 0) {
+			try {
+				loadMedia(song.getUrl());
+			} catch (LoadException e) {
+				ErrorPopup.showError(e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			addToPlaylist(song.getUrl());
+		}
+	}
+	
 
 	private void setTimer() {
         timer = new Timer() {
             @Override
             public void run() {
-            	
             	controls.setCurrentProgress(getPlayPosition());
             }
         };
@@ -77,6 +105,7 @@ public class NublicPlayer extends CustomAudioPlayer {
         addPlayStateHandler(new PlayStateHandler() {
             @Override
             public void onPlayStateChanged(PlayStateEvent event) {
+            	SongInfo song = playlist.get(event.getItemIndex());
             	switch(event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
@@ -84,8 +113,8 @@ public class NublicPlayer extends CustomAudioPlayer {
             		break;
             	case Started:
             		controls.setPlaying(true);
-            		controls.setTotalTime(getMediaDuration());
-            		timer.scheduleRepeating(1000);
+            		controls.setTotalTime(song.getLength()*1000);
+            		timer.scheduleRepeating(900);
             		break;
             	case Stopped:
             		controls.setPlaying(false);
@@ -111,12 +140,36 @@ public class NublicPlayer extends CustomAudioPlayer {
 		controls.addPlayHandler(new PlayHandler() {
 			@Override
 			public void onPlay() {
-//				try {
-					play(0);
-//					playMedia();
-//				} catch (PlayException e) {
-//					e.printStackTrace();
-//				}
+				try {
+					if (getPlaylistSize() != 0) {
+						playMedia();
+					}
+				} catch (Exception e) {
+					ErrorPopup.showError(e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		});
+		controls.addNextHandler(new NextHandler() {
+			@Override
+			public void onNext() {
+				try {
+					playNext();
+				} catch (PlayException e) {
+					ErrorPopup.showError(e.getMessage());
+					e.printStackTrace();
+				}				
+			}
+		});
+		controls.addPrevHandler(new PrevHandler() {
+			@Override
+			public void onPrev() {
+				try {
+					playPrevious();
+				} catch (PlayException e) {
+					ErrorPopup.showError(e.getMessage());
+					e.printStackTrace();
+				}				
 			}
 		});
 	}
