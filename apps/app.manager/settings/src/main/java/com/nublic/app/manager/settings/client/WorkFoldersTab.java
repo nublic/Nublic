@@ -83,7 +83,7 @@ public class WorkFoldersTab extends Composite {
 	@UiHandler("addButton")
 	void onAddButtonClick(ClickEvent event) {
 		final TextPopup popup = new TextPopup("New work folder name",
-				EnumSet.of(PopupButton.ADD, PopupButton.CANCEL));
+				EnumSet.of(PopupButton.ADD, PopupButton.CANCEL), PopupButton.ADD);
 		
 		popup.addButtonHandler(PopupButton.ADD, new PopupButtonHandler() {
 			
@@ -131,7 +131,8 @@ public class WorkFoldersTab extends Composite {
 			
 			final TextPopup popup = new TextPopup("Do you really want to remove \"" 
 					+ name + "\" from your Nublic?",
-					EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL));
+					EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL),
+					PopupButton.DELETE);
 			
 			popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
 				
@@ -180,7 +181,7 @@ public class WorkFoldersTab extends Composite {
 			
 			final TextPopup popup = new TextPopup("Change work folder name",
 					EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL),
-					"Change name");
+					"Change name", PopupButton.CUSTOM);
 			popup.setText(name);
 			
 			popup.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
