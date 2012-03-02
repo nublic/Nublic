@@ -45,4 +45,7 @@ public interface Resources extends ClientBundle {
 
 	@Source("images/player_prev.png")
 	ImageResource playerPrev();
+	
+	@Source("images/volume.png")
+	ImageResource volume();
 }
