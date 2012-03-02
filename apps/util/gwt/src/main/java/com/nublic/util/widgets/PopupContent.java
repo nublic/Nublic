@@ -107,7 +107,7 @@ public class PopupContent extends Composite {
 		this.innerHeight = h;
 	}
 	
-	private void handle(PopupButton button, ClickEvent event) {
+	void handle(PopupButton button, ClickEvent event) {
 		for (PopupButtonHandler handler : handlers.get(button)) {
 			handler.onClicked(button, event);
 		}

@@ -15,7 +15,6 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -31,6 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.model.FileNode;
+import com.nublic.util.gwt.LocationUtil;
 
 public class FileWidget extends Composite implements HasMouseDownHandlers {
 
@@ -89,11 +89,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		// Gets the thumbnail of the file
-		String url = URL.encode(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
+		String url = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
 		if (!n.hasThumbnail()) {
-			url = URL.encode(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + n.getMime());
+			url = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + n.getMime());
 		}
-
 		
 		String viewType = node.getView();
 		if (node.getMime().equals(Constants.FOLDER_MIME)) {

@@ -57,6 +57,10 @@ public class FolderNode {
 		children.add(child);
 	}
 	
+	public void removeChild(FolderNode child) {
+		children.remove(child);
+	}
+	
 	public void clear() {
 		children.clear();
 	}
