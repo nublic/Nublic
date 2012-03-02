@@ -12,15 +12,16 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Grid;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
@@ -278,26 +279,30 @@ public class SongList extends Composite implements ScrollHandler {
 	private void setAlbum(int row, int column, SongInfo s) {
 		final Label albumLabel = new Label();
 		albumLabel.getElement().addClassName(style.leftmargin());
-		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+		Controller.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+//		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
 				albumLabel.setText(v.getName());
 			}
 		});
-		model.getAlbumCache().obtain(s.getAlbumId());
+		Controller.getAlbumCache().obtain(s.getAlbumId());
+//		model.getAlbumCache().obtain(s.getAlbumId());
 		grid.setWidget(row, column, albumLabel);
 	}
 	
 	private void setArtist(int row, int column, SongInfo s) {
 		final Label artistLabel = new Label();
 		artistLabel.getElement().addClassName(style.leftmargin());
-		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+		Controller.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+//		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {
 				artistLabel.setText(v.getName());
 			}
 		});
-		model.getArtistCache().obtain(s.getArtistId());
+		Controller.getArtistCache().obtain(s.getArtistId());
+//		model.getArtistCache().obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
 	}
 	
@@ -311,6 +316,7 @@ public class SongList extends Composite implements ScrollHandler {
 		@Override
 		public void onAddAtEnd() {
 			model.addToCurrentPlaylist(song);
+			Controller.getPlayer().addSongToPlaylist(song);
 		}
 	}
 

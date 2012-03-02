@@ -1,5 +1,6 @@
 package com.nublic.app.music.client.datamodel;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 
 //song   ::= { "id": $song-id,
@@ -39,12 +40,27 @@ public class SongInfo {
 	public void setLength(int length) { this.length = length; }
 	
 	public String getFormattedLength() {
+		return SongInfo.getFormattedLength(length);
+	}
+
+	public static String getFormattedLength(double d) {
+		return SongInfo.getFormattedLength((int)d);
+	}
+	
+	public static String getFormattedLength(int songLength) {
 		StringBuilder sb = new StringBuilder();
-		sb.append((int)(length/60));
+		sb.append((int)(songLength/60));
 		sb.append(":");
-		sb.append(NumberFormat.getFormat("00").format(length%60));
+		sb.append(NumberFormat.getFormat("00").format(songLength%60));
 		return sb.toString();
 //		return String.format("%d:%d", getLenght()/60, getLenght()%60);
+	}
+	
+	// GET /view/:song-id.mp3
+	// * Return: raw data of the song converted to MP3 128 kbps
+	
+	public String getUrl() {
+		return GWT.getHostPageBaseURL() + "server/view/" + id + ".mp3";
 	}
 	
 }

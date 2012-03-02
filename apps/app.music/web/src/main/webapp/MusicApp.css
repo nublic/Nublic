@@ -49,17 +49,17 @@ h1 {
 /** progress bar */
  /** the seekbar itself */
 .player-CSSSeekBar {
-	background-color: #AAAAAA;
-	border: 1px solid #888888;
+	background-color: #888888;
+	border: 1px solid #555555;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 }
  /** the loading progress indicator */
 .player-CSSSeekBar .loading {
-	background-color: #CCCCCC;
+	background-color: #DDDDDD;
 }
  /** the playing progress indicator */
 .player-CSSSeekBar .playing {
-	background-color: #8888FF;
+	background-color: #0064CD;
 }

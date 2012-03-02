@@ -9,6 +9,7 @@ import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.js.JSArtist;
@@ -73,7 +74,8 @@ public class ArtistMessage extends Message {
 					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
 					answerList.add(info);
 					// We take the opportunity to add the artist to the model cache
-					model.getArtistCache().put(info.getId(), info);
+					Controller.getArtistCache().put(info.getId(), info);
+//					model.getArtistCache().put(info.getId(), info);
 				}
 				
 				// Only if the message arrives on time to fill the screen it was meant for
