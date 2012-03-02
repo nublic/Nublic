@@ -4,6 +4,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -12,8 +13,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
@@ -27,11 +28,19 @@ public class SongPanel extends Composite {
 	private static SongPanelUiBinder uiBinder = GWT.create(SongPanelUiBinder.class);
 	interface SongPanelUiBinder extends UiBinder<Widget, SongPanel> { }
 
+	// CSS Styles defined in the .xml file
+	interface SongPanelStyle extends CssResource {
+		String scroll();
+		String rightmargin();
+		String space();
+	}
+	@UiField SongPanelStyle style;
+	
 	@UiField FlowPanel mainPanel;
 	@UiField Label titleLabel;
 	@UiField Label byLabel;
 	@UiField HorizontalPanel titlePanel;
-	@UiField Hyperlink subtitleLabel;
+	@UiField HorizontalPanel subtitlePanel;
 	
 	DataModel model;
 	String inCollection;
@@ -48,7 +57,7 @@ public class SongPanel extends Composite {
 		if (albumId == null) {
 			titleLabel.setText("All songs");
 			byLabel.setVisible(false);
-			subtitleLabel.setVisible(false);
+			subtitlePanel.setVisible(false);
 		} else {
 			Controller.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
 //			model.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
@@ -56,9 +65,7 @@ public class SongPanel extends Composite {
 				public void onCacheUpdated(String k, AlbumInfo v) {
 					titleLabel.setText(v.getName());
 					byLabel.setVisible(true);
-					subtitleLabel.setVisible(true);
-					subtitleLabel.setText("some artist");
-					setSubtitleTarget();
+					setSubtitles(v.getArtistList());
 				}
 			});
 			Controller.getAlbumCache().obtain(albumId);
@@ -68,9 +75,7 @@ public class SongPanel extends Composite {
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
 														ButtonLineParam.PLAY);
-//		buttonSet.add(ButtonLineParam.DELETE);
 		ButtonLine b = new ButtonLine(buttonSet);
-//		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.add(b);
@@ -83,19 +88,26 @@ public class SongPanel extends Composite {
 
 		mainPanel.add(sl);
 	}
-	
-	public void setSubtitleTarget() {
-		StringBuilder target = new StringBuilder();		
-		if (inCollection != null) {
-			target.append(Constants.PARAM_COLLECTION);
-			target.append("=");
-			target.append(inCollection);
-			target.append("&");
+
+	public void setSubtitles(List<String> artistList) {
+		subtitlePanel.clear();
+		for (String artistId : artistList) {
+			final Hyperlink artistLink = new Hyperlink();
+			Label commaLabel = new Label(",");
+			commaLabel.getElement().addClassName(style.space());
+			Controller.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+				@Override
+				public void onCacheUpdated(String k, ArtistInfo v) {
+					artistLink.setText(v.getName());
+					artistLink.setTargetHistoryToken(v.getTargetHistoryToken());
+				}
+			});
+			Controller.getArtistCache().obtain(artistId);
+			subtitlePanel.add(artistLink);
+			subtitlePanel.add(commaLabel);
 		}
-		target.append(Constants.PARAM_ARTIST);
-		target.append("=");
-		target.append("SomeArtistId");
-		subtitleLabel.setTargetHistoryToken(target.toString());
+		subtitlePanel.remove(subtitlePanel.getWidgetCount() - 1);
+		subtitlePanel.setVisible(true);
 	}
 	
 	// Handlers for button line

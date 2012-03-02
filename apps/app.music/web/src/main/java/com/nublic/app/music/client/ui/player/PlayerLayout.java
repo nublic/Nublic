@@ -48,8 +48,8 @@ public class PlayerLayout extends Composite {
 	double totalDuration = 0;
 
 	// Handlers
-	List<PlayHandler> playHandlers = new ArrayList<PlayHandler>();
 	List<PauseHandler> pauseHandlers = new ArrayList<PauseHandler>();
+	List<PlayHandler> playHandlers = new ArrayList<PlayHandler>();
 	List<PrevHandler> prevHandlers = new ArrayList<PrevHandler>();
 	List<NextHandler> nextHandlers = new ArrayList<NextHandler>();
 	
@@ -58,6 +58,7 @@ public class PlayerLayout extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		setPlaying(false);
+		volumeControl.setVolume(1);
 	}
 	
 	public void setPlaying(boolean p) {

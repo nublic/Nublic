@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
+	<ui:style type='com.nublic.app.music.client.ui.song.SongPanel.SongPanelStyle'>
 		.scroll {
 	        overflow-x: hidden;
 			overflow-y: auto;
@@ -22,7 +22,7 @@
 			  </g:HorizontalPanel>
 			  <g:HorizontalPanel>
 			  	<g:Label ui:field="byLabel" text="by:" addStyleNames="{style.space}"/>
-			  	<g:Hyperlink ui:field="subtitleLabel"/>
+			  	<g:HorizontalPanel ui:field="subtitlePanel"/>
 			  </g:HorizontalPanel>
 			</g:VerticalPanel>
 		</g:north>

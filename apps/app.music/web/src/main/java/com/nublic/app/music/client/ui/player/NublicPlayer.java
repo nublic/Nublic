@@ -67,6 +67,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			public void onPlayerStateChanged(PlayerStateEvent event) {
 				if (event.getPlayerState() == State.Ready) {
 					clearPlaylist();
+					setVolume(1);
 				}
 			}
 		});

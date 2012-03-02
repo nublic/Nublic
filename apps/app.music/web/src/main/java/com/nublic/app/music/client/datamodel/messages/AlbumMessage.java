@@ -78,7 +78,7 @@ public class AlbumMessage extends Message {
 			for (int i = 0; i < albumList.length(); i++) {
 				JSAlbum album = albumList.get(i);
 
-				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs(), album.getArtists());
 				answerList.add(info);
 				// We take the opportunity to add the album to the model cache
 				Controller.getAlbumCache().put(info.getId(), info);
@@ -102,6 +102,6 @@ public class AlbumMessage extends Message {
 		String text = response.getText();
 		JSAlbum album = JsonUtils.safeEval(text);
 		
-		return new AlbumInfo(album.getId(), album.getName(), album.getSongs());
+		return new AlbumInfo(album.getId(), album.getName(), album.getSongs(), album.getArtists());
 	}
 }
