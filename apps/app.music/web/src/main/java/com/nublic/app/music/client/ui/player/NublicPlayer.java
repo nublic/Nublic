@@ -15,6 +15,10 @@ import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
+import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
+import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
+import com.bramosystems.oss.player.core.event.client.VolumeChangeEvent;
+import com.bramosystems.oss.player.core.event.client.VolumeChangeHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.google.gwt.core.client.GWT;
@@ -63,6 +67,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			public void onPlayerStateChanged(PlayerStateEvent event) {
 				if (event.getPlayerState() == State.Ready) {
 					clearPlaylist();
+					setVolume(1);
 				}
 			}
 		});
@@ -176,6 +181,18 @@ public class NublicPlayer extends CustomAudioPlayer {
 					ErrorPopup.showError(e.getMessage());
 					e.printStackTrace();
 				}				
+			}
+		});
+		controls.addSeekChangeHandler(new SeekChangeHandler() {
+			@Override
+			public void onSeekChanged(SeekChangeEvent event) {
+				setPlayPosition(event.getSeekPosition() * playlist.get(lastPlayIndex).getLength() * 1000);
+			}
+		});
+		controls.addVolumeHandler(new VolumeChangeHandler() {
+			@Override
+			public void onVolumeChanged(VolumeChangeEvent event) {
+				setVolume(event.getNewVolume());
 			}
 		});
 	}

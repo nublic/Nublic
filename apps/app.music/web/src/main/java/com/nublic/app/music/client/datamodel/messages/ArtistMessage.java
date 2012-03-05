@@ -26,6 +26,7 @@ import com.nublic.util.messages.Message;
 //                       "name": $name,
 //                       "discs": $number_of_discs,
 //                       "songs": $number_of_songs,
+//                       "artists": [ $artist-id, $artist-id, ... ]
 //                       $extra_info }
 public class ArtistMessage extends Message {
 	String collectionId;

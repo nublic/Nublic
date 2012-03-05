@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bramosystems.oss.player.core.client.skin.CSSSeekBar;
+import com.bramosystems.oss.player.core.client.skin.VolumeControl;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
+import com.bramosystems.oss.player.core.event.client.VolumeChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
@@ -36,6 +38,7 @@ public class PlayerLayout extends Composite {
 	@UiField PushButton pauseButton;
 	@UiField PushButton nextButton;
 	@UiField(provided=true) CSSSeekBar seekBar = new CSSSeekBar(10); // create a seekbar with CSS styling ...
+	@UiField(provided=true) VolumeControl volumeControl = new VolumeControl(new Image(Resources.INSTANCE.volume()), 10);
 	@UiField Label currentTime;
 	@UiField Label totalDurationLabel;
 	@UiField Label artistLabel;
@@ -45,8 +48,8 @@ public class PlayerLayout extends Composite {
 	double totalDuration = 0;
 
 	// Handlers
-	List<PlayHandler> playHandlers = new ArrayList<PlayHandler>();
 	List<PauseHandler> pauseHandlers = new ArrayList<PauseHandler>();
+	List<PlayHandler> playHandlers = new ArrayList<PlayHandler>();
 	List<PrevHandler> prevHandlers = new ArrayList<PrevHandler>();
 	List<NextHandler> nextHandlers = new ArrayList<NextHandler>();
 	
@@ -55,6 +58,7 @@ public class PlayerLayout extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		setPlaying(false);
+		volumeControl.setVolume(1);
 	}
 	
 	public void setPlaying(boolean p) {
@@ -74,7 +78,6 @@ public class PlayerLayout extends Composite {
 			totalDurationLabel.setText("0:00");
 			currentTime.setText("0:00");
 		}
-
 	}
 	
 	public void setSongInfo(SongInfo s) {
@@ -143,6 +146,7 @@ public class PlayerLayout extends Composite {
 
 	// Add handlers
 	public void addSeekChangeHandler(SeekChangeHandler h) { seekBar.addSeekChangeHandler(h); }
+	public void addVolumeHandler(VolumeChangeHandler h) { volumeControl.addVolumeChangeHandler(h); }
 	public void addPlayHandler(PlayHandler h) { playHandlers.add(h); }
 	public void addPauseHandler(PauseHandler h) { pauseHandlers.add(h); }
 	public void addPrevHandler(PrevHandler h) { prevHandlers.add(h); }

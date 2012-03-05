@@ -1,5 +1,7 @@
 package com.nublic.app.music.client.datamodel;
 
+import com.nublic.app.music.client.Constants;
+
 //artist ::= { "id" : $artist-id,
 //        "name": $name,
 //        "discs": $number_of_discs,
@@ -28,5 +30,13 @@ public class ArtistInfo {
 	public void setNumberOfAlbums(int numberOfAlbums) { this.numberOfAlbums = numberOfAlbums; }
 	public int getNumberOfSongs() { return numberOfSongs; }
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
+	
+	public String getTargetHistoryToken() {
+		StringBuilder target = new StringBuilder();
+		target.append(Constants.PARAM_ARTIST);
+		target.append("=");
+		target.append(id);
+		return target.toString();
+	}
 
 }
