@@ -83,7 +83,7 @@ public class SongPanel extends Composite {
 	}
 	
 	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
-		SongList sl = new SongList(model, albumId, null, collectionId, total, mainPanel);
+		SongList sl = new AlbumSongList(model, albumId, null, collectionId, total, mainPanel);
 		sl.addSongs(total, from, to, answerList);
 
 		mainPanel.add(sl);

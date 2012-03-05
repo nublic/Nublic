@@ -23,7 +23,7 @@ import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.app.music.client.ui.song.SongList;
+import com.nublic.app.music.client.ui.song.AlbumSongList;
 
 //GET /album-art/:album-id
 //* Retrieve the image associated with an album
@@ -58,7 +58,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new SongList(model, album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
+		songsPanel.add(new AlbumSongList(model, album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
 	}
 
 	private void setImage() {

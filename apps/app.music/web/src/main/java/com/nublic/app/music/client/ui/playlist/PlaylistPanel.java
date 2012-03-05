@@ -18,6 +18,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.song.PlaylistSongList;
 import com.nublic.app.music.client.ui.song.SongList;
 
 public class PlaylistPanel extends Composite {
@@ -50,7 +51,7 @@ public class PlaylistPanel extends Composite {
 	
 	
 	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String playlistId) {
-		SongList sl = new SongList(model, playlistId, total, mainPanel);
+		SongList sl = new PlaylistSongList(model, playlistId, total, mainPanel);
 		sl.addSongs(total, from, to, answerList);
 
 		mainPanel.add(sl);
