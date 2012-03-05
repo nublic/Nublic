@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
+import org.swfupload.client.event.UploadCompleteHandler;
+import org.swfupload.client.event.UploadProgressHandler;
+import org.swfupload.client.event.UploadStartHandler;
+
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.bramosystems.oss.player.core.client.AbstractMediaPlayer;
@@ -41,6 +45,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Button;
@@ -50,6 +55,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -138,6 +144,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 //	@UiField PasteAction pasteAction;
 	@UiField HTMLPanel workFolderPanel;
 	@UiField Button workFolderURL;
+	@UiField FlowPanel progressPanel;
 	
 	FixedPopup popUpBox;
 
@@ -707,7 +714,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	// Handler for paste upper button
 	@UiHandler("pasteTopButton")
 	void onPasteTopButtonClick(ClickEvent event) {
-		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath(), model);
+		PasteAction.doPasteAction(clipboardModeCut ? "move" : "copy", clipboard, model.getShowingPath(), model, this);
 	}
 
 	// Handler for model change event
@@ -900,8 +907,25 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showUploadPopup() {
-		// final UploadPopup popup = new UploadPopup("Upload file");
-		final SwfUploadContent content = new SwfUploadContent();
+		final Label feedbackLabel = new Label("");
+		final SwfUploadContent content = new SwfUploadContent(new UploadStartHandler() {
+			@Override
+			public void onUploadStart(UploadStartEvent e) {
+				BrowserUi.this.addToTaskList(feedbackLabel);
+			}
+		}, new UploadProgressHandler() {
+			@Override
+			public void onUploadProgress(UploadProgressEvent e) {
+				int complete = Math.round(e.getBytesComplete() / e.getBytesTotal() * 100);
+				feedbackLabel.setText("Uploading " + e.getFile().getName() + " (" + String.valueOf(complete) + "% complete)...");
+			}
+		}, new UploadCompleteHandler() {
+			@Override
+			public void onUploadComplete(UploadCompleteEvent e) {
+				BrowserUi.this.removeFromTaskList(feedbackLabel);
+			}
+		});
+		
 		final Popup popup = new Popup("Upload file", 
 				EnumSet.of(PopupButton.CANCEL, PopupButton.UPLOAD),
 				content);
@@ -917,7 +941,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					content.getUploadInfo().addPostParam("name", content.getUploadInfo().getFile(0).getName());
 					content.getUploadInfo().addPostParam("path", showingPath);
 					// content.getUploadInfo().setFilePostName("contents");
-					content.getUploadInfo().startUpload();
+					content.getUploadInfo().startUpload();					
 					popup.hide();
 				}
 			}
@@ -930,5 +954,21 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		});
 		
 		popup.center();
+	}
+	
+	public void addToTaskList(Widget w) {
+		w.setWidth("100%");
+		w.addStyleName("task");
+		progressPanel.add(w);
+	}
+	
+	public void removeFromTaskList(final Widget w) {
+		Timer t = new Timer() {
+			@Override
+			public void run() {
+				progressPanel.remove(w);
+			}
+		};
+		t.schedule(2000);
 	}
 }

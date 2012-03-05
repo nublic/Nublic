@@ -3,6 +3,9 @@ package com.nublic.app.browser.web.client.UI.dialogs;
 import org.swfupload.client.SWFUpload;
 import org.swfupload.client.SWFUpload.ButtonAction;
 import org.swfupload.client.event.FileDialogCompleteHandler;
+import org.swfupload.client.event.UploadCompleteHandler;
+import org.swfupload.client.event.UploadProgressHandler;
+import org.swfupload.client.event.UploadStartHandler;
 import org.swfupload.client.UploadBuilder;
 
 import com.google.gwt.core.client.GWT;
@@ -36,7 +39,7 @@ public class SwfUploadContent extends Composite {
 		return upload;
 	}
 
-	public SwfUploadContent() {
+	public SwfUploadContent(UploadStartHandler startH, UploadProgressHandler progressH, UploadCompleteHandler completeH) {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		final UploadBuilder builder = new UploadBuilder();
@@ -59,6 +62,10 @@ public class SwfUploadContent extends Composite {
 
 		// Use ButtonAction.SELECT_FILE to only allow selection of a single file
 		builder.setButtonAction(ButtonAction.SELECT_FILES);
+		
+		builder.setUploadStartHandler(startH);
+		builder.setUploadProgressHandler(progressH);
+		builder.setUploadCompleteHandler(completeH);
 		
 		builder.setFileDialogCompleteHandler(new FileDialogCompleteHandler() {
 			@Override

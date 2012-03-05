@@ -51,3 +51,8 @@ body, html {
   margin: 15px 6px 6px;
 }
 
+.task {
+	font-size: 115%;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}

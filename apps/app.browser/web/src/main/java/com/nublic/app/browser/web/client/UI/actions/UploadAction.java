@@ -14,6 +14,7 @@ public class UploadAction extends ActionWidget {
 		super(Resources.INSTANCE.addfile(), "Upload file", stateProvider);
 	}
 	
+	@Deprecated
 	public static void doUpload(String pathTo, FileUpload uploadWidget) {
 		PostRedirectHelper sendFileHelper = new PostRedirectHelper(URL.encode(GWT.getHostPageBaseURL() + "server/upload"));
 		sendFileHelper.addParam("path", pathTo);
