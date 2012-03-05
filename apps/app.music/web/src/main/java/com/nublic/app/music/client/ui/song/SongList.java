@@ -41,6 +41,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	// CSS Styles defined in the .xml file
 	interface SongStyle extends CssResource {
 		String alignright();
+		String alignmiddle();
 		String leftmargin();
 		String rightmargin();
 		String bottommargin();
@@ -57,16 +58,6 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	HashMap<Integer, SongLocalizer> localizerIndex;
 	List<Range> askedRanges = new ArrayList<Range>();
 	MySongHandler songHandler;
-
-	
-//	public SongList(DataModel model, String playlistId, int numberOfSongs, Widget scrollPanel) {
-//		this(model, null, null, null, numberOfSongs, scrollPanel, SongListType.SONG_IN_PLAYLIST);
-//		//this.playlistId = playlistId;
-//	}
-	
-//	public SongList(DataModel model, String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
-//		this(model, albumId, artistId, collectionId, numberOfSongs, scrollPanel, SongListType.SONG_IN_ALBUM);
-//	}
 	
 	// With numberOfSongs == -1 we'll get it from first request
 	// Scroll panel which we in are in to handle lazy loading
@@ -157,6 +148,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		}
 	}
 	
+	// Get songs properly from model
 	public abstract void askForsongs(int from, int to);
 	
 	private Range findRangeFromPosition(int position) {
@@ -179,44 +171,10 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	public void _setSong(int row, SongInfo s) {
 		grid.getRowFormatter().getElement(row).addClassName("translucidPanel");
 		setSong(row, s);
-//		switch (songListType) {
-//		case SONG_IN_PLAYLIST:
-//			setPlaylistSong(row, s);
-//			break;
-//		case SONG_IN_ALBUM:
-//			setAlbumSong(row, s);
-//			break;
-//		}
 	}
 	
 	public abstract void setSong(int row, SongInfo s);
 	protected abstract void prepareGrid();
-	
-//	private void prepareGrid() {
-//		switch (songListType) {
-//		case SONG_IN_PLAYLIST:
-//			grid.resize(numberOfSongs, 6);
-//			break;
-//		case SONG_IN_ALBUM:
-//			grid.resize(numberOfSongs, 2);
-//			grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
-//			break;
-//		}
-//	}
-	
-//	private void setAlbumSong(int row, SongInfo s) {
-//		setTrackNumber(row, 0, s.getTrack()); 		// Column 0
-//		setTitleLenght(row, 1, s);					// Column 1
-//	}
-//
-//	private void setPlaylistSong(int row, SongInfo s) {
-//		setButtons(row, 0, s);						// Column 0
-//		setTrackNumber(row, 1, s.getTrack());		// Column 1
-//		setTitle(row, 2, s.getTitle());				// Column 2
-//		setLenght(row, 3, s.getFormattedLength());	// Column 3
-//		setAlbum(row, 4, s);						// Column 4
-//		setArtist(row, 5, s);						// Column 5
-//	}
 
 	// +++ Methods to fill the grid +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	protected void setLenght(int row, int column, String formattedLength) {
