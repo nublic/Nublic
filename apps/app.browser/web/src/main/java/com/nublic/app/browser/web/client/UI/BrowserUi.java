@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,6 +35,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -69,6 +71,7 @@ import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 import com.nublic.app.browser.web.client.UI.dialogs.FixedPopup;
+import com.nublic.app.browser.web.client.UI.dialogs.SwfUploadContent;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -84,9 +87,9 @@ import com.nublic.util.gwt.LazyLoader;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.widgets.Popup;
 import com.nublic.util.widgets.PopupButton;
 import com.nublic.util.widgets.PopupButtonHandler;
-import com.nublic.util.widgets.UploadPopup;
 import com.nublic.util.widgets.TextPopup;
 
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
@@ -897,13 +900,31 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showUploadPopup() {
-		final UploadPopup popup = new UploadPopup("Upload file");
+		// final UploadPopup popup = new UploadPopup("Upload file");
+		final SwfUploadContent content = new SwfUploadContent();
+		final Popup popup = new Popup("Upload file", 
+				EnumSet.of(PopupButton.CANCEL, PopupButton.UPLOAD),
+				content);
+		popup.setInnerHeight(130);
 		final String showingPath = this.getShowingPath();
 		
 		popup.addButtonHandler(PopupButton.UPLOAD, new PopupButtonHandler() {
 			@Override
 			public void onClicked(PopupButton button, ClickEvent event) {
-				UploadAction.doUpload(showingPath, popup.getFileUpload());
+				// UploadAction.doUpload(showingPath, popup.getFileUpload());
+				if (content.getUploadInfo().getFile(0) != null) {
+					content.getUploadInfo().setUploadURL(URL.encode(GWT.getHostPageBaseURL() + "server/upload"));
+					content.getUploadInfo().addPostParam("name", content.getUploadInfo().getFile(0).getName());
+					content.getUploadInfo().addPostParam("path", showingPath);
+					// content.getUploadInfo().setFilePostName("contents");
+					content.getUploadInfo().startUpload();
+					popup.hide();
+				}
+			}
+		});
+		popup.addButtonHandler(PopupButton.CANCEL, new PopupButtonHandler() {
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
 				popup.hide();
 			}
 		});
