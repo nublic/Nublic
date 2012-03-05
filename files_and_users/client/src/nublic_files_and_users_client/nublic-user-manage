@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from nublic_files_and_users_client.dbus_client import *
+from nublic_files_and_users_client.utf8 import *
 import sys
 
 if __name__ == '__main__':
@@ -14,18 +15,18 @@ if __name__ == '__main__':
         sys.stdout.write("Rewrite password: ")
         password2 = sys.stdin.readline().strip()
         if password1 == password2:
-            create_user(user, name, password1)
+            create_user(to_utf8(user), to_utf8(name), to_utf8(password1))
             sys.stdout.write("User created\n")
         else:
             sys.stdout.write("Passwords do not match\n")
     # Delete an user
     elif sys.argv[1] == 'delete':
         user = sys.argv[2]
-        delete_user(user)
+        delete_user(to_utf8(user))
         sys.stdout.write("User deleted\n")
     # Chnage user name
     elif sys.argv[1] == 'name':
         user = sys.argv[2]
         sys.stdout.write("Name to be shown: ")
         name = sys.stdin.readline().strip()
-        change_user_name(user, name)
+        change_user_name(to_utf8(user), to_utf8(name))

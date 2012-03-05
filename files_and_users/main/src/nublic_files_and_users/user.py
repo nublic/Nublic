@@ -7,6 +7,7 @@ import grp
 
 from elixir import *
 from model import *
+from utf8 import *
 
 # Needs a group 'nublic' in the system
 
@@ -35,7 +36,7 @@ class UserDBus(dbus.service.Object):
     @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'b')
     def user_exists(self, username):
         try:
-            spwd.getspnam(username)
+            spwd.getspnam(from_utf8(username))
             return True
         except KeyError:
             return False
@@ -52,11 +53,16 @@ class UserDBus(dbus.service.Object):
     
     @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'i')
     def get_user_uid(self, username):
-        user = pwd.getpwnam(username)
+        user = pwd.getpwnam(from_utf8(username))
         return user[2] # Corresponds to uid
     
     @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
-    def create_user(self, username, password, name):
+    def create_user(self, username_, password_, name_):
+        # Convert to utf-8
+        username = from_utf8(username_)
+        password = from_utf8(password_)
+        name = from_utf8(name_)
+        # Do things
         if ' ' in username or self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # passwd
@@ -107,7 +113,12 @@ class UserDBus(dbus.service.Object):
             os.utime(fname, times)
     
     @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
-    def change_user_password(self, username, old_password, new_password):
+    def change_user_password(self, username_, old_password_, new_password_):
+        # Convert to utf-8
+        username = from_utf8(username_)
+        old_password = from_utf8(old_password_)
+        new_password = from_utf8(new_password_)
+        # Do things
         if ' ' in username or not self.user_exists(username):
             raise NameError()
         # passwd
@@ -135,7 +146,10 @@ class UserDBus(dbus.service.Object):
         print("Changed in htpasswd")
     
     @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 's')
-    def get_user_shown_name(self, username):
+    def get_user_shown_name(self, username_):
+        # Convert to utf-8
+        username = from_utf8(username_)
+        # Do things
         if ' ' in username or not self.user_exists(username):
             raise NameError()
         # query in database
@@ -143,7 +157,11 @@ class UserDBus(dbus.service.Object):
         return user.name
     
     @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
-    def change_user_shown_name(self, username, name):
+    def change_user_shown_name(self, username_, name_):
+        # Convert to utf-8
+        username = from_utf8(username_)
+        name = from_utf8(name_)
+        # Do things
         if ' ' in username or not self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # change in database
@@ -155,7 +173,10 @@ class UserDBus(dbus.service.Object):
         self.user_shown_name_changed(username, name)
     
     @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = '')
-    def delete_user(self, username):
+    def delete_user(self, username_):
+        # Convert to utf-8
+        username = from_utf8(username_)
+        # Do things
         if ' ' in username or not self.user_exists(username):
             raise NameError()
         # passwd
@@ -180,7 +201,11 @@ class UserDBus(dbus.service.Object):
         return nublic.gr_gid
     
     @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
-    def assign_file(self, username, path):
+    def assign_file(self, username_, path_):
+        # Convert to utf-8
+        username = from_utf8(username_)
+        path = from_utf8(path_)
+        # Do things
         # Do not allow going to parent
         if path.find("..") != -1:
             raise NameError()
@@ -194,7 +219,9 @@ class UserDBus(dbus.service.Object):
         pexpect.run('setfacl -m u:tomcat6:rwx "' + real_path + '"')
     
     @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
-    def add_public_key(self, username, key):
+    def add_public_key(self, username_, key):
+        # Convert to utf-8
+        username = from_utf8(username_)
         # Get user id
         user = User.get_by(username=username)
         if user is None:

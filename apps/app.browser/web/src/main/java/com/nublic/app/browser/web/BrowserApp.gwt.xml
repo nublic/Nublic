@@ -11,6 +11,7 @@
   <inherits name='edu.ycp.cs.dh.acegwt.AceGWT'/>
   <inherits name="com.google.common.collect.Collect"/>
   <inherits name='com.allen_sauer.gwt.dnd.gwt-dnd'/>
+  <inherits name="org.swfupload.SWFUpload"/>
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->

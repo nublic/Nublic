@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
@@ -25,7 +26,8 @@ public class PasteAction extends ActionWidget {
 		super(Resources.INSTANCE.editPaste(), "Paste", stateProvider);
 	}
 
-	public static void doPasteAction(final String mode, final Set<Widget> setToCopy, final String pathTo, final BrowserModel feedbackTarget) {
+	public static void doPasteAction(final String mode, final Set<Widget> setToCopy, final String pathTo, final BrowserModel feedbackTarget,
+			final BrowserUi stateProvider) {
 		String tempPathFrom = null;
 		// Create the request params
 		StringBuilder setOfFiles = new StringBuilder();		
@@ -39,6 +41,15 @@ public class PasteAction extends ActionWidget {
 		}
 		// Necessary to get the path from we're copying. In case we want to give feedback in that folder
 		final String pathFrom = tempPathFrom;
+		
+		// Create widget for moving or copying
+		String feedbackMessage;
+		if (mode.equals("move")) {
+			feedbackMessage = "Moving " + String.valueOf(setToCopy.size()) + "elements...";
+		} else {
+			feedbackMessage = "Copying " + String.valueOf(setToCopy.size()) + "elements...";
+		}
+		final Label feedbackLabel = new Label(feedbackMessage);
 
 		Message m = new Message() {
 			@Override
@@ -62,6 +73,9 @@ public class PasteAction extends ActionWidget {
 						feedbackTarget.removeFiles(filesCut);
 						feedbackTarget.fireFilesUpdateHandlers(false, false);
 					}
+					
+					// Remove feedback
+					stateProvider.removeFromTaskList(feedbackLabel);
 				} else {
 					ErrorPopup.showError("Could not " + mode + " files");
 				}
@@ -78,6 +92,9 @@ public class PasteAction extends ActionWidget {
 		m.addParam("files", setOfFiles.toString());
 		m.addParam("target", pathTo);
 		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
+		
+		// Show message in task list
+		stateProvider.addToTaskList(feedbackLabel);
 	}
 
 	@Override
@@ -85,7 +102,8 @@ public class PasteAction extends ActionWidget {
 		doPasteAction(stateProvider.getModeCut() ? "move" : "copy",
 				      stateProvider.getClipboard(),
 				      stateProvider.getShowingPath(),
-				      stateProvider.getModel());
+				      stateProvider.getModel(),
+				      stateProvider);
 	}
 
 	@Override

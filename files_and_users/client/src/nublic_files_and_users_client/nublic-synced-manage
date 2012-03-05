@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from nublic_files_and_users_client.dbus_client import *
+from nublic_files_and_users_client.utf8 import *
 import sys
 
 if __name__ == '__main__':
@@ -10,7 +11,7 @@ if __name__ == '__main__':
         name = sys.stdin.readline().strip()
         sys.stdout.write("Owner: ")
         owner = sys.stdin.readline().strip()
-        mid = create_synced_folder(name, owner)
+        mid = create_synced_folder(to_utf8(name), to_utf8(owner))
         sys.stdout.write("Synced folder created with id ")
         sys.stdout.write(str(mid))
         sys.stdout.write("\n")

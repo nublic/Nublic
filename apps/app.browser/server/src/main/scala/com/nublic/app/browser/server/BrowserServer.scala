@@ -398,7 +398,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     withUser { user =>
       withPath("path", false) { folder =>
         val name = params("name").trim()
-        val file = fileParams("contents")
+        val file = fileParams("Filedata")
         if (name.contains("..")) {
           throw new Exception("name contains ..")
         } else if (!folder.isDirectory()) {

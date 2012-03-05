@@ -83,6 +83,7 @@
 	   	
 	   	<!-- Actions panel -->
 	   	<g:east size="176">
+	   	  <g:VerticalPanel>
 			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
 				<my:SelectionDetails ui:field="infoWidget" addStyleNames="{style.marginbottom}"/>
 				<g:HTMLPanel ui:field="workFolderPanel">
@@ -109,6 +110,10 @@
 <!-- 	   			<acts:DeleteAction/> -->
 <!-- 	   			<acts:PasteAction ui:field="pasteAction"/> -->
 	   		</g:FlowPanel>
+	   		<g:FlowPanel ui:field="progressPanel" addStyleNames="{style.horizontalpadding}">
+	   		  <g:Label>Tralara</g:Label>
+	   		</g:FlowPanel>
+	   	  </g:VerticalPanel>
 	   	</g:east>
 	   	
 	   	<!-- Center panel to show the files in each folder -->
