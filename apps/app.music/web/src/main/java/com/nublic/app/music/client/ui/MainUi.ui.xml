@@ -24,6 +24,7 @@
 				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Playlists</h3></div></g:HTMLPanel>
 				<g:VerticalPanel ui:field="playlistsPanel"/>
 				<my:AddTagWidget ui:field="addPlaylistWidget"/>
+<!-- 				<my:NavigationPanel/> -->
 			</g:FlowPanel>
 		</g:west>
 		<g:north size="70">
