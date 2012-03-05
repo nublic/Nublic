@@ -129,6 +129,8 @@ public class NublicPlayer extends CustomAudioPlayer {
             		break;
             	case Finished:
             		controls.setPlaying(false);
+            		controls.setCurrentProgress(0);
+            		controls.setSongInfo(null);
             		controls.setTotalTime(0);
             		timer.cancel();
             		break;

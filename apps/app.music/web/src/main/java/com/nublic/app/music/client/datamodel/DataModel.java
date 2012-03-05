@@ -11,7 +11,6 @@ import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
@@ -168,16 +167,16 @@ public class DataModel {
 	}
 	
 	// Playlists songs
-	public void askForPlaylistSongs(String playlist, PlaylistHandler ph) {
+	public void askForPlaylistSongs(String playlist, SongHandler ph) {
 		askForPlaylistSongs(0, Constants.NEXT_SONGS_TO_ASK, playlist, ph, false);
 	}
-	public void askForPlaylistSongs(String playlist, PlaylistHandler ph, boolean newScreen) {
+	public void askForPlaylistSongs(String playlist, SongHandler ph, boolean newScreen) {
 		askForPlaylistSongs(0, Constants.NEXT_SONGS_TO_ASK, playlist, ph, newScreen);
 	}
-	public void askForPlaylistSongs(int from, int to, String playlist, PlaylistHandler ph) {
+	public void askForPlaylistSongs(int from, int to, String playlist, SongHandler ph) {
 		askForPlaylistSongs(from, to, playlist, ph, false);
 	}
-	public void askForPlaylistSongs(int from, int to, String playlist, PlaylistHandler ph, boolean newScreen) {
+	public void askForPlaylistSongs(int from, int to, String playlist, SongHandler ph, boolean newScreen) {
 		if (newScreen) {
 			increaseCurrentScreen();
 		}

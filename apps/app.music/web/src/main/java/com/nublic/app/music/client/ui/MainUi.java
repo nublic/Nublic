@@ -203,9 +203,9 @@ public class MainUi extends Composite {
 	public void setPlaying(String playingPlaylistId, int index) {
 		unselectPrevious(playingPlaylistId);
 		if (playingPlaylistId != null) {
-			PlaylistWidget w = playlistIndex.get(playingPlaylistId);
-			w.setState(PlayState.PLAYING);
-			if (w.isSelected()) {
+			playingPlaylistWidget = playlistIndex.get(playingPlaylistId);
+			playingPlaylistWidget.setState(PlayState.PLAYING);
+			if (playingPlaylistWidget.isSelected()) {
 				// TODO: Set song playing
 			}
 		}
@@ -214,10 +214,10 @@ public class MainUi extends Composite {
 	public void setPaused(String playingPlaylistId, int itemIndex) {
 		unselectPrevious(playingPlaylistId);
 		if (playingPlaylistId != null) {
-			PlaylistWidget w = playlistIndex.get(playingPlaylistId);
-			w.setState(PlayState.PAUSED);
-			if (w.isSelected()) {
-				// TODO: Set song playing
+			playingPlaylistWidget = playlistIndex.get(playingPlaylistId);
+			playingPlaylistWidget.setState(PlayState.PAUSED);
+			if (playingPlaylistWidget.isSelected()) {
+				// TODO: Set song paused
 			}
 		}
 	}

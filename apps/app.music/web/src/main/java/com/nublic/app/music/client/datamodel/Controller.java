@@ -8,7 +8,6 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
@@ -128,7 +127,7 @@ public class Controller {
 	}
 
 	// Playlist
-	class MyPlaylistHandler implements PlaylistHandler {
+	class MyPlaylistHandler implements SongHandler {
 		String playlistId;
 		public MyPlaylistHandler(String playlistId) {
 			this.playlistId = playlistId;

@@ -25,7 +25,6 @@ import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
@@ -64,13 +63,11 @@ public class SongList extends Composite implements ScrollHandler {
 	HashMap<Integer, SongLocalizer> localizerIndex;
 	List<Range> askedRanges = new ArrayList<Range>();
 	MySongHandler songHandler;
-	MyPlaylistHandler playlistHandler;
 
 	
 	public SongList(DataModel model, String playlistId, int numberOfSongs, Widget scrollPanel) {
 		this(model, null, null, null, numberOfSongs, scrollPanel, SongListType.SONG_IN_PLAYLIST);
 		this.playlistId = playlistId;
-		playlistHandler = new MyPlaylistHandler();
 	}
 	
 	public SongList(DataModel model, String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
@@ -108,13 +105,8 @@ public class SongList extends Composite implements ScrollHandler {
 		}
 	}
 	
-	private class MyPlaylistHandler implements PlaylistHandler {
-		@Override
-		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-			songHandler.onSongsChange(total, from, to, answerList);
-		}
-	}
 	
+	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private class MySongHandler implements SongHandler {
 		@Override
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
@@ -173,7 +165,7 @@ public class SongList extends Composite implements ScrollHandler {
 				if (playlistId == null) {
 					model.askForSongs(r.getFrom(), r.getTo(), albumId, artistId, collectionId, songHandler);
 				} else {
-					model.askForPlaylistSongs(r.getFrom(), r.getTo(), playlistId, playlistHandler);
+					model.askForPlaylistSongs(r.getFrom(), r.getTo(), playlistId, songHandler);
 				}
 			}
 		}
@@ -195,6 +187,7 @@ public class SongList extends Composite implements ScrollHandler {
 
 	// TODO: make a function to invalid askedRange if request fails
 	
+	// +++ Things related to ui fill +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public void setSong(int row, SongInfo s) {
 		grid.getRowFormatter().getElement(row).addClassName("translucidPanel");
 		switch (songListType) {
@@ -233,7 +226,7 @@ public class SongList extends Composite implements ScrollHandler {
 		setArtist(row, 5, s);						// Column 5
 	}
 
-	// Methods to fill the grid
+	// +++ Methods to fill the grid +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private void setLenght(int row, int column, String formattedLength) {
 		Label titleLabel = new Label(formattedLength);
 		titleLabel.getElement().addClassName(style.leftmargin());
@@ -306,7 +299,7 @@ public class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, artistLabel);
 	}
 	
-	// Handlers
+	// +++ Handlers +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private class MyAddAtEndHandler implements AddAtEndButtonHandler {
 		SongInfo song;
 		public MyAddAtEndHandler(SongInfo s) {
