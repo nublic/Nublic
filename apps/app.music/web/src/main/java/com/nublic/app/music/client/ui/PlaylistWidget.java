@@ -29,10 +29,12 @@ public class PlaylistWidget extends Composite implements HasText {
 	}
 
 	@UiField Image playImage;
+	@UiField Image pauseImage;
 	@UiField Label nameLabel;
 	@UiField PlaylistStyle style;
 	String id;
-	boolean isBeingPlayed;
+//	boolean isBeingPlayed;
+	PlayState currentState;
 	boolean isSelected;
 	boolean isTag;
 	
@@ -59,7 +61,8 @@ public class PlaylistWidget extends Composite implements HasText {
 		this.isTag = isTag;
 		nameLabel.setText(name);
 		playImage.setResource(Resources.INSTANCE.playMini());
-		setPlaying(false);
+		pauseImage.setResource(Resources.INSTANCE.pauseMini());
+		setState(PlayState.STOPPED);
 		setSelected(false);
 	}
 	
@@ -73,18 +76,25 @@ public class PlaylistWidget extends Composite implements HasText {
 		nameLabel.setText(text);		
 	}
 
-	public void setPlaying(boolean b) {
-		isBeingPlayed = b;
-		playImage.setVisible(b);
-		if (b) {
+	public void setState(PlayState newState) {
+		currentState = newState;
+		switch (newState) {
+		case PAUSED:
 			nameLabel.getElement().addClassName(style.playing());
-		} else {
+			playImage.setVisible(false);
+			pauseImage.setVisible(true);
+			break;
+		case PLAYING:
+			nameLabel.getElement().addClassName(style.playing());
+			playImage.setVisible(true);
+			pauseImage.setVisible(false);
+			break;
+		case STOPPED:
 			nameLabel.getElement().removeClassName(style.playing());
+			playImage.setVisible(false);
+			pauseImage.setVisible(false);
+			break;
 		}
-	}
-	
-	public boolean isPlaying() {
-		return isBeingPlayed;
 	}
 	
 	public void setSelected(boolean b) {

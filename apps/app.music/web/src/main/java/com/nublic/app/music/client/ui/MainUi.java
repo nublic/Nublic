@@ -44,6 +44,7 @@ public class MainUi extends Composite {
 	HashMap<String, PlaylistWidget> tagIndex = new HashMap<String, PlaylistWidget>();
 	HashMap<String, PlaylistWidget> playlistIndex = new HashMap<String, PlaylistWidget>();
 	PlaylistWidget showingPlaylistWidget;
+	PlaylistWidget playingPlaylistWidget = null;
 	DataModel model;
 
 	public MainUi(DataModel model) {
@@ -70,7 +71,6 @@ public class MainUi extends Composite {
 				PlaylistWidget currentPlaylist = playlistIndex.get(Constants.CURRENT_PLAYLIST_ID);
 				if (currentPlaylist == null) {
 					currentPlaylist = new PlaylistWidget(new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME));
-					currentPlaylist.setPlaying(true); // TODO: set playing only when proceeds
 					playlistIndex.put(Constants.CURRENT_PLAYLIST_ID, currentPlaylist); // Add playlist to index of playlists
 					playlistsPanel.add(currentPlaylist);
 				}
@@ -198,6 +198,37 @@ public class MainUi extends Composite {
 
 	public void error(String message) {
 		ErrorPopup.showError(message);
+	}
+
+	public void setPlaying(String playingPlaylistId, int index) {
+		unselectPrevious(playingPlaylistId);
+		if (playingPlaylistId != null) {
+			PlaylistWidget w = playlistIndex.get(playingPlaylistId);
+			w.setState(PlayState.PLAYING);
+			if (w.isSelected()) {
+				// TODO: Set song playing
+			}
+		}
+	}
+
+	public void setPaused(String playingPlaylistId, int itemIndex) {
+		unselectPrevious(playingPlaylistId);
+		if (playingPlaylistId != null) {
+			PlaylistWidget w = playlistIndex.get(playingPlaylistId);
+			w.setState(PlayState.PAUSED);
+			if (w.isSelected()) {
+				// TODO: Set song playing
+			}
+		}
+	}
+	
+	private void unselectPrevious(String playingPlaylistId) {
+		if (playingPlaylistWidget != null) {
+			if (!playingPlaylistWidget.getId().equals(playingPlaylistId)) {
+				playingPlaylistWidget.setState(PlayState.STOPPED);
+			}
+		}
+		
 	}
 
 

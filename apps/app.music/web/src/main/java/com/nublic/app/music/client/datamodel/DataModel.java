@@ -32,19 +32,13 @@ public class DataModel {
 	// Independent things
 	List<Tag> tagList = new ArrayList<Tag>();
 	List<Playlist> playlistList = new ArrayList<Playlist>();
-//	Playlist currentList = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
 	HashMap<String, Tag> tagIndex = new HashMap<String, Tag>();
 	HashMap<String, Playlist> playlistIndex = new HashMap<String, Playlist>();
-
-	// Depending on what is being played
 	List<SongInfo> currentPlaylist = new ArrayList<SongInfo>();
-//	Playlist currentPlayingList;
-//	int currentSongInPlaylist;
 	
 	// Depending on what is being shown
 	Playlist showingPlaylist = null; // null if a tag is being shown
 	Tag showingTag = null;			 // null if a playlist is being shown
-
 	
 	// Handlers
 	List<TagsChangeHandler> tagsHandlers = new ArrayList<TagsChangeHandler>();

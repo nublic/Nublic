@@ -2,6 +2,8 @@ package com.nublic.app.music.client.datamodel;
 
 import java.util.List;
 
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
@@ -19,6 +21,9 @@ public class Controller {
 	DataModel model;
 	MainUi ui;
 	
+	// Depending on what is being played
+	static String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
+	
 	public Controller(DataModel model, MainUi ui) {
 		this.model = model;
 		this.ui = ui;
@@ -26,8 +31,10 @@ public class Controller {
 		Controller.setPlayer(ui.getPlayer());
 		Controller.setAlbumCache(model.getAlbumCache());
 		Controller.setArtistCache(model.getArtistCache());
+		
+		addPlayHandler();
 	}
-	
+
 	// Getters and setters of singletones
 	public static NublicPlayer getPlayer() { return player; }
 	public static void setPlayer(NublicPlayer p) { player = p; }
@@ -35,6 +42,30 @@ public class Controller {
 	public static void setAlbumCache(Cache<String, AlbumInfo> albumCache) {	Controller.albumCache = albumCache; }
 	public static Cache<String, ArtistInfo> getArtistCache() { return artistCache; }
 	public static void setArtistCache(Cache<String, ArtistInfo> artistCache) { Controller.artistCache = artistCache; }
+	public static String getPlayingPlaylistId() { return playingPlaylistId; }
+	public static void setPlayingPlaylistId(String playingPlaylistId) { Controller.playingPlaylistId = playingPlaylistId; }
+
+	private void addPlayHandler() {
+		ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
+			@Override
+			public void onPlayStateChanged(PlayStateEvent event) {
+				switch (event.getPlayState()) {
+				case Paused:
+					ui.setPaused(Controller.getPlayingPlaylistId(), event.getItemIndex());
+            		break;
+            	case Started:
+					ui.setPlaying(Controller.getPlayingPlaylistId(), event.getItemIndex());
+            		break;
+            	case Stopped:
+					ui.setPlaying(null, -1);
+            		break;
+            	case Finished:
+					ui.setPlaying(null, -1);
+            		break;
+				}
+			}
+		});
+	}
 
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {

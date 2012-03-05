@@ -21,6 +21,9 @@
 		<g:at left='0' top='1'>
 			<g:Image ui:field="playImage"/>
 		</g:at>
+		<g:at left='0' top='1'>
+			<g:Image ui:field="pauseImage"/>
+		</g:at>
 		<g:at left='20' top='0'>
 			<g:Label ui:field="nameLabel" addStyleNames="{style.clickable}"/>
 		</g:at>
