@@ -31,7 +31,7 @@ public class PlaylistPanel extends Composite {
 	
 	public PlaylistPanel(String id) {
 		initWidget(uiBinder.createAndBindUi(this));
-				
+
 		titleLabel.setText(Controller.getModel().getPlaylistCache().get(id).getName());
 
 		// Create button line

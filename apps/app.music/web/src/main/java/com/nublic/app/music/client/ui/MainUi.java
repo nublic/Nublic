@@ -40,9 +40,7 @@ public class MainUi extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.model = model;
-		
-//		allMusic.setSelected(true);
-//		showingPlaylistWidget = allMusic;
+
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
 		addPutTagHandler();

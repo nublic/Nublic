@@ -12,6 +12,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.datamodel.Playlist;
 
 public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
@@ -30,12 +32,18 @@ public class NavigationPanel extends Composite {
 			public void onAttachOrDetach(AttachEvent event) {
 				if (event.isAttached()) {
 					addAllMusic();
-					addPlaylist(Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
+					createCurrentPlaylist();
 					activeElement = allMusic;
 					selectAllMusic();
 				}
 			}
 		});
+	}
+	
+	public void createCurrentPlaylist() {
+		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
+		addPlaylist(current.getName(), current.getId());
+		Controller.getModel().getPlaylistCache().put(current.getId(), current);
 	}
 	
 	// Adding methods

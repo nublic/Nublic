@@ -5,7 +5,7 @@
 	xmlns:myplayer="urn:import:com.nublic.app.music.client.ui.player">
 	<ui:style>
 		.padding {
-			padding: 10px;
+			padding: 10px 20px 30px 10px;
 		}
 		.scroll {
 	        overflow-x: hidden;

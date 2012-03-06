@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
@@ -51,7 +52,11 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 
 		this.collectionId = collectionId;
 		
-		titleLabel.setText(Controller.getModel().getTagCache().get(collectionId).getName());
+		if (collectionId == null) {
+			titleLabel.setText(Constants.ALL_MUSIC_NAME);
+		} else {
+			titleLabel.setText(Controller.getModel().getTagCache().get(collectionId).getName());
+		}
 		
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,

@@ -83,8 +83,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 			});
 		}
 	}
-	
-	
+
 	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private class MySongHandler implements SongHandler {
 		@Override
