@@ -30,8 +30,6 @@ public class NavigationPanel extends Composite {
 			public void onAttachOrDetach(AttachEvent event) {
 				if (event.isAttached()) {
 					addAllMusic();
-					addCollection("Hola", "caracola");
-					addCollection("Adios", "portazo");
 					addPlaylist(Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
 					activeElement = allMusic;
 					selectAllMusic();
@@ -40,12 +38,13 @@ public class NavigationPanel extends Composite {
 		});
 	}
 	
+	// Adding methods
 	public void addAllMusic() {
 		InlineHyperlink a = new InlineHyperlink("All music", "");
 		Element e = addElement(a, "Library");
 		allMusic = e;
 	}
-	
+
 	public void addCollection(String name, String id) {
 		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_COLLECTION + "=" + id);
 		Element e = addElement(a, Constants.PARAM_COLLECTION);
@@ -66,6 +65,24 @@ public class NavigationPanel extends Composite {
 		return li;
 	}
 	
+	// Removing methods
+	public void removeCollection(String id) {
+		Element elementToRemove = collections.get(id);
+		if (activeElement == elementToRemove) {
+			activeElement = allMusic;
+		}
+		elementToRemove.removeFromParent();
+	}
+	
+	public void removePlaylist(String id) {
+		Element elementToRemove = playlists.get(id);
+		if (activeElement == elementToRemove) {
+			activeElement = allMusic;
+		}
+		elementToRemove.removeFromParent();
+	}
+	
+	// Selecting methods
 	public void selectAllMusic() {
 		select(allMusic);
 	}

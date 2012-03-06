@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -39,7 +38,7 @@ public class AlbumWidget extends Composite {
 	@UiField FlowPanel songsPanel;
 	AlbumInfo album;
 	
-	public AlbumWidget(DataModel model, AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
+	public AlbumWidget(AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		album = a;
 
@@ -58,7 +57,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new AlbumSongList(model, album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
+		songsPanel.add(new AlbumSongList(album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
 	}
 
 	private void setImage() {

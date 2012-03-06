@@ -22,12 +22,12 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
@@ -49,7 +49,6 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
-	DataModel model;
 	Widget scrollPanel;
 	int numberOfSongs;	
 	
@@ -61,10 +60,9 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	
 	// With numberOfSongs == -1 we'll get it from first request
 	// Scroll panel which we in are in to handle lazy loading
-	public SongList(DataModel model, int numberOfSongs, Widget scrollPanel) {
+	public SongList(int numberOfSongs, Widget scrollPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.model = model;
 		this.numberOfSongs = numberOfSongs;
 		this.scrollPanel = scrollPanel;
 
@@ -222,30 +220,28 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	protected void setAlbum(int row, int column, SongInfo s) {
 		final Label albumLabel = new Label();
 		albumLabel.getElement().addClassName(style.leftmargin());
-		Controller.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
-//		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+		Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+		albumCache.addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
 				albumLabel.setText(v.getName());
 			}
 		});
-		Controller.getAlbumCache().obtain(s.getAlbumId());
-//		model.getAlbumCache().obtain(s.getAlbumId());
+		albumCache.obtain(s.getAlbumId());
 		grid.setWidget(row, column, albumLabel);
 	}
 	
 	protected void setArtist(int row, int column, SongInfo s) {
 		final Label artistLabel = new Label();
 		artistLabel.getElement().addClassName(style.leftmargin());
-		Controller.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
-//		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+		Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+		artistCache.addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {
 				artistLabel.setText(v.getName());
 			}
 		});
-		Controller.getArtistCache().obtain(s.getArtistId());
-//		model.getArtistCache().obtain(s.getArtistId());
+		artistCache.obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
 	}
 	
@@ -258,7 +254,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		
 		@Override
 		public void onAddAtEnd() {
-			model.addToCurrentPlaylist(song);
+			Controller.getModel().addToCurrentPlaylist(song);
 			Controller.getPlayer().addSongToPlaylist(song);
 		}
 	}

@@ -2,7 +2,7 @@ package com.nublic.app.music.client.ui.song;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 
 public class AlbumSongList extends SongList {
@@ -10,8 +10,8 @@ public class AlbumSongList extends SongList {
 	String artistId;
 	String collectionId;
 	
-	public AlbumSongList(DataModel model, String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
-		super(model, numberOfSongs, scrollPanel);
+	public AlbumSongList(String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
+		super(numberOfSongs, scrollPanel);
 		this.albumId = albumId;
 		this.artistId = artistId;
 		this.collectionId = collectionId;
@@ -19,7 +19,7 @@ public class AlbumSongList extends SongList {
 	
 	@Override
 	public void askForsongs(int from, int to) {
-		model.askForSongs(from, from, albumId, artistId, collectionId, songHandler);
+		Controller.getModel().askForSongs(from, from, albumId, artistId, collectionId, songHandler);
 	}
 
 	@Override

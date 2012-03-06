@@ -26,6 +26,7 @@ import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.google.gwt.user.client.ui.Image;
 
@@ -89,22 +90,24 @@ public class PlayerLayout extends Composite {
 			albumArt.setVisible(false);
 		} else {
 			setTotalTime(s.getLength() * 1000);
-			Controller.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			artistCache.addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
 					artistLabel.setText(v.getName());
 					artistLabel.setVisible(true);
 				}
 			});
-			Controller.getArtistCache().obtain(s.getArtistId());
-			Controller.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+			artistCache.obtain(s.getArtistId());
+			Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+			albumCache.addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {
 					albumLabel.setText(v.getName());
 					albumLabel.setVisible(true);
 				}
 			});
-			Controller.getAlbumCache().obtain(s.getAlbumId());
+			albumCache.obtain(s.getAlbumId());
 			songLabel.setText(s.getTitle());
 			songLabel.setVisible(true);
 			setImage(s.getAlbumId());

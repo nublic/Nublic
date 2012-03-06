@@ -4,15 +4,14 @@ import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 
 public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
 	int playingIndex = -1;
 	
-	public PlaylistSongList(DataModel model, String playlistId, int numberOfSongs, Widget scrollPanel) {
-		super(model, numberOfSongs, scrollPanel);
+	public PlaylistSongList(String playlistId, int numberOfSongs, Widget scrollPanel) {
+		super(numberOfSongs, scrollPanel);
 		this.playlistId = playlistId;
 		
 		Controller.getPlayer().addPlayStateHandler(this);
@@ -21,7 +20,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void askForsongs(int from, int to) {
-		model.askForPlaylistSongs(from, to, playlistId, songHandler);
+		Controller.getModel().askForPlaylistSongs(from, to, playlistId, songHandler);
 	}
 	
 	@Override

@@ -16,12 +16,12 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
 public class SongPanel extends Composite {
@@ -42,14 +42,12 @@ public class SongPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	@UiField HorizontalPanel subtitlePanel;
 	
-	DataModel model;
 	String inCollection;
 	String albumId;
 
-	public SongPanel(DataModel model, String albumId, String collectionId) {
+	public SongPanel(String albumId, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		this.model = model;
 		this.albumId = albumId;
 		this.inCollection = collectionId;
 
@@ -59,8 +57,8 @@ public class SongPanel extends Composite {
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
 		} else {
-			Controller.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
-//			model.getAlbumCache().addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
+			Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+			albumCache.addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {
 					titleLabel.setText(v.getName());
@@ -68,8 +66,7 @@ public class SongPanel extends Composite {
 					setSubtitles(v.getArtistList());
 				}
 			});
-			Controller.getAlbumCache().obtain(albumId);
-//			model.getAlbumCache().obtain(albumId);
+			albumCache.obtain(albumId);
 		}
 
 		// Create button line
@@ -83,7 +80,7 @@ public class SongPanel extends Composite {
 	}
 	
 	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
-		SongList sl = new AlbumSongList(model, albumId, null, collectionId, total, mainPanel);
+		SongList sl = new AlbumSongList(albumId, null, collectionId, total, mainPanel);
 		sl.addSongs(total, from, to, answerList);
 
 		mainPanel.add(sl);
@@ -95,14 +92,15 @@ public class SongPanel extends Composite {
 			final Hyperlink artistLink = new Hyperlink();
 			Label commaLabel = new Label(",");
 			commaLabel.getElement().addClassName(style.space());
-			Controller.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
 					artistLink.setText(v.getName());
 					artistLink.setTargetHistoryToken(v.getTargetHistoryToken());
 				}
 			});
-			Controller.getArtistCache().obtain(artistId);
+			artistCache.obtain(artistId);
 			subtitlePanel.add(artistLink);
 			subtitlePanel.add(commaLabel);
 		}
