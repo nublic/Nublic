@@ -111,7 +111,6 @@
 <!-- 	   			<acts:PasteAction ui:field="pasteAction"/> -->
 	   		</g:FlowPanel>
 	   		<g:FlowPanel ui:field="progressPanel" addStyleNames="{style.horizontalpadding}">
-	   		  <g:Label>Tralara</g:Label>
 	   		</g:FlowPanel>
 	   	  </g:VerticalPanel>
 	   	</g:east>

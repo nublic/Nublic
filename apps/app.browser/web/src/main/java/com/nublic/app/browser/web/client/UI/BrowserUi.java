@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import org.swfupload.client.event.UploadCompleteHandler;
+import org.swfupload.client.event.UploadErrorHandler;
 import org.swfupload.client.event.UploadProgressHandler;
 import org.swfupload.client.event.UploadStartHandler;
+import org.swfupload.client.event.UploadSuccessHandler;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
@@ -45,7 +46,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.Window.Location;
 import com.google.gwt.user.client.ui.Button;
@@ -63,6 +63,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
@@ -77,7 +78,6 @@ import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 import com.nublic.app.browser.web.client.UI.dialogs.FixedPopup;
-import com.nublic.app.browser.web.client.UI.dialogs.SwfUploadContent;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -93,10 +93,13 @@ import com.nublic.util.gwt.LazyLoader;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.widgets.BootstrapProgressBar;
+import com.nublic.util.widgets.Elements;
 import com.nublic.util.widgets.Popup;
 import com.nublic.util.widgets.PopupButton;
 import com.nublic.util.widgets.PopupButtonHandler;
 import com.nublic.util.widgets.TextPopup;
+import com.nublic.util.widgets.UploadPopup;
 
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
@@ -907,53 +910,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showUploadPopup() {
-		final Label feedbackLabel = new Label("");
-		final SwfUploadContent content = new SwfUploadContent(new UploadStartHandler() {
-			@Override
-			public void onUploadStart(UploadStartEvent e) {
-				BrowserUi.this.addToTaskList(feedbackLabel);
-			}
-		}, new UploadProgressHandler() {
-			@Override
-			public void onUploadProgress(UploadProgressEvent e) {
-				int complete = Math.round(e.getBytesComplete() / e.getBytesTotal() * 100);
-				feedbackLabel.setText("Uploading " + e.getFile().getName() + " (" + String.valueOf(complete) + "% complete)...");
-			}
-		}, new UploadCompleteHandler() {
-			@Override
-			public void onUploadComplete(UploadCompleteEvent e) {
-				BrowserUi.this.removeFromTaskList(feedbackLabel);
-			}
-		});
-		
-		final Popup popup = new Popup("Upload file", 
-				EnumSet.of(PopupButton.CANCEL, PopupButton.UPLOAD),
-				content);
-		popup.setInnerHeight(130);
-		final String showingPath = this.getShowingPath();
-		
+		final UploadPopup popup = new UploadPopup("Upload file");
 		popup.addButtonHandler(PopupButton.UPLOAD, new PopupButtonHandler() {
+			
 			@Override
 			public void onClicked(PopupButton button, ClickEvent event) {
-				// UploadAction.doUpload(showingPath, popup.getFileUpload());
-				if (content.getUploadInfo().getFile(0) != null) {
-					content.getUploadInfo().setUploadURL(URL.encode(GWT.getHostPageBaseURL() + "server/upload"));
-					content.getUploadInfo().addPostParam("name", content.getUploadInfo().getFile(0).getName());
-					content.getUploadInfo().addPostParam("path", showingPath);
-					// content.getUploadInfo().setFilePostName("contents");
-					content.getUploadInfo().startUpload();					
-					popup.hide();
-				}
+				UploadAction.doUpload(getShowingPath(), popup.getFileUpload(), BrowserUi.this);
 			}
 		});
-		popup.addButtonHandler(PopupButton.CANCEL, new PopupButtonHandler() {
-			@Override
-			public void onClicked(PopupButton button, ClickEvent event) {
-				popup.hide();
-			}
-		});
-		
-		popup.center();
 	}
 	
 	public void addToTaskList(Widget w) {
@@ -963,12 +927,20 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void removeFromTaskList(final Widget w) {
-		Timer t = new Timer() {
+		Elements.fadeOut(w, 2000, 0, new Elements.FadeCallback() {
 			@Override
-			public void run() {
+			public void onFadeStart() {
+				// Do nothing
+			}
+			
+			@Override
+			public void onFadeComplete() {
 				progressPanel.remove(w);
 			}
-		};
-		t.schedule(2000);
+		});
 	}
+	
+	public native boolean hasFlashPlayer() /*-{
+		return $wnd.swfobject.hasFlashPlayerVersion("10");
+	}-*/;
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.FormPanel.SubmitEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitHandler;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -48,8 +49,12 @@ public class PostRedirectHelper {
 	public HashMap<String, String> getParams() {
 		return params;
 	}
-
+	
 	public void send() {
+		send(null);
+	}
+
+	public void send(SubmitCompleteHandler h) {
 		final FormPanel form = new FormPanel();
 		VerticalPanel formContent = new VerticalPanel();
 		form.add(formContent);
@@ -85,5 +90,8 @@ public class PostRedirectHelper {
 				RootPanel.get().remove(form);
 			}
 		});
+		if (h != null) {
+			form.addSubmitCompleteHandler(h);
+		}
 	}
 }

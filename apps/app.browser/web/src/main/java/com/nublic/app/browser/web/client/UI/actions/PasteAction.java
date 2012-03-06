@@ -45,9 +45,9 @@ public class PasteAction extends ActionWidget {
 		// Create widget for moving or copying
 		String feedbackMessage;
 		if (mode.equals("move")) {
-			feedbackMessage = "Moving " + String.valueOf(setToCopy.size()) + "elements...";
+			feedbackMessage = "Moving " + String.valueOf(setToCopy.size()) + " elements...";
 		} else {
-			feedbackMessage = "Copying " + String.valueOf(setToCopy.size()) + "elements...";
+			feedbackMessage = "Copying " + String.valueOf(setToCopy.size()) + " elements...";
 		}
 		final Label feedbackLabel = new Label(feedbackMessage);
 
