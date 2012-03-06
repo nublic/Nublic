@@ -6,12 +6,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
 
@@ -20,11 +24,11 @@ public class NavigationPanel extends Composite {
 	interface NavigationPanelUiBinder extends UiBinder<Widget, NavigationPanel> { }
 
 	// CSS Styles defined in the .xml file
-//	interface NavStyle extends CssResource {
-//		String bold();
-//	}
-//
-//	@UiField NavStyle style;
+	interface NavStyle extends CssResource {
+		String innerImage();
+	}
+
+	@UiField NavStyle style;
 	Element allMusic;
 	HashMap<String, Element> collections = new HashMap<String, Element>();
 	HashMap<String, Element> playlists = new HashMap<String, Element>();
@@ -139,30 +143,30 @@ public class NavigationPanel extends Composite {
 	}
 	
 	public void play(Element e) {
-		if (e != playingElement) {
-			stop();
-			playingElement = e;
-		}
-//		e.addClassName(style.bold());
+		stop();
+		playingElement = e;
+
+		Image play = new Image(Resources.INSTANCE.playMini());
+		play.addStyleName(style.innerImage());
+		e.getFirstChild().insertFirst(play.getElement());
 		e.addClassName("bold-link");
 	}
-	
+
 	public void pause(Element e) {
-		if (e != playingElement) {
-			stop();
-			playingElement = e;
-		}
-//		DOM.getChild(e, 0).addClassName(style.bold());
-//		e.getElementsByTagName("a").getItem(0).addClassName(style.bold());
-//		e.addClassName(style.bold());
+		stop();
+		playingElement = e;
+
+		Image pause = new Image(Resources.INSTANCE.pauseMini());
+		pause.addStyleName(style.innerImage());
+		e.getFirstChild().insertFirst(pause.getElement());
 		e.addClassName("bold-link");
 	}
 	
 	public void stop(Element e) {
 		if (e != null) {
-			playingElement = null;
-//			e.removeClassName(style.bold());
 			e.removeClassName("bold-link");
+			e.getFirstChild().removeChild(e.getFirstChild().getFirstChild()); // The <a> child of <li> has an <img> as first child
+			playingElement = null;
 		}
 	}
 
