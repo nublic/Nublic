@@ -43,16 +43,16 @@ public class Controller {
 			public void onPlayStateChanged(PlayStateEvent event) {
 				switch (event.getPlayState()) {
 				case Paused:
-					ui.setPaused(Controller.getPlayingPlaylistId(), event.getItemIndex());
+					ui.setPaused(Controller.getPlayingPlaylistId());
             		break;
             	case Started:
-					ui.setPlaying(Controller.getPlayingPlaylistId(), event.getItemIndex());
+					ui.setPlaying(Controller.getPlayingPlaylistId());
             		break;
             	case Stopped:
-					ui.setPlaying(null, -1);
+					ui.setPlaying(null);
             		break;
             	case Finished:
-					ui.setPlaying(null, -1);
+					ui.setPlaying(null);
             		break;
 				}
 			}

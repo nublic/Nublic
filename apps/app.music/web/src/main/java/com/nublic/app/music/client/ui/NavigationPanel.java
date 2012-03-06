@@ -19,10 +19,17 @@ public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
 	interface NavigationPanelUiBinder extends UiBinder<Widget, NavigationPanel> { }
 
+	// CSS Styles defined in the .xml file
+//	interface NavStyle extends CssResource {
+//		String bold();
+//	}
+//
+//	@UiField NavStyle style;
 	Element allMusic;
 	HashMap<String, Element> collections = new HashMap<String, Element>();
 	HashMap<String, Element> playlists = new HashMap<String, Element>();
 	Element activeElement;
+	Element playingElement;
 	
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -94,23 +101,69 @@ public class NavigationPanel extends Composite {
 	public void selectAllMusic() {
 		select(allMusic);
 	}
-	
+
 	public void selectCollection(String id) {
 		select(collections.get(id));
 	}
-	
+
 	public void selectPlaylist(String id) {
 		select(playlists.get(id));
 	}
-	
+
 	public void select(Element e) {
 		unselect(activeElement);
 		activeElement = e;
 		e.addClassName("active");
 	}
-	
+
 	public void unselect(Element e) {
-		e.removeClassName("active");
+		if (e != null) {
+			e.removeClassName("active");
+		}
+	}
+	
+	// Playing methods
+	public void playPlaylist(String id) {
+		play(playlists.get(id));
+	}
+	public void pausePlaylist(String id) {
+		pause(playlists.get(id));
+	}
+	
+	public void stop() {
+		stop(playingElement);
+	}
+	
+	public void stopPlaylist(String id) {
+		stop(playlists.get(id));
+	}
+	
+	public void play(Element e) {
+		if (e != playingElement) {
+			stop();
+			playingElement = e;
+		}
+//		e.addClassName(style.bold());
+		e.addClassName("bold-link");
+	}
+	
+	public void pause(Element e) {
+		if (e != playingElement) {
+			stop();
+			playingElement = e;
+		}
+//		DOM.getChild(e, 0).addClassName(style.bold());
+//		e.getElementsByTagName("a").getItem(0).addClassName(style.bold());
+//		e.addClassName(style.bold());
+		e.addClassName("bold-link");
+	}
+	
+	public void stop(Element e) {
+		if (e != null) {
+			playingElement = null;
+//			e.removeClassName(style.bold());
+			e.removeClassName("bold-link");
+		}
 	}
 
 }

@@ -158,28 +158,20 @@ public class MainUi extends Composite {
 		ErrorPopup.showError(message);
 	}
 
-	public void setPlaying(String playingPlaylistId, int index) {
-//		unselectPrevious(playingPlaylistId);
-//		if (playingPlaylistId != null) {
-//			playingPlaylistWidget = playlistIndex.get(playingPlaylistId);
-//			playingPlaylistWidget.setState(PlayState.PLAYING);
-//		}
+	public void setPlaying(String playlistId) {
+		if (playlistId == null) {
+			navigationPanel.stop();
+		} else {
+			navigationPanel.playPlaylist(playlistId);
+		}
 	}
 
-	public void setPaused(String playingPlaylistId, int itemIndex) {
-//		unselectPrevious(playingPlaylistId);
-//		if (playingPlaylistId != null) {
-//			playingPlaylistWidget = playlistIndex.get(playingPlaylistId);
-//			playingPlaylistWidget.setState(PlayState.PAUSED);
-//		}
-	}
-	
-	private void unselectPrevious(String playingPlaylistId) {
-//		if (playingPlaylistWidget != null) {
-//			if (!playingPlaylistWidget.getId().equals(playingPlaylistId)) {
-//				playingPlaylistWidget.setState(PlayState.STOPPED);
-//			}
-//		}
+	public void setPaused(String playlistId) {
+		if (playlistId == null) {
+			navigationPanel.stop();
+		} else {
+			navigationPanel.pausePlaylist(playlistId);
+		}
 	}
 
 }
