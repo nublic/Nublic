@@ -39,6 +39,7 @@ public class MainUi extends Composite {
 	@UiField PlaylistWidget allMusic;
 	@UiField AddTagWidget addTagWidget;
 	@UiField AddTagWidget addPlaylistWidget;
+	@UiField NavigationPanel navigationPanel;
 	@UiField(provided=true) Widget _player = NublicPlayer.create();
 	NublicPlayer player;
 	HashMap<String, PlaylistWidget> tagIndex = new HashMap<String, PlaylistWidget>();
@@ -205,9 +206,6 @@ public class MainUi extends Composite {
 		if (playingPlaylistId != null) {
 			playingPlaylistWidget = playlistIndex.get(playingPlaylistId);
 			playingPlaylistWidget.setState(PlayState.PLAYING);
-			if (playingPlaylistWidget.isSelected()) {
-				// TODO: Set song playing
-			}
 		}
 	}
 
@@ -216,9 +214,6 @@ public class MainUi extends Composite {
 		if (playingPlaylistId != null) {
 			playingPlaylistWidget = playlistIndex.get(playingPlaylistId);
 			playingPlaylistWidget.setState(PlayState.PAUSED);
-			if (playingPlaylistWidget.isSelected()) {
-				// TODO: Set song paused
-			}
 		}
 	}
 	

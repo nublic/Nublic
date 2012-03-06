@@ -1,23 +1,19 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:my="urn:import:com.nublic.app.music.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		
 	</ui:style>
 	<g:HTMLPanel>
 	  <div class="well" style="padding: 8px 0;">
-		<ul class="nav nav-list">
+		<ul id="Library" class="nav nav-list">
   			<li class="nav-header">Library</li>
-			<li class="active"><a href="#">All music</a></li>
+		</ul>
+		<ul id="Collection" class="nav nav-list"> <!-- Id defined as Constants.PARAM_COLLECTION -->
 			<li class="nav-header">Collections</li>
-			<my:NavigationWidget/>
-			<li><a href="#">Jazz</a></li>
-			<li><a href="#">Pop</a></li>
+		</ul>
+		<ul id="Playlist" class="nav nav-list"> <!-- Id defined as Constants.PARAM_PLAYLIST -->
 			<li class="nav-header">Playlists</li>
-			<li><a href="#">Verano mix 97</a></li>
-			<li><a href="#">Summer mezclado 98</a></li>
-			<my:NavigationWidget/>
 		</ul>
 	  </div>
 	</g:HTMLPanel>
