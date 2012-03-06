@@ -12,10 +12,14 @@
 	</ui:style>
 
 	<g:DockLayoutPanel width="100%" height="100%">
-		<g:north size='50'>
-			<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
+		<g:north size='35'>
+		  <g:HTMLPanel>
+		    <div class="page-header" style="width: 100%;">
+			  <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
 				<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
-			</g:HorizontalPanel>
+			  </g:HorizontalPanel>
+			</div>
+		  </g:HTMLPanel>
 		</g:north>
 		<g:center>
 			<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll}"/>
