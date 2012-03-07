@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:com.nublic.app.music.client.ui">
 	<ui:style type='com.nublic.app.music.client.ui.NavigationPanel.NavStyle'>
 		.innerImage {
 			vertical-align: middle;
@@ -15,9 +16,11 @@
 		<ul id="Collection" class="nav nav-list"> <!-- Id defined as Constants.PARAM_COLLECTION -->
 			<li class="nav-header">Collections</li>
 		</ul>
+		<my:AddWidget/>
 		<ul id="Playlist" class="nav nav-list"> <!-- Id defined as Constants.PARAM_PLAYLIST -->
 			<li class="nav-header">Playlists</li>
 		</ul>
+		<my:AddWidget/>
 	  </div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

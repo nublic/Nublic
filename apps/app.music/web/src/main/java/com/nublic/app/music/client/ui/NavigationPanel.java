@@ -148,7 +148,7 @@ public class NavigationPanel extends Composite {
 
 		Image play = new Image(Resources.INSTANCE.playMini());
 		play.addStyleName(style.innerImage());
-		e.getFirstChild().insertFirst(play.getElement());
+		e.getFirstChild().insertFirst(play.getElement()); // Inserting in the <a> child of <li>
 		e.addClassName("bold-link");
 	}
 
@@ -158,14 +158,14 @@ public class NavigationPanel extends Composite {
 
 		Image pause = new Image(Resources.INSTANCE.pauseMini());
 		pause.addStyleName(style.innerImage());
-		e.getFirstChild().insertFirst(pause.getElement());
+		e.getFirstChild().insertFirst(pause.getElement()); // Inserting in the <a> child of <li>
 		e.addClassName("bold-link");
 	}
 	
 	public void stop(Element e) {
 		if (e != null) {
 			e.removeClassName("bold-link");
-			e.getFirstChild().removeChild(e.getFirstChild().getFirstChild()); // The <a> child of <li> has an <img> as first child
+			e.getFirstChild().removeChild(e.getFirstChild().getFirstChild()); // The <a> child of <li> has an <img> (play/stop) as first child
 			playingElement = null;
 		}
 	}

@@ -165,7 +165,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onNext() {
 				try {
-					if (lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
+					if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
 						playNext();
 					}
 				} catch (PlayException e) {
@@ -178,7 +178,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPrev() {
 				try {
-					if (lastStateEvent.getItemIndex() != 0) {
+					if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
 						playPrevious();
 					}
 				} catch (PlayException e) {

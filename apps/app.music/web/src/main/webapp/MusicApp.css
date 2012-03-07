@@ -101,6 +101,7 @@ h1 {
 	opacity: 1 !important;
 }
 
+/** So a playlist can be bold if it's being played */
 .bold-link a {
 	font-weight: bold;
 }
