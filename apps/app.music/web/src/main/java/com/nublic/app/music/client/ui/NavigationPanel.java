@@ -18,6 +18,7 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
+import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 
 public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
@@ -29,6 +30,8 @@ public class NavigationPanel extends Composite {
 	}
 
 	@UiField NavStyle style;
+	@UiField AddWidget addCollection;
+	@UiField AddWidget addPlaylist;
 	Element allMusic;
 	HashMap<String, Element> collections = new HashMap<String, Element>();
 	HashMap<String, Element> playlists = new HashMap<String, Element>();
@@ -46,6 +49,7 @@ public class NavigationPanel extends Composite {
 					createCurrentPlaylist();
 					activeElement = allMusic;
 					selectAllMusic();
+					addAddTagsHandlers();
 				}
 			}
 		});
@@ -168,6 +172,23 @@ public class NavigationPanel extends Composite {
 			e.getFirstChild().removeChild(e.getFirstChild().getFirstChild()); // The <a> child of <li> has an <img> (play/stop) as first child
 			playingElement = null;
 		}
+	}
+	
+	
+	// Handler to notify model that the user has added a tag
+	private void addAddTagsHandlers() {
+		addCollection.addPutTagHandler(new PutTagHandler() {
+			@Override
+			public void onPutTag(String newTagName) {
+				Controller.getModel().putNewTag(newTagName);
+			}
+		});
+		addPlaylist.addPutTagHandler(new PutTagHandler() {
+			@Override
+			public void onPutTag(String newTagName) {
+				Controller.getModel().putNewPlaylist(newTagName);
+			}
+		});
 	}
 
 }

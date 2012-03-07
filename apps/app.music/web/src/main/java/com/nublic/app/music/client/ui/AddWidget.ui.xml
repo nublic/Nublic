@@ -22,7 +22,7 @@
 		<ul class="nav nav-list">
 			<li>
 				<g:Anchor ui:field="addAnchor" addStyleNames="{style.plusButton}" text="+"/>
-				<g:TextBox ui:field="addTextBox"/>
+				<g:TextBox ui:field="addTextBox" width="94%"/>
 			</li>
 		</ul>
 	</g:HTMLPanel>

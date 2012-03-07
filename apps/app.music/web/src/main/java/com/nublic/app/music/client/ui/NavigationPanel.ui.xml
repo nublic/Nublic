@@ -16,11 +16,11 @@
 		<ul id="Collection" class="nav nav-list"> <!-- Id defined as Constants.PARAM_COLLECTION -->
 			<li class="nav-header">Collections</li>
 		</ul>
-		<my:AddWidget/>
+		<my:AddWidget defaultText="New Collection" ui:field="addCollection"/>
 		<ul id="Playlist" class="nav nav-list"> <!-- Id defined as Constants.PARAM_PLAYLIST -->
 			<li class="nav-header">Playlists</li>
 		</ul>
-		<my:AddWidget/>
+		<my:AddWidget defaultText="New Playlist" ui:field="addPlaylist"/>
 	  </div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

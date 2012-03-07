@@ -102,7 +102,7 @@ public class AddTagWidget extends Composite implements HasText {
 	
 	private void addTag() {
 		for (PutTagHandler pth : tagHandlerList) {
-			pth.onPutTag();
+			pth.onPutTag("a");
 		}
 		setPanel1();
 	}

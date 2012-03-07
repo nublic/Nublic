@@ -43,7 +43,6 @@ public class MainUi extends Composite {
 
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
-		addPutTagHandler();
 	}
 
 	// Handler to handle changes in playlists list
@@ -86,22 +85,6 @@ public class MainUi extends Composite {
 				}
 			}
 		});
-	}
-	
-	// Handler to notify model that the user has added a tag
-	private void addPutTagHandler() {
-//		addTagWidget.addPutTagHandler(new PutTagHandler() {
-//			@Override
-//			public void onPutTag() {
-//				model.putNewTag(addTagWidget.getText());				
-//			}
-//		});
-//		addPlaylistWidget.addPutTagHandler(new PutTagHandler() {
-//			@Override
-//			public void onPutTag() {
-//				model.putNewPlaylist(addPlaylistWidget.getText());				
-//			}
-//		});
 	}
 
 	public void setSelectedCollection(String collectionId) {
@@ -154,10 +137,6 @@ public class MainUi extends Composite {
 		return player;		
 	}
 
-	public void error(String message) {
-		ErrorPopup.showError(message);
-	}
-
 	public void setPlaying(String playlistId) {
 		if (playlistId == null) {
 			navigationPanel.stop();
@@ -172,6 +151,10 @@ public class MainUi extends Composite {
 		} else {
 			navigationPanel.pausePlaylist(playlistId);
 		}
+	}
+	
+	public void error(String message) {
+		ErrorPopup.showError(message);
 	}
 
 }
