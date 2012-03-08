@@ -10,9 +10,12 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -82,6 +85,13 @@ public abstract class SongList extends Composite implements ScrollHandler {
 				}
 			});
 		}
+
+		Window.addResizeHandler(new ResizeHandler() {			
+			@Override
+			public void onResize(ResizeEvent event) {
+				onScroll(null);				
+			}
+		});
 	}
 
 	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

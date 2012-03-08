@@ -19,7 +19,7 @@ public class AlbumSongList extends SongList {
 	
 	@Override
 	public void askForsongs(int from, int to) {
-		Controller.getModel().askForSongs(from, from, albumId, artistId, collectionId, songHandler);
+		Controller.getModel().askForSongs(from, to, albumId, artistId, collectionId, songHandler);
 	}
 
 	@Override
