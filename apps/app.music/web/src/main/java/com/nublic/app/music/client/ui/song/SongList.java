@@ -27,6 +27,7 @@ import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
@@ -218,6 +219,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
 		buttonLine.setAddAtEndButtonHandler(new MyAddAtEndHandler(s));
+		buttonLine.setPlayButtonHandler(new MyPlayHandler(s));
 		HorizontalPanel h = new HorizontalPanel();
 		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		h.add(titleLabel);
@@ -260,11 +262,20 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		public MyAddAtEndHandler(SongInfo s) {
 			this.song = s;
 		}
-		
 		@Override
 		public void onAddAtEnd() {
-			Controller.getModel().addToCurrentPlaylist(song);
-			Controller.getPlayer().addSongToPlaylist(song);
+			Controller.addAtEnd(song);
+		}
+	}
+	
+	protected class MyPlayHandler implements PlayButtonHandler {
+		SongInfo song;
+		public MyPlayHandler(SongInfo s) {
+			this.song = s;
+		}
+		@Override
+		public void onPlay() {
+			Controller.play(song);
 		}
 	}
 
