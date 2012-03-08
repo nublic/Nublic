@@ -36,6 +36,19 @@ public class Controller {
 	public static void setPlayingPlaylistId(String playingPlaylistId) { Controller.playingPlaylistId = playingPlaylistId; }
 	public static DataModel getModel() { return model; }
 	public static void setModel(DataModel model) { Controller.model = model; }
+	
+	// Utils to music reproduction
+	public static void addAtEnd(SongInfo s) {
+		model.addToCurrentPlaylist(s);
+		player.addSongToPlaylist(s);
+	}
+	
+	public static void play(SongInfo s) {
+//		model.clearCurrentPlaylist();
+//		player.clearSongs();
+		addAtEnd(s);
+		player.playSong(player.getNublicPlaylistSize() -1);
+	}
 
 	private void addPlayHandler() {
 		ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {

@@ -79,6 +79,8 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		if (playingIndex != -1) {
 			grid.getRowFormatter().removeStyleName(playingIndex, "songselected");
 		}
-	}	
+	}
+	
+	// TODO: add handlers
 	
 }

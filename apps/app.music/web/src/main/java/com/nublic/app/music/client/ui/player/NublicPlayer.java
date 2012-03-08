@@ -75,20 +75,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 		});
 	}
 
-	public void addSongToPlaylist(SongInfo song) {
-		playlist.add(song);
-		if (getPlaylistSize() == 0) {
-			try {
-				loadMedia(song.getUrl());
-			} catch (LoadException e) {
-				ErrorPopup.showError(e.getMessage());
-				e.printStackTrace();
-			}
-		} else {
-			addToPlaylist(song.getUrl());
-		}
-	}
-
 	private void setTimer() {
         timer = new Timer() {
             @Override
@@ -151,40 +137,20 @@ public class NublicPlayer extends CustomAudioPlayer {
 		controls.addPlayHandler(new PlayHandler() {
 			@Override
 			public void onPlay() {
-				try {
-					if (getPlaylistSize() != 0) {
-						playMedia();
-					}
-				} catch (Exception e) {
-					ErrorPopup.showError(e.getMessage());
-					e.printStackTrace();
-				}
+				nublicPlay();
+				
 			}
 		});
 		controls.addNextHandler(new NextHandler() {
 			@Override
 			public void onNext() {
-				try {
-					if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
-						playNext();
-					}
-				} catch (PlayException e) {
-					ErrorPopup.showError(e.getMessage());
-					e.printStackTrace();
-				}				
+				nublicPlayNext();			
 			}
 		});
 		controls.addPrevHandler(new PrevHandler() {
 			@Override
 			public void onPrev() {
-				try {
-					if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
-						playPrevious();
-					}
-				} catch (PlayException e) {
-					ErrorPopup.showError(e.getMessage());
-					e.printStackTrace();
-				}				
+				nublicPlayPrev();			
 			}
 		});
 		controls.addSeekChangeHandler(new SeekChangeHandler() {
@@ -199,5 +165,85 @@ public class NublicPlayer extends CustomAudioPlayer {
 				setVolume(event.getNewVolume());
 			}
 		});
+	}
+	
+	
+	// Utils
+	public void addSongToPlaylist(SongInfo song) {
+		playlist.add(song);
+		if (getPlaylistSize() == 0) {
+			try {
+				loadMedia(song.getUrl());
+			} catch (LoadException e) {
+				ErrorPopup.showError(e.getMessage());
+				e.printStackTrace();
+			}
+		} else {
+			addToPlaylist(song.getUrl());
+		}
+	}
+	
+	public int getNublicPlaylistSize() {
+		return playlist.size();
+	}
+
+	public void clearNublicPlaylist() {
+		if (!playlist.isEmpty()) {
+			stopMedia();
+			playlist.clear();
+			clearPlaylist();
+		}
+	}
+
+	public void playSong(int index) {
+		// play(i); // This doesn't fire any event
+		if (lastStateEvent != null) {
+		int i = lastStateEvent.getItemIndex();
+			while (i != index) {
+				if (i > index) {
+					nublicPlayPrev();
+					i--;
+				} else {
+					nublicPlayNext();
+					i++;
+				}
+			}
+		} else {
+			nublicPlay();
+		}
+	}
+	
+	// secure play methods
+	private void nublicPlayNext() {
+		try {
+			if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
+				playNext();
+			}
+		} catch (PlayException e) {
+			ErrorPopup.showError(e.getMessage());
+			e.printStackTrace();
+		}
+	}
+	
+	private void nublicPlayPrev() {
+		try {
+			if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
+				playPrevious();
+			}
+		} catch (PlayException e) {
+			ErrorPopup.showError(e.getMessage());
+			e.printStackTrace();
+		}	
+	}
+	
+	private void nublicPlay() {
+		try {
+			if (getPlaylistSize() != 0) {
+				playMedia();
+			}
+		} catch (Exception e) {
+			ErrorPopup.showError(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 }

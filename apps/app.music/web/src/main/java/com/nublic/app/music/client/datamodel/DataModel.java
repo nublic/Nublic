@@ -218,7 +218,7 @@ public class DataModel {
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
 	}
 	
-	// addToPlaylist methods
+	// current playlist manage methods
 	public void addToCurrentPlaylist(SongInfo s) {
 		currentPlaylist.add(s);
 	}
@@ -227,6 +227,10 @@ public class DataModel {
 		for (SongInfo s : songList) {
 			addToCurrentPlaylist(s);
 		}
+	}
+	
+	public void clearCurrentPlaylist() {
+		currentPlaylist.clear();
 	}
 
 }

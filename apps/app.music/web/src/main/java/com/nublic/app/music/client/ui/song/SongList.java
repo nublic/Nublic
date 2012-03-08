@@ -10,9 +10,12 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -24,6 +27,8 @@ import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
@@ -82,6 +87,13 @@ public abstract class SongList extends Composite implements ScrollHandler {
 				}
 			});
 		}
+
+		Window.addResizeHandler(new ResizeHandler() {			
+			@Override
+			public void onResize(ResizeEvent event) {
+				onScroll(null);				
+			}
+		});
 	}
 
 	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -204,10 +216,12 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, capsule);
 	}
 	
-	protected void setTitleLenght(int row, int column, SongInfo s) {
+	protected void setTitleLenght(int row, int column, SongInfo s, AddAtEndButtonHandler aaebh, PlayButtonHandler pbh, EditButtonHandler ebh) {
 		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
-		buttonLine.setAddAtEndButtonHandler(new MyAddAtEndHandler(s));
+		buttonLine.setAddAtEndButtonHandler(aaebh);
+		buttonLine.setPlayButtonHandler(pbh);
+		buttonLine.setEditButtonHandler(ebh);
 		HorizontalPanel h = new HorizontalPanel();
 		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		h.add(titleLabel);
@@ -244,19 +258,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, artistLabel);
 	}
 	
-	// +++ Handlers +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	protected class MyAddAtEndHandler implements AddAtEndButtonHandler {
-		SongInfo song;
-		public MyAddAtEndHandler(SongInfo s) {
-			this.song = s;
-		}
-		
-		@Override
-		public void onAddAtEnd() {
-			Controller.getModel().addToCurrentPlaylist(song);
-			Controller.getPlayer().addSongToPlaylist(song);
-		}
-	}
+
 
 
 }
