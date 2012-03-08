@@ -3,16 +3,13 @@ package com.nublic.app.browser.web.client.UI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
 
-import org.swfupload.client.event.UploadErrorHandler;
-import org.swfupload.client.event.UploadProgressHandler;
-import org.swfupload.client.event.UploadStartHandler;
-import org.swfupload.client.event.UploadSuccessHandler;
+import org.swfupload.client.SWFUpload;
+import org.swfupload.client.event.SWFUploadLoadedHandler;
 
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
@@ -31,6 +28,8 @@ import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
+import com.google.gwt.event.logical.shared.AttachEvent;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
 import com.google.gwt.event.logical.shared.OpenEvent;
@@ -40,7 +39,6 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -55,7 +53,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
@@ -63,7 +60,6 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
@@ -93,9 +89,7 @@ import com.nublic.util.gwt.LazyLoader;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
-import com.nublic.util.widgets.BootstrapProgressBar;
 import com.nublic.util.widgets.Elements;
-import com.nublic.util.widgets.Popup;
 import com.nublic.util.widgets.PopupButton;
 import com.nublic.util.widgets.PopupButtonHandler;
 import com.nublic.util.widgets.TextPopup;
@@ -105,7 +99,7 @@ import edu.ycp.cs.dh.acegwt.client.ace.AceEditor;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorMode;
 import edu.ycp.cs.dh.acegwt.client.ace.AceEditorTheme;
 
-public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer, CheckedChangeHandler {
+public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHandler<TreeItem>, SelectionHandler<TreeItem>, CloseHandler<PopupPanel>, ShowsPlayer, CheckedChangeHandler, Handler {
 	private static BrowserUiUiBinder uiBinder = GWT.create(BrowserUiUiBinder.class);
 	interface BrowserUiUiBinder extends UiBinder<Widget, BrowserUi> { }
 	
@@ -150,6 +144,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiField FlowPanel progressPanel;
 	
 	FixedPopup popUpBox;
+	
+	UploadAction upAction;
+	SWFUpload upload = null;
+	boolean uploadReady = false;
 
 	public BrowserUi(BrowserModel model) {
 		// Initialize tree
@@ -211,6 +209,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		
 		// Request to update folder tree with the root directory
 		model.updateFolders(model.getFolderTree(), Constants.DEFAULT_DEPTH);
+		
+		// Initialize SWFUpload
+		if (hasFlashPlayer()) {
+			// Let's change to use flash
+			this.addAttachHandler(this);
+		}
 	}
 
 	private void initActions() {
@@ -219,7 +223,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		actionsPanel.add(new SingleDownloadAction(this));
 		final NewFolderAction folderAction = new NewFolderAction(this);
 		actionsPanel.add(folderAction);
-		final UploadAction upAction = new UploadAction(this);
+		upAction = new UploadAction(this);
 		actionsPanel.add(upAction);
 		actionsPanel.add(new SetDownloadAction(this));
 		actionsPanel.add(new CutAction(this));
@@ -255,8 +259,14 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				}
 				if (upAction.getAvailability() == Availability.AVAILABLE) {
 					addFileTopButton.setEnabled(true);
+					if (uploadReady) {
+						upload.setButtonDisabled(false);
+					}
 				} else {
 					addFileTopButton.setEnabled(false);
+					if (uploadReady) {
+						upload.setButtonDisabled(true);
+					}
 				}
 				if (folderAction.getAvailability() == Availability.AVAILABLE) {
 					newFolderTopButton.setEnabled(true);
@@ -891,7 +901,9 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	
 	@UiHandler("addFileTopButton")
 	void onAddFileTopButtonClick(ClickEvent event) {
-		showUploadPopup();
+		if (!hasFlashPlayer()) {
+			showUploadPopup();
+		}
 	}
 	
 	public void showNewFolderPopup() {
@@ -918,6 +930,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				UploadAction.doUpload(getShowingPath(), popup.getFileUpload(), BrowserUi.this);
 			}
 		});
+		popup.center();
 	}
 	
 	public void addToTaskList(Widget w) {
@@ -943,4 +956,19 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	public native boolean hasFlashPlayer() /*-{
 		return $wnd.swfobject.hasFlashPlayerVersion("10");
 	}-*/;
+
+	@Override
+	public void onAttachOrDetach(AttachEvent event) {
+		if (event.isAttached()) {
+			upload = UploadAction.buildUploadWidget(addFileTopButton.getElement().getParentElement(), this, 20, 26,
+						"                                 ", "", null, new 
+						SWFUploadLoadedHandler() {
+							@Override
+							public void onSWFUploadLoaded() {
+								upload.setButtonDisabled(upAction.getAvailability() != Availability.AVAILABLE);
+								uploadReady = true;
+							}
+						}, "24px", "0");
+		}
+	}
 }
