@@ -27,6 +27,7 @@ import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -215,11 +216,12 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, capsule);
 	}
 	
-	protected void setTitleLenght(int row, int column, SongInfo s) {
+	protected void setTitleLenght(int row, int column, SongInfo s, AddAtEndButtonHandler aaebh, PlayButtonHandler pbh, EditButtonHandler ebh) {
 		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
-		buttonLine.setAddAtEndButtonHandler(new MyAddAtEndHandler(s));
-		buttonLine.setPlayButtonHandler(new MyPlayHandler(s));
+		buttonLine.setAddAtEndButtonHandler(aaebh);
+		buttonLine.setPlayButtonHandler(pbh);
+		buttonLine.setEditButtonHandler(ebh);
 		HorizontalPanel h = new HorizontalPanel();
 		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		h.add(titleLabel);
@@ -256,28 +258,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, artistLabel);
 	}
 	
-	// +++ Handlers +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	protected class MyAddAtEndHandler implements AddAtEndButtonHandler {
-		SongInfo song;
-		public MyAddAtEndHandler(SongInfo s) {
-			this.song = s;
-		}
-		@Override
-		public void onAddAtEnd() {
-			Controller.addAtEnd(song);
-		}
-	}
-	
-	protected class MyPlayHandler implements PlayButtonHandler {
-		SongInfo song;
-		public MyPlayHandler(SongInfo s) {
-			this.song = s;
-		}
-		@Override
-		public void onPlay() {
-			Controller.play(song);
-		}
-	}
+
 
 
 }
