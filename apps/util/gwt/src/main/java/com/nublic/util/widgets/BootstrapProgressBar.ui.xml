@@ -4,8 +4,6 @@
 	<ui:style>
 		
 	</ui:style>
-	<g:HTMLPanel ui:field="htmlPanel">
-	  <g:TextBox ui:field="nameBox" readOnly="true" width="300px"></g:TextBox>
+	<g:HTMLPanel ui:field="parent" styleName="progress">
 	</g:HTMLPanel>
-
 </ui:UiBinder> 

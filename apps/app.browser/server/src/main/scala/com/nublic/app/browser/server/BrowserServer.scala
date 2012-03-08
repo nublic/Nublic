@@ -20,6 +20,7 @@ import java.nio.file.Files
 import scala.collection.JavaConversions._
 import org.scalatra.fileupload.FileUploadSupport
 import java.util.Date
+import scala.util.Random
 
 class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -394,29 +395,66 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     }
   }
   
-  post("/upload") {
-    withUser { user =>
-      withPath("path", false) { folder =>
-        val name = params("name").trim()
-        val file = fileParams("Filedata")
-        if (name.contains("..")) {
-          throw new Exception("name contains ..")
-        } else if (!folder.isDirectory()) {
-          throw new Exception("folder is not a directory")
-        } else if (!user.canWrite(folder)) {
-          throw new Exception("user cannot write in that folder")
+  def doUpload(user : User) = {
+    withPath("path", false) { folder =>
+      val name = params("name").trim()
+      val file = fileParams("Filedata")
+      if (name.contains("..")) {
+        throw new Exception("name contains ..")
+      } else if (!folder.isDirectory()) {
+        throw new Exception("folder is not a directory")
+      } else if (!user.canWrite(folder)) {
+        throw new Exception("user cannot write in that folder")
+      } else {
+        val new_file = new File(folder, name)
+        if (new_file.exists()) {
+          throw new Exception("a file with that name already exists")
         } else {
-          val new_file = new File(folder, name)
-          if (new_file.exists()) {
-            throw new Exception("a file with that name already exists")
-          } else {
-            FileUtils.touch(new_file)
-            user.assignFile(new_file)
-            file.write(new_file)
-            halt(200)
-          }
-        } 
-      }
+          FileUtils.touch(new_file)
+          user.assignFile(new_file)
+          file.write(new_file)
+          halt(200)
+        }
+      } 
+    }
+  }
+  
+  post("/upload") {
+    withUser(doUpload)
+  }
+  
+  // We use upload in two phases to allow uploding via Flash
+  // For that, we use an authenticated "phase1" to generate an unique id
+  // and then we use that id to upload one file in "phase2"
+  
+  var current_upload_keys = scala.collection.mutable.Map[Long, Tuple2[User, Long]]()
+  
+  def prune_old_upload_keys = {
+    // Prune those older than 5 minutes
+    val end_time = (new Date()).getTime() - 5 * 3600 * 1000 /* 5 hours */
+    current_upload_keys = current_upload_keys.filter(kv => kv._2._2 > end_time)
+  }
+  
+  get("/upload-in-phases/phase1") {
+    withUser { user => 
+      // Generate new id for new uploading
+      val upload_key_id = Random.nextLong().abs
+      current_upload_keys += upload_key_id -> ( user, (new Date()).getTime() )
+      upload_key_id.toString()
+    }
+  }
+  
+  post("/upload-in-phases/phase2/:id") {
+    val id = java.lang.Long.parseLong(params("id"))
+    // Prune old elements
+    prune_old_upload_keys
+    // Try to find ours
+    current_upload_keys.get(id) match {
+      case None    => halt(500)
+      case Some(v) => {
+        doUpload(v._1)
+        current_upload_keys -= id
+      }  
     }
   }
   

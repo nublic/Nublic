@@ -15,8 +15,10 @@
 		} */
 	</ui:style>
 
+    <g:HTMLPanel>
 	<g:HorizontalPanel ui:field="rootPanel" verticalAlignment="ALIGN_MIDDLE">
 <!-- 		<g:PushButton ui:field="imageButton"/> -->
 <!-- 		<g:Anchor ui:field="actionLink"/> -->
 	</g:HorizontalPanel>
+	</g:HTMLPanel>
 </ui:UiBinder> 

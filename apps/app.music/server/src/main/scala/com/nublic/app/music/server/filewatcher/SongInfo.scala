@@ -14,7 +14,8 @@ import java.util.logging.Logger
 case class SongInfo(title: Option[String], artist: Option[String], album: Option[String],
   length: Option[Int], year: Option[Int], track: Option[Int], disc_no: Option[Int]) {
  
-  def hasImportantInfoMissing = title == None || artist == None || album == None
+  def hasImportantInfoMissing = title == None || title.isEmpty || 
+    artist == None || artist.isEmpty || album == None || album.isEmpty
 }
 
 object SongInfo {
@@ -72,6 +73,6 @@ object SongInfo {
     SongInfo(title, artist, album, length, year, track, disc_no)
   }
   
-  def merge[T](o1: Option[T], o2: Option[T]): Option[T] = if (o1 != None) o1 else o2
+  def merge[T](o1: Option[T], o2: Option[T]): Option[T] = if (o1.isDefined && !o1.isEmpty) o1 else o2
   
 }

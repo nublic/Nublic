@@ -220,34 +220,6 @@
 					</additionalProjectnatures>
 				</configuration>
 			</plugin>
-
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-prod-resources</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<!-- this is important -->
-							<overwrite>true</overwrite>
-							<!-- this as well (target/ was missing) -->
-							<outputDirectory>${basedir}/target/app.browser.web-0.0.1-SNAPSHOT</outputDirectory>
-							<resources>
-								<resource>
-								    <directory>${basedir}/target/app.browser.web-0.0.1-SNAPSHOT/browserapp</directory>
-									<includes>
-										<include>swfupload.swf</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
