@@ -124,7 +124,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       Database.collections.lookup(id) match {
         case None       => { /* There is no tag like that */ }
         case Some(coll) => {
-          Database.songCollections.deleteWhere(st => st.collectionId == coll.id)
+          Database.songCollections.deleteWhere(st => st.collectionId === coll.id)
           Database.collections.deleteWhere(t => t.id === coll.id)
         }
       }
@@ -211,7 +211,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         Database.collections.lookup(id) match {
           case None     => { /* There is no playlist like that */ }
           case Some(pl) => {
-            Database.songPlaylists.deleteWhere(sp => sp.playlistId == pl.id)
+            Database.songPlaylists.deleteWhere(sp => sp.playlistId === pl.id)
             Database.playlists.deleteWhere(p => p.id === pl.id)
           }
         }
