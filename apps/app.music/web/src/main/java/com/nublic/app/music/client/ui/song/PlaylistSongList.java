@@ -5,6 +5,7 @@ import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 
 public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
@@ -30,12 +31,12 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void setSong(int row, SongInfo s) {
-		setButtons(row, 0, s);						// Column 0
-		setTrackNumber(row, 1, s.getTrack());		// Column 1
-		setTitle(row, 2, s.getTitle());				// Column 2
-		setLenght(row, 3, s.getFormattedLength());	// Column 3
-		setAlbum(row, 4, s);						// Column 4
-		setArtist(row, 5, s);						// Column 5
+		setButtons(row, 0, s, new MyPlayHandler(row));	// Column 0
+		setTrackNumber(row, 1, s.getTrack());			// Column 1
+		setTitle(row, 2, s.getTitle());					// Column 2
+		setLenght(row, 3, s.getFormattedLength());		// Column 3
+		setAlbum(row, 4, s);							// Column 4
+		setArtist(row, 5, s);							// Column 5
 	}
 
 	@Override
@@ -80,7 +81,16 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 			grid.getRowFormatter().removeStyleName(playingIndex, "songselected");
 		}
 	}
-	
-	// TODO: add handlers
+
+	protected class MyPlayHandler implements PlayButtonHandler {
+		int row;
+		public MyPlayHandler(int row) {
+			this.row = row;
+		}
+		@Override
+		public void onPlay() {
+			Controller.play(row, playlistId);
+		}
+	}
 	
 }

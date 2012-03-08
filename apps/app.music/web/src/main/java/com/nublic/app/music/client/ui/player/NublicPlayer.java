@@ -13,6 +13,7 @@ import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
 import com.bramosystems.oss.player.core.event.client.LoadingProgressEvent;
 import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
@@ -197,24 +198,27 @@ public class NublicPlayer extends CustomAudioPlayer {
 
 	public void playSong(int index) {
 		// play(i); // This doesn't fire any event
-		if (lastStateEvent != null) {
-		int i = lastStateEvent.getItemIndex();
-			while (i != index) {
-				if (i > index) {
-					nublicPlayPrev();
-					i--;
-				} else {
-					nublicPlayNext();
-					i++;
-				}
-			}
-		} else {
+		int i;
+		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
+			// from the beginning of the playlist
+			i = 0;
 			nublicPlay();
+		} else {
+			i = lastStateEvent.getItemIndex();
+		}
+		while (i != index) {
+			if (i > index) {
+				nublicPlayPrev();
+				i--;
+			} else {
+				nublicPlayNext();
+				i++;
+			}
 		}
 	}
 	
 	// secure play methods
-	private void nublicPlayNext() {
+	public void nublicPlayNext() {
 		try {
 			if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
 				playNext();
@@ -225,7 +229,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 		}
 	}
 	
-	private void nublicPlayPrev() {
+	public void nublicPlayPrev() {
 		try {
 			if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
 				playPrevious();
@@ -236,7 +240,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 		}	
 	}
 	
-	private void nublicPlay() {
+	public void nublicPlay() {
 		try {
 			if (getPlaylistSize() != 0) {
 				playMedia();
@@ -244,6 +248,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 		} catch (Exception e) {
 			ErrorPopup.showError(e.getMessage());
 			e.printStackTrace();
+		}
+	}
+	
+	public void nublicStop() {
+		if (!playlist.isEmpty()) {
+			stopMedia();
 		}
 	}
 }
