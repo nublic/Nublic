@@ -38,7 +38,7 @@ public class AlbumSongList extends SongList {
 			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 1)
 	}
 	
-	// +++ Handlers +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++ Handlers for buttons +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	protected class MyAddAtEndHandler implements AddAtEndButtonHandler {
 		SongInfo song;
 		public MyAddAtEndHandler(SongInfo s) {
