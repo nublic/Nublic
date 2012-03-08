@@ -1,10 +1,15 @@
 package com.nublic.app.music.client.datamodel.messages;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.Tag;
+import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEvent;
+import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEventType;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
@@ -14,11 +19,9 @@ import com.nublic.util.messages.Message;
 //* Return: the new id of the collection
 public class AddTagMessage extends Message {
 	String name;
-	DataModel model;
 	
-	public AddTagMessage(String name, DataModel model) {
+	public AddTagMessage(String name) {
 		this.name = name;
-		this.model = model;
 	}
 	
 	@Override
@@ -32,8 +35,12 @@ public class AddTagMessage extends Message {
 		if (response.getStatusCode() == Response.SC_OK) {
 			String text = response.getText();
 
-			model.addTag(new Tag(text, name));
-			model.fireTagsHandlers();
+			List<Tag> involvedSet = new ArrayList<Tag>();
+			Tag t = new Tag(text, name);
+			involvedSet.add(new Tag(text, name));
+			TagsChangeEvent event = new TagsChangeEvent(TagsChangeEventType.TAGS_ADDED, involvedSet);
+			Controller.getModel().fireTagsHandlers(event);
+			Controller.getModel().getTagCache().put(text, t);
 		} else {
 			onError();
 		}

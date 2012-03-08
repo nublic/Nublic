@@ -24,7 +24,7 @@
 		<g:PushButton ui:field="addAtEndButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}">
 			<g:upFace image="{res.addAtEnd}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="playButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}">
+		<g:PushButton ui:field="playButton" addStyleNames="translucidButton playButton {style.nobackground} {style.leftmargin}">
 			<g:upFace image="{res.playMini}"/>
 		</g:PushButton>
 	</g:HorizontalPanel>

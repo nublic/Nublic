@@ -20,7 +20,7 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
@@ -51,15 +51,13 @@ public class ArtistWidget extends Composite {
 	@UiField FlowPanel albumsPanel;
 	@UiField HorizontalPanel labelAndButtonsPanel;
 	
-	DataModel model;
 	ArtistInfo artist;
 	String collectionId;
 	boolean loaded = false;
 
-	public ArtistWidget(DataModel model, ArtistInfo art, String collectionId) {
+	public ArtistWidget(ArtistInfo art, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		this.model = model;
 		this.artist = art;
 		this.collectionId = collectionId;
 		
@@ -118,7 +116,7 @@ public class ArtistWidget extends Composite {
 
 	// To handle answers to album messages and add album widgets
 	private void setMyselfAsAlbumHandler() {
-		model.askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
+		Controller.getModel().askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
 			@Override
 			public void onAlbumChange(List<AlbumInfo> answerList) {
 				for (AlbumInfo a : answerList) {

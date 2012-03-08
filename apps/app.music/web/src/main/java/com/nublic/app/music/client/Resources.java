@@ -13,6 +13,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/play_mini.png")
 	ImageResource playMini();
 	
+	@Source("images/pause_mini.png")
+	ImageResource pauseMini();
+	
 	@Source("images/edit.png")
 	ImageResource edit();
 	

@@ -22,26 +22,26 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.range.Range;
 
-public class SongList extends Composite implements ScrollHandler {
+public abstract class SongList extends Composite implements ScrollHandler {
 	private static SongListUiBinder uiBinder = GWT.create(SongListUiBinder.class);
 	interface SongListUiBinder extends UiBinder<Widget, SongList> { }
 	
 	// CSS Styles defined in the .xml file
 	interface SongStyle extends CssResource {
 		String alignright();
+		String alignmiddle();
 		String leftmargin();
 		String rightmargin();
 		String bottommargin();
@@ -49,46 +49,22 @@ public class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
-	DataModel model;
 	Widget scrollPanel;
-	String albumId;
-	String artistId;
-	String collectionId;
-	String playlistId = null;
-	int numberOfSongs;
-	SongListType songListType;
-	
+	int numberOfSongs;	
 	
 	SequenceIgnorer<Message> sendHelper = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
 	List<SongLocalizer> unloadedLocalizers;
 	HashMap<Integer, SongLocalizer> localizerIndex;
 	List<Range> askedRanges = new ArrayList<Range>();
 	MySongHandler songHandler;
-	MyPlaylistHandler playlistHandler;
-
-	
-	public SongList(DataModel model, String playlistId, int numberOfSongs, Widget scrollPanel) {
-		this(model, null, null, null, numberOfSongs, scrollPanel, SongListType.SONG_IN_PLAYLIST);
-		this.playlistId = playlistId;
-		playlistHandler = new MyPlaylistHandler();
-	}
-	
-	public SongList(DataModel model, String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
-		this(model, albumId, artistId, collectionId, numberOfSongs, scrollPanel, SongListType.SONG_IN_ALBUM);
-	}
 	
 	// With numberOfSongs == -1 we'll get it from first request
 	// Scroll panel which we in are in to handle lazy loading
-	public SongList(DataModel model, String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel, SongListType type) {
+	public SongList(int numberOfSongs, Widget scrollPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		this.model = model;
-		this.albumId = albumId;
-		this.artistId = artistId;
-		this.collectionId = collectionId;
 		this.numberOfSongs = numberOfSongs;
 		this.scrollPanel = scrollPanel;
-		this.songListType = type;
 
 		songHandler = new MySongHandler();
 		
@@ -107,14 +83,8 @@ public class SongList extends Composite implements ScrollHandler {
 			});
 		}
 	}
-	
-	private class MyPlaylistHandler implements PlaylistHandler {
-		@Override
-		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-			songHandler.onSongsChange(total, from, to, answerList);
-		}
-	}
-	
+
+	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private class MySongHandler implements SongHandler {
 		@Override
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
@@ -123,7 +93,7 @@ public class SongList extends Composite implements ScrollHandler {
 			} else {
 				int currentSong = from;
 				for (SongInfo s : answerList) {
-					setSong(currentSong, s);
+					_setSong(currentSong, s);
 					// Maybe it's more efficient to remove all localizers applying a filter from <= .getPosition <= to
 					SongLocalizer loc = localizerIndex.get(currentSong);
 					unloadedLocalizers.remove(loc);
@@ -170,14 +140,13 @@ public class SongList extends Composite implements ScrollHandler {
 		if (needToLoad) {
 			for (Range r : rangeToAsk) {
 				askedRanges.add(r);
-				if (playlistId == null) {
-					model.askForSongs(r.getFrom(), r.getTo(), albumId, artistId, collectionId, songHandler);
-				} else {
-					model.askForPlaylistSongs(r.getFrom(), r.getTo(), playlistId, playlistHandler);
-				}
+				askForsongs(r.getFrom(), r.getTo());
 			}
 		}
 	}
+	
+	// Get songs properly from model
+	public abstract void askForsongs(int from, int to);
 	
 	private Range findRangeFromPosition(int position) {
 		int unboundedFrom = position - Constants.PREVIOUS_SONGS_TO_ASK;
@@ -195,64 +164,35 @@ public class SongList extends Composite implements ScrollHandler {
 
 	// TODO: make a function to invalid askedRange if request fails
 	
-	public void setSong(int row, SongInfo s) {
+	// +++ Things related to ui fill +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	public void _setSong(int row, SongInfo s) {
 		grid.getRowFormatter().getElement(row).addClassName("translucidPanel");
-		switch (songListType) {
-		case SONG_IN_PLAYLIST:
-			setPlaylistSong(row, s);
-			break;
-		case SONG_IN_ALBUM:
-			setAlbumSong(row, s);
-			break;
-		}
+		setSong(row, s);
 	}
 	
-	private void prepareGrid() {
-		switch (songListType) {
-		case SONG_IN_PLAYLIST:
-			grid.resize(numberOfSongs, 6);
-			break;
-		case SONG_IN_ALBUM:
-			grid.resize(numberOfSongs, 2);
-			grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);
-			break;
-		}
-	}
-	
-	private void setAlbumSong(int row, SongInfo s) {
-		setTrackNumber(row, 0, s.getTrack()); 		// Column 0
-		setTitleLenght(row, 1, s);					// Column 1
-	}
+	public abstract void setSong(int row, SongInfo s);
+	protected abstract void prepareGrid();
 
-	private void setPlaylistSong(int row, SongInfo s) {
-		setButtons(row, 0, s);						// Column 0
-		setTrackNumber(row, 1, s.getTrack());		// Column 1
-		setTitle(row, 2, s.getTitle());				// Column 2
-		setLenght(row, 3, s.getFormattedLength());	// Column 3
-		setAlbum(row, 4, s);						// Column 4
-		setArtist(row, 5, s);						// Column 5
-	}
-
-	// Methods to fill the grid
-	private void setLenght(int row, int column, String formattedLength) {
+	// +++ Methods to fill the grid +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	protected void setLenght(int row, int column, String formattedLength) {
 		Label titleLabel = new Label(formattedLength);
 		titleLabel.getElement().addClassName(style.leftmargin());
 		grid.setWidget(row, column, titleLabel);
 	}
 
-	private void setTitle(int row, int column, String title) {
+	protected void setTitle(int row, int column, String title) {
 		Label titleLabel = new Label(title);
 		titleLabel.getElement().addClassName(style.leftmargin());
 		grid.setWidget(row, column, titleLabel);
 	}
 
-	private void setButtons(int row, int column, SongInfo s) {
+	protected void setButtons(int row, int column, SongInfo s) {
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
 		buttonLine.getElement().addClassName(style.rightmargin());
 		grid.setWidget(row, column, buttonLine);
 	}
 
-	private void setTrackNumber(int row, int column, int track) {
+	protected void setTrackNumber(int row, int column, int track) {
 		String trackStr = track == -1 ? "-" : String.valueOf(track);
 		Label trackNumLabel = new Label(trackStr);
 		trackNumLabel.getElement().addClassName(style.alignright());
@@ -264,7 +204,7 @@ public class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, capsule);
 	}
 	
-	private void setTitleLenght(int row, int column, SongInfo s) {
+	protected void setTitleLenght(int row, int column, SongInfo s) {
 		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
 		buttonLine.setAddAtEndButtonHandler(new MyAddAtEndHandler(s));
@@ -276,38 +216,36 @@ public class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, h);
 	}
 
-	private void setAlbum(int row, int column, SongInfo s) {
+	protected void setAlbum(int row, int column, SongInfo s) {
 		final Label albumLabel = new Label();
 		albumLabel.getElement().addClassName(style.leftmargin());
-		Controller.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
-//		model.getAlbumCache().addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
+		Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+		albumCache.addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
 				albumLabel.setText(v.getName());
 			}
 		});
-		Controller.getAlbumCache().obtain(s.getAlbumId());
-//		model.getAlbumCache().obtain(s.getAlbumId());
+		albumCache.obtain(s.getAlbumId());
 		grid.setWidget(row, column, albumLabel);
 	}
 	
-	private void setArtist(int row, int column, SongInfo s) {
+	protected void setArtist(int row, int column, SongInfo s) {
 		final Label artistLabel = new Label();
 		artistLabel.getElement().addClassName(style.leftmargin());
-		Controller.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
-//		model.getArtistCache().addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
+		Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+		artistCache.addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {
 				artistLabel.setText(v.getName());
 			}
 		});
-		Controller.getArtistCache().obtain(s.getArtistId());
-//		model.getArtistCache().obtain(s.getArtistId());
+		artistCache.obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
 	}
 	
-	// Handlers
-	private class MyAddAtEndHandler implements AddAtEndButtonHandler {
+	// +++ Handlers +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	protected class MyAddAtEndHandler implements AddAtEndButtonHandler {
 		SongInfo song;
 		public MyAddAtEndHandler(SongInfo s) {
 			this.song = s;
@@ -315,7 +253,7 @@ public class SongList extends Composite implements ScrollHandler {
 		
 		@Override
 		public void onAddAtEnd() {
-			model.addToCurrentPlaylist(song);
+			Controller.getModel().addToCurrentPlaylist(song);
 			Controller.getPlayer().addSongToPlaylist(song);
 		}
 	}

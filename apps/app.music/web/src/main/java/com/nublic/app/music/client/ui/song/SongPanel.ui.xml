@@ -16,14 +16,18 @@
 
 	<g:DockLayoutPanel width="100%" height="100%">
 		<g:north size='50'>
-			<g:VerticalPanel>
-			  <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
-				<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
-			  </g:HorizontalPanel>
-			  <g:HorizontalPanel>
-			  	<g:Label ui:field="byLabel" text="by:" addStyleNames="{style.space}"/>
-			  	<g:HorizontalPanel ui:field="subtitlePanel"/>
-			  </g:HorizontalPanel>
+			<g:VerticalPanel width="100%">
+				<g:HTMLPanel>
+					<div class="page-header" style="width: 100%;">
+						<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
+							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
+						</g:HorizontalPanel>
+					</div>
+				</g:HTMLPanel>
+				<g:HorizontalPanel>
+					<g:Label ui:field="byLabel" text="by:" addStyleNames="{style.space}"/>
+					<g:HorizontalPanel ui:field="subtitlePanel"/>
+				</g:HorizontalPanel>
 			</g:VerticalPanel>
 		</g:north>
 		<g:center>

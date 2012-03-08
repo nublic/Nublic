@@ -17,8 +17,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -35,27 +36,27 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
 
-	DataModel model;
 	String collectionId;
-	String collectionName;
 	Set<ArtistWidget> unloadedWidgets = new HashSet<ArtistWidget>();
 	List<ArtistInfo> artistList;
 	ConfirmDeletionPanel cdp = new ConfirmDeletionPanel(new DeleteHandler() {
 		@Override
 		public void onDelete() {
-			model.deleteTag(collectionId);
+			Controller.getModel().deleteTag(collectionId);
 			cdp.hide();
 		}
 	});
 
-	public ArtistPanel(DataModel model, String collectionId, String collectionName) {
+	public ArtistPanel(String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		this.model = model;
+
 		this.collectionId = collectionId;
-		this.collectionName = collectionName;
 		
-		titleLabel.setText(collectionName);
+		if (collectionId == null) {
+			titleLabel.setText(Constants.ALL_MUSIC_NAME);
+		} else {
+			titleLabel.setText(Controller.getModel().getTagCache().get(collectionId).getName());
+		}
 		
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
@@ -95,7 +96,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		this.artistList = artistList;
 		
 		for (ArtistInfo a : artistList) {
-			ArtistWidget aw = new ArtistWidget(model, a, collectionId);
+			ArtistWidget aw = new ArtistWidget(a, collectionId);
 			unloadedWidgets.add(aw); // for handling lazy scroll loading
 			mainPanel.add(aw);
 		}

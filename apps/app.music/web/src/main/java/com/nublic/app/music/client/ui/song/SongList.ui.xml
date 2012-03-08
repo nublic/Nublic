@@ -5,6 +5,9 @@
 		.alignright {
 			text-align: right;
 		}
+		.alignmiddle {
+			vertical-align: middle;
+		}
 		.leftmargin {
 			margin-left: 15px;
 		}
@@ -15,7 +18,7 @@
 			margin-bottom: 15px;
 		}
 	</ui:style>
-	<g:FlowPanel addStyleNames="{style.bottommargin}">
+	<g:FlowPanel addStyleNames="{style.bottommargin} {style.alignmiddle}">
 		<g:Grid ui:field="grid">
 		</g:Grid>
 	</g:FlowPanel>

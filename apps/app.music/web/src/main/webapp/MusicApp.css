@@ -89,3 +89,19 @@ h1 {
 .player-VolumeControl .track  {
 	background-color: #DDDDDD;
 }
+
+/** Styles to select playing song in a playlist */
+.songselected {
+}
+.songselected td {
+	color: #0064CD;
+	font-weight: bold !important;
+}
+.songselected .playButton {
+	opacity: 1 !important;
+}
+
+/** So a playlist can be bold if it's being played */
+.bold-link a {
+	font-weight: bold;
+}

@@ -4,8 +4,11 @@
 	xmlns:my="urn:import:com.nublic.app.music.client.ui"
 	xmlns:myplayer="urn:import:com.nublic.app.music.client.ui.player">
 	<ui:style>
-		.padding {
-			padding: 10px;
+		.leftPanelPadding {
+			padding: 10px 10px 30px 10px;
+		}
+		.leftpadding {
+			padding-left: 10px;
 		}
 		.scroll {
 	        overflow-x: hidden;
@@ -13,17 +16,9 @@
 		}
 	</ui:style>
 	<g:DockLayoutPanel>
-		<g:west size="170">
-			<g:FlowPanel addStyleNames="{style.padding}">
-				<my:PlaylistWidget ui:field="allMusic" name="All music"/>
-<!-- 			<g:Label text="Collections"/> -->
-				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Collections</h3></div></g:HTMLPanel>
-				<g:VerticalPanel ui:field="tagsPanel"/>
-				<my:AddTagWidget ui:field="addTagWidget"/>
-<!-- 			<g:Label text="Playlists"/> -->
-				<g:HTMLPanel><div class="page-header" style="margin-bottom: 6px;"><h3 style="line-height: 28px;">Playlists</h3></div></g:HTMLPanel>
-				<g:VerticalPanel ui:field="playlistsPanel"/>
-				<my:AddTagWidget ui:field="addPlaylistWidget"/>
+		<g:west size="220">
+			<g:FlowPanel addStyleNames="{style.leftPanelPadding}">
+				<my:NavigationPanel ui:field="navigationPanel"/>
 			</g:FlowPanel>
 		</g:west>
 		<g:north size="70">
@@ -32,9 +27,8 @@
 			</g:HorizontalPanel>
 		</g:north>
 		<g:center>
-<!-- 			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.scroll}"> -->
-			<g:SimplePanel ui:field="mainPanel">
-				<g:Label text="main panel"/>
+			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.leftpadding}">
+<!-- 				<g:Label text="main panel"/> -->
 			</g:SimplePanel>
 		</g:center>
 	</g:DockLayoutPanel>

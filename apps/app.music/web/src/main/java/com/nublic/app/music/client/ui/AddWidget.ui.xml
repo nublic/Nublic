@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.plusButton {
+			color: #000000;
+			font-size: 20px;
+			font-weight: bold;
+			line-height: 18px;
+			opacity: 0.05;
+			text-align: right;
+			text-shadow: 0 1px 0 #FFFFFF;
+		}
+		.plusButton:hover {
+			color: #000000;
+			cursor: pointer;
+			opacity: 0.4;
+			text-decoration: none;
+		}
+	</ui:style>
+	<g:HTMLPanel>
+		<ul class="nav nav-list">
+			<li>
+				<g:Anchor ui:field="addAnchor" addStyleNames="{style.plusButton}" text="+"/>
+				<g:TextBox ui:field="addTextBox" width="94%"/>
+			</li>
+		</ul>
+	</g:HTMLPanel>
+</ui:UiBinder> 

@@ -2,39 +2,62 @@ package com.nublic.app.music.client.datamodel;
 
 import java.util.List;
 
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
-import com.nublic.util.cache.Cache;
 
 public class Controller {
 	static NublicPlayer player;
-	static Cache<String, AlbumInfo> albumCache;
-	static Cache<String, ArtistInfo> artistCache;
-	DataModel model;
+	static DataModel model;
 	MainUi ui;
 	
+	// Depending on what is being played
+	static String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
+	
 	public Controller(DataModel model, MainUi ui) {
-		this.model = model;
 		this.ui = ui;
 		
 		Controller.setPlayer(ui.getPlayer());
-		Controller.setAlbumCache(model.getAlbumCache());
-		Controller.setArtistCache(model.getArtistCache());
+		Controller.setModel(model);
+		
+		addPlayHandler();
 	}
-	
+
 	// Getters and setters of singletones
 	public static NublicPlayer getPlayer() { return player; }
 	public static void setPlayer(NublicPlayer p) { player = p; }
-	public static Cache<String, AlbumInfo> getAlbumCache() { return albumCache; }
-	public static void setAlbumCache(Cache<String, AlbumInfo> albumCache) {	Controller.albumCache = albumCache; }
-	public static Cache<String, ArtistInfo> getArtistCache() { return artistCache; }
-	public static void setArtistCache(Cache<String, ArtistInfo> artistCache) { Controller.artistCache = artistCache; }
+	public static String getPlayingPlaylistId() { return playingPlaylistId; }
+	public static void setPlayingPlaylistId(String playingPlaylistId) { Controller.playingPlaylistId = playingPlaylistId; }
+	public static DataModel getModel() { return model; }
+	public static void setModel(DataModel model) { Controller.model = model; }
+
+	private void addPlayHandler() {
+		ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
+			@Override
+			public void onPlayStateChanged(PlayStateEvent event) {
+				switch (event.getPlayState()) {
+				case Paused:
+					ui.setPaused(Controller.getPlayingPlaylistId());
+            		break;
+            	case Started:
+					ui.setPlaying(Controller.getPlayingPlaylistId());
+            		break;
+            	case Stopped:
+					ui.setPlaying(null);
+            		break;
+            	case Finished:
+					ui.setPlaying(null);
+            		break;
+				}
+			}
+		});
+	}
 
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
@@ -97,7 +120,7 @@ public class Controller {
 	}
 
 	// Playlist
-	class MyPlaylistHandler implements PlaylistHandler {
+	class MyPlaylistHandler implements SongHandler {
 		String playlistId;
 		public MyPlaylistHandler(String playlistId) {
 			this.playlistId = playlistId;

@@ -14,11 +14,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
 public class AlbumPanel extends Composite {
@@ -30,30 +30,27 @@ public class AlbumPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	
 	List<AlbumInfo> albumList;
-	DataModel model;
 	String artistId;
 	String collectionId;
 
-	public AlbumPanel(DataModel model, String artistId, String collectionId) {
+	public AlbumPanel(String artistId, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.collectionId = collectionId;
-		this.model = model;
 		this.artistId = artistId;
 	
 		// Get artist info (null means all artists)
 		if (artistId == null) {
 			titleLabel.setText("All artists");
 		} else {
-			Controller.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
-//			model.getArtistCache().addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
 					titleLabel.setText(v.getName());
 				}
 			});
-			Controller.getArtistCache().obtain(artistId);
-//			model.getArtistCache().obtain(artistId);
+			artistCache.obtain(artistId);
 		}
 
 		// Create button line
@@ -69,7 +66,7 @@ public class AlbumPanel extends Composite {
 		this.albumList = albumList;
 
 		for (AlbumInfo a : albumList) {
-			AlbumWidget aw = new AlbumWidget(model, a, artistId, collectionId, mainPanel);
+			AlbumWidget aw = new AlbumWidget(a, artistId, collectionId, mainPanel);
 			mainPanel.add(aw);
 		}
 	}

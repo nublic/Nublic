@@ -15,7 +15,10 @@
 			margin-left: 15px;
 		}
 		.minheight {
-			min-height: 139px;
+			min-height: 128px;
+		}
+		.myh3andahalf {
+			font-size: 16px;
 		}
 	</ui:style>
 	
@@ -25,9 +28,7 @@
 		<!-- Artist display -->
 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
 			<g:Image ui:field="artistImage"/>
-			<g:HTMLPanel addStyleNames="{style.leftmargin}">
-				<h3><g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.rightmargin}"/></h3>
-			</g:HTMLPanel>
+			<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.leftmargin} {style.rightmargin} {style.myh3andahalf}"/>
 		</g:HorizontalPanel>
 		<!-- Albums display -->
 		<g:FlowPanel ui:field="albumsPanel" width="100%" addStyleNames="{style.padding}">

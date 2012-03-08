@@ -11,6 +11,9 @@
 		.topmargin {
 			margin-top: 15px;
 		}
+		.myh3andahalf {
+			font-size: 16px;
+		}
 	</ui:style>
 	
 	<g:FlowPanel>
@@ -18,7 +21,7 @@
 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
 			<g:Image ui:field="albumImage"/>
 			<g:HTMLPanel addStyleNames="{style.leftmargin}">
-				<h3><g:Hyperlink ui:field="albumNameLabel" text="Album name" addStyleNames="{style.rightmargin}"/></h3>
+				<g:Hyperlink ui:field="albumNameLabel" text="Album name" addStyleNames="{style.rightmargin} {style.myh3andahalf}"/>
 			</g:HTMLPanel>
 		</g:HorizontalPanel>
 

@@ -5,7 +5,7 @@
 	<ui:style>
 		.nobackground {
 			background: transparent;
-			padding: 5px 5px 0px 5px;
+			padding: 5px;
 			margin: 10px 2px 10px 2px;
 		}
 		.marginleft {
@@ -37,16 +37,16 @@
 	
 	<g:HorizontalPanel verticalAlignment="middle">
 		<!-- Player controls -->
-		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow} {style.marginleft}" ui:field="prevButton">
+		<g:PushButton ui:field="prevButton" height="24px" width="24px" addStyleNames="{style.nobackground} {style.smallround} {style.glow} {style.marginleft}">
 			<g:upFace image="{res.playerPrev}"/>
 		</g:PushButton>
-		<g:PushButton addStyleNames="{style.nobackground} {style.biground} {style.glow}" ui:field="playButton">
+		<g:PushButton ui:field="playButton" height="32px" width="32px" addStyleNames="{style.nobackground} {style.biground} {style.glow}">
 			<g:upFace image="{res.playerPlay}"/>
 		</g:PushButton>
-		<g:PushButton addStyleNames="{style.nobackground} {style.biground} {style.glow}" ui:field="pauseButton">
+		<g:PushButton ui:field="pauseButton" height="32px" width="32px" addStyleNames="{style.nobackground} {style.biground} {style.glow}">
 			<g:upFace image="{res.playerPause}"/>
 		</g:PushButton>
-		<g:PushButton addStyleNames="{style.nobackground} {style.smallround} {style.glow}" ui:field="nextButton">
+		<g:PushButton ui:field="nextButton" height="24px" width="24px" addStyleNames="{style.nobackground} {style.smallround} {style.glow}">
 			<g:upFace image="{res.playerNext}"/>
 		</g:PushButton>
 		
@@ -66,7 +66,7 @@
 				<b:VolumeControl ui:field="volumeControl"/>
 				<g:Label height="1em"/> <!-- To maintain alignment -->
 			</g:VerticalPanel>
-			<g:Image ui:field="albumArt" addStyleNames="{style.marginleft}"/>
+			<g:Image ui:field="albumArt" height="48px" width="48px" addStyleNames="{style.marginleft}"/>
 			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}">
 				<g:Label ui:field="artistLabel"/>
 				<g:Label ui:field="albumLabel"/>

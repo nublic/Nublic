@@ -19,7 +19,6 @@ import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.bramosystems.oss.player.core.event.client.VolumeChangeEvent;
 import com.bramosystems.oss.player.core.event.client.VolumeChangeHandler;
-import com.bramosystems.oss.player.core.event.client.PlayerStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
@@ -33,7 +32,8 @@ public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
-	int lastPlayIndex;
+//	int lastPlayIndex;
+	PlayStateEvent lastStateEvent;
 	
 	public static Widget create() {
 		try {
@@ -61,11 +61,13 @@ public class NublicPlayer extends CustomAudioPlayer {
 		addPlayerHandler();					// Clear the initial playlist
 	}
 	
+	public PlayStateEvent getLastEvent() { return lastStateEvent; }
+	
 	private void addPlayerHandler() {
 		addPlayerStateHandler(new PlayerStateHandler() {
 			@Override
 			public void onPlayerStateChanged(PlayerStateEvent event) {
-				if (event.getPlayerState() == State.Ready) {
+				if (event.getPlayerState() == PlayerStateEvent.State.Ready) {
 					clearPlaylist();
 					setVolume(1);
 				}
@@ -112,8 +114,8 @@ public class NublicPlayer extends CustomAudioPlayer {
             @Override
             public void onPlayStateChanged(PlayStateEvent event) {
             	SongInfo song = playlist.get(event.getItemIndex());
-            	lastPlayIndex = event.getItemIndex();
-            	switch(event.getPlayState()) {
+            	lastStateEvent = event;
+            	switch (event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
             		timer.cancel();
@@ -129,6 +131,8 @@ public class NublicPlayer extends CustomAudioPlayer {
             		break;
             	case Finished:
             		controls.setPlaying(false);
+            		controls.setCurrentProgress(0);
+            		controls.setSongInfo(null);
             		controls.setTotalTime(0);
             		timer.cancel();
             		break;
@@ -161,7 +165,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onNext() {
 				try {
-					if (lastPlayIndex != getPlaylistSize() - 1) {
+					if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
 						playNext();
 					}
 				} catch (PlayException e) {
@@ -174,7 +178,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPrev() {
 				try {
-					if (lastPlayIndex != 0) {
+					if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
 						playPrevious();
 					}
 				} catch (PlayException e) {
@@ -186,7 +190,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 		controls.addSeekChangeHandler(new SeekChangeHandler() {
 			@Override
 			public void onSeekChanged(SeekChangeEvent event) {
-				setPlayPosition(event.getSeekPosition() * playlist.get(lastPlayIndex).getLength() * 1000);
+				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
 			}
 		});
 		controls.addVolumeHandler(new VolumeChangeHandler() {

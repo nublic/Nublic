@@ -10,7 +10,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistHandler;
+import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.js.JSSong;
 import com.nublic.app.music.client.datamodel.js.JSSongResponse;
 import com.nublic.util.error.ErrorPopup;
@@ -23,11 +23,11 @@ public class PlaylistContentMessage extends Message {
 	int from;
 	int to;
 	String id;
-	PlaylistHandler ph;
+	SongHandler ph;
 	int targetScreen;
 	DataModel model;
 
-	public PlaylistContentMessage(int from, int to, String id, PlaylistHandler ph, int currentScreen, DataModel model) {
+	public PlaylistContentMessage(int from, int to, String id, SongHandler ph, int currentScreen, DataModel model) {
 		this.from = from;
 		this.to = to;
 		this.id = id;
