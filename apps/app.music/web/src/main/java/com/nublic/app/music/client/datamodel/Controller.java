@@ -38,16 +38,31 @@ public class Controller {
 	public static void setModel(DataModel model) { Controller.model = model; }
 	
 	// Utils to music reproduction
-	public static void addAtEnd(SongInfo s) {
+	public static void addAtEndOfCurrentPlaylist(SongInfo s) {
 		model.addToCurrentPlaylist(s);
 		player.addSongToPlaylist(s);
 	}
 	
+	
+	public static void setPlayingList(String playlistId) {
+		if (!playlistId.equals(playingPlaylistId)) {
+			player.clearNublicPlaylist();
+			playingPlaylistId = playlistId;
+			// TODO: load the new playlist
+		}
+	}
+	
+	// Plays a song from a collection
 	public static void play(SongInfo s) {
-//		model.clearCurrentPlaylist();
-//		player.clearSongs();
-		addAtEnd(s);
+		setPlayingList(Constants.CURRENT_PLAYLIST_ID);
+		addAtEndOfCurrentPlaylist(s);
 		player.playSong(player.getNublicPlaylistSize() -1);
+	}
+	
+	// Plays a song from a playlist
+	public static void play(int row, String playlistId) {
+		setPlayingList(playlistId);
+		player.playSong(row);
 	}
 
 	private void addPlayHandler() {

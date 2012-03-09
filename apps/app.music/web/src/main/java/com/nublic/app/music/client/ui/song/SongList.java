@@ -27,6 +27,7 @@ import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
@@ -198,9 +199,11 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, titleLabel);
 	}
 
-	protected void setButtons(int row, int column, SongInfo s) {
+	protected void setButtons(int row, int column, SongInfo s, PlayButtonHandler pbh, DeleteButtonHandler dbh) {
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
 		buttonLine.getElement().addClassName(style.rightmargin());
+		buttonLine.setPlayButtonHandler(pbh);
+		buttonLine.setDeleteButtonHandler(dbh);
 		grid.setWidget(row, column, buttonLine);
 	}
 
@@ -257,8 +260,5 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		artistCache.obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
 	}
-	
-
-
 
 }
