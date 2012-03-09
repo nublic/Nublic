@@ -71,6 +71,11 @@
 			<artifactId>bst-player-api</artifactId>
 			<version>1.3</version>
 		</dependency>
+		<dependency>
+			<groupId>gwt-incubator</groupId>
+			<artifactId>gwt-slider-bar</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
