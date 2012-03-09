@@ -16,11 +16,11 @@ import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.bramosystems.oss.player.core.event.client.VolumeChangeEvent;
 import com.bramosystems.oss.player.core.event.client.VolumeChangeHandler;
-import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
@@ -203,8 +203,8 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-		// play(i); // This doesn't fire any event
-		// TODO: invent something to make this properly
+//		play(index); // This doesn't fire any event
+		// TODO: change to Alex solution when ready
 		int i;
 		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
 			// from the beginning of the playlist
