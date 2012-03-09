@@ -50,11 +50,22 @@ public class Controller {
 		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				setPlayingList(Constants.CURRENT_PLAYLIST_ID);
 				model.clearCurrentPlaylist();
 				model.addToCurrentPlaylist(answerList);
 				player.clearNublicPlaylist();
 				player.addSongsToPlaylist(answerList);
 				player.nublicPlay();
+			}
+		}, false);
+	}
+	
+	public static void addAtEnd(String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				model.addToCurrentPlaylist(answerList);
+				player.addSongsToPlaylist(answerList);
 			}
 		}, false);
 	}

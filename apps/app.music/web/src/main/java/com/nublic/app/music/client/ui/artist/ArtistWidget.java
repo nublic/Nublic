@@ -142,7 +142,7 @@ public class ArtistWidget extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				// TODO: addAtEnd
+				Controller.addAtEnd(artist.getId(), null, collectionId);
 			}
 		});
 	}

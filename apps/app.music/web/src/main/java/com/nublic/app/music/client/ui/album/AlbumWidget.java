@@ -110,7 +110,7 @@ public class AlbumWidget extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				// TODO: addAtEnd
+				Controller.addAtEnd(artistId, album.getId(), collectionId);
 			}
 		});
 	}

@@ -113,7 +113,7 @@ public class SongPanel extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				// TODO: addAtEnd
+				Controller.addAtEnd(null, albumId, inCollection);
 			}
 		});
 	}
