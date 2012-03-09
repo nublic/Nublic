@@ -299,7 +299,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   }
   
   def do_chown(file: File, user: User) = {
-    user.assignFile(file)
+    user.assignFile(file, true)
   }
   
   post("/delete") {
@@ -387,7 +387,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
             throw new Exception("a file with that name already exists")
           } else {
             new_folder.mkdir()
-            user.assignFile(new_folder)
+            user.assignFile(new_folder, true)
             halt(200)
           }
         } 
@@ -410,9 +410,9 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
         if (new_file.exists()) {
           throw new Exception("a file with that name already exists")
         } else {
-          FileUtils.touch(new_file)
-          user.assignFile(new_file)
+          // FileUtils.touch(new_file)
           file.write(new_file)
+          user.assignFile(new_file, true)
           halt(200)
         }
       } 

@@ -221,6 +221,10 @@ public class UploadAction extends ActionWidget implements Handler {
 		
 		SWFUpload uWidget = builder.build();
 		hack.add(uWidget);
+		// Special fix for Google Chrome
+		Element object = child.getFirstChildElement();
+		object.setAttribute("classid", "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000");
+		// Return our beloved widget
 		return uWidget;
 	}
 	
