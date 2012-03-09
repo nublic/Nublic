@@ -122,7 +122,7 @@ public class SongPanel extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.play(null, albumId, inCollection);
 			}
 		});
 	}

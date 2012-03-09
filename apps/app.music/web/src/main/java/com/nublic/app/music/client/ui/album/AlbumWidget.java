@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -37,10 +38,14 @@ public class AlbumWidget extends Composite {
 	@UiField Image albumImage;
 	@UiField FlowPanel songsPanel;
 	AlbumInfo album;
+	String artistId;
+	String collectionId;
 	
 	public AlbumWidget(AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
-		album = a;
+		this.album = a;
+		this.artistId = artistId;
+		this.collectionId = collectionId;
 
 		setImage();
 
@@ -114,7 +119,7 @@ public class AlbumWidget extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.play(artistId, album.getId(), collectionId);
 			}
 		});
 	}

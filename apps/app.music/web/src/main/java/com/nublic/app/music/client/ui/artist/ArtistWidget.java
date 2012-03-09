@@ -151,7 +151,7 @@ public class ArtistWidget extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.play(artist.getId(), null, collectionId);
 			}
 		});
 	}

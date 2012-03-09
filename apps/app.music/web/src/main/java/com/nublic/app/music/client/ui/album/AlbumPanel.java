@@ -85,7 +85,7 @@ public class AlbumPanel extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.play(artistId, null, collectionId);
 			}
 		});
 	}

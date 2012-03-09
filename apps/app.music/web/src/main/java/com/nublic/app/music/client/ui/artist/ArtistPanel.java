@@ -134,7 +134,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.play(null, null, collectionId);
 			}
 		});
 	}
