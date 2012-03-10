@@ -38,18 +38,41 @@ public class Controller {
 	public static void setModel(DataModel model) { Controller.model = model; }
 	
 	// Utils to music reproduction
-	public static void addAtEndOfCurrentPlaylist(SongInfo s) {
-		model.addToCurrentPlaylist(s);
-		player.addSongToPlaylist(s);
-	}
-	
-	
 	public static void setPlayingList(String playlistId) {
 		if (!playlistId.equals(playingPlaylistId)) {
 			player.clearNublicPlaylist();
 			playingPlaylistId = playlistId;
 			// TODO: load the new playlist
 		}
+	}
+
+	public static void play(String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				setPlayingList(Constants.CURRENT_PLAYLIST_ID);
+				model.clearCurrentPlaylist();
+				model.addToCurrentPlaylist(answerList);
+				player.clearNublicPlaylist();
+				player.addSongsToPlaylist(answerList);
+				player.nublicPlay();
+			}
+		}, false);
+	}
+	
+	public static void addAtEnd(String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				model.addToCurrentPlaylist(answerList);
+				player.addSongsToPlaylist(answerList);
+			}
+		}, false);
+	}
+
+	public static void addAtEndOfCurrentPlaylist(SongInfo s) {
+		model.addToCurrentPlaylist(s);
+		player.addSongToPlaylist(s);
 	}
 	
 	// Plays a song from a collection

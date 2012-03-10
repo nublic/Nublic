@@ -76,7 +76,7 @@ public class AlbumPanel extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				// TODO: addAtEnd
+				Controller.addAtEnd(artistId, null, collectionId);
 			}
 		});
 	}
@@ -85,7 +85,7 @@ public class AlbumPanel extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.play(artistId, null, collectionId);
 			}
 		});
 	}

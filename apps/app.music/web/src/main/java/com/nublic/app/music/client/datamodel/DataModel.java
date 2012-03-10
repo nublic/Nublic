@@ -222,7 +222,7 @@ public class DataModel {
 	public void addToCurrentPlaylist(SongInfo s) {
 		currentPlaylist.add(s);
 	}
-	
+
 	public void addToCurrentPlaylist(List<SongInfo> songList) {
 		for (SongInfo s : songList) {
 			addToCurrentPlaylist(s);

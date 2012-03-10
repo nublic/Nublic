@@ -184,6 +184,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 		}
 	}
 	
+	public void addSongsToPlaylist(List<SongInfo> songList) {
+		for (SongInfo s : songList) {
+			addSongToPlaylist(s);
+		}
+	}
+	
 	public int getNublicPlaylistSize() {
 		return playlist.size();
 	}
@@ -198,6 +204,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 
 	public void playSong(int index) {
 		// play(i); // This doesn't fire any event
+		// TODO: invent something to make this properly
 		int i;
 		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
 			// from the beginning of the playlist
