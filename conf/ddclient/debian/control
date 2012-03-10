@@ -1,0 +1,16 @@
+Source: nublic-ddclient-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-ddclient-config
+Architecture: all
+Depends: ${misc:Depends}, ddclient 
+Replaces: 
+Description: Nublic ddclient configuration files
+ Required Nublic configuration for ddclient.
+ Include the needed configuration for freeDNS and no-ip.com
+
