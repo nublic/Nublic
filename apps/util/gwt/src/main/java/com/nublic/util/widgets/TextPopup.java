@@ -50,4 +50,9 @@ public class TextPopup extends Popup {
 	public void setText(String text) {
 		box.setText(text);
 	}
+	
+	public void selectAndFocus() {
+		box.selectAll();
+		box.setFocus(true);
+	}
 }

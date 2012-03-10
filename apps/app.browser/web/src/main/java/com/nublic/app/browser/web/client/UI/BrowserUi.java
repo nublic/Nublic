@@ -70,6 +70,7 @@ import com.nublic.app.browser.web.client.UI.actions.DeleteAction;
 import com.nublic.app.browser.web.client.UI.actions.FolderDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.NewFolderAction;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
+import com.nublic.app.browser.web.client.UI.actions.RenameAction;
 import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
@@ -226,6 +227,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		upAction = new UploadAction(this);
 		actionsPanel.add(upAction);
 		actionsPanel.add(new SetDownloadAction(this));
+		actionsPanel.add(new RenameAction(this));
 		actionsPanel.add(new CutAction(this));
 		actionsPanel.add(new CopyAction(this));
 		actionsPanel.add(new DeleteAction(this));
@@ -919,6 +921,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		});
 		
 		popup.center();
+		popup.selectAndFocus();
 	}
 	
 	public void showUploadPopup() {
@@ -928,6 +931,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			@Override
 			public void onClicked(PopupButton button, ClickEvent event) {
 				UploadAction.doUpload(getShowingPath(), popup.getFileUpload(), BrowserUi.this);
+				popup.hide();
 			}
 		});
 		popup.center();
@@ -968,7 +972,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 								upload.setButtonDisabled(upAction.getAvailability() != Availability.AVAILABLE);
 								uploadReady = true;
 							}
-						}, "24px", "0");
+						}, "24px", "0")._2;
 		}
 	}
 }

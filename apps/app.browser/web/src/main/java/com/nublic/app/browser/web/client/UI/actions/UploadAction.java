@@ -35,6 +35,7 @@ import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.PostRedirectHelper;
 import com.nublic.util.messages.SequenceHelper;
+import com.nublic.util.tuples.Pair;
 import com.nublic.util.widgets.BootstrapProgressBar;
 
 public class UploadAction extends ActionWidget implements Handler {
@@ -53,6 +54,7 @@ public class UploadAction extends ActionWidget implements Handler {
 			+ "cursor: pointer; }";
 	
 	BrowserUi ui;
+	Element childElement = null;
 	SWFUpload upload = null;
 	boolean uploadReady = false;
 
@@ -69,13 +71,13 @@ public class UploadAction extends ActionWidget implements Handler {
 	
 	static int build_widget_z_index = 20;
 	
-	public static SWFUpload buildUploadWidget(final Element e, final BrowserUi ui,
+	public static Pair<Element, SWFUpload> buildUploadWidget(final Element e, final BrowserUi ui,
 			final int width, final int height, final String text, final String style, final String imageUrl,
 			final SWFUploadLoadedHandler readyH) {
 		return buildUploadWidget(e, ui, width, height, text, style, imageUrl, readyH, "0", "0");
 	}
 	
-	public static SWFUpload buildUploadWidget(final Element e, final BrowserUi ui,
+	public static Pair<Element, SWFUpload> buildUploadWidget(final Element e, final BrowserUi ui,
 			final int width, final int height, final String text, final String style, final String imageUrl,
 			final SWFUploadLoadedHandler readyH, String left, String top) {
 		if (!e.getAttribute("style").contains("position: relative;")) {
@@ -225,21 +227,23 @@ public class UploadAction extends ActionWidget implements Handler {
 		Element object = child.getFirstChildElement();
 		object.setAttribute("classid", "clsid:d27cdb6e-ae6d-11cf-96b8-444553540000");
 		// Return our beloved widget
-		return uWidget;
+		return new Pair<Element, SWFUpload>(child, uWidget);
 	}
 	
 
 	@Override
 	public void onAttachOrDetach(AttachEvent event) {
 		if (event.isAttached()) {
-			upload = buildUploadWidget(this.getElement(), ui, 150, 36,
-						"                                 ", FLASH_BUTTON_STYLE, null, new SWFUploadLoadedHandler() {
-							@Override
-							public void onSWFUploadLoaded() {
-								changeTextButtonState(_getAvailability());
-								uploadReady = true;
-							}
-						});
+			Pair<Element, SWFUpload> e = buildUploadWidget(this.getElement(), ui, 150, 36,
+					"                                 ", FLASH_BUTTON_STYLE, null, new SWFUploadLoadedHandler() {
+				@Override
+				public void onSWFUploadLoaded() {
+					changeTextButtonState(_getAvailability());
+					uploadReady = true;
+				}
+			});
+			upload = e._2;
+			childElement = e._1;
 		}
 	}
 	
@@ -277,7 +281,11 @@ public class UploadAction extends ActionWidget implements Handler {
 	public Availability getAvailability() {
 		Availability a = _getAvailability();
 		if (uploadReady) {
-			changeTextButtonState(a);
+			upload.setButtonDisabled(a != Availability.AVAILABLE);
+		}
+		if (childElement != null) {
+			String zIndex = (a != Availability.AVAILABLE) ? "-100" : "100";
+			childElement.setAttribute("style", "position: absolute; left: 0; top: 0; z-index: " + zIndex + "; width: 150px; height: 36px;");
 		}
 		return a;
 	}
