@@ -35,11 +35,23 @@
 		.smartbutton {
 			padding: 1px;
 		}
+		.parentForHover .childForHoverNotSelected {
+	        display: none;
+	    }
+	    .parentForHover .childForHoverSelected {
+	        display: block !important;
+	    }
+	    .parentForHover:hover .childForHoverNotSelected {
+	        display: block;
+	    }
+	    .parentForHover:hover .childForHoverSelected {
+            display: block;
+        }
 	</ui:style>
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
 
 	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}">
-		<g:AbsolutePanel width="96px" height="96px">
+		<g:AbsolutePanel width="96px" height="96px" addStyleNames="{style.parentForHover}">
 			<g:at left='0' top='0'>
 				<g:VerticalPanel ui:field="imagePanel" verticalAlignment="middle" horizontalAlignment="center" width="96px" height="96px">
 		<!-- 			<g:Hyperlink ui:field="fileThumbnail" styleName="{style.maxheight}"/> -->
@@ -47,12 +59,12 @@
 				</g:VerticalPanel>
 			</g:at>
 			<g:at left='0' top='0' width="20px">
-				<g:CheckBox ui:field="selectedBox" width="20px">
+				<g:CheckBox ui:field="selectedBox" width="20px"  addStyleNames="{style.childForHoverNotSelected}">
 				</g:CheckBox>
 			</g:at>
 			<g:at left='74' top='74'> <!-- 96px of the thumbnail minus 16px of the download image -->
 <!-- 				<g:PushButton ui:field="downloadButton" addStyleNames="{style.nobackground}"> -->
-				<g:PushButton ui:field="downloadButton" addStyleNames="{style.smartbutton}">
+				<g:PushButton ui:field="downloadButton" addStyleNames="{style.smartbutton} {style.childForHoverNotSelected}">
 					<g:upFace image="{res.download}"/>
 				</g:PushButton>
 			</g:at>

@@ -45,13 +45,14 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	    String maxheight();
 	    String ellipcenter();
 	    String shadowed();
+	    String childForHoverNotSelected();
+	    String childForHoverSelected();
 	}
 
 	FileNode node;
 	String path;
 	String inPath;
 	String url = null;
-	boolean mouseOver = false;
 	boolean hasPreview = false;
 	Image fileImage;
 	Hyperlink fileThumbnail;
@@ -132,8 +133,8 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			textPanel.add(fileName);
 			
 			// Add handlers
-			fileThumbnail.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
-			fileName.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
+			// fileThumbnail.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
+			// fileName.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
 		} else {
 			// Create the alternative widgets (which are not links)
 //			altThumbnail = new Image(url);
@@ -150,11 +151,9 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			textPanel.add(altName);
 			
 			// Add handlers
-			altThumbnail.addMouseDownHandler(new MyMouseEventHandler());
-			altName.addMouseDownHandler(new MyMouseEventHandler());
+			// altThumbnail.addMouseDownHandler(new MyMouseEventHandler());
+			// altName.addMouseDownHandler(new MyMouseEventHandler());
 		}
-		addMouseOverHandler(new MyMouseEventHandler());
-		addMouseOutHandler(new MyMouseEventHandler());
 		// This doesn't work.. no reason
 		// (making widgets draggables makes their children to not receive onMouseUp events, nor onClick)
 //		addMouseUpHandler(new MouseUpHandler() {
@@ -164,13 +163,22 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 //				mouseOverActions();
 //			}
 //		});
-		selectedBox.setVisible(false);
+		// selectedBox.setVisible(false);
 		selectedBox.setValue(false, false);
-		downloadButton.setVisible(false);
+		// downloadButton.setVisible(false);
 		
 		selectedBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 			@Override
 			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				// Set CSS style
+				if (event.getValue()) {
+					selectedBox.removeStyleName(style.childForHoverNotSelected());
+					selectedBox.addStyleName(style.childForHoverSelected());
+				} else {
+					selectedBox.removeStyleName(style.childForHoverSelected());
+					selectedBox.addStyleName(style.childForHoverNotSelected());
+				}
+				// Notify other elements
 				for (CheckedChangeHandler handler : chekedChangeHandlers) {
 					handler.onChekedChange(FileWidget.this);
 				}
@@ -247,12 +255,12 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
 		// TODO: Regression. this is not called anymore, using onmousedown (reported to library developer)
-		SingleDownloadAction.download(path);
+		SingleDownloadAction.download(path, isFolder());
 	}
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonMouseDown(MouseDownEvent event) {
-		SingleDownloadAction.download(path);
+		SingleDownloadAction.download(path, isFolder());
 	}
 	
 	public void setCut() {
@@ -279,51 +287,17 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return addDomHandler(handler, MouseOutEvent.getType());
 //		return addDomHandler(handler, LoseCaptureEvent.getType());
 	}
-
-	public class MyMouseEventHandler implements MouseOverHandler, MouseOutHandler, MouseDownHandler {
-		public void onMouseOver(final MouseOverEvent moe) {
-//			System.out.println("mouse over");
-			mouseOverActions();
-		}
-
-		public void onMouseOut(final MouseOutEvent moe) {
-//			System.out.println("mouse out");
-			mouseOutActions();
-		}
-		
-		@Override
-		public void onMouseDown(MouseDownEvent event) {
-//			System.out.println("mouse down");
-			mouseOutActions();
-		}
-	}
-	
-	public void mouseOverActions() {
-		selectedBox.setVisible(true);
-		downloadButton.setVisible(true);
-		mouseOver = true;
-//		widget.addStyleName("my-mouse-over");
-	}
-	
-	public void mouseOutActions() {
-		downloadButton.setVisible(false);
-		if (!selectedBox.getValue()) {
-			// To maintain visible the boxes 
-			selectedBox.setVisible(false);
-		}
-		mouseOver = false;
-//		widget.removeStyleName("my-mouse-over");
-	}
 	
 	public boolean isChecked() {
 		return selectedBox.getValue();
 	}
 	
 	public void setChecked(boolean checked) {
-		if (!mouseOver) {
+		/*if (!mouseOver) {
 			selectedBox.setVisible(checked);
-		}
+		}*/
 		selectedBox.setValue(checked);
+		
 	}
 	
 	// To proper handling of FileWidgets lists
@@ -351,6 +325,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 //		}
 		return addDomHandler(handler, MouseDownEvent.getType());
 	}
+
 	
 //	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
 //		return addDomHandler(handler, MouseUpEvent.getType());
