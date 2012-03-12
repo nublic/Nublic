@@ -24,10 +24,6 @@ import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.song.AlbumSongList;
 
-//GET /album-art/:album-id
-//* Retrieve the image associated with an album
-//* Return: the raw image data
-
 public class AlbumWidget extends Composite {
 	private static AlbumWidgetUiBinder uiBinder = GWT.create(AlbumWidgetUiBinder.class);
 	interface AlbumWidgetUiBinder extends UiBinder<Widget, AlbumWidget> { }

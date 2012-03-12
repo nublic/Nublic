@@ -32,11 +32,15 @@ public class AlbumInfo {
 	public List<String> getArtistList() { return artistList; }
 	
 	public String getImageUrl() {
+		return AlbumInfo.getAlbumImageUrl(id);
+	}
+	
+	public static String getAlbumImageUrl(String albumId) {
 		// building imageUrl as /album-art/:album-id
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
-		imageUrl.append(id);
+		imageUrl.append(albumId);
 		imageUrl.append(".png");
 		
 		return imageUrl.toString();

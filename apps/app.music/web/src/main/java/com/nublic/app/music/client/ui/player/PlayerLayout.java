@@ -13,7 +13,6 @@ import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -143,12 +142,6 @@ public class PlayerLayout extends Composite {
 		if (albumId == null) {
 			albumArt.setVisible(false);
 		} else {
-			// building imageUrl as /album-art/:album-id
-			StringBuilder imageUrl = new StringBuilder();
-			imageUrl.append(GWT.getHostPageBaseURL());
-			imageUrl.append("server/album-art/");
-			imageUrl.append(albumId);
-	
 			albumArt.addErrorHandler(new ErrorHandler() {
 				@Override
 				public void onError(ErrorEvent event) {
@@ -162,8 +155,7 @@ public class PlayerLayout extends Composite {
 					albumArt.setVisible(true);					
 				}
 			});
-			
-			albumArt.setUrl(URL.encode(imageUrl.toString()));
+			albumArt.setUrl(AlbumInfo.getAlbumImageUrl(albumId));
 		}
 	}
 

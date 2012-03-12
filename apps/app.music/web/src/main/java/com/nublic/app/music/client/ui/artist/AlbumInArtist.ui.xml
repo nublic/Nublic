@@ -22,7 +22,7 @@
 
 	<g:VerticalPanel width="90px" horizontalAlignment="center" addStyleNames="{style.aligntop}">
 		<g:HTMLPanel addStyleNames="{style.padding}">
-			<g:Image ui:field="albumImage"/>
+			<g:Image ui:field="albumImage" width="64px" height="64px"/>
 		</g:HTMLPanel>
 		<g:Hyperlink ui:field="albumNameLabel" width="85px" addStyleNames="{style.center} {style.marginbottom}" text="Album name"/>
 	</g:VerticalPanel>
