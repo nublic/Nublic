@@ -39,6 +39,7 @@ initialize() {
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/bst-player/bst-player-api-1.3-1.jar" com.bramosystems.oss.player bst-player-api 1.3-1
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
@@ -48,6 +49,7 @@ package_and_install() {
     echo
     echo "PACKAGING AND INSTALLING IN MAVEN " $1
     cd "$1"
+    ${MAVEN} clean
     ${MAVEN} install
     cd "${INITIAL_DIR}"
 }
