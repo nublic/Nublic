@@ -64,6 +64,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/edit_paste.png")
 	ImageResource editPaste();
 	
+	@Source("images/edit_rename.png")
+	ImageResource editRename();
+	
 	@Source("images/filter.png")
 	ImageResource filter();
 	

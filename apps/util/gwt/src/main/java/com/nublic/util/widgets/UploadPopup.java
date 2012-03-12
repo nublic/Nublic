@@ -16,7 +16,7 @@ public class UploadPopup extends Popup {
 		box.setHeight("100%");
 		this.addWidget(box);
 		
-		setInnerHeight(130);
+		setInnerHeight(140);
 		addButtonHandler(PopupButton.CLOSE, POPUP_CLOSE);
 		addButtonHandler(PopupButton.CANCEL, POPUP_CLOSE);
 	}

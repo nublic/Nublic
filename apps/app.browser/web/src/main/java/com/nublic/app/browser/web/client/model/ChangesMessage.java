@@ -77,7 +77,8 @@ public class ChangesMessage extends Message {
 					foldersChanged = true;
 				}
 			}
-			for (FileNode n : deletedFiles) {
+			// We don't receive mime information for deleted files
+			/*for (FileNode n : deletedFiles) {
 				if (n.getMime().equals(Constants.FOLDER_MIME)) {
 					FolderNode childN = showingNode.getChild(n.getName());
 					if (childN != null) {
@@ -85,7 +86,7 @@ public class ChangesMessage extends Message {
 						foldersChanged = true;
 					}
 				}
-			}
+			}*/
 			if (foldersChanged) {
 				model.fireFolderUpdateHandlers(showingNode);
 			}

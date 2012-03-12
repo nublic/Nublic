@@ -117,17 +117,17 @@ public class User {
 		return folder.getOwner().getUsername().equals(username);
 	}
 	
-	public void assignFile(File file) throws FileQueryException, IOException {
-		this.assignFile(file.getAbsolutePath());
+	public void assignFile(File file, boolean touch_after) throws FileQueryException, IOException {
+		this.assignFile(file.getAbsolutePath(), touch_after);
 	}
 	
-	public void assignFile(String path) throws FileQueryException, IOException {
+	public void assignFile(String path, boolean touch_after) throws FileQueryException, IOException {
 		if (!path.startsWith(DATA_ROOT + "/"))
 			throw new FileQueryException("You are not allowed to change that path's owner");
 		
 		String path_to_send = path.replace(DATA_ROOT, "");
 		try {
-			Singletons.getUsers().assign_file(username, path_to_send);
+			Singletons.getUsers().assign_file(username, path_to_send, touch_after);
 		} catch (DBusException e) {
 			throw new FileQueryException();
 		}
