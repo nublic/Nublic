@@ -51,4 +51,16 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/volume.png")
 	ImageResource volume();
+	
+	@Source("images/volume_low.png")
+	ImageResource volumeLow();
+	
+	@Source("images/mute.png")
+	ImageResource mute();
+	
+	@Source("images/repeat.png")
+	ImageResource repeat();
+	
+	@Source("images/shufle.png")
+	ImageResource shufle();
 }

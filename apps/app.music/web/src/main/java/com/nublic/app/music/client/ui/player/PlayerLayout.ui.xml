@@ -4,10 +4,17 @@
 	xmlns:b="urn:import:com.bramosystems.oss.player.core.client.skin"
 	xmlns:c="urn:import:com.kiouri.sliderbar.client.solution.simplevertical">
 	<ui:style>
-		.nobackground {
+		.background {
 			background: transparent;
 			padding: 5px;
 			margin: 10px 2px 10px 2px;
+		}
+		.nobackground {
+			background: transparent;
+			margin-left: 5px;
+			border-style: none;
+			box-shadow: none;
+			padding: 0;
 		}
 		.marginleft {
 			margin-left: 10px;
@@ -38,16 +45,16 @@
 	
 	<g:HorizontalPanel verticalAlignment="middle">
 		<!-- Player controls -->
-		<g:PushButton ui:field="prevButton" height="24px" width="24px" addStyleNames="{style.nobackground} {style.smallround} {style.glow} {style.marginleft}">
+		<g:PushButton ui:field="prevButton" height="24px" width="24px" addStyleNames="{style.background} {style.smallround} {style.glow} {style.marginleft}">
 			<g:upFace image="{res.playerPrev}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="playButton" height="32px" width="32px" addStyleNames="{style.nobackground} {style.biground} {style.glow}">
+		<g:PushButton ui:field="playButton" height="32px" width="32px" addStyleNames="{style.background} {style.biground} {style.glow}">
 			<g:upFace image="{res.playerPlay}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="pauseButton" height="32px" width="32px" addStyleNames="{style.nobackground} {style.biground} {style.glow}">
+		<g:PushButton ui:field="pauseButton" height="32px" width="32px" addStyleNames="{style.background} {style.biground} {style.glow}">
 			<g:upFace image="{res.playerPause}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="nextButton" height="24px" width="24px" addStyleNames="{style.nobackground} {style.smallround} {style.glow}">
+		<g:PushButton ui:field="nextButton" height="24px" width="24px" addStyleNames="{style.background} {style.smallround} {style.glow}">
 			<g:upFace image="{res.playerNext}"/>
 		</g:PushButton>
 		
@@ -61,13 +68,27 @@
 			</g:HorizontalPanel>
 		</g:VerticalPanel>
 
-		<!-- Info panel -->
+		<!-- Volume panel -->
 		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle">
 			<g:VerticalPanel width="70px">
-<!-- 				<b:VolumeControl ui:field="volumeControl"/> -->
-<!-- 				<g:Label height="1em"/> To maintain alignment -->
-				<c:SliderBarSimpleVertical ui:field="volumeControl"/>
+				<g:HorizontalPanel>
+					<g:PushButton height="16px" width="16px" addStyleNames="{style.nobackground}">
+						<g:upFace image="{res.shufle}"/>
+					</g:PushButton>
+					<g:PushButton height="16px" width="16px" addStyleNames="{style.nobackground}">
+						<g:upFace image="{res.repeat}"/>
+					</g:PushButton>
+					<g:PushButton height="16px" width="16px" addStyleNames="{style.nobackground}">
+						<g:upFace image="{res.volume}"/>
+					</g:PushButton>
+				</g:HorizontalPanel>
+				<g:Label height="1em"/>  <!-- To maintain alignment -->
 			</g:VerticalPanel>
+			<c:SliderBarSimpleVertical ui:field="volumeControl"/>
+		</g:HorizontalPanel>
+		
+		<!-- Info panel -->
+		<g:HorizontalPanel verticalAlignment="middle">	
 			<g:Image ui:field="albumArt" height="48px" width="48px" addStyleNames="{style.marginleft}"/>
 			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}">
 				<g:Label ui:field="artistLabel"/>
