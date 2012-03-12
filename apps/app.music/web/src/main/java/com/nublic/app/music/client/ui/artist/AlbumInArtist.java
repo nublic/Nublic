@@ -3,7 +3,6 @@ package com.nublic.app.music.client.ui.artist;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -38,20 +37,13 @@ public class AlbumInArtist extends Composite {
 	}
 	
 	private void setImage() {
-		// building imageUrl as /album-art/:album-id
-		StringBuilder imageUrl = new StringBuilder();
-		imageUrl.append(GWT.getHostPageBaseURL());
-		imageUrl.append("server/album-art/");
-		imageUrl.append(album.getId());
-		imageUrl.append(".png");
-		
-		albumImage.setUrl(URL.encode(imageUrl.toString()));
 		albumImage.addErrorHandler(new ErrorHandler() {
 			@Override
 			public void onError(ErrorEvent event) {
 				albumImage.setResource(Resources.INSTANCE.album());
 			}
 		});
+		albumImage.setUrl(album.getImageUrl());
 	}
 
 	private void setClickTarget() {

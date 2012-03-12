@@ -2,6 +2,8 @@ package com.nublic.app.music.client.datamodel;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
+
 //album  ::= { "id" : $album-id,
 //        "name": $name,
 //        "songs": $number_of_songs,
@@ -28,4 +30,15 @@ public class AlbumInfo {
 	public int getNumberOfSongs() { return numberOfSongs; }
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
 	public List<String> getArtistList() { return artistList; }
+	
+	public String getImageUrl() {
+		// building imageUrl as /album-art/:album-id
+		StringBuilder imageUrl = new StringBuilder();
+		imageUrl.append(GWT.getHostPageBaseURL());
+		imageUrl.append("server/album-art/");
+		imageUrl.append(id);
+		imageUrl.append(".png");
+		
+		return imageUrl.toString();
+	}
 }
