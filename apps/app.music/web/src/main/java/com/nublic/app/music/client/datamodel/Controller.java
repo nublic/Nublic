@@ -89,25 +89,27 @@ public class Controller {
 	}
 
 	private void addPlayHandler() {
-		ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
-			@Override
-			public void onPlayStateChanged(PlayStateEvent event) {
-				switch (event.getPlayState()) {
-				case Paused:
-					ui.setPaused(Controller.getPlayingPlaylistId());
-            		break;
-            	case Started:
-					ui.setPlaying(Controller.getPlayingPlaylistId());
-            		break;
-            	case Stopped:
-					ui.setPlaying(null);
-            		break;
-            	case Finished:
-					ui.setPlaying(null);
-            		break;
+		if (ui.getPlayer() != null) {
+			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
+				@Override
+				public void onPlayStateChanged(PlayStateEvent event) {
+					switch (event.getPlayState()) {
+					case Paused:
+						ui.setPaused(Controller.getPlayingPlaylistId());
+	            		break;
+	            	case Started:
+						ui.setPlaying(Controller.getPlayingPlaylistId());
+	            		break;
+	            	case Stopped:
+						ui.setPlaying(null);
+	            		break;
+	            	case Finished:
+						ui.setPlaying(null);
+	            		break;
+					}
 				}
-			}
-		});
+			});
+		}
 	}
 
 	// When URL changes this method is called

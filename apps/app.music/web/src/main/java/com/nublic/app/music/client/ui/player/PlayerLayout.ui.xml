@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:b="urn:import:com.bramosystems.oss.player.core.client.skin">
+	xmlns:b="urn:import:com.bramosystems.oss.player.core.client.skin"
+	xmlns:c="urn:import:com.kiouri.sliderbar.client.solution.simplevertical">
 	<ui:style>
 		.nobackground {
 			background: transparent;
@@ -63,8 +64,9 @@
 		<!-- Info panel -->
 		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle">
 			<g:VerticalPanel width="70px">
-				<b:VolumeControl ui:field="volumeControl"/>
-				<g:Label height="1em"/> <!-- To maintain alignment -->
+<!-- 				<b:VolumeControl ui:field="volumeControl"/> -->
+<!-- 				<g:Label height="1em"/> To maintain alignment -->
+				<c:SliderBarSimpleVertical ui:field="volumeControl"/>
 			</g:VerticalPanel>
 			<g:Image ui:field="albumArt" height="48px" width="48px" addStyleNames="{style.marginleft}"/>
 			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}">

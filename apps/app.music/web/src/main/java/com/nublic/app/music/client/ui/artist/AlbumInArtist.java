@@ -43,6 +43,7 @@ public class AlbumInArtist extends Composite {
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
 		imageUrl.append(album.getId());
+		imageUrl.append(".png");
 		
 		albumImage.setUrl(URL.encode(imageUrl.toString()));
 		albumImage.addErrorHandler(new ErrorHandler() {

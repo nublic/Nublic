@@ -71,6 +71,7 @@ public class AlbumWidget extends Composite {
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/album-art/");
 		imageUrl.append(album.getId());
+		imageUrl.append(".png");
 
 		albumImage.addErrorHandler(new ErrorHandler() {
 			@Override

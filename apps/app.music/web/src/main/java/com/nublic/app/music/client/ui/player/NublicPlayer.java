@@ -19,8 +19,6 @@ import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
-import com.bramosystems.oss.player.core.event.client.VolumeChangeEvent;
-import com.bramosystems.oss.player.core.event.client.VolumeChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
@@ -33,7 +31,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
-//	int lastPlayIndex;
 	PlayStateEvent lastStateEvent;
 	
 	public static Widget create() {
@@ -110,7 +107,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             	case Started:
             		controls.setPlaying(true);
             		controls.setSongInfo(song);
-            		timer.scheduleRepeating(900);
+            		timer.scheduleRepeating(200);
             		break;
             	case Stopped:
             		controls.setPlaying(false);
@@ -160,10 +157,16 @@ public class NublicPlayer extends CustomAudioPlayer {
 				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
 			}
 		});
-		controls.addVolumeHandler(new VolumeChangeHandler() {
+//		controls.addVolumeHandler(new VolumeChangeHandler() {
+//			@Override
+//			public void onVolumeChanged(VolumeChangeEvent event) {
+//				setVolume(event.getNewVolume());
+//			}
+//		});
+		controls.addVolumeHandler(new VolumeHandler() {
 			@Override
-			public void onVolumeChanged(VolumeChangeEvent event) {
-				setVolume(event.getNewVolume());
+			public void onVolumeChange(double newVolume) {
+				setVolume(newVolume);
 			}
 		});
 	}
@@ -203,25 +206,25 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-//		play(index); // This doesn't fire any event
-		// TODO: change to Alex solution when ready
-		int i;
-		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
-			// from the beginning of the playlist
-			i = 0;
-			nublicPlay();
-		} else {
-			i = lastStateEvent.getItemIndex();
-		}
-		while (i != index) {
-			if (i > index) {
-				nublicPlayPrev();
-				i--;
-			} else {
-				nublicPlayNext();
-				i++;
-			}
-		}
+		play(index); // This doesn't fire any event
+		// TODO: change to Alex's solution when ready
+//		int i;
+//		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
+//			// from the beginning of the playlist
+//			i = 0;
+//			nublicPlay();
+//		} else {
+//			i = lastStateEvent.getItemIndex();
+//		}
+//		while (i != index) {
+//			if (i > index) {
+//				nublicPlayPrev();
+//				i--;
+//			} else {
+//				nublicPlayNext();
+//				i++;
+//			}
+//		}
 	}
 	
 	// secure play methods

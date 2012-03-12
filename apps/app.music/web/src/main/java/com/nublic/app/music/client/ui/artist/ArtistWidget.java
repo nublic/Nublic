@@ -90,6 +90,7 @@ public class ArtistWidget extends Composite {
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/artist-art/");
 		imageUrl.append(artist.getId());
+		imageUrl.append(".png");
 
 		artistImage.setUrl(URL.encode(imageUrl.toString()));
 		artistImage.addErrorHandler(new ErrorHandler() {
