@@ -148,7 +148,7 @@ public class PopupContent extends Composite {
 	@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
 		if (internalFile != null) {
-			SingleDownloadAction.download(internalFile.getPath());
+			SingleDownloadAction.download(internalFile.getPath(), internalFile.isFolder());
 		}
 	}
 	

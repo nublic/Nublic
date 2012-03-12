@@ -9,8 +9,12 @@ import com.nublic.app.browser.web.client.UI.FileWidget;
 
 public class SingleDownloadAction extends ActionWidget {
 
-	public static void download(String path) {
-		Window.open(GWT.getHostPageBaseURL() + "server/raw/" + path, "_self", "");
+	public static void download(String path, boolean isFolder) {
+		if (isFolder) {
+			Window.open(GWT.getHostPageBaseURL() + "server/zip/" + path, "_self", "");
+		} else {
+			Window.open(GWT.getHostPageBaseURL() + "server/raw/" + path, "_self", "");
+		}
 		//Window.Location.assign(GWT.getHostPageBaseURL() + "server/raw/" + path);
 	}
 
@@ -25,7 +29,8 @@ public class SingleDownloadAction extends ActionWidget {
 //			String realPath = stateProvider.getDevicesManager().getRealPath(((FileWidget) w).getPath());
 //			download(realPath);
 //			download(((FileWidget)w).getRealPath());
-			download(((FileWidget)w).getPath());
+			FileWidget fw = (FileWidget)w;
+			download(fw.getPath(), fw.isFolder());
 		}
 	}
 
