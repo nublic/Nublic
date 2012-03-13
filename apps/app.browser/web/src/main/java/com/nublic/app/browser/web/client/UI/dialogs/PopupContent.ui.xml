@@ -1,11 +1,15 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
+	<ui:style type='com.nublic.app.browser.web.client.UI.dialogs.PopupContent.PopupContentStyle'>
 		.withmargin {
 	        line-height: 36px;
 	   		margin-left: 10px;
 		}
+		.centerAlign {
+	        text-align: center;
+	        vertical-align: middle;
+	    }
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
