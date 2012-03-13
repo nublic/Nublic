@@ -111,7 +111,13 @@ public class Controller {
 			});
 		}
 	}
-
+ 
+	public static void saveCurrentPlaylist() {
+		// TODO: This should pop up a panel to ask the name of the new playlist
+		// Create the playlist
+		// and then put "current playlist" to it 
+	}
+	
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
 		String collection = hmap.get(Constants.PARAM_COLLECTION);

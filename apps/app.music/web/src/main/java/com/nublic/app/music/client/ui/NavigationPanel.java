@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.resources.client.CssResource;
@@ -13,6 +15,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHyperlink;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
@@ -57,8 +60,17 @@ public class NavigationPanel extends Composite {
 	
 	public void createCurrentPlaylist() {
 		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
-		addPlaylist(current.getName(), current.getId());
+		Element e = addPlaylist(current.getName(), current.getId());
 		Controller.getModel().getPlaylistCache().put(current.getId(), current);
+		// TODO: vas por aqui Pablo
+		PushButton saveButton = new PushButton(new Image(Resources.INSTANCE.save()));
+		saveButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Controller.saveCurrentPlaylist();
+			}
+		});
+		e.appendChild(saveButton.getElement());
 	}
 	
 	// Adding methods
@@ -68,19 +80,21 @@ public class NavigationPanel extends Composite {
 		allMusic = e;
 	}
 
-	public void addCollection(String name, String id) {
+	public Element addCollection(String name, String id) {
 		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_COLLECTION + "=" + id);
 		Element e = addElement(a, Constants.PARAM_COLLECTION);
 		collections.put(id, e);
+		return e;
 	}
 	
-	public void addPlaylist(String name, String id) {
+	public Element addPlaylist(String name, String id) {
 		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_PLAYLIST + "=" + id);
 		Element e = addElement(a, Constants.PARAM_PLAYLIST);
 		playlists.put(id, e);
+		return e;
 	}
 	
-	public Element addElement(InlineHyperlink a, String parentId) {
+	private Element addElement(InlineHyperlink a, String parentId) {
 		Element li = DOM.createElement("li");
 		li.appendChild(a.getElement());
 		Element parent = DOM.getElementById(parentId);
