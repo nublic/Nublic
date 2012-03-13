@@ -137,7 +137,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPlay() {
 				nublicPlay();
-				
 			}
 		});
 		controls.addNextHandler(new NextHandler() {
@@ -164,9 +163,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 				setVolume(newVolume);
 			}
 		});
-		controls.addShufleHandler(new ShufleHandler() {
+		controls.addShufleHandler(new ShuffleHandler() {
 			@Override
-			public void onShufleToggled(boolean active) {
+			public void onShuffleToggled(boolean active) {
 				setShuffleEnabled(active);		
 				isShuffleEnabled = active;
 			}

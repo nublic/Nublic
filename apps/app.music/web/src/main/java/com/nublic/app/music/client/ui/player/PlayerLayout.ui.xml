@@ -79,7 +79,7 @@
 		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle" width="80px">
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
-					<g:PushButton ui:field="shufleButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
+					<g:PushButton ui:field="shuffleButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
 						<g:upFace image="{res.shufle}"/>
 					</g:PushButton>
 					<g:PushButton ui:field="repeatButton" height="16px" width="16px" addStyleNames="{style.nobackground}">

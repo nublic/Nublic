@@ -66,7 +66,7 @@ public class PlayerLayout extends Composite {
 	@UiField Label albumLabel;
 	@UiField Label songLabel;
 	@UiField Image albumArt;
-	@UiField PushButton shufleButton;
+	@UiField PushButton shuffleButton;
 	@UiField PushButton repeatButton;
 	@UiField PushButton volumeButton;
 
@@ -76,11 +76,11 @@ public class PlayerLayout extends Composite {
 	List<PrevHandler> prevHandlers = new ArrayList<PrevHandler>();
 	List<NextHandler> nextHandlers = new ArrayList<NextHandler>();
 	List<VolumeHandler> volumeHandlers = new ArrayList<VolumeHandler>();
-	List<ShufleHandler> shufleHandlers = new ArrayList<ShufleHandler>();
 	List<RepeatHandler> repeatHandlers = new ArrayList<RepeatHandler>();
+	List<ShuffleHandler> shuffleHandlers = new ArrayList<ShuffleHandler>();
 	
 	double totalDuration = 0;
-	boolean shufleActive = false;
+	boolean shuffleActive = false;
 	boolean repeatActive = false;
 	boolean volumeActive = false;
 	
@@ -195,7 +195,7 @@ public class PlayerLayout extends Composite {
 	public void addPauseHandler(PauseHandler h) { pauseHandlers.add(h); }
 	public void addPrevHandler(PrevHandler h) { prevHandlers.add(h); }
 	public void addNextHandler(NextHandler h) { nextHandlers.add(h); }
-	public void addShufleHandler(ShufleHandler h) { shufleHandlers.add(h); }
+	public void addShufleHandler(ShuffleHandler h) { shuffleHandlers.add(h); }
 	public void addRepeatHandler(RepeatHandler h) { repeatHandlers.add(h); }
 	
 	// Primary buttons handlers
@@ -228,11 +228,11 @@ public class PlayerLayout extends Composite {
 	}
 	
 	// Secondary buttons handlers
-	@UiHandler("shufleButton")
-	void onShufleButtonClick(ClickEvent event) {
-		shufleActive = toggleButton(shufleButton, shufleActive);
-		for (ShufleHandler h : shufleHandlers) {
-			h.onShufleToggled(shufleActive);
+	@UiHandler("shuffleButton")
+	void onShuffleButtonClick(ClickEvent event) {
+		shuffleActive = toggleButton(shuffleButton, shuffleActive);
+		for (ShuffleHandler h : shuffleHandlers) {
+			h.onShuffleToggled(shuffleActive);
 		}
 	}
 
