@@ -9,6 +9,7 @@ import com.bramosystems.oss.player.core.client.PlayerUtil;
 import com.bramosystems.oss.player.core.client.Plugin;
 import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
+import com.bramosystems.oss.player.core.client.RepeatMode;
 import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
 import com.bramosystems.oss.player.core.event.client.LoadingProgressEvent;
 import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
@@ -31,6 +32,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
 	PlayStateEvent lastStateEvent;
+	boolean isShuffleEnabled = false;
 	
 	public static Widget create() {
 		try {
@@ -156,16 +158,27 @@ public class NublicPlayer extends CustomAudioPlayer {
 				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
 			}
 		});
-//		controls.addVolumeHandler(new VolumeChangeHandler() {
-//			@Override
-//			public void onVolumeChanged(VolumeChangeEvent event) {
-//				setVolume(event.getNewVolume());
-//			}
-//		});
 		controls.addVolumeHandler(new VolumeHandler() {
 			@Override
 			public void onVolumeChange(double newVolume) {
 				setVolume(newVolume);
+			}
+		});
+		controls.addShufleHandler(new ShufleHandler() {
+			@Override
+			public void onShufleToggled(boolean active) {
+				setShuffleEnabled(active);		
+				isShuffleEnabled = active;
+			}
+		});
+		controls.addRepeatHandler(new RepeatHandler() {
+			@Override
+			public void onRepeatToggled(boolean active) {
+				if (active) {
+					setRepeatMode(RepeatMode.REPEAT_ALL);
+				} else {
+					setRepeatMode(RepeatMode.REPEAT_OFF);
+				}
 			}
 		});
 	}
@@ -205,25 +218,13 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-		play(index); // This doesn't fire any event
-		// TODO: change to Alex's solution when ready
-//		int i;
-//		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
-//			// from the beginning of the playlist
-//			i = 0;
-//			nublicPlay();
-//		} else {
-//			i = lastStateEvent.getItemIndex();
-//		}
-//		while (i != index) {
-//			if (i > index) {
-//				nublicPlayPrev();
-//				i--;
-//			} else {
-//				nublicPlayNext();
-//				i++;
-//			}
-//		}
+		if (isShuffleEnabled) {
+			setShuffleEnabled(false);
+			play(index);
+			setShuffleEnabled(true);
+		} else {
+			play(index);			
+		}
 	}
 	
 	// secure play methods

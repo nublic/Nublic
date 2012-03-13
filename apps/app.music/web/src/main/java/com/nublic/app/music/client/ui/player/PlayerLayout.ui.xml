@@ -3,7 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:b="urn:import:com.bramosystems.oss.player.core.client.skin"
 	xmlns:c="urn:import:com.kiouri.sliderbar.client.solution.simplevertical">
-	<ui:style>
+	<ui:style type='com.nublic.app.music.client.ui.player.PlayerLayout.PlayerStyle'>
 		.background {
 			background: transparent;
 			padding: 5px;
@@ -15,6 +15,13 @@
 			border-style: none;
 			box-shadow: none;
 			padding: 0;
+			opacity: 0.4;
+		}
+		.toggled {
+			opacity: 1.0;
+		}
+		.nobackground:hover {
+			opacity: 1.0;
 		}
 		.marginleft {
 			margin-left: 10px;
@@ -69,16 +76,16 @@
 		</g:VerticalPanel>
 
 		<!-- Volume panel -->
-		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle">
-			<g:VerticalPanel width="70px">
+		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle" width="80px">
+			<g:VerticalPanel>
 				<g:HorizontalPanel>
-					<g:PushButton height="16px" width="16px" addStyleNames="{style.nobackground}">
+					<g:PushButton ui:field="shufleButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
 						<g:upFace image="{res.shufle}"/>
 					</g:PushButton>
-					<g:PushButton height="16px" width="16px" addStyleNames="{style.nobackground}">
+					<g:PushButton ui:field="repeatButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
 						<g:upFace image="{res.repeat}"/>
 					</g:PushButton>
-					<g:PushButton height="16px" width="16px" addStyleNames="{style.nobackground}">
+					<g:PushButton ui:field="volumeButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
 						<g:upFace image="{res.volume}"/>
 					</g:PushButton>
 				</g:HorizontalPanel>

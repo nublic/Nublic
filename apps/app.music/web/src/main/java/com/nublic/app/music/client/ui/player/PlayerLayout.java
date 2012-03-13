@@ -6,6 +6,7 @@ import java.util.List;
 import com.bramosystems.oss.player.core.client.skin.CSSSeekBar;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
@@ -13,6 +14,7 @@ import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -36,6 +38,20 @@ public class PlayerLayout extends Composite {
 	private static PlayerLayoutUiBinder uiBinder = GWT.create(PlayerLayoutUiBinder.class);
 	interface PlayerLayoutUiBinder extends UiBinder<Widget, PlayerLayout> { }
 
+	// CSS Styles defined in the .xml file
+	interface PlayerStyle extends CssResource {
+		String background();
+		String nobackground();
+		String toggled();
+		String marginleft();
+		String moremarginleft();
+		String smallround();
+		String biground();
+		String glow();
+	}
+
+	@UiField PlayerStyle style;
+	// UI
 	@UiField PushButton prevButton;
 	@UiField PushButton playButton;
 	@UiField PushButton pauseButton;
@@ -50,7 +66,9 @@ public class PlayerLayout extends Composite {
 	@UiField Label albumLabel;
 	@UiField Label songLabel;
 	@UiField Image albumArt;
-	double totalDuration = 0;
+	@UiField PushButton shufleButton;
+	@UiField PushButton repeatButton;
+	@UiField PushButton volumeButton;
 
 	// Handlers
 	List<PauseHandler> pauseHandlers = new ArrayList<PauseHandler>();
@@ -58,13 +76,18 @@ public class PlayerLayout extends Composite {
 	List<PrevHandler> prevHandlers = new ArrayList<PrevHandler>();
 	List<NextHandler> nextHandlers = new ArrayList<NextHandler>();
 	List<VolumeHandler> volumeHandlers = new ArrayList<VolumeHandler>();
+	List<ShufleHandler> shufleHandlers = new ArrayList<ShufleHandler>();
+	List<RepeatHandler> repeatHandlers = new ArrayList<RepeatHandler>();
 	
+	double totalDuration = 0;
+	boolean shufleActive = false;
+	boolean repeatActive = false;
+	boolean volumeActive = false;
 	
 	public PlayerLayout() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		setPlaying(false);
-//		volumeControl.setVolume(1);
 		this.addAttachHandler(new Handler() {
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
@@ -84,6 +107,7 @@ public class PlayerLayout extends Composite {
 				}
 			}
 		});
+		volumeControl.setVisible(false);
 	}
 	
 	public void setPlaying(boolean p) {
@@ -166,13 +190,15 @@ public class PlayerLayout extends Composite {
 
 	// Add handlers
 	public void addSeekChangeHandler(SeekChangeHandler h) { seekBar.addSeekChangeHandler(h); }
-//	public void addVolumeHandler(VolumeChangeHandler h) { volumeControl.addVolumeChangeHandler(h); }
 	public void addVolumeHandler(VolumeHandler h) { volumeHandlers.add(h); }
 	public void addPlayHandler(PlayHandler h) { playHandlers.add(h); }
 	public void addPauseHandler(PauseHandler h) { pauseHandlers.add(h); }
 	public void addPrevHandler(PrevHandler h) { prevHandlers.add(h); }
 	public void addNextHandler(NextHandler h) { nextHandlers.add(h); }
+	public void addShufleHandler(ShufleHandler h) { shufleHandlers.add(h); }
+	public void addRepeatHandler(RepeatHandler h) { repeatHandlers.add(h); }
 	
+	// Primary buttons handlers
 	@UiHandler("prevButton")
 	void onPrevButtonClick(ClickEvent event) {
 		for (PrevHandler h : prevHandlers) {
@@ -199,5 +225,44 @@ public class PlayerLayout extends Composite {
 		for (NextHandler h : nextHandlers) {
 			h.onNext();
 		}
+	}
+	
+	// Secondary buttons handlers
+	@UiHandler("shufleButton")
+	void onShufleButtonClick(ClickEvent event) {
+		shufleActive = toggleButton(shufleButton, shufleActive);
+		for (ShufleHandler h : shufleHandlers) {
+			h.onShufleToggled(shufleActive);
+		}
+	}
+
+	@UiHandler("repeatButton")
+	void onRepeatButtonClick(ClickEvent event) {
+		repeatActive = toggleButton(repeatButton, repeatActive);
+		for (RepeatHandler h : repeatHandlers) {
+			h.onRepeatToggled(repeatActive);
+		}
+	}
+
+	@UiHandler("volumeButton")
+	void onVolumeButtonClick(ClickEvent event) {
+		volumeActive = toggleButton(volumeButton, volumeActive);
+		volumeControl.setVisible(volumeActive);
+		volumeControl.setFocus(true);
+	}
+	
+	@UiHandler("volumeControl")
+	void onVolumeControlBlur(BlurEvent event) {
+		volumeControl.setVisible(false);
+		volumeActive = toggleButton(volumeButton, volumeActive);
+	}
+
+	private boolean toggleButton(PushButton b, boolean active) {
+		if (active) {
+			b.getElement().removeClassName(style.toggled());
+		} else {
+			b.getElement().addClassName(style.toggled());
+		}
+		return !active;
 	}
 }
