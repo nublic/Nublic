@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
+import com.google.gwt.user.client.Window;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
@@ -116,6 +117,7 @@ public class Controller {
 		// TODO: This should pop up a panel to ask the name of the new playlist
 		// Create the playlist
 		// and then put "current playlist" to it 
+		Window.alert("Saving");
 	}
 	
 	// When URL changes this method is called

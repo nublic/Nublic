@@ -12,10 +12,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHyperlink;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
@@ -33,6 +34,9 @@ public class NavigationPanel extends Composite {
 	}
 
 	@UiField NavStyle style;
+	@UiField HTMLPanel libraryPanel;
+	@UiField HTMLPanel collectionPanel;
+	@UiField HTMLPanel playlistPanel;
 	@UiField AddWidget addCollection;
 	@UiField AddWidget addPlaylist;
 	Element allMusic;
@@ -56,21 +60,23 @@ public class NavigationPanel extends Composite {
 				}
 			}
 		});
-	}
-	
+	}	
+
 	public void createCurrentPlaylist() {
 		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
-		Element e = addPlaylist(current.getName(), current.getId());
+		addPlaylist(current.getName(), current.getId());
 		Controller.getModel().getPlaylistCache().put(current.getId(), current);
-		// TODO: vas por aqui Pablo
-		PushButton saveButton = new PushButton(new Image(Resources.INSTANCE.save()));
-		saveButton.addClickHandler(new ClickHandler() {
+		
+		// New thing
+		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
+		pw.addIconAction(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Controller.saveCurrentPlaylist();
+				Window.alert("aaaaa!");
 			}
 		});
-		e.appendChild(saveButton.getElement());
+		playlistPanel.add(pw);
+		
 	}
 	
 	// Adding methods
@@ -78,20 +84,27 @@ public class NavigationPanel extends Composite {
 		InlineHyperlink a = new InlineHyperlink("All music", "");
 		Element e = addElement(a, "Library");
 		allMusic = e;
+		
+		// New thing
+		libraryPanel.add(new TagWidget(null, "All music", ""));
 	}
 
-	public Element addCollection(String name, String id) {
+	public void addCollection(String name, String id) {
 		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_COLLECTION + "=" + id);
 		Element e = addElement(a, Constants.PARAM_COLLECTION);
 		collections.put(id, e);
-		return e;
+		
+		// New thing
+		collectionPanel.add(new TagWidget(TagKind.COLLECTION, name, id));
 	}
 	
-	public Element addPlaylist(String name, String id) {
+	public void addPlaylist(String name, String id) {
 		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_PLAYLIST + "=" + id);
 		Element e = addElement(a, Constants.PARAM_PLAYLIST);
 		playlists.put(id, e);
-		return e;
+		
+		// New thing
+		playlistPanel.add(new TagWidget(TagKind.PLAYLIST, name, id));
 	}
 	
 	private Element addElement(InlineHyperlink a, String parentId) {
@@ -187,8 +200,7 @@ public class NavigationPanel extends Composite {
 			playingElement = null;
 		}
 	}
-	
-	
+
 	// Handler to notify model that the user has added a tag
 	private void addAddTagsHandlers() {
 		addCollection.addPutTagHandler(new PutTagHandler() {

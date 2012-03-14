@@ -13,14 +13,17 @@
 		<ul id="Library" class="nav nav-list">
   			<li class="nav-header">Library</li>
 		</ul>
+		<g:HTMLPanel ui:field="libraryPanel"/>
 		<ul id="Collection" class="nav nav-list"> <!-- Id defined as Constants.PARAM_COLLECTION -->
 			<li class="nav-header">Collections</li>
 		</ul>
-		<my:AddWidget defaultText="New Collection" ui:field="addCollection"/>
+		<g:HTMLPanel ui:field="collectionPanel"/>
+		<my:AddWidget ui:field="addCollection" defaultText="New Collection"/>
 		<ul id="Playlist" class="nav nav-list"> <!-- Id defined as Constants.PARAM_PLAYLIST -->
 			<li class="nav-header">Playlists</li>
 		</ul>
-		<my:AddWidget defaultText="New Playlist" ui:field="addPlaylist"/>
+		<g:HTMLPanel ui:field="playlistPanel"/>
+		<my:AddWidget ui:field="addPlaylist" defaultText="New Playlist"/>
 	  </div>
 	</g:HTMLPanel>
 </ui:UiBinder> 
