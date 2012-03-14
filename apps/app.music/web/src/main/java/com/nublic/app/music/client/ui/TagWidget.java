@@ -2,12 +2,14 @@ package com.nublic.app.music.client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHyperlink;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
@@ -24,6 +26,7 @@ public class TagWidget extends Composite {
 	@UiField TagStyle style;
 	@UiField InlineHyperlink anchor;
 //	@UiField Image icon;
+	@UiField PushButton icon;
 	
 	boolean isStopped = true;
 	
@@ -43,34 +46,33 @@ public class TagWidget extends Composite {
 	}
 
 	public TagWidget(TagKind k, String name, String id) {
-//		this(name, getTargetToken(id, k), null);
-		this(name, getTargetToken(id, k));
+		this(name, getTargetToken(id, k), null);
 	}
 	
-//	public TagWidget(TagKind k, String name, String id, Image iconImage) {
-//		this(name, getTargetToken(id, k), iconImage);
-//	}
+	public TagWidget(TagKind k, String name, String id, Image iconImage) {
+		this(name, getTargetToken(id, k), iconImage);
+	}
 
-//	public TagWidget(String text, String targetHistoryToken, Image iconImage) {
-	public TagWidget(String text, String targetHistoryToken) {
+	public TagWidget(String text, String targetHistoryToken, Image iconImage) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-//		if (iconImage == null) {
-//			icon.setVisible(false);
-//		} else {
+		if (iconImage == null) {
+			icon.setVisible(false);
+		} else {
+			icon.getUpFace().setImage(iconImage);
 //			icon.setUrl(iconImage.getUrl());
-//		}
+		}
 
 		anchor.setText(text);
 		anchor.setTargetHistoryToken(targetHistoryToken);
 	}
 	
-//	public void addIconAction(ClickHandler ch) {
-//		icon.addClickHandler(ch);
-//	}
+	public void addIconAction(ClickHandler ch) {
+		icon.addClickHandler(ch);
+	}
 	
 	public void select(boolean setSelected) {
-		Element li = this.getElement().getFirstChildElement().getFirstChildElement();
+		Element li = getLiElement();
 		if (setSelected) {
 			li.addClassName("active");
 		} else {
@@ -85,8 +87,8 @@ public class TagWidget extends Composite {
 		play.addStyleName(style.innerImage());
 
 		isStopped = false;
-		// Inserting in the <a> child of <li> (child of <ul>, child of this <div>)
-		Element li = this.getElement().getFirstChildElement().getFirstChildElement();
+		// Inserting in the <a> child of <li>
+		Element li = getLiElement();
 		li.getFirstChildElement().insertFirst(play.getElement());
 		li.addClassName("bold-link");
 	}
@@ -98,8 +100,8 @@ public class TagWidget extends Composite {
 		pause.addStyleName(style.innerImage());
 
 		isStopped = false;
-		// Inserting in the <a> child of <li> (child of <ul>, child of this <div>)
-		Element li = this.getElement().getFirstChildElement().getFirstChildElement();
+		// Inserting in the <a> child of <li>
+		Element li = getLiElement();
 		li.getFirstChildElement().insertFirst(pause.getElement());
 		li.addClassName("bold-link");
 	}
@@ -107,11 +109,17 @@ public class TagWidget extends Composite {
 	public void stop() {
 		if (!isStopped) {
 			isStopped = true;
-			// Removing from the <a> child of <li> (child of <ul>, child of this <div>)
-			Element li = this.getElement().getFirstChildElement().getFirstChildElement();
+			// Removing from the <a> child of <li>
+			Element li = getLiElement();
 			li.getFirstChildElement().getFirstChild().removeFromParent();
 			li.removeClassName("bold-link");
 		}
+	}
+	
+	private Element getLiElement() {
+//		return this.getElement().getFirstChildElement().getFirstChildElement();
+		// <li> is child of <ul>, child of two <div>)
+		return this.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
 	}
 
 }

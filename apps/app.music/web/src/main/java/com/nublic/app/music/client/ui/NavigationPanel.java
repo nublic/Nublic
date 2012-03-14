@@ -3,14 +3,19 @@ package com.nublic.app.music.client.ui;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
@@ -48,14 +53,14 @@ public class NavigationPanel extends Composite {
 	}	
 
 	public void createCurrentPlaylist() {
-//		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
-//		pw.addIconAction(new ClickHandler() {
-//			@Override
-//			public void onClick(ClickEvent event) {
-//				Window.alert("aaaaa!");
-//			}
-//		});
-		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
+//		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
+		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
+		pw.addIconAction(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				Controller.saveCurrentPlaylist();
+			}
+		});
 		playlistPanel.add(pw);
 		playlists.put(Constants.CURRENT_PLAYLIST_ID, pw);
 
