@@ -1,14 +1,17 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
-		
+	<ui:style type='com.nublic.app.music.client.ui.TagWidget.TagStyle'>
+		.innerImage {
+			vertical-align: middle;
+			margin-right: 5px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<ul class="nav nav-list">
 			<li>
 				<g:InlineHyperlink ui:field="anchor"/>
-				<g:Image ui:field="icon" width="16px" height="16px"/>
+<!-- 				<g:Image ui:field="icon" width="16px" height="16px"/> -->
 			</li>
 		</ul>
 	</g:HTMLPanel>

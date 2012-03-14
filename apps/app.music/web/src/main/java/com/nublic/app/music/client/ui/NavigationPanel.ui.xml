@@ -2,28 +2,25 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:my="urn:import:com.nublic.app.music.client.ui">
-	<ui:style type='com.nublic.app.music.client.ui.NavigationPanel.NavStyle'>
-		.innerImage {
-			vertical-align: middle;
-			margin-right: 5px;
-		}
+	<ui:style>
+
 	</ui:style>
 	<g:HTMLPanel width="100%" height="100%">
 	  <div class="well" style="padding: 8px 0; height: 100%; width: 100%;">
-		<ul id="Library" class="nav nav-list">
+		<ul class="nav nav-list">												<!-- Library title -->
   			<li class="nav-header">Library</li>
 		</ul>
-		<g:HTMLPanel ui:field="libraryPanel"/>
-		<ul id="Collection" class="nav nav-list"> <!-- Id defined as Constants.PARAM_COLLECTION -->
+		<g:HTMLPanel ui:field="libraryPanel"/>									<!-- Library panel -->
+		<ul class="nav nav-list">												<!-- Collections title -->
 			<li class="nav-header">Collections</li>
 		</ul>
-		<g:HTMLPanel ui:field="collectionPanel"/>
-		<my:AddWidget ui:field="addCollection" defaultText="New Collection"/>
-		<ul id="Playlist" class="nav nav-list"> <!-- Id defined as Constants.PARAM_PLAYLIST -->
+		<g:HTMLPanel ui:field="collectionPanel"/>								<!-- Collections panel -->
+		<my:AddWidget ui:field="addCollection" defaultText="New Collection"/>	<!-- Collections adder -->
+		<ul class="nav nav-list">												<!-- Playlists title -->
 			<li class="nav-header">Playlists</li>
 		</ul>
-		<g:HTMLPanel ui:field="playlistPanel"/>
-		<my:AddWidget ui:field="addPlaylist" defaultText="New Playlist"/>
+		<g:HTMLPanel ui:field="playlistPanel"/>									<!-- Playlists panel -->
+		<my:AddWidget ui:field="addPlaylist" defaultText="New Playlist"/>		<!-- Playlists adder -->
 	  </div>
 	</g:HTMLPanel>
 </ui:UiBinder> 
