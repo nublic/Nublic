@@ -585,6 +585,17 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			dragController.unregisterDropController(dc);
 		}
 		activeDropControllers.clear();
+		// Make not dragabbles
+		for (int i = 0; i < centralPanel.getWidgetCount(); i++) {
+			Widget w = centralPanel.getWidget(i);
+			if (w instanceof FileWidget) {
+				try {
+					dragController.makeNotDraggable(w);
+				} catch (Exception e) {
+					// Do nothing
+				}
+			}
+		}
 		centralPanel.clear();
 		// Fill the panel
 		addToCentralPanel(fileList, path);

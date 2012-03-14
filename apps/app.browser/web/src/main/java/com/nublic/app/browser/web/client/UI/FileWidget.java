@@ -1,9 +1,14 @@
 package com.nublic.app.browser.web.client.UI;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArray;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasMouseDownHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -19,6 +24,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -53,10 +59,12 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	String path;
 	String inPath;
 	String url = null;
+	String imageUrl = null;
 	boolean hasPreview = false;
-	Image fileImage;
+	Element divImage;
+	// Image fileImage;
 	Hyperlink fileThumbnail;
-	Image altThumbnail;
+	// Image altThumbnail;
 	Hyperlink fileName;
 	Label altName;
 	@UiField VerticalPanel imagePanel;
@@ -75,6 +83,22 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return chekedChangeHandlers;
 	}
 	
+	public static native JsArray<Node> _getAttributes(Element elem) /*-{
+	   return elem.attributes;
+	}-*/;
+	
+	public Map<String, String> getAttributtes(Element element) {
+		HashMap<String, String> m = new HashMap<String, String>();
+		final JsArray<Node> attributes = _getAttributes(element);
+		for (int i = 0; i < attributes.length(); i ++) {
+		    final Node node = attributes.get(i);
+		    String attributeName = node.getNodeName();
+		    String attributeValue = node.getNodeValue();
+		    m.put(attributeName, attributeValue);
+		}
+		return m;
+	}
+	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -90,9 +114,9 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		// Gets the thumbnail of the file
-		String url = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
+		imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + this.path);
 		if (!n.hasThumbnail()) {
-			url = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + n.getMime());
+			imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + n.getMime());
 		}
 		
 		String viewType = node.getView();
@@ -105,7 +129,11 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		// Set the thumbnail
-		fileImage = node.getImportantThumbnail() == null ? new Image(url) : new Image(node.getImportantThumbnail());
+		divImage = DOM.createDiv();
+		imageUrl = node.getImportantThumbnail() == null ? imageUrl : new Image(node.getImportantThumbnail()).getUrl();
+		divImage.setAttribute("style", "height: 96px; width: 96px; background-image: url('" + imageUrl + "');" +
+				" background-position: center center; background-repeat: no-repeat;");
+		// fileImage = node.getImportantThumbnail() == null ? new Image(url) : new Image(node.getImportantThumbnail());
 
 		// To fileWidgets with previews we'll create hyperlinks
 		if (hasPreview) {
@@ -119,7 +147,8 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			
 			// Add the image thumbnail to the hypertext widget
 //			fileImage = new Image(url);
-			fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
+			// fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
+			fileThumbnail.getElement().getChild(0).appendChild(divImage);
 			
 			// Set up name
 			fileName.setText(n.getName());
@@ -138,16 +167,18 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		} else {
 			// Create the alternative widgets (which are not links)
 //			altThumbnail = new Image(url);
-			altThumbnail = fileImage;			
+			// altThumbnail = fileImage;			
 			altName = new Label(n.getName());
 			altName.setTitle(n.getName());
 			
 			// Associate CSS styles
-			altThumbnail.getElement().addClassName(style.maxheight());
+			// altThumbnail.getElement().addClassName(style.maxheight());
+			divImage.addClassName(style.maxheight());
 			altName.getElement().addClassName(style.ellipcenter());
 			
 			// Add the widgets to the panels
-			imagePanel.add(altThumbnail);
+			// imagePanel.add(altThumbnail);
+			imagePanel.getElement().appendChild(divImage);
 			textPanel.add(altName);
 			
 			// Add handlers
@@ -230,12 +261,16 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return node.getSize();
 	}
 	
-	public Image getImage() {
+	/*public Image getImage() {
 //		if (hasPreview) {
 			return fileImage;
 //		} else {
 //			return altThumbnail;
 //		}
+	}*/
+	
+	public String getImageUrl() {
+		return imageUrl;
 	}
 
 	private void setURL(String viewType) {
@@ -267,7 +302,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		if (hasPreview) {
 			fileThumbnail.addStyleName(style.shadowed());
 		} else {
-			altThumbnail.addStyleName(style.shadowed());
+			divImage.addClassName(style.shadowed());
 		}
 	}
 	
@@ -275,7 +310,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		if (hasPreview) {
 			fileThumbnail.removeStyleName(style.shadowed());
 		} else {
-			altThumbnail.addStyleName(style.shadowed());
+			divImage.addClassName(style.shadowed());
 		}
 	}
 

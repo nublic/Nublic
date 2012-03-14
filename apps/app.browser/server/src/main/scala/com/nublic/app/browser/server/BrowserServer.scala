@@ -21,6 +21,7 @@ import scala.collection.JavaConversions._
 import org.scalatra.fileupload.FileUploadSupport
 import java.util.Date
 import scala.util.Random
+import org.apache.commons.lang3.StringUtils
 
 class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -222,17 +223,40 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     }
   }
   
+  def getNextFilenameFor(f: File) : File = {
+    if (!f.exists()) {
+      f
+    } else {
+      val parent = f.getParentFile()
+      val name = f.getName()
+      val splitted_name = name.split('.')
+      val original_first = splitted_name(0)
+      
+      var i = 0
+      var newF: File = null
+      do {
+        i = i + 1
+        splitted_name(0) = original_first + " (" + i + ")"
+        val newName = StringUtils.join(splitted_name, ".")
+        newF = new File(parent, newName)
+      } while(newF.exists())
+      
+      newF
+    }
+  }
+  
   post("/rename") {
     withUser { user =>
       withPath("from", false) { from_path =>
         withPath("to", false) { to_path =>
-          if (to_path.exists() || !user.canWrite(from_path)) {
+          if (!user.canWrite(from_path) || !user.canWrite(to_path.getParent())) {
             halt(403)
           } else {
+            val real_to_path = getNextFilenameFor(to_path)
             if (from_path.isDirectory()) {
-              FileUtils.moveDirectory(from_path, to_path)
+              FileUtils.moveDirectory(from_path, real_to_path)
             } else {
-    	      FileUtils.moveFile(from_path, to_path)
+    	      FileUtils.moveFile(from_path, real_to_path)
             }
             halt(200)
           }
@@ -245,28 +269,30 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     withUser { user =>
       withMultiplePaths("files") { from_paths =>
         withPath("target", false) { to_path =>
-          from_paths.map(f => do_move(f, to_path, user))
+          from_paths.map(f => do_move2(f, to_path, user))
           halt(200)
         }
       }
     }
   }
   
-  def do_move(file: File, target: File, user: User): Unit = {
-    val final_file = new File(target, file.getName())
-    if (!final_file.exists() && user.canRead(file) && user.canWrite(target)) {
-      if (!file.isDirectory) {
-        FileUtils.moveToDirectory(file, target, true)
-        // do_chown(final_file, user)
-      } else {
-        final_file.mkdir()
-        // do_chown(final_file, user)
+  def do_move2(file: File, target: File, user: User): Unit = {
+    if (user.canWrite(target)) {
+      if (file.isDirectory()) {
+        val final_dir = new File(target, file.getName())
+        if (!final_dir.exists()) {
+          final_dir.mkdir()
+        }
+        // Merge contents
         for (child <- file.listFiles) {
-          do_move(child, final_file, user)
+          do_move2(child, final_dir, user)
         }
         if (file.listFiles.length == 0) {
-          file.delete()
+          file.delete
         }
+      } else {
+        val final_file = getNextFilenameFor(new File(target, file.getName()))
+        FileUtils.moveFile(file, final_file)
       }
     }
   }
@@ -275,25 +301,29 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     withUser { user =>
       withMultiplePaths("files") { from_paths =>
         withPath("target", false) { to_path =>
-          from_paths.map(f => do_copy(f, to_path, user))
+          from_paths.map(f => do_copy2(f, to_path, user))
           halt(200)
         }
       }
     }
   }
   
-  def do_copy(file: File, target: File, user: User): Unit = {
-    val final_file = new File(target, file.getName())
-    if (!final_file.exists() && user.canRead(file) && user.canWrite(target)) {
-      if (!file.isDirectory) {
-        FileUtils.copyFileToDirectory(file, target)
-        do_chown(final_file, user)
-      } else {
-        final_file.mkdir()
-        do_chown(final_file, user)
-        for (child <- file.listFiles) {
-          do_copy(child, final_file, user)
+  def do_copy2(file: File, target: File, user: User): Unit = {
+    if (user.canWrite(target)) {
+      if (file.isDirectory()) {
+        val final_dir = new File(target, file.getName())
+        if (!final_dir.exists()) {
+          final_dir.mkdir()
         }
+        do_chown(final_dir, user)
+        // Merge contents
+        for (child <- file.listFiles) {
+          do_copy2(child, final_dir, user)
+        }
+      } else {
+        val final_file = getNextFilenameFor(new File(target, file.getName()))
+        FileUtils.copyFile(file, final_file)
+        do_chown(final_file, user)
       }
     }
   }
@@ -382,14 +412,10 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
         } else if (!user.canWrite(folder)) {
           throw new Exception("user cannot write in that folder")
         } else {
-          val new_folder = new File(folder, name)
-          if (new_folder.exists()) {
-            throw new Exception("a file with that name already exists")
-          } else {
-            new_folder.mkdir()
-            user.assignFile(new_folder, true)
-            halt(200)
-          }
+          val new_folder = getNextFilenameFor(new File(folder, name))
+          new_folder.mkdir()
+          user.assignFile(new_folder, true)
+          halt(200)
         } 
       }
     }
@@ -406,15 +432,10 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
       } else if (!user.canWrite(folder)) {
         throw new Exception("user cannot write in that folder")
       } else {
-        val new_file = new File(folder, name)
-        if (new_file.exists()) {
-          throw new Exception("a file with that name already exists")
-        } else {
-          // FileUtils.touch(new_file)
-          file.write(new_file)
-          user.assignFile(new_file, true)
-          halt(200)
-        }
+        val new_file = getNextFilenameFor(new File(folder, name))
+        file.write(new_file)
+        user.assignFile(new_file, true)
+        halt(200)
       } 
     }
   }

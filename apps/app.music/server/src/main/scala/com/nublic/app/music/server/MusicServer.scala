@@ -184,18 +184,28 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
+  def addSongsToPlaylist(songsP: String, pl: Playlist) = {
+    val db_pos = pl.songs.count(_ => true)
+    val songs = splitThatRespectsReasonableSemantics(",")(songsP).map(Long.parseLong(_))
+    val songs_filtered = songs.filter(sid => Database.songs.lookup(sid).isDefined)
+    val song_pos = songs_filtered.zip(new Range(db_pos, db_pos + songs_filtered.length, 1))
+    song_pos.map(s => {
+      val newIntro = new SongPlaylist(s._1, pl.id, s._2)
+      Database.songPlaylists.insert(newIntro)
+    })
+  }
+  
   putUser("/playlists") { user =>
     val name = extraParams("name")
+    val songsP = extraParams("songs")
     transaction {
-      val pls = Database.playlistByName(user.getUsername())
-      pls.find(pl => pl.name == name) match {
-        case Some(p) => p.id
-        case None    => {
-          val newPlaylist = new Playlist(name, user.getUsername())
-          Database.playlists.insert(newPlaylist)
-          newPlaylist.id.toString()
-        }
-      }
+      // Create playlist
+      val newPlaylist = new Playlist(name, user.getUsername())
+      Database.playlists.insert(newPlaylist)
+      // Add songs
+      addSongsToPlaylist(songsP, newPlaylist)
+      // Return new playlist id
+      newPlaylist.id.toString
     }
   }
   
@@ -228,50 +238,13 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     if (!is_of_user) {
       halt(500)
     } else {
-      val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
-      val positions = splitThatRespectsReasonableSemantics(",")(params("songs")).map(parse_playlist_position)
-      val song_pos = songs.zip(positions)
+      val songsP = extraParams("songs")
       transaction {
-        Database.playlists.lookup(id).map(pl =>
-          song_pos.map(sp => {
-            val songId = sp._1
-            val position = sp._2
-            Database.songs.lookup(songId).map(song => {
-              /* Now we have to add the element */
-              val db_pos = pl.songs.count(_ => true)
-              position match {
-                case AtEnd => {
-                  /* Get position for database */
-                  val newIntro = new SongPlaylist(song.id, pl.id, db_pos)
-                  Database.songPlaylists.insert(newIntro)
-                }
-                case AtBetween(l) => {
-                  /* Insert in the middle */
-                  val real_pos: Int = if (l > db_pos) { db_pos } else { l }
-                  update(Database.songPlaylists)(sp =>
-                    where(sp.playlistId === pl.id and sp.position >= real_pos)
-                    set(sp.position := sp.position + 1)
-                  )
-                }
-              }
-            })
-          })
-        )
+    	  addSongsToPlaylist(songsP, Database.playlists.lookup(id).get)
       }
       halt(200)
     }
   }
-  
-  case class AtEnd
-  case class AtBetween(i: Int)
-  
-  def parse_playlist_position(s: String) = {
-    if (s == "end") {
-      AtEnd
-    } else {
-      AtBetween(Integer.parseInt(s))
-    }
-  } 
   
   deleteUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
@@ -281,19 +254,54 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     if (!is_of_user) {
       halt(500)
     } else {
-      val positions = params("positions").split(",").toList.map(Long.parseLong(_))
+      val position = Long.parseLong(extraParams("position"))
       transaction {
-        positions.map(position => {
-            // Delete the song
-            Database.songPlaylists.deleteWhere(x =>
-              x.playlistId === id and x.position === position)
-            // Update the position of following songs
-            update(Database.songPlaylists)(sp =>
-              where(sp.playlistId === id.~ and sp.position > position.~)
-              set(sp.position := sp.position - 1)
-            )
-          }
+        // Delete the song
+        Database.songPlaylists.deleteWhere(x =>
+          x.playlistId === id and x.position === position)
+        // Update the position of following songs
+        update(Database.songPlaylists)(sp =>
+          where(sp.playlistId === id.~ and sp.position > position.~)
+          set(sp.position := sp.position - 1)
         )
+      }
+      halt(200)
+    }
+  }
+  
+  postUser("/playlist/order/:id") { user =>
+    val id = Long.parseLong(params("id"))
+    val is_of_user = transaction {
+      Database.isPlaylistOfUser(id, user.getUsername())
+    }
+    val from = Long.parseLong(params("from"))
+    val to = Long.parseLong(params("to"))
+    val db_count = transaction {
+      Database.playlists.lookup(id).get.songs.count(_ => true)
+    }
+    if (!is_of_user || from < 0 || to < 0 || from >= db_count || to >= db_count) {
+      halt(500)
+    } else {
+      transaction {
+        // Delete the song
+        Database.songPlaylists.deleteWhere(x =>
+          x.playlistId === id and x.position === from)
+        // Different cases
+        if (from < to) {
+          // In [from + 1, to] put one position up
+          update(Database.songPlaylists)(sp =>
+            where(sp.playlistId === id.~ and sp.position > from and sp.position <= to)
+            set(sp.position := sp.position - 1)
+          )
+        } else if (from > to) {
+          // In [from, to - 1] put one position down
+          update(Database.songPlaylists)(sp =>
+            where(sp.playlistId === id.~ and sp.position >= from and sp.position < to)
+            set(sp.position := sp.position + 1)
+          )
+        } else {
+          // from == to => Do nothing
+        }
       }
       halt(200)
     }

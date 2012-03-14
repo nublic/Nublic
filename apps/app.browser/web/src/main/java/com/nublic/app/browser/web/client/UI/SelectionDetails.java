@@ -53,9 +53,9 @@ public class SelectionDetails extends Composite {
 //				setImage(fw.getImage()); // This doesn't create a new Image and so the original gets moved
 				String onClickURL = fw.getURL();
 				if (onClickURL == null) {
-					setImage(fw.getImage().getUrl());
+					setImage(fw.getImageUrl());
 				} else {
-					setHyperLink(fw.getImage().getUrl(), onClickURL);
+					setHyperLink(fw.getImageUrl(), onClickURL);
 				}
 				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
 					info1Label.setText("");

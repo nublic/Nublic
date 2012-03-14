@@ -3,7 +3,7 @@ package com.nublic.app.browser.web.client.UI.dialogs;
 import java.util.ArrayList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -26,7 +26,13 @@ public class PopupContent extends Composite {
 
 	interface PopupContentUiBinder extends UiBinder<Widget, PopupContent> {
 	}
+	
+	interface PopupContentStyle extends CssResource {
+		String withmargin();
+		String centerAlign();
+	}
 
+	@UiField PopupContentStyle style;
 	@UiField LayoutPanel contentTop;
 	@UiField Hyperlink nextLink;
 	@UiField Hyperlink previousLink;
@@ -69,6 +75,8 @@ public class PopupContent extends Composite {
 			titleLabel.setText("?");
 		}
 	}
+	
+	String contentTopInitialStyle = null;
 
 	public void setContent(Widget w) {
 		internalWidget = w;
@@ -77,9 +85,17 @@ public class PopupContent extends Composite {
 		if (w instanceof Image) {
 			originalWidth = ((Image)w).getWidth();
 			originalHeight = ((Image)w).getHeight();
+			contentTop.addStyleName(style.centerAlign());
+			if (contentTopInitialStyle == null) {
+				contentTopInitialStyle = contentTop.getElement().getAttribute("style");
+			}
 		} else {
 			originalWidth = 0;
 			originalHeight = 0;
+			contentTop.removeStyleName(style.centerAlign());
+			if (contentTopInitialStyle != null) {
+				contentTop.getElement().setAttribute("style", contentTopInitialStyle);
+			}
 		}
 	}
 	
@@ -91,7 +107,9 @@ public class PopupContent extends Composite {
 		if (internalWidget != null) {
 			if (internalWidget instanceof Image) {
 				// Images
-				if (originalWidth > 0 && width > 0 && originalHeight > 0 && height > 0) {
+				internalWidget.getElement().setAttribute("style", "max-height: " + height + "px; max-width: " + width + "px;");
+				contentTop.getElement().setAttribute("style", contentTopInitialStyle + " line-height: " + height + "px;");
+				/*if (originalWidth > 0 && width > 0 && originalHeight > 0 && height > 0) {
 					// to avoid 0 divisions and setting negative lengths
 					float widgetRatio = originalHeight / (float) originalWidth;
 					float boxRatio = height / (float) width;
@@ -130,7 +148,7 @@ public class PopupContent extends Composite {
 					if (originalHeight != 0 && originalHeight != 0) {
 						internalWidget.setPixelSize(0, 0);
 					}
-				}
+				}*/
 //			} else if (internalWidget instanceof AbstractMediaPlayer) {
 //				// Music and video
 			} else {
