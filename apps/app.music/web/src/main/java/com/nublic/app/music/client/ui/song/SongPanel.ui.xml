@@ -9,6 +9,9 @@
 		.rightmargin {
 			margin-right: 15px;
 		}
+		.leftmargin {
+			margin-left: 30px;
+		}
 		.space {
 			margin-right: 5px;
 		}
@@ -31,7 +34,7 @@
 			</g:VerticalPanel>
 		</g:north>
 		<g:center>
-			<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll}"/>
+			<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll} {style.leftmargin}"/>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

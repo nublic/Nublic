@@ -9,18 +9,16 @@ import com.bramosystems.oss.player.core.client.PlayerUtil;
 import com.bramosystems.oss.player.core.client.Plugin;
 import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
+import com.bramosystems.oss.player.core.client.RepeatMode;
 import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
 import com.bramosystems.oss.player.core.event.client.LoadingProgressEvent;
 import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
-import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
-import com.bramosystems.oss.player.core.event.client.VolumeChangeEvent;
-import com.bramosystems.oss.player.core.event.client.VolumeChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
@@ -33,8 +31,8 @@ public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
-//	int lastPlayIndex;
 	PlayStateEvent lastStateEvent;
+	boolean isShuffleEnabled = false;
 	
 	public static Widget create() {
 		try {
@@ -110,7 +108,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             	case Started:
             		controls.setPlaying(true);
             		controls.setSongInfo(song);
-            		timer.scheduleRepeating(900);
+            		timer.scheduleRepeating(200);
             		break;
             	case Stopped:
             		controls.setPlaying(false);
@@ -139,7 +137,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPlay() {
 				nublicPlay();
-				
 			}
 		});
 		controls.addNextHandler(new NextHandler() {
@@ -160,10 +157,27 @@ public class NublicPlayer extends CustomAudioPlayer {
 				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
 			}
 		});
-		controls.addVolumeHandler(new VolumeChangeHandler() {
+		controls.addVolumeHandler(new VolumeHandler() {
 			@Override
-			public void onVolumeChanged(VolumeChangeEvent event) {
-				setVolume(event.getNewVolume());
+			public void onVolumeChange(double newVolume) {
+				setVolume(newVolume);
+			}
+		});
+		controls.addShufleHandler(new ShuffleHandler() {
+			@Override
+			public void onShuffleToggled(boolean active) {
+				setShuffleEnabled(active);		
+				isShuffleEnabled = active;
+			}
+		});
+		controls.addRepeatHandler(new RepeatHandler() {
+			@Override
+			public void onRepeatToggled(boolean active) {
+				if (active) {
+					setRepeatMode(RepeatMode.REPEAT_ALL);
+				} else {
+					setRepeatMode(RepeatMode.REPEAT_OFF);
+				}
 			}
 		});
 	}
@@ -203,24 +217,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-//		play(index); // This doesn't fire any event
-		// TODO: change to Alex solution when ready
-		int i;
-		if (lastStateEvent == null || lastStateEvent.getPlayState() == State.Stopped || lastStateEvent.getPlayState() == State.Finished) {
-			// from the beginning of the playlist
-			i = 0;
-			nublicPlay();
+		if (isShuffleEnabled) {
+			setShuffleEnabled(false);
+			play(index);
+			setShuffleEnabled(true);
 		} else {
-			i = lastStateEvent.getItemIndex();
-		}
-		while (i != index) {
-			if (i > index) {
-				nublicPlayPrev();
-				i--;
-			} else {
-				nublicPlayNext();
-				i++;
-			}
+			play(index);			
 		}
 	}
 	

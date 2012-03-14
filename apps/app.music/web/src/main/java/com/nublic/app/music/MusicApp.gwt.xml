@@ -10,6 +10,7 @@
   <inherits name='com.nublic.util.GwtUtil'/>
   <inherits name="com.google.common.collect.Collect"/>
   <inherits name="com.bramosystems.oss.player.core.Core"/>
+  <inherits name="com.kiouri.sliderbar.SliderBarMVP"/>
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
   <!-- the theme of your GWT application by uncommenting          -->

@@ -1,5 +1,6 @@
 package com.nublic.app.music.client.datamodel;
 
+import com.google.gwt.core.client.GWT;
 import com.nublic.app.music.client.Constants;
 
 //artist ::= { "id" : $artist-id,
@@ -37,6 +38,17 @@ public class ArtistInfo {
 		target.append("=");
 		target.append(id);
 		return target.toString();
+	}
+	
+	public String getImageUrl() {
+		// building imageUrl as /artist-art/:artist-id
+		StringBuilder imageUrl = new StringBuilder();
+		imageUrl.append(GWT.getHostPageBaseURL());
+		imageUrl.append("server/artist-art/");
+		imageUrl.append(id);
+		imageUrl.append(".png");
+		
+		return imageUrl.toString();
 	}
 
 }

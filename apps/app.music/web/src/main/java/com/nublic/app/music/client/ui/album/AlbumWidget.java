@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -24,10 +23,6 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.song.AlbumSongList;
-
-//GET /album-art/:album-id
-//* Retrieve the image associated with an album
-//* Return: the raw image data
 
 public class AlbumWidget extends Composite {
 	private static AlbumWidgetUiBinder uiBinder = GWT.create(AlbumWidgetUiBinder.class);
@@ -66,12 +61,6 @@ public class AlbumWidget extends Composite {
 	}
 
 	private void setImage() {
-		// building imageUrl as /album-art/:album-id
-		StringBuilder imageUrl = new StringBuilder();
-		imageUrl.append(GWT.getHostPageBaseURL());
-		imageUrl.append("server/album-art/");
-		imageUrl.append(album.getId());
-
 		albumImage.addErrorHandler(new ErrorHandler() {
 			@Override
 			public void onError(ErrorEvent event) {
@@ -79,7 +68,7 @@ public class AlbumWidget extends Composite {
 			}
 		});
 		
-		albumImage.setUrl(URL.encode(imageUrl.toString()));
+		albumImage.setUrl(album.getImageUrl());
 	}
 
 	private void setClickTarget(String collectionId) {

@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -85,19 +84,14 @@ public class ArtistWidget extends Composite {
 	}
 
 	private void setImage() {
-		// building imageUrl as /artist-art/:artist-id
-		StringBuilder imageUrl = new StringBuilder();
-		imageUrl.append(GWT.getHostPageBaseURL());
-		imageUrl.append("server/artist-art/");
-		imageUrl.append(artist.getId());
-
-		artistImage.setUrl(URL.encode(imageUrl.toString()));
 		artistImage.addErrorHandler(new ErrorHandler() {
 			@Override
 			public void onError(ErrorEvent event) {
 				artistImage.setResource(Resources.INSTANCE.artist());
 			}
 		});
+//		artistImage.setUrl(URL.encode(imageUrl.toString()));
+		artistImage.setUrl(artist.getImageUrl());
 	}
 
 	private void setClickTarget() {
