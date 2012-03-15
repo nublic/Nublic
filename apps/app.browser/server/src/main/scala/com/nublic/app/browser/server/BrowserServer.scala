@@ -229,16 +229,16 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
     } else {
       val parent = f.getParentFile()
       val name = f.getName()
-      val splitted_name = name.split('.')
-      val original_first = splitted_name(0)
+      val splitted_name = name.split('.').toList
+      val original_first = splitted_name.head
+      val original_tail = splitted_name.tail
       
-      var i = 0
+      var i: Long = 0
       var newF: File = null
       do {
         i = i + 1
-        splitted_name(0) = original_first + " (" + i + ")"
-        val newName = StringUtils.join(splitted_name, ".")
-        newF = new File(parent, newName)
+        var end_name_s: String = original_tail.foldLeft(original_first + " (" + i + ")")((a, b) => a + "." + b)
+        newF = new File(parent, end_name_s)
       } while(newF.exists())
       
       newF
