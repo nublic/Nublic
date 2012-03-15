@@ -3,19 +3,16 @@ package com.nublic.app.music.client.ui;
 import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.InlineHyperlink;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
@@ -27,19 +24,16 @@ public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
 	interface NavigationPanelUiBinder extends UiBinder<Widget, NavigationPanel> { }
 
-	// CSS Styles defined in the .xml file
-	interface NavStyle extends CssResource {
-		String innerImage();
-	}
-
-	@UiField NavStyle style;
+	@UiField HTMLPanel libraryPanel;
+	@UiField HTMLPanel collectionPanel;
+	@UiField HTMLPanel playlistPanel;
 	@UiField AddWidget addCollection;
 	@UiField AddWidget addPlaylist;
-	Element allMusic;
-	HashMap<String, Element> collections = new HashMap<String, Element>();
-	HashMap<String, Element> playlists = new HashMap<String, Element>();
-	Element activeElement;
-	Element playingElement;
+	HashMap<String, TagWidget> collections = new HashMap<String, TagWidget>();
+	HashMap<String, TagWidget> playlists = new HashMap<String, TagWidget>();
+	TagWidget allMusic;
+	TagWidget activeTag;
+	TagWidget playingTag;
 	
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -50,73 +44,64 @@ public class NavigationPanel extends Composite {
 				if (event.isAttached()) {
 					addAllMusic();
 					createCurrentPlaylist();
-					activeElement = allMusic;
+					activeTag = allMusic;
 					selectAllMusic();
 					addAddTagsHandlers();
 				}
 			}
 		});
-	}
-	
+	}	
+
 	public void createCurrentPlaylist() {
-		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
-		Element e = addPlaylist(current.getName(), current.getId());
-		Controller.getModel().getPlaylistCache().put(current.getId(), current);
-		// TODO: vas por aqui Pablo
-		PushButton saveButton = new PushButton(new Image(Resources.INSTANCE.save()));
-		saveButton.addClickHandler(new ClickHandler() {
+//		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
+		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
+		pw.addIconAction(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				Controller.saveCurrentPlaylist();
 			}
 		});
-		e.appendChild(saveButton.getElement());
+		playlistPanel.add(pw);
+		playlists.put(Constants.CURRENT_PLAYLIST_ID, pw);
+
+		// Add it to the model
+		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
+		Controller.getModel().getPlaylistCache().put(current.getId(), current);
 	}
 	
 	// Adding methods
 	public void addAllMusic() {
-		InlineHyperlink a = new InlineHyperlink("All music", "");
-		Element e = addElement(a, "Library");
-		allMusic = e;
+		allMusic = new TagWidget(null, "All music", "");
+		libraryPanel.add(allMusic);
 	}
 
-	public Element addCollection(String name, String id) {
-		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_COLLECTION + "=" + id);
-		Element e = addElement(a, Constants.PARAM_COLLECTION);
-		collections.put(id, e);
-		return e;
+	public void addCollection(String name, String id) {
+		TagWidget col = new TagWidget(TagKind.COLLECTION, name, id);
+		collectionPanel.add(col);
+		collections.put(id, col);
 	}
 	
-	public Element addPlaylist(String name, String id) {
-		InlineHyperlink a = new InlineHyperlink(name, Constants.PARAM_PLAYLIST + "=" + id);
-		Element e = addElement(a, Constants.PARAM_PLAYLIST);
-		playlists.put(id, e);
-		return e;
-	}
-	
-	private Element addElement(InlineHyperlink a, String parentId) {
-		Element li = DOM.createElement("li");
-		li.appendChild(a.getElement());
-		Element parent = DOM.getElementById(parentId);
-		parent.appendChild(li);
-		return li;
+	public void addPlaylist(String name, String id) {
+		TagWidget play = new TagWidget(TagKind.PLAYLIST, name, id);
+		playlistPanel.add(play);
+		playlists.put(id, play);
 	}
 	
 	// Removing methods
 	public void removeCollection(String id) {
-		Element elementToRemove = collections.get(id);
-		if (activeElement == elementToRemove) {
-			activeElement = allMusic;
+		TagWidget tagToRemove = collections.get(id);
+		if (activeTag == tagToRemove) {
+			activeTag = allMusic;
 		}
-		elementToRemove.removeFromParent();
+		tagToRemove.removeFromParent();
 	}
 	
 	public void removePlaylist(String id) {
-		Element elementToRemove = playlists.get(id);
-		if (activeElement == elementToRemove) {
-			activeElement = allMusic;
+		TagWidget tagToRemove = playlists.get(id);
+		if (activeTag == tagToRemove) {
+			activeTag = allMusic;
 		}
-		elementToRemove.removeFromParent();
+		tagToRemove.removeFromParent();
 	}
 	
 	// Selecting methods
@@ -132,62 +117,33 @@ public class NavigationPanel extends Composite {
 		select(playlists.get(id));
 	}
 
-	public void select(Element e) {
-		unselect(activeElement);
-		activeElement = e;
-		e.addClassName("active");
+	public void select(TagWidget e) {
+		activeTag.select(false);
+		activeTag = e;
+		e.select(true);
 	}
 
-	public void unselect(Element e) {
-		if (e != null) {
-			e.removeClassName("active");
-		}
-	}
-	
 	// Playing methods
 	public void playPlaylist(String id) {
-		play(playlists.get(id));
+		stop();
+		playingTag = playlists.get(id);
+		playingTag.play();
 	}
 	public void pausePlaylist(String id) {
-		pause(playlists.get(id));
+		stop();
+		playingTag = playlists.get(id);
+		playingTag.pause();
 	}
 	
 	public void stop() {
-		stop(playingElement);
-	}
-	
-	public void stopPlaylist(String id) {
-		stop(playlists.get(id));
-	}
-	
-	public void play(Element e) {
-		stop();
-		playingElement = e;
-
-		Image play = new Image(Resources.INSTANCE.playMini());
-		play.addStyleName(style.innerImage());
-		e.getFirstChild().insertFirst(play.getElement()); // Inserting in the <a> child of <li>
-		e.addClassName("bold-link");
-	}
-
-	public void pause(Element e) {
-		stop();
-		playingElement = e;
-
-		Image pause = new Image(Resources.INSTANCE.pauseMini());
-		pause.addStyleName(style.innerImage());
-		e.getFirstChild().insertFirst(pause.getElement()); // Inserting in the <a> child of <li>
-		e.addClassName("bold-link");
-	}
-	
-	public void stop(Element e) {
-		if (e != null) {
-			e.removeClassName("bold-link");
-			e.getFirstChild().removeChild(e.getFirstChild().getFirstChild()); // The <a> child of <li> has an <img> (play/stop) as first child
-			playingElement = null;
+		if (playingTag != null) {
+			playingTag.stop();
 		}
 	}
 	
+	public void stopPlaylist(String id) {
+		playlists.get(id).stop();
+	}
 	
 	// Handler to notify model that the user has added a tag
 	private void addAddTagsHandlers() {
