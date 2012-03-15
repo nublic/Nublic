@@ -370,12 +370,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  getUser("/artist-art/:artistid.png") { _ =>
-    val artist_id = Long.parseLong(params("artistid"))
-    val place = new File(MusicFolder.getArtistFolder(artist_id), MusicFolder.THUMBNAIL_FILENAME)
-    if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
-  }
-  
   def artist_to_json(a: GroupWithMeasures[LongType, Product3[StringType, LongType, LongType]]) =
     JsonArtist(a.key, a.measures._1, a.measures._2, a.measures._3)
   
@@ -460,12 +454,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  getUser("/album-art/:albumid.png") { _ =>
-    val album_id = Long.parseLong(params("albumid"))
-    val place = new File(MusicFolder.getAlbumFolder(album_id), MusicFolder.THUMBNAIL_FILENAME)
-    if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
-  }
-  
   def album_to_json(a: GroupWithMeasures[LongType, Product2[StringType, LongType]]) = {
     val artists = transaction {
       val query = from(Database.songs, Database.artists)((s, ar) =>
@@ -475,6 +463,46 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       query.toList.removeDuplicates
     }
     JsonAlbum(a.key, a.measures._1, a.measures._2, artists)
+  }
+  
+  // Getting images
+  // ==============
+  
+  val ONE_MONTH_IN_MS = 30 * ONE_DAY_IN_MS
+  val ONE_DAY_IN_MS = 24 * ONE_HOUR_IN_MS
+  val ONE_HOUR_IN_MS = 1 * 3600 * 1000
+  
+  def sendImageIfNewer(place: File, last_modified: Long) = {
+    if (!place.exists()) {
+      halt(404)
+    } else {
+      if (last_modified == -1 || last_modified < place.lastModified()) {
+        response.setContentType("image/png")
+        response.setDateHeader("Last-Modified", place.lastModified())
+        response.setDateHeader("Expires", place.lastModified() + ONE_DAY_IN_MS)
+        
+        place
+      } else {
+        halt(304)
+      }
+    }
+    halt(500)
+  }
+  
+  getUser("/artist-art/:artistid.png") { _ =>
+    val artist_id = Long.parseLong(params("artistid"))
+    val last_modified = request.getDateHeader("If-Modified-Since")
+    val place = new File(MusicFolder.getArtistFolder(artist_id), MusicFolder.THUMBNAIL_FILENAME)
+    
+    sendImageIfNewer(place, last_modified)
+  }
+  
+  getUser("/album-art/:albumid.png") { _ =>
+    val album_id = Long.parseLong(params("albumid"))
+    val last_modified = request.getDateHeader("If-Modified-Since")
+    val place = new File(MusicFolder.getAlbumFolder(album_id), MusicFolder.THUMBNAIL_FILENAME)
+    
+    sendImageIfNewer(place, last_modified)
   }
   
   // Songs
