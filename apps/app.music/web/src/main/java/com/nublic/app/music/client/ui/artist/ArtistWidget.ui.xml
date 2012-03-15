@@ -24,6 +24,10 @@
 			max-height: 48px;
 			max-width: 48px;
 		}
+		.handover:hover {
+			cursor: pointer;
+			cursor: hand;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
@@ -32,7 +36,7 @@
 		<!-- Artist display -->
 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
 			<g:HorizontalPanel width="48px" height="48px" horizontalAlignment="center" verticalAlignment="middle">
-				<g:Image ui:field="artistImage" addStyleNames="{style.artlimits}"/>
+				<g:Image ui:field="artistImage" addStyleNames="{style.artlimits} {style.handover}"/>
 			</g:HorizontalPanel>
 			<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.leftmargin} {style.rightmargin} {style.myh3andahalf}"/>
 		</g:HorizontalPanel>

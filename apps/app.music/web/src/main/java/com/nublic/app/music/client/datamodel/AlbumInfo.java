@@ -3,6 +3,7 @@ package com.nublic.app.music.client.datamodel;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.nublic.app.music.client.Constants;
 
 //album  ::= { "id" : $album-id,
 //        "name": $name,
@@ -44,5 +45,20 @@ public class AlbumInfo {
 		imageUrl.append(".png");
 		
 		return imageUrl.toString();
+	}
+	
+	public String getTargetHistoryToken(String collectionId) {
+		final StringBuilder target = new StringBuilder();		
+		if (collectionId != null) {
+			target.append(Constants.PARAM_COLLECTION);
+			target.append("=");
+			target.append(collectionId);
+			target.append("&");
+		}
+		target.append(Constants.PARAM_ALBUM);
+		target.append("=");
+		target.append(id);
+		
+		return target.toString();
 	}
 }

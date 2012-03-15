@@ -33,7 +33,17 @@ public class ArtistInfo {
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
 	
 	public String getTargetHistoryToken() {
+		return getTargetHistoryToken(null);
+	}
+	
+	public String getTargetHistoryToken(String collectionId) {
 		StringBuilder target = new StringBuilder();
+		if (collectionId != null) {
+			target.append(Constants.PARAM_COLLECTION);
+			target.append("=");
+			target.append(collectionId);
+			target.append("&");
+		}
 		target.append(Constants.PARAM_ARTIST);
 		target.append("=");
 		target.append(id);
