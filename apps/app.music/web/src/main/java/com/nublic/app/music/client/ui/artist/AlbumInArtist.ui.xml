@@ -6,11 +6,9 @@
 			text-align: center;
 			vertical-align: middle;
 		}
-		.padding {
-			padding-left: 21px;
-			padding-right: 21px;
-			padding-top: 0px;
-			padding-bottom: 5px;
+		.margin {
+			margin-bottom: 5px;
+			margin-top: 5px;
 		}
 		.marginbottom {
 			margin-bottom: 10px;
@@ -21,7 +19,7 @@
 	</ui:style>
 
 	<g:VerticalPanel width="90px" horizontalAlignment="center" addStyleNames="{style.aligntop}">
-		<g:HTMLPanel addStyleNames="{style.padding}">
+		<g:HTMLPanel addStyleNames="{style.margin}" width="64px" height="64px">
 			<g:Image ui:field="albumImage" width="64px" height="64px"/>
 		</g:HTMLPanel>
 		<g:Hyperlink ui:field="albumNameLabel" width="85px" addStyleNames="{style.center} {style.marginbottom}" text="Album name"/>

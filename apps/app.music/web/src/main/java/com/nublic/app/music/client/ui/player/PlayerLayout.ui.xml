@@ -17,17 +17,14 @@
 			padding: 0;
 			opacity: 0.4;
 		}
-		.toggled {
+		.nobackground:hover {
 			opacity: 1.0;
 		}
-		.nobackground:hover {
+		.toggled {
 			opacity: 1.0;
 		}
 		.marginleft {
 			margin-left: 10px;
-		}
-		.moremarginleft {
-			margin-left: 20px;
 		}
 		.smallround {
 			-webkit-border-radius: 17px;
@@ -66,8 +63,8 @@
 		</g:PushButton>
 		
 		<!-- Progress bar -->
-		<g:VerticalPanel width="300px" horizontalAlignment="right">
-			<b:CSSSeekBar ui:field="seekBar" addStyleNames="{style.glow} {style.marginleft}"/>
+		<g:VerticalPanel width="315px" horizontalAlignment="right">
+			<b:CSSSeekBar ui:field="seekBar" width="300px" addStyleNames="{style.glow}"/>
 			<g:HorizontalPanel>
 				<g:Label ui:field="currentTime" text="0:00"/>
 				<g:Label text="/"/>
@@ -76,7 +73,7 @@
 		</g:VerticalPanel>
 
 		<!-- Volume panel -->
-		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle" width="80px">
+		<g:HorizontalPanel addStyleNames="{style.marginleft}" verticalAlignment="middle" width="90px">
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
 					<g:PushButton ui:field="shuffleButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
@@ -95,9 +92,9 @@
 		</g:HorizontalPanel>
 		
 		<!-- Info panel -->
-		<g:HorizontalPanel verticalAlignment="middle">	
+		<g:HorizontalPanel width="548px" verticalAlignment="middle" horizontalAlignment="right">	
 			<g:Image ui:field="albumArt" height="48px" width="48px" addStyleNames="{style.marginleft}"/>
-			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}">
+			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}" horizontalAlignment="left">
 				<g:Label ui:field="artistLabel"/>
 				<g:Label ui:field="albumLabel"/>
 				<g:Label ui:field="songLabel"/>
