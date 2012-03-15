@@ -44,6 +44,10 @@
 			outline: 0;
 			outline: thin dotted 9;
 		}
+		.artlimits {
+			max-height: 48px;
+			max-width: 48px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 	
@@ -92,8 +96,10 @@
 		</g:HorizontalPanel>
 		
 		<!-- Info panel -->
-		<g:HorizontalPanel width="548px" verticalAlignment="middle" horizontalAlignment="right">	
-			<g:Image ui:field="albumArt" height="48px" width="48px" addStyleNames="{style.marginleft}"/>
+		<g:HorizontalPanel width="548px" verticalAlignment="middle" horizontalAlignment="right">
+			<g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="center" width="48" height="48px">	
+				<g:Image ui:field="albumArt" addStyleNames="{style.marginleft} {style.artlimits}"/>
+			</g:HorizontalPanel>
 			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}" horizontalAlignment="left">
 				<g:Label ui:field="artistLabel"/>
 				<g:Label ui:field="albumLabel"/>

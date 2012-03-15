@@ -16,12 +16,16 @@
 		.aligntop {
 			vertical-align: top;
 		}
+		.artlimits {
+			max-height: 64px;
+			max-width: 64px;
+		}
 	</ui:style>
 
 	<g:VerticalPanel width="90px" horizontalAlignment="center" addStyleNames="{style.aligntop}">
-		<g:HTMLPanel addStyleNames="{style.margin}" width="64px" height="64px">
-			<g:Image ui:field="albumImage" width="64px" height="64px"/>
-		</g:HTMLPanel>
+		<g:HorizontalPanel addStyleNames="{style.margin}" width="64px" height="64px" horizontalAlignment="center" verticalAlignment="middle">
+			<g:Image ui:field="albumImage" addStyleNames="{style.artlimits}"/>
+		</g:HorizontalPanel>
 		<g:Hyperlink ui:field="albumNameLabel" width="85px" addStyleNames="{style.center} {style.marginbottom}" text="Album name"/>
 	</g:VerticalPanel>
 </ui:UiBinder> 

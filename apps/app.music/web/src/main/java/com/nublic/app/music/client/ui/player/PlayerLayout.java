@@ -220,6 +220,7 @@ public class PlayerLayout extends Composite {
 		for (PlayHandler h : playHandlers) {
 			h.onPlay();
 		}
+		playButton.setFocus(false);
 	}
 	
 	@UiHandler("pauseButton")
@@ -227,6 +228,7 @@ public class PlayerLayout extends Composite {
 		for (PauseHandler h : pauseHandlers) {
 			h.onPause();
 		}
+		pauseButton.setFocus(false);
 	}
 
 	@UiHandler("nextButton")
