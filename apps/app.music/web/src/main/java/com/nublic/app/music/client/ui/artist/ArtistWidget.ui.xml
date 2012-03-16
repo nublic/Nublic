@@ -6,7 +6,7 @@
 			display: inline-block;
 		}
 		.padding {
-			padding: 0px 0px 0px 44px;
+			padding: 0px 0px 0px 52px;
 		}
 		.rightmargin {
 			margin-right: 15px;
@@ -15,10 +15,18 @@
 			margin-left: 15px;
 		}
 		.minheight {
-			min-height: 144px;
+			min-height: 147px;
 		}
 		.myh3andahalf {
 			font-size: 16px;
+		}
+		.artlimits {
+			max-height: 48px;
+			max-width: 48px;
+		}
+		.handover:hover {
+			cursor: pointer;
+			cursor: hand;
 		}
 	</ui:style>
 	
@@ -27,7 +35,9 @@
 	<g:FlowPanel addStyleNames="{style.minheight}">
 		<!-- Artist display -->
 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
-			<g:Image ui:field="artistImage" height="48px" width="48px"/>
+			<g:HorizontalPanel width="48px" height="48px" horizontalAlignment="center" verticalAlignment="middle">
+				<g:Image ui:field="artistImage" addStyleNames="{style.artlimits} {style.handover}"/>
+			</g:HorizontalPanel>
 			<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.leftmargin} {style.rightmargin} {style.myh3andahalf}"/>
 		</g:HorizontalPanel>
 		<!-- Albums display -->

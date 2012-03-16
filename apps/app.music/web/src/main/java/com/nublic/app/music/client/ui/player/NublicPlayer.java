@@ -11,8 +11,6 @@ import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.bramosystems.oss.player.core.client.RepeatMode;
 import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
-import com.bramosystems.oss.player.core.event.client.LoadingProgressEvent;
-import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
@@ -23,6 +21,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.util.error.ErrorPopup;
 
@@ -49,13 +48,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	public NublicPlayer(Plugin p) throws PluginNotFoundException, PluginVersionException, LoadException {
-		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "800px");
+		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "850px");
 
 		controls = new PlayerLayout();
 		addControlHandlers();				// For buttons clicks
 		setPlayerControlWidget(controls);	// Set player widget showing
 		addPlayHandler();					// Control what happens when state changes (stop, play, ..)
-		addLoadingHandler();				// Update the view with progress of the song
 		setTimer();							// Monitor playing progress & update timer display ...
 		addPlayerHandler();					// Clear the initial playlist
 	}
@@ -78,19 +76,13 @@ public class NublicPlayer extends CustomAudioPlayer {
         timer = new Timer() {
             @Override
             public void run() {
+            	// Playing progress
             	controls.setCurrentProgress(getPlayPosition());
+            	// Loading progres
+            	double loadingProgress = (getMediaDuration() / controls.getTotalDuration());
+                controls.setLoadingProgress(loadingProgress);
             }
         };
-	}
-
-	private void addLoadingHandler() {
-		// monitor loading progress and indicate on seekbar
-        addLoadingProgressHandler(new LoadingProgressHandler() {
-            @Override
-            public void onLoadingProgress(LoadingProgressEvent event) {
-                controls.setLoadingProgress(event.getProgress());
-            }
-        });
 	}
 
 	private void addPlayHandler() {
@@ -108,7 +100,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             	case Started:
             		controls.setPlaying(true);
             		controls.setSongInfo(song);
-            		timer.scheduleRepeating(200);
+            		timer.scheduleRepeating(Constants.UPDATE_SAMPLE_MILLISECONDS);
             		break;
             	case Stopped:
             		controls.setPlaying(false);
@@ -118,7 +110,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             		controls.setPlaying(false);
             		controls.setCurrentProgress(0);
             		controls.setSongInfo(null);
-            		controls.setTotalTime(0);
+            		controls.setTotalDuration(0);
             		timer.cancel();
             		break;
                }
