@@ -10,6 +10,7 @@ import org.squeryl.Table
 import java.text.Normalizer
 import java.util.regex.Pattern
 import org.squeryl.dsl.CompositeKey2
+import org.squeryl.dsl.CompositeKey3
 
 object StringUtil {
   def unaccent(s: String): String = {
@@ -66,8 +67,8 @@ class Playlist(val id: Long, var name: String, var user: String) extends KeyedEn
   lazy val songs = Database.songPlaylists.right(this)
 }
 
-class SongPlaylist(val songId: Long, var playlistId: Long, val position: Int) extends KeyedEntity[CompositeKey2[Long, Long]] {
-  def id = compositeKey(songId, playlistId)
+class SongPlaylist(val songId: Long, var playlistId: Long, val position: Int) extends KeyedEntity[CompositeKey3[Long, Long, Int]] {
+  def id = compositeKey(songId, playlistId, position)
 }
 
 object Database extends Schema {

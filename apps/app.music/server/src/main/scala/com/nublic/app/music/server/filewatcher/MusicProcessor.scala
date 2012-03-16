@@ -113,7 +113,23 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   }
   
   def process_deleted_file(filename: String): Unit = inTransaction {
-    Database.songByFilename(filename).map(song => Database.songs.deleteWhere(s => s.id === song.id))
+    Database.songByFilename(filename).map(song => {
+      Database.songCollections.deleteWhere(sc => sc.songId === song.id)
+      // Remove from playlists
+      var sps: List[SongPlaylist] = Database.songPlaylists.where(sp => sp.songId == song.id).toList
+      while (!sps.isEmpty) {
+        val sp = sps.head
+        val pl_pos = sp.position
+        Database.songPlaylists.deleteWhere(x => x.songId === sp.songId and x.playlistId === sp.playlistId and x.position === sp.position)
+        update(Database.songPlaylists)(x =>
+          where(x.playlistId === sp.playlistId and sp.position > pl_pos.~)
+          set(x.position := x.position - 1)
+        )
+        // Try again
+        sps = Database.songPlaylists.where(sp => sp.songId == song.id).toList
+      }
+      Database.songs.deleteWhere(s => s.id === song.id)
+    })
   }
   
   // Functions for working with the database
