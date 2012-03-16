@@ -225,6 +225,12 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     write(JsonPhotosWithCount(photos._1, json_photos))
   }
   
+  def photo_to_json(p: Photo) =
+	JsonPhoto(p.id, p.title, p.date)
+	
+  // Photo properties
+  // ================
+	
   getUser("/photo-info/:photoid") { _ =>
     val photo_id = Long.parseLong(params("photoid"))
     transaction {
@@ -235,8 +241,16 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  def photo_to_json(p: Photo) =
-	JsonPhoto(p.id, p.title, p.date)
+  postUser("/photo-title/:photoid") { _ =>
+    val photo_id = Long.parseLong(params("photoid"))
+    val title = params("title")
+    transaction {
+      update(Database.photos)(p =>
+        where(p.id === photo_id.~)
+        set(p.title := title)
+      )
+    }
+  }
   
   // Image files
   // ===========
