@@ -28,11 +28,20 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
   }
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {
-    
+    Database.photoByFilename(from) match {
+      case None       => process_updated_file(to, context)
+      case Some(photo) => {
+        photo.file = to
+        Database.photos.update(photo)
+      }
+    }
   }
   
   def process_deleted_file(filename: String): Unit = inTransaction {
-    
+    Database.photoByFilename(filename).map(photo => {
+      Database.photoAlbums.deleteWhere(pa => pa.photoId === photo.id)
+      Database.photos.deleteWhere(p => p.id === photo.id)
+    })
   }
 
 }
