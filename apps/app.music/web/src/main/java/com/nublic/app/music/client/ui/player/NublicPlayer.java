@@ -20,6 +20,7 @@ import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,6 +35,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 	Timer timer;
 	PlayStateEvent lastStateEvent;
 	boolean isShuffleEnabled = false;
+	
+	// To fix that ugly bug on loading
+	List<ErrorHandler> errorHandlers = new ArrayList<ErrorHandler>();
 	
 	public static Widget create() {
 		try {
@@ -75,15 +79,20 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	private void initPlayer() {
-		// TODO: surround with try/catch and retry if fails..
-		clearPlaylist();
-		setVolume(1);
-		
-		setTimer();							// Monitor playing progress & update timer display ...
-		controls = new PlayerLayout();
-		addControlHandlers();				// For buttons clicks
-		setPlayerControlWidget(controls);	// Set player widget showing
-		addPlayHandler();					// Control what happens when state changes (stop, play, ..)
+		try {
+			clearPlaylist();
+			setVolume(1);
+			
+			setTimer();							// Monitor playing progress & update timer display ...
+			controls = new PlayerLayout();
+			addControlHandlers();				// For buttons clicks
+			setPlayerControlWidget(controls);	// Set player widget showing
+			addPlayHandler();					// Control what happens when state changes (stop, play, ..)
+		} catch (Exception e) {
+			for (ErrorHandler eh : errorHandlers) {
+				eh.onError(null);
+			}
+		}
 	}
 
 	private void setTimer() {
@@ -269,5 +278,10 @@ public class NublicPlayer extends CustomAudioPlayer {
 		if (!playlist.isEmpty()) {
 			stopMedia();
 		}
+	}
+	
+	// To fix that ugly bug on loading
+	public void addErrorHandler(ErrorHandler h) {
+		errorHandlers.add(h);
 	}
 }

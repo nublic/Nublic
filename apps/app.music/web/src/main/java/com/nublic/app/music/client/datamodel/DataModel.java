@@ -232,5 +232,9 @@ public class DataModel {
 	public void clearCurrentPlaylist() {
 		currentPlaylist.clear();
 	}
+	
+	public void saveCurrentPlaylist(String name) {
+		
+	}
 
 }

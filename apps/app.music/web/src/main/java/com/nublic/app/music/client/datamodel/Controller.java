@@ -6,7 +6,6 @@ import java.util.List;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.client.Window;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
@@ -126,7 +125,7 @@ public class Controller {
 		tp.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
 			@Override
 			public void onClicked(PopupButton button, ClickEvent event) {
-				Window.alert("Saving");
+				Controller.getModel().saveCurrentPlaylist(tp.getText());
 				tp.hide();
 			}
 		});
