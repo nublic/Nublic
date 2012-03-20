@@ -18,6 +18,8 @@ import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -50,12 +52,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	public NublicPlayer(Plugin p) throws PluginNotFoundException, PluginVersionException, LoadException {
 		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "850px");
 
-		controls = new PlayerLayout();
-		addControlHandlers();				// For buttons clicks
-		setPlayerControlWidget(controls);	// Set player widget showing
-		addPlayHandler();					// Control what happens when state changes (stop, play, ..)
-		setTimer();							// Monitor playing progress & update timer display ...
-		addPlayerHandler();					// Clear the initial playlist
+		addPlayerHandler();					// Init all the interface
 	}
 	
 	public PlayStateEvent getLastEvent() { return lastStateEvent; }
@@ -65,11 +62,28 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPlayerStateChanged(PlayerStateEvent event) {
 				if (event.getPlayerState() == PlayerStateEvent.State.Ready) {
-					clearPlaylist();
-					setVolume(1);
+					// Deferred command because if something is not ready sometimes it crash...
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						@Override
+						public void execute() {
+							initPlayer();
+						}
+					});
 				}
 			}
 		});
+	}
+	
+	private void initPlayer() {
+		// TODO: surround with try/catch and retry if fails..
+		clearPlaylist();
+		setVolume(1);
+		
+		setTimer();							// Monitor playing progress & update timer display ...
+		controls = new PlayerLayout();
+		addControlHandlers();				// For buttons clicks
+		setPlayerControlWidget(controls);	// Set player widget showing
+		addPlayHandler();					// Control what happens when state changes (stop, play, ..)
 	}
 
 	private void setTimer() {
@@ -173,8 +187,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			}
 		});
 	}
-	
-	
+
 	// Utils
 	public void addSongToPlaylist(SongInfo song) {
 		playlist.add(song);
@@ -209,13 +222,13 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-		if (isShuffleEnabled) {
-			setShuffleEnabled(false);
+//		if (isShuffleEnabled) {
+//			setShuffleEnabled(false);
 			play(index);
-			setShuffleEnabled(true);
-		} else {
-			play(index);			
-		}
+//			setShuffleEnabled(true);
+//		} else {
+//			play(index);			
+//		}
 	}
 	
 	// secure play methods

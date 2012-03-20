@@ -1,9 +1,11 @@
 package com.nublic.app.music.client.datamodel;
 
+import java.util.EnumSet;
 import java.util.List;
 
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.Window;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
@@ -12,6 +14,10 @@ import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
+import com.nublic.util.widgets.PopupButton;
+import com.nublic.util.widgets.PopupButtonHandler;
+import com.nublic.util.widgets.PopupColor;
+import com.nublic.util.widgets.TextPopup;
 
 public class Controller {
 	static NublicPlayer player;
@@ -114,10 +120,19 @@ public class Controller {
 	}
  
 	public static void saveCurrentPlaylist() {
-		// TODO: This should pop up a panel to ask the name of the new playlist
-		// Create the playlist
-		// and then put "current playlist" to it 
-		Window.alert("Saving");
+		EnumSet<PopupButton> set = EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL);
+		final TextPopup tp = new TextPopup("Enter new playlist name", set, "Save", PopupButton.CUSTOM);
+		tp.setCustomButtonColor(PopupColor.PRIMARY);
+		tp.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
+				Window.alert("Saving");
+				tp.hide();
+			}
+		});
+		tp.setText("New playlist");
+		tp.center();
+		tp.selectAndFocus();
 	}
 	
 	// When URL changes this method is called
