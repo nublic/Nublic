@@ -5,9 +5,10 @@ import java.util.EnumSet;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class TextPopup extends Popup {
+public class TextPopup extends Popup implements HasText {
 	
 	TextBox box;
 
@@ -42,11 +43,13 @@ public class TextPopup extends Popup {
 	public TextPopup(String title) {
 		this(title, EnumSet.of(PopupButton.OK, PopupButton.CANCEL), PopupButton.OK);
 	}
-	
+
+	@Override
 	public String getText() {
 		return box.getText();
 	}
-	
+
+	@Override
 	public void setText(String text) {
 		box.setText(text);
 	}
