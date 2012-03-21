@@ -1,0 +1,38 @@
+package com.nublic.app.photos.server.filewatcher
+
+import java.io.File
+import org.apache.commons.io.FilenameUtils
+import org.squeryl.PrimitiveTypeMode._
+import com.nublic.filewatcher.scala._
+import com.nublic.app.photos.server.Solr
+import com.nublic.app.photos.server.model._
+import java.io.FileWriter
+import java.io.PrintWriter
+import java.util.logging.Logger
+
+class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, true) {
+  
+  def process(c: FileChange) = {
+    Logger.global.severe("Filewatcher: Processing " + c.toString())
+    c match {
+      // case Created(filename, false)  => process_updated_file(filename)
+      case Modified(filename, context, false) => process_updated_file(filename, context)
+      case Moved(from, to, context, _)        => process_moved_file(from, to, context)
+      case Deleted(filename, _, false)        => process_deleted_file(filename)
+      case _                                  => { /* Nothing */ }
+    }
+  }
+  
+  def process_updated_file(filename: String, context: String): Unit = {
+    
+  }
+  
+  def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {
+    
+  }
+  
+  def process_deleted_file(filename: String): Unit = inTransaction {
+    
+  }
+
+}
