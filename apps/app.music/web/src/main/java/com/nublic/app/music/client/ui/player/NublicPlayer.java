@@ -20,7 +20,6 @@ import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,7 +36,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	boolean isShuffleEnabled = false;
 	
 	// To fix that ugly bug on loading
-	List<ErrorHandler> errorHandlers = new ArrayList<ErrorHandler>();
+//	List<ErrorHandler> errorHandlers = new ArrayList<ErrorHandler>();
 	
 	public static Widget create() {
 		try {
@@ -89,9 +88,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 			setPlayerControlWidget(controls);	// Set player widget showing
 			addPlayHandler();					// Control what happens when state changes (stop, play, ..)
 		} catch (Exception e) {
-			for (ErrorHandler eh : errorHandlers) {
-				eh.onError(null);
-			}
+//			for (ErrorHandler eh : errorHandlers) {
+//				eh.onError(null);
+//			}
 		}
 	}
 
@@ -281,7 +280,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	// To fix that ugly bug on loading
-	public void addErrorHandler(ErrorHandler h) {
-		errorHandlers.add(h);
-	}
+//	public void addErrorHandler(ErrorHandler h) {
+//		errorHandlers.add(h);
+//	}
 }

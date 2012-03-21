@@ -22,6 +22,7 @@
 			</g:FlowPanel>
 		</g:west>
 		<g:north size="70">
+			<!-- <g:HorizontalPanel ui:field="playerPanel"> -->
 			<g:HorizontalPanel>
 				<g:Widget ui:field="_player"/>
 			</g:HorizontalPanel>

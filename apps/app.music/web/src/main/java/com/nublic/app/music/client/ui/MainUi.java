@@ -3,12 +3,8 @@ package com.nublic.app.music.client.ui;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ErrorEvent;
-import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,6 +30,7 @@ public class MainUi extends Composite {
 	@UiField SimplePanel mainPanel;
 	@UiField NavigationPanel navigationPanel;
 	@UiField(provided=true) Widget _player;
+//	@UiField HorizontalPanel playerPanel;
 	NublicPlayer player;
 	DataModel model;
 
@@ -50,26 +47,28 @@ public class MainUi extends Composite {
 
 	private void createPlayer() {
 		_player = NublicPlayer.create();
-		if (_player instanceof NublicPlayer) {
-			player = (NublicPlayer) _player;
-			player.addErrorHandler(new ErrorHandler() {
-				@Override
-				public void onError(ErrorEvent event) {
-					Timer t = new Timer() {
-						@Override
-						public void run() {
-							Window.alert("Creating new player...");
-							_player = NublicPlayer.create();
-							player = (NublicPlayer) _player;
-							// TODO: add to panel it's in
-						}
-					};
-					t.schedule(1000);
-				}
-			});
-		} else {
-			player = null;
-		}
+//		if (_player instanceof NublicPlayer) {
+//			player = (NublicPlayer) _player;
+//			player.addErrorHandler(new ErrorHandler() {
+//				@Override
+//				public void onError(ErrorEvent event) {
+//					Timer t = new Timer() {
+//						@Override
+//						public void run() {
+//							Window.alert("Creating new player...");
+//							_player = NublicPlayer.create();
+//							player = (NublicPlayer) _player;
+//							playerPanel.clear();
+//							playerPanel.add(player);
+//						}
+//					};
+//					t.schedule(1000);
+//				}
+//			});
+//		} else {
+//			player = null;
+//		}
+		player = _player instanceof NublicPlayer ? (NublicPlayer) _player : null;
 	}
 
 	// Handler to handle changes in playlists list
