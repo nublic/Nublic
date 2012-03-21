@@ -12,6 +12,7 @@ import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEvent;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEventType;
 import com.nublic.util.error.ErrorPopup;
+import com.nublic.util.gwt.NublicLists;
 import com.nublic.util.messages.Message;
 
 //PUT /playlists
@@ -30,13 +31,9 @@ public class SavePlaylistMessage extends Message {
 	
 	@Override
 	public String getURL() {
-		StringBuilder songString = new StringBuilder();
-		for (SongInfo s : songList) {
-			songString.append(s.getId());
-			songString.append(",");
-		}
+		addParam("songs", NublicLists.joinList(songList, ","));
 		addParam("name", name);
-		addParam("songs", songString.substring(0, songString.length() - 1)); // Substring taken to discard last ","
+		
 		return URL.encode(GWT.getHostPageBaseURL() + "server/playlists");
 	}
 
@@ -49,8 +46,8 @@ public class SavePlaylistMessage extends Message {
 			Playlist p = new Playlist(text, name);
 			involvedSet.add(p);
 			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
-			Controller.getModel().firePlaylistsHandlers(event);
-			Controller.getModel().getPlaylistCache().put(text, p);
+			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
+			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
 		} else {
 			onError();
 		}

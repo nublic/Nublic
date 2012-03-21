@@ -57,7 +57,7 @@ public class NavigationPanel extends Composite {
 		pw.addIconAction(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				Controller.saveCurrentPlaylist();
+				Controller.INSTANCE.saveCurrentPlaylist();
 			}
 		});
 		playlistPanel.add(pw);
@@ -65,7 +65,7 @@ public class NavigationPanel extends Composite {
 
 		// Add it to the model
 		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
-		Controller.getModel().getPlaylistCache().put(current.getId(), current);
+		Controller.INSTANCE.getModel().getPlaylistCache().put(current.getId(), current);
 	}
 	
 	// Adding methods
@@ -149,13 +149,13 @@ public class NavigationPanel extends Composite {
 		addCollection.addPutTagHandler(new PutTagHandler() {
 			@Override
 			public void onPutTag(String newTagName) {
-				Controller.getModel().putNewTag(newTagName);
+				Controller.INSTANCE.getModel().putNewTag(newTagName);
 			}
 		});
 		addPlaylist.addPutTagHandler(new PutTagHandler() {
 			@Override
 			public void onPutTag(String newTagName) {
-				Controller.getModel().putNewPlaylist(newTagName);
+				Controller.INSTANCE.getModel().putNewPlaylist(newTagName);
 			}
 		});
 	}

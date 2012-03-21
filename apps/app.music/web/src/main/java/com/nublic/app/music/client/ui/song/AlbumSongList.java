@@ -21,7 +21,7 @@ public class AlbumSongList extends SongList {
 	
 	@Override
 	public void askForsongs(int from, int to) {
-		Controller.getModel().askForSongs(from, to, albumId, artistId, collectionId, songHandler);
+		Controller.INSTANCE.getModel().askForSongs(from, to, albumId, artistId, collectionId, songHandler);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class AlbumSongList extends SongList {
 		}
 		@Override
 		public void onAddAtEnd() {
-			Controller.addAtEndOfCurrentPlaylist(song);
+			Controller.INSTANCE.addAtEndOfCurrentPlaylist(song);
 		}
 	}
 	
@@ -56,7 +56,7 @@ public class AlbumSongList extends SongList {
 		}
 		@Override
 		public void onPlay() {
-			Controller.play(song);
+			Controller.INSTANCE.play(song);
 		}
 	}
 	

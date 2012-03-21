@@ -46,9 +46,9 @@ public class PlaylistsMessage extends Message {
 					JSPlaylist jsPlaylist = jsPlaylistList.get(i);
 					Playlist p = new Playlist(jsPlaylist.getId(), jsPlaylist.getName());
 					receivedPlaylists.add(p);
-					Controller.getModel().getPlaylistCache().put(jsPlaylist.getId(), p);
+					Controller.INSTANCE.getModel().getPlaylistCache().put(jsPlaylist.getId(), p);
 				}
-				Controller.getModel().firePlaylistsHandlers(new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, receivedPlaylists));
+				Controller.INSTANCE.getModel().firePlaylistsHandlers(new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, receivedPlaylists));
 			}
 		} else {
 			onError();

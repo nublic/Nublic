@@ -39,8 +39,8 @@ public class AddPlaylistMessage extends Message {
 			Playlist p = new Playlist(text, name);
 			involvedSet.add(p);
 			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
-			Controller.getModel().firePlaylistsHandlers(event);
-			Controller.getModel().getPlaylistCache().put(text, p);
+			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
+			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
 		} else {
 			onError();
 		}

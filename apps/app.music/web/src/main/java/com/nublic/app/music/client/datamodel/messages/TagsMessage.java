@@ -47,9 +47,9 @@ public class TagsMessage extends Message {
 					JSTag jsTag = jsTagList.get(i);
 					Tag t = new Tag(jsTag.getId(), jsTag.getName());
 					receivedTags.add(t);
-					Controller.getModel().getTagCache().put(jsTag.getId(), t);
+					Controller.INSTANCE.getModel().getTagCache().put(jsTag.getId(), t);
 				}				
-				Controller.getModel().fireTagsHandlers(new TagsChangeEvent(TagsChangeEventType.TAGS_ADDED, receivedTags));
+				Controller.INSTANCE.getModel().fireTagsHandlers(new TagsChangeEvent(TagsChangeEventType.TAGS_ADDED, receivedTags));
 			}
 		} else {
 			onError();

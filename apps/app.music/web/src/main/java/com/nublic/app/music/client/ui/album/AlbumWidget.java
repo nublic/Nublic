@@ -99,7 +99,7 @@ public class AlbumWidget extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				Controller.addAtEnd(artistId, album.getId(), collectionId);
+				Controller.INSTANCE.addAtEnd(artistId, album.getId(), collectionId);
 			}
 		});
 	}
@@ -108,7 +108,7 @@ public class AlbumWidget extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				Controller.play(artistId, album.getId(), collectionId);
+				Controller.INSTANCE.play(artistId, album.getId(), collectionId);
 			}
 		});
 	}

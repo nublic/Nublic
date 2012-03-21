@@ -43,7 +43,7 @@ public class AlbumPanel extends Composite {
 		if (artistId == null) {
 			titleLabel.setText("All artists");
 		} else {
-			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
@@ -76,7 +76,7 @@ public class AlbumPanel extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				Controller.addAtEnd(artistId, null, collectionId);
+				Controller.INSTANCE.addAtEnd(artistId, null, collectionId);
 			}
 		});
 	}
@@ -85,7 +85,7 @@ public class AlbumPanel extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				Controller.play(artistId, null, collectionId);
+				Controller.INSTANCE.play(artistId, null, collectionId);
 			}
 		});
 	}

@@ -42,7 +42,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	ConfirmDeletionPanel cdp = new ConfirmDeletionPanel(new DeleteHandler() {
 		@Override
 		public void onDelete() {
-			Controller.getModel().deleteTag(collectionId);
+			Controller.INSTANCE.getModel().deleteTag(collectionId);
 			cdp.hide();
 		}
 	});
@@ -55,7 +55,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		if (collectionId == null) {
 			titleLabel.setText(Constants.ALL_MUSIC_NAME);
 		} else {
-			titleLabel.setText(Controller.getModel().getTagCache().get(collectionId).getName());
+			titleLabel.setText(Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName());
 		}
 		
 		// Create button line
@@ -125,7 +125,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				Controller.addAtEnd(null, null, collectionId);
+				Controller.INSTANCE.addAtEnd(null, null, collectionId);
 			}
 		});
 	}
@@ -134,7 +134,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				Controller.play(null, null, collectionId);
+				Controller.INSTANCE.play(null, null, collectionId);
 			}
 		});
 	}

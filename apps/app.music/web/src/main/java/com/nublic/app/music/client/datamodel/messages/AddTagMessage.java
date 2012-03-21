@@ -39,8 +39,8 @@ public class AddTagMessage extends Message {
 			Tag t = new Tag(text, name);
 			involvedSet.add(new Tag(text, name));
 			TagsChangeEvent event = new TagsChangeEvent(TagsChangeEventType.TAGS_ADDED, involvedSet);
-			Controller.getModel().fireTagsHandlers(event);
-			Controller.getModel().getTagCache().put(text, t);
+			Controller.INSTANCE.getModel().fireTagsHandlers(event);
+			Controller.INSTANCE.getModel().getTagCache().put(text, t);
 		} else {
 			onError();
 		}

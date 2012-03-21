@@ -107,7 +107,7 @@ public class ArtistWidget extends Composite {
 
 	// To handle answers to album messages and add album widgets
 	private void setMyselfAsAlbumHandler() {
-		Controller.getModel().askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
+		Controller.INSTANCE.getModel().askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
 			@Override
 			public void onAlbumChange(List<AlbumInfo> answerList) {
 				for (AlbumInfo a : answerList) {
@@ -133,7 +133,7 @@ public class ArtistWidget extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				Controller.addAtEnd(artist.getId(), null, collectionId);
+				Controller.INSTANCE.addAtEnd(artist.getId(), null, collectionId);
 			}
 		});
 	}
@@ -142,7 +142,7 @@ public class ArtistWidget extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				Controller.play(artist.getId(), null, collectionId);
+				Controller.INSTANCE.play(artist.getId(), null, collectionId);
 			}
 		});
 	}

@@ -142,7 +142,7 @@ public class PlayerLayout extends Composite {
 			albumArt.setVisible(false);
 		} else {
 			setTotalDuration(s.getLength() * 1000);
-			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
@@ -151,7 +151,7 @@ public class PlayerLayout extends Composite {
 				}
 			});
 			artistCache.obtain(s.getArtistId());
-			Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+			Cache<String, AlbumInfo> albumCache = Controller.INSTANCE.getModel().getAlbumCache();
 			albumCache.addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {

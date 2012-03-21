@@ -37,8 +37,8 @@ public class DeleteTagMessage extends Message {
 			List<Tag> involvedSet = new ArrayList<Tag>();
 			involvedSet.add(new Tag(id, id));
 			TagsChangeEvent event = new TagsChangeEvent(TagsChangeEventType.TAGS_REMOVED, involvedSet);
-			Controller.getModel().fireTagsHandlers(event);
-			Controller.getModel().getTagCache().remove(id);
+			Controller.INSTANCE.getModel().fireTagsHandlers(event);
+			Controller.INSTANCE.getModel().getTagCache().remove(id);
 			// reload main ui
 			History.newItem("");
 		} else {

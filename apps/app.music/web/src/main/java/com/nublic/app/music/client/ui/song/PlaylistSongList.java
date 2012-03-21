@@ -16,13 +16,13 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		super(numberOfSongs, scrollPanel);
 		this.playlistId = playlistId;
 		
-		Controller.getPlayer().addPlayStateHandler(this);
-		this.onPlayStateChanged(Controller.getPlayer().getLastEvent());
+		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
+		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getLastEvent());
 	}
 
 	@Override
 	public void askForsongs(int from, int to) {
-		Controller.getModel().askForPlaylistSongs(from, to, playlistId, songHandler);
+		Controller.INSTANCE.getModel().askForPlaylistSongs(from, to, playlistId, songHandler);
 	}
 	
 	@Override
@@ -42,7 +42,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void onPlayStateChanged(PlayStateEvent event) {
-		if (event != null && Controller.getPlayingPlaylistId().equals(playlistId)) {
+		if (event != null && Controller.INSTANCE.getPlayingPlaylistId().equals(playlistId)) {
 			switch (event.getPlayState()) {
 			case Paused:
 				setSongPaused(event.getItemIndex());
@@ -91,7 +91,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		}
 		@Override
 		public void onPlay() {
-			Controller.play(row, playlistId);
+			Controller.INSTANCE.play(row, playlistId);
 		}
 	}
 	

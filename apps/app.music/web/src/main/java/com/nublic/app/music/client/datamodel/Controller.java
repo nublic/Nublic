@@ -19,106 +19,85 @@ import com.nublic.util.widgets.PopupColor;
 import com.nublic.util.widgets.TextPopup;
 
 public class Controller {
-	static NublicPlayer player;
-	static DataModel model;
+	public static Controller INSTANCE = null;
+	DataModel model;
 	MainUi ui;
 	
 	// Depending on what is being played
-	static String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
+	String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
 	
-	public Controller(DataModel model, MainUi ui) {
+	public static void create(DataModel model, MainUi ui) {
+		if (INSTANCE == null) {
+			INSTANCE = new Controller(model, ui);
+		}
+	}
+	
+	private Controller(DataModel model, MainUi ui) {
 		this.ui = ui;
-		
-		Controller.setPlayer(ui.getPlayer());
-		Controller.setModel(model);
+		this.model = model;
 		
 		addPlayHandler();
 	}
 
 	// Getters and setters of singletones
-	public static NublicPlayer getPlayer() { return player; }
-	public static void setPlayer(NublicPlayer p) { player = p; }
-	public static String getPlayingPlaylistId() { return playingPlaylistId; }
-	public static void setPlayingPlaylistId(String playingPlaylistId) { Controller.playingPlaylistId = playingPlaylistId; }
-	public static DataModel getModel() { return model; }
-	public static void setModel(DataModel model) { Controller.model = model; }
+	public NublicPlayer getPlayer() { return ui.getPlayer(); }
+	public String getPlayingPlaylistId() { return playingPlaylistId; }
+	public void setPlayingPlaylistId(String playingPlaylistId) { this.playingPlaylistId = playingPlaylistId; }
+	public DataModel getModel() { return model; }
+	public void setModel(DataModel model) { this.model = model; }
 	
 	// Utils to music reproduction
-	public static void setPlayingList(String playlistId) {
+	public void setPlayingList(String playlistId) {
 		if (!playlistId.equals(playingPlaylistId)) {
-			player.clearNublicPlaylist();
+			ui.getPlayer().clearNublicPlaylist();
 			playingPlaylistId = playlistId;
 			// TODO: load the new playlist
 		}
 	}
 
-	public static void play(String artistId, String albumId, String collectionId) {
+	public void play(String artistId, String albumId, String collectionId) {
 		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
 				setPlayingList(Constants.CURRENT_PLAYLIST_ID);
 				model.clearCurrentPlaylist();
 				model.addToCurrentPlaylist(answerList);
-				player.clearNublicPlaylist();
-				player.addSongsToPlaylist(answerList);
-				player.nublicPlay();
+				ui.getPlayer().clearNublicPlaylist();
+				ui.getPlayer().addSongsToPlaylist(answerList);
+				ui.getPlayer().nublicPlay();
 			}
 		}, false);
 	}
 	
-	public static void addAtEnd(String artistId, String albumId, String collectionId) {
+	public void addAtEnd(String artistId, String albumId, String collectionId) {
 		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
 				model.addToCurrentPlaylist(answerList);
-				player.addSongsToPlaylist(answerList);
+				ui.getPlayer().addSongsToPlaylist(answerList);
 			}
 		}, false);
 	}
 
-	public static void addAtEndOfCurrentPlaylist(SongInfo s) {
+	public void addAtEndOfCurrentPlaylist(SongInfo s) {
 		model.addToCurrentPlaylist(s);
-		player.addSongToPlaylist(s);
+		ui.getPlayer().addSongToPlaylist(s);
 	}
 	
 	// Plays a song from a collection
-	public static void play(SongInfo s) {
+	public void play(SongInfo s) {
 		setPlayingList(Constants.CURRENT_PLAYLIST_ID);
 		addAtEndOfCurrentPlaylist(s);
-		player.playSong(player.getNublicPlaylistSize() -1);
+		ui.getPlayer().playSong(ui.getPlayer().getNublicPlaylistSize() -1);
 	}
 	
 	// Plays a song from a playlist
-	public static void play(int row, String playlistId) {
+	public void play(int row, String playlistId) {
 		setPlayingList(playlistId);
-		player.playSong(row);
+		ui.getPlayer().playSong(row);
 	}
-
-	private void addPlayHandler() {
-		if (ui.getPlayer() != null) {
-			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
-				@Override
-				public void onPlayStateChanged(PlayStateEvent event) {
-					switch (event.getPlayState()) {
-					case Paused:
-						ui.setPaused(Controller.getPlayingPlaylistId());
-	            		break;
-	            	case Started:
-						ui.setPlaying(Controller.getPlayingPlaylistId());
-	            		break;
-	            	case Stopped:
-						ui.setPlaying(null);
-	            		break;
-	            	case Finished:
-						ui.setPlaying(null);
-	            		break;
-					}
-				}
-			});
-		}
-	}
- 
-	public static void saveCurrentPlaylist() {
+	
+	public void saveCurrentPlaylist() {
 		// TODO: check that current playlist is not empty
 		EnumSet<PopupButton> set = EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL);
 		final TextPopup tp = new TextPopup("Enter new playlist name", set, "Save", PopupButton.CUSTOM);
@@ -133,6 +112,30 @@ public class Controller {
 		tp.setText("New playlist");
 		tp.center();
 		tp.selectAndFocus();
+	}
+
+	private void addPlayHandler() {
+		if (ui.getPlayer() != null) {
+			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
+				@Override
+				public void onPlayStateChanged(PlayStateEvent event) {
+					switch (event.getPlayState()) {
+					case Paused:
+						ui.setPaused(getPlayingPlaylistId());
+	            		break;
+	            	case Started:
+						ui.setPlaying(getPlayingPlaylistId());
+	            		break;
+	            	case Stopped:
+						ui.setPlaying(null);
+	            		break;
+	            	case Finished:
+						ui.setPlaying(null);
+	            		break;
+					}
+				}
+			});
+		}
 	}
 	
 	// When URL changes this method is called

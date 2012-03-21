@@ -15,7 +15,6 @@ import com.nublic.app.music.client.ui.MainUi;
 public class MusicApp implements EntryPoint, ValueChangeHandler<String> {
 	DataModel model;
 	MainUi ui;
-	Controller controller;
 	
 	/**
 	 * This is the entry point method.
@@ -23,7 +22,7 @@ public class MusicApp implements EntryPoint, ValueChangeHandler<String> {
 	public void onModuleLoad() {
 		model = new DataModel();
 		ui = new MainUi(model);
-		controller = new Controller(model, ui);
+		Controller.create(model, ui);
 		
 		RootLayoutPanel rp = RootLayoutPanel.get();
 	    rp.add(ui);
@@ -39,7 +38,7 @@ public class MusicApp implements EntryPoint, ValueChangeHandler<String> {
 		String args = event.getValue();
 		ParamsHashMap hmap = new ParamsHashMap(args);
 		
-		controller.changeState(hmap);
+		Controller.INSTANCE.changeState(hmap);
 //		model.changeState(hmap);
 	}
 
