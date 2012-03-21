@@ -57,7 +57,7 @@ public class SongPanel extends Composite {
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
 		} else {
-			Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+			Cache<String, AlbumInfo> albumCache = Controller.INSTANCE.getModel().getAlbumCache();
 			albumCache.addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {
@@ -92,7 +92,7 @@ public class SongPanel extends Composite {
 			final Hyperlink artistLink = new Hyperlink();
 			Label commaLabel = new Label(",");
 			commaLabel.getElement().addClassName(style.space());
-			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
@@ -113,7 +113,7 @@ public class SongPanel extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				Controller.addAtEnd(null, albumId, inCollection);
+				Controller.INSTANCE.addAtEnd(null, albumId, inCollection);
 			}
 		});
 	}
@@ -122,7 +122,7 @@ public class SongPanel extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				Controller.play(null, albumId, inCollection);
+				Controller.INSTANCE.play(null, albumId, inCollection);
 			}
 		});
 	}

@@ -32,7 +32,7 @@ public class PlaylistPanel extends Composite {
 	public PlaylistPanel(String id) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		titleLabel.setText(Controller.getModel().getPlaylistCache().get(id).getName());
+		titleLabel.setText(Controller.INSTANCE.getModel().getPlaylistCache().get(id).getName());
 
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.PLAY);

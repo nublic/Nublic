@@ -79,6 +79,10 @@ public class PopupContent extends Composite {
 		this(title, buttonsToShow, w, null);
 	}
 	
+	public void setCustomButtonColor(PopupColor c) {
+		customButton.addStyleName(c.getCssName());
+	}
+	
 	public void addWidget(Widget w) {
 		if (w != null) {
 			mainPanel.add(w);

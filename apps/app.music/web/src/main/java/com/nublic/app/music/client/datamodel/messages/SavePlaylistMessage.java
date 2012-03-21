@@ -8,25 +8,32 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
+import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEvent;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEventType;
 import com.nublic.util.error.ErrorPopup;
+import com.nublic.util.gwt.NublicLists;
 import com.nublic.util.messages.Message;
 
 //PUT /playlists
 //* Add a playlist to the system
 //* :name -> name that the user gave
+//* :songs -> list of songs to add initially
 //* Return: the new id of the playlist
-public class AddPlaylistMessage extends Message {
+public class SavePlaylistMessage extends Message {
 	String name;
+	List<SongInfo> songList;
 	
-	public AddPlaylistMessage(String name) {
+	public SavePlaylistMessage(String name, List<SongInfo> songList) {
 		this.name = name;
+		this.songList = songList;
 	}
 	
 	@Override
 	public String getURL() {
+		addParam("songs", NublicLists.joinList(songList, ","));
 		addParam("name", name);
+		
 		return URL.encode(GWT.getHostPageBaseURL() + "server/playlists");
 	}
 
