@@ -119,13 +119,14 @@ public class Controller {
 	}
  
 	public static void saveCurrentPlaylist() {
+		// TODO: check that current playlist is not empty
 		EnumSet<PopupButton> set = EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL);
 		final TextPopup tp = new TextPopup("Enter new playlist name", set, "Save", PopupButton.CUSTOM);
 		tp.setCustomButtonColor(PopupColor.PRIMARY);
 		tp.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
 			@Override
 			public void onClicked(PopupButton button, ClickEvent event) {
-				Controller.getModel().saveCurrentPlaylist(tp.getText());
+				model.saveCurrentPlaylist(tp.getText());
 				tp.hide();
 			}
 		});

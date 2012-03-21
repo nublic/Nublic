@@ -23,6 +23,7 @@ import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
+import com.nublic.app.music.client.datamodel.messages.SavePlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
 import com.nublic.util.cache.Cache;
@@ -213,6 +214,11 @@ public class DataModel {
 		SequenceHelper.sendJustOne(apm, RequestBuilder.PUT);
 	}
 	
+	public void saveCurrentPlaylist(String name) {
+		SavePlaylistMessage spm = new SavePlaylistMessage(name, currentPlaylist);
+		SequenceHelper.sendJustOne(spm, RequestBuilder.PUT);
+	}
+	
 	public void deleteTag(String tagId) {
 		DeleteTagMessage dtm = new DeleteTagMessage(tagId);
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
@@ -231,10 +237,6 @@ public class DataModel {
 	
 	public void clearCurrentPlaylist() {
 		currentPlaylist.clear();
-	}
-	
-	public void saveCurrentPlaylist(String name) {
-		
 	}
 
 }
