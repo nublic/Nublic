@@ -12,8 +12,10 @@ import java.util.logging.Logger
 
 class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, true) {
   
+  val GLOBAL_LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
+  
   def process(c: FileChange) = {
-    Logger.global.severe("Filewatcher: Processing " + c.toString())
+    GLOBAL_LOGGER.severe("Filewatcher: Processing " + c.toString())
     c match {
       // case Created(filename, false)  => process_updated_file(filename)
       case Modified(filename, context, false) => process_updated_file(filename, context)

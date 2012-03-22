@@ -495,14 +495,14 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
 	    }
 	  }
 	}
-	subfolders.sort((a, b) => a.name.compareToIgnoreCase(b.name) < 0)
+	subfolders.sortWith((a, b) => a.name.compareToIgnoreCase(b.name) < 0)
   }
   
   def get_files(folder: File, user: User): List[BrowserFile] = {
     folder.listFiles().filter(f => !is_hidden(f.getName()) && user.canRead(f))
                       .map(f => get_one_file(f, user))
                       .toList
-                      .sort(fileLt)
+                      .sortWith(fileLt)
   }
   
   def get_one_file(file: File, user: User): BrowserFile = {
