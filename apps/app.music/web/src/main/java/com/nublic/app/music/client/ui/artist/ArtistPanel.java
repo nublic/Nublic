@@ -25,8 +25,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.app.music.client.ui.popup.ConfirmDeletionPanel;
-import com.nublic.app.music.client.ui.popup.DeleteHandler;
+import com.nublic.app.music.client.ui.TagKind;
 
 public class ArtistPanel extends Composite implements ScrollHandler {
 	private static ArtistPanelUiBinder uiBinder = GWT.create(ArtistPanelUiBinder.class);
@@ -39,13 +38,6 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	String collectionId;
 	Set<ArtistWidget> unloadedWidgets = new HashSet<ArtistWidget>();
 	List<ArtistInfo> artistList;
-	ConfirmDeletionPanel cdp = new ConfirmDeletionPanel(new DeleteHandler() {
-		@Override
-		public void onDelete() {
-			Controller.INSTANCE.getModel().deleteTag(collectionId);
-			cdp.hide();
-		}
-	});
 
 	public ArtistPanel(String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -116,7 +108,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		b.setDeleteButtonHandler(new DeleteButtonHandler() {
 			@Override
 			public void onDelete() {
-				cdp.center();
+				Controller.INSTANCE.deleteTag(collectionId, TagKind.COLLECTION);
 			}
 		});
 	}

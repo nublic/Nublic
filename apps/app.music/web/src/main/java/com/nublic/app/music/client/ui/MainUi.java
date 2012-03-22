@@ -152,7 +152,7 @@ public class MainUi extends Composite {
 		setSelectedPlaylist(playlistId);
 		
 		PlaylistPanel plPanel = new PlaylistPanel(playlistId);
-		plPanel.setSongList(total, from, to, answerList, playlistId);
+		plPanel.setSongList(total, from, to, answerList);
 		mainPanel.setWidget(plPanel);
 	}
 	

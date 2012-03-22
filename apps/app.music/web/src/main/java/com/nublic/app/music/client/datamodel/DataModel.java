@@ -20,6 +20,7 @@ import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
+import com.nublic.app.music.client.datamodel.messages.DeletePlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
@@ -222,6 +223,11 @@ public class DataModel {
 	public void deleteTag(String tagId) {
 		DeleteTagMessage dtm = new DeleteTagMessage(tagId);
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
+	}
+	
+	public void deletePlaylist(String id) {
+		DeletePlaylistMessage dpm = new DeletePlaylistMessage(id);
+		SequenceHelper.sendJustOne(dpm, RequestBuilder.DELETE);
 	}
 	
 	// current playlist manage methods
