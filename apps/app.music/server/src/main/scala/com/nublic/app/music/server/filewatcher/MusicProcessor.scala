@@ -12,6 +12,8 @@ import java.util.logging.Logger
 
 class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher, true) {
   
+  val GLOBAL_LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
+  
   def taggedMimeTypes: List[String] = List(
       // MP4
       "audio/mp4",
@@ -60,7 +62,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     List("wav", "aac", "ac3", "aiff", "mid", "midi", "au", "pcm")
   
   def process(c: FileChange) = {
-    Logger.global.severe("Filewatcher: Processing " + c.toString())
+    GLOBAL_LOGGER.severe("Filewatcher: Processing " + c.toString())
     c match {
       // case Created(filename, false)  => process_updated_file(filename)
       case Modified(filename, context, false) => process_updated_file(filename, context)
@@ -73,7 +75,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   def process_updated_file(filename: String, context: String): Unit = {
     val extension = FilenameUtils.getExtension(filename)
     
-    Logger.global.severe("Filewatcher: Getting info from " + filename)
+    GLOBAL_LOGGER.severe("Filewatcher: Getting info from " + filename)
     val song_info = 
       if (taggedExtensions.contains(extension) || taggedMimeTypes.contains(Solr.getMimeType(filename))) {
         Some(SongInfo.from(filename, context))
@@ -83,16 +85,16 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         None
       }
     
-    Logger.global.severe("Filewatcher: Adding to database " + filename)
+    GLOBAL_LOGGER.severe("Filewatcher: Adding to database " + filename)
     if (song_info.isDefined) {
       inTransaction {
         Database.songByFilename(filename) match {
           case Some(song) => {
-            Logger.global.severe("Filewatcher: Replacing in database " + filename)
+            GLOBAL_LOGGER.severe("Filewatcher: Replacing in database " + filename)
             replace_in_database(filename, song.id, song_info.get) 
           }
           case None =>  {
-            Logger.global.severe("Filewatcher: Really adding to database " + filename)
+            GLOBAL_LOGGER.severe("Filewatcher: Really adding to database " + filename)
             add_to_database(filename, song_info.get)
           }
         }
@@ -113,7 +115,23 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   }
   
   def process_deleted_file(filename: String): Unit = inTransaction {
-    Database.songByFilename(filename).map(song => Database.songs.deleteWhere(s => s.id === song.id))
+    Database.songByFilename(filename).map(song => {
+      Database.songCollections.deleteWhere(sc => sc.songId === song.id)
+      // Remove from playlists
+      var sps: List[SongPlaylist] = Database.songPlaylists.where(sp => sp.songId === song.id).toList
+      while (!sps.isEmpty) {
+        val sp = sps.head
+        val pl_pos = sp.position
+        Database.songPlaylists.deleteWhere(x => x.songId === sp.songId and x.playlistId === sp.playlistId and x.position === sp.position)
+        update(Database.songPlaylists)(x =>
+          where(x.playlistId === sp.playlistId and sp.position > pl_pos.~)
+          set(x.position := x.position - 1)
+        )
+        // Try again
+        sps = Database.songPlaylists.where(sp => sp.songId === song.id).toList
+      }
+      Database.songs.deleteWhere(s => s.id === song.id)
+    })
   }
   
   // Functions for working with the database
@@ -205,15 +223,15 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
 
   def add_to_database(file: String, info: SongInfo) = {
     inTransaction {
-      Logger.global.severe("Filewatcher: Adding artist " + info.artist.getOrElse(""))
+      GLOBAL_LOGGER.severe("Filewatcher: Adding artist " + info.artist.getOrElse(""))
       val artist = Database.ensureInDb(info.artist.getOrElse(""), Database.artists, Database.artistByNameNormalizing, new Artist(_))
-      Logger.global.severe("Filewatcher: Adding artist image")
+      GLOBAL_LOGGER.severe("Filewatcher: Adding artist image")
       Images.ensureArtist(artist)
-      Logger.global.severe("Filewatcher: Adding album " + info.album.getOrElse(""))
+      GLOBAL_LOGGER.severe("Filewatcher: Adding album " + info.album.getOrElse(""))
       val album = ensure_or_create_album(file, info.artist, info.album)
-      Logger.global.severe("Filewatcher: Adding album image")
+      GLOBAL_LOGGER.severe("Filewatcher: Adding album image")
       Images.ensureAlbum(new File(file), album, Some(artist))
-      Logger.global.severe("Filewatcher: Creating song")
+      GLOBAL_LOGGER.severe("Filewatcher: Creating song")
       val song = new Song()
       song.file = file
       song.title = info.title.getOrElse("")
@@ -227,10 +245,10 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       try {
         Database.songs.insert(song)
       } catch {
-        case e: Throwable => Logger.global.severe("Music Filewatcher exception: " + e.getMessage())
+        case e: Throwable => GLOBAL_LOGGER.severe("Music Filewatcher exception: " + e.getMessage())
       }
     }
-    Logger.global.severe("Filewatcher: Adding to solr")
+    GLOBAL_LOGGER.severe("Filewatcher: Adding to solr")
     update_solr(file, info)
   }
   
@@ -253,7 +271,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         try {
           Database.songs.update(song)
         } catch {
-          case e: Throwable => Logger.global.severe("Music Filewatcher exception: " + e.getMessage())
+          case e: Throwable => GLOBAL_LOGGER.severe("Music Filewatcher exception: " + e.getMessage())
         }
         Database.deleteIfNoAssocInDb(prevArtistId, Database.artists, _.artistId)
         Database.deleteIfNoAssocInDb(prevAlbumId, Database.albums, _.albumId)

@@ -33,8 +33,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
   val THE_REST = "splat"
   val ALL_OF_SOMETHING = "all"
+    
+  val TRUE: LogicalBoolean = 1 === 1
   
-  val watcher = new MusicActor(servletContext)
+  val watcher = new MusicActor(applicationContext)
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
@@ -218,7 +220,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       halt(500)
     } else {
       transaction {
-        Database.collections.lookup(id) match {
+        Database.playlists.lookup(id) match {
           case None     => { /* There is no playlist like that */ }
           case Some(pl) => {
             Database.songPlaylists.deleteWhere(sp => sp.playlistId === pl.id)
@@ -290,13 +292,13 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         if (from < to) {
           // In [from + 1, to] put one position up
           update(Database.songPlaylists)(sp =>
-            where(sp.playlistId === id.~ and sp.position > from and sp.position <= to)
+            where((sp.playlistId === id.~) and (sp.position > from.~) and (sp.position <= to.~))
             set(sp.position := sp.position - 1)
           )
         } else if (from > to) {
           // In [from, to - 1] put one position down
           update(Database.songPlaylists)(sp =>
-            where(sp.playlistId === id.~ and sp.position >= from and sp.position < to)
+            where((sp.playlistId === id.~) and (sp.position >= from.~) and (sp.position < to.~))
             set(sp.position := sp.position + 1)
           )
         } else {
@@ -399,7 +401,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get query about artists
     val artistid = params("artistid")
     val artist_query: Song => LogicalBoolean = if(artistid == ALL_OF_SOMETHING) {
-      s: Song => true
+      s: Song => 1 === 1
     } else {
       val artistN = Long.parseLong(artistid)
       s: Song => s.artistId === artistN
@@ -460,7 +462,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       	where(s.albumId === a.key and s.artistId === ar.id)
       	select(ar.id)
       )
-      query.toList.removeDuplicates
+      query.toList.distinct
     }
     JsonAlbum(a.key, a.measures._1, a.measures._2, artists)
   }
@@ -472,7 +474,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   val ONE_DAY_IN_MS = 24 * ONE_HOUR_IN_MS
   val ONE_HOUR_IN_MS = 1 * 3600 * 1000
   
-  def sendImageIfNewer(place: File, last_modified: Long) = {
+  def sendImageIfNewer(place: File, last_modified: Long): Any = {
     if (!place.exists()) {
       halt(404)
     } else {
@@ -486,7 +488,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         halt(304)
       }
     }
-    halt(500)
   }
   
   getUser("/artist-art/:artistid.png") { _ =>
@@ -535,7 +536,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get query about artists
     val artistid = params("artistid")
     val artist_query: Song => LogicalBoolean = if(artistid == ALL_OF_SOMETHING) {
-      s: Song => true
+      s: Song => TRUE
     } else {
       val artistN = Long.parseLong(artistid)
       s: Song => s.artistId === artistN
@@ -543,7 +544,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get query about albums
     val albumid = params("albumid")
     val album_query: Song => LogicalBoolean = if(albumid == ALL_OF_SOMETHING) {
-      s: Song => true
+      s: Song => TRUE
     } else {
       val albumN = Long.parseLong(albumid)
       s: Song => s.albumId === albumN

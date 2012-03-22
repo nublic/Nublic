@@ -20,14 +20,15 @@ case class SongInfo(title: Option[String], artist: Option[String], album: Option
 
 object SongInfo {
   
+  val GLOBAL_LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
   def EMPTY_SONG_INFO = SongInfo(None, None, None, None, None, None, None)
   
   def from(filename: String, context: String): SongInfo = {
-    Logger.global.severe("Filewatcher: JAudioTagger for " + filename)
+    GLOBAL_LOGGER.severe("Filewatcher: JAudioTagger for " + filename)
     var tag_info = clean(JAudioTaggerExtractor.from(filename))
     
     if (tag_info.hasImportantInfoMissing) {
-      Logger.global.severe("Filewatcher: Echonest for " + filename)
+      GLOBAL_LOGGER.severe("Filewatcher: Echonest for " + filename)
       EchonestExtractor.from(filename) match {
         case None => { /* */ }
         case Some(echonest_info) => tag_info = merge(tag_info, echonest_info)
@@ -35,7 +36,7 @@ object SongInfo {
     }
     
     if (tag_info.hasImportantInfoMissing) {
-      Logger.global.severe("Filewatcher: Filenaming for " + filename)
+      GLOBAL_LOGGER.severe("Filewatcher: Filenaming for " + filename)
       val fextract = FilenameExtractor.from(filename, context)
       tag_info = merge(tag_info, fextract)
     }

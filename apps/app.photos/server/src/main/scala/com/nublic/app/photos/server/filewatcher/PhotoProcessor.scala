@@ -12,8 +12,10 @@ import java.util.logging.Logger
 
 class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, true) {
   
+  val GLOBAL_LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
+  
   def process(c: FileChange) = {
-    Logger.global.severe("Filewatcher: Processing " + c.toString())
+    GLOBAL_LOGGER.severe("Filewatcher: Processing " + c.toString())
     c match {
       // case Created(filename, false)  => process_updated_file(filename)
       case Modified(filename, context, false) => process_updated_file(filename, context)
@@ -28,11 +30,20 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
   }
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {
-    
+    Database.photoByFilename(from) match {
+      case None       => process_updated_file(to, context)
+      case Some(photo) => {
+        photo.file = to
+        Database.photos.update(photo)
+      }
+    }
   }
   
   def process_deleted_file(filename: String): Unit = inTransaction {
-    
+    Database.photoByFilename(filename).map(photo => {
+      Database.photoAlbums.deleteWhere(pa => pa.photoId === photo.id)
+      Database.photos.deleteWhere(p => p.id === photo.id)
+    })
   }
 
 }

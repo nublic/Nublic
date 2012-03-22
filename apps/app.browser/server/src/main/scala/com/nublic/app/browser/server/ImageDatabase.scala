@@ -5,12 +5,14 @@ import com.nublic.app.browser.server.filewatcher.workers._
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.commons.io.CopyUtils
 import java.util.Date
+import java.util.GregorianCalendar
+import java.util.Calendar
 
 object ImageDatabase {
   
   val DIRECTORY_MIME = "application/x-directory"
   
-  val LAST_MODIFIED_DATE = new Date(112, 1, 22)
+  def LAST_MODIFIED_DATE = new GregorianCalendar(2012, Calendar.FEBRUARY, 23).getTime()
   
   def getImageBytes(mime: String): Array[Byte] = {
     val input = classOf[BrowserServer].getResourceAsStream(getImagePath(mime))

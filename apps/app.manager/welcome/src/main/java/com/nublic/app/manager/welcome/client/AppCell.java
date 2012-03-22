@@ -14,6 +14,7 @@ public class AppCell extends Composite {
 	@UiField Image image;
 	@UiField Anchor name;
 	// @UiField Image star;
+	@SuppressWarnings("unused")
 	private String appId;
 	// private boolean favourite;
 	

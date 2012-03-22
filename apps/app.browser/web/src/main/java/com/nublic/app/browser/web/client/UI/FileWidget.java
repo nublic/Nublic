@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Node;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.HasMouseDownHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -287,11 +286,11 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return url;
 	}
 	
-	@UiHandler("downloadButton")
+	// Regression. this is not called anymore, using onmousedown (reported to library developer)
+	/*@UiHandler("downloadButton")
 	void onDownloadButtonClick(ClickEvent event) {
-		// TODO: Regression. this is not called anymore, using onmousedown (reported to library developer)
 		SingleDownloadAction.download(path, isFolder());
-	}
+	}*/
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonMouseDown(MouseDownEvent event) {
