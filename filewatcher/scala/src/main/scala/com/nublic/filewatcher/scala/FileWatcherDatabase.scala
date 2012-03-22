@@ -3,6 +3,7 @@ package com.nublic.filewatcher.scala
 import org.squeryl.KeyedEntity
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Schema
+import java.lang.Integer
 
 class FileChangeInDatabase(val id: Long, val ty: String, val pathname: String,
     val src_pathname: String, val context: String, val isdir: Short, var processed: Integer)
