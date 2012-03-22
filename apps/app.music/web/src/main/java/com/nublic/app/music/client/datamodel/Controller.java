@@ -47,12 +47,34 @@ public class Controller {
 	public void setModel(DataModel model) { this.model = model; }
 	
 	// Utils to music reproduction
-	public void setPlayingList(String playlistId) {
+	public void setPlayingList(String playlistId, SongHandler sh) {
 		if (!playlistId.equals(playingPlaylistId)) {
 			ui.getPlayer().clearNublicPlaylist();
 			playingPlaylistId = playlistId;
-			// TODO: load the new playlist
+			model.askForPlaylistSongs(0, 32000, playlistId, sh, false);
 		}
+	}
+	
+	public void setPlayingList(String playlistId) {
+		setPlayingList(playlistId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				// Load the new playlist
+				ui.getPlayer().addSongsToPlaylist(answerList);
+			}
+		});
+	}
+	
+	private void setPlayingListAndPlay(String playlistId, final int row) {
+		setPlayingList(playlistId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				// Load the new playlist and play
+				ui.getPlayer().addSongsToPlaylist(answerList);
+				ui.getPlayer().playSong(row);
+			}
+		});
+		
 	}
 
 	public void play(String artistId, String albumId, String collectionId) {
@@ -93,10 +115,13 @@ public class Controller {
 	
 	// Plays a song from a playlist
 	public void play(int row, String playlistId) {
-		setPlayingList(playlistId);
-		ui.getPlayer().playSong(row);
+		if (playingPlaylistId != playlistId) {
+			setPlayingListAndPlay(playlistId, row);
+		} else {
+			ui.getPlayer().playSong(row);
+		}
 	}
-	
+
 	public void saveCurrentPlaylist() {
 		// TODO: check that current playlist is not empty
 		EnumSet<PopupButton> set = EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL);
