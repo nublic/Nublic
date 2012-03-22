@@ -220,7 +220,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       halt(500)
     } else {
       transaction {
-        Database.collections.lookup(id) match {
+        Database.playlists.lookup(id) match {
           case None     => { /* There is no playlist like that */ }
           case Some(pl) => {
             Database.songPlaylists.deleteWhere(sp => sp.playlistId === pl.id)
