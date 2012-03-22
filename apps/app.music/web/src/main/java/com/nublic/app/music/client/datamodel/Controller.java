@@ -65,7 +65,7 @@ public class Controller {
 		});
 	}
 	
-	private void setPlayingListAndPlay(String playlistId, final int row) {
+	public void setPlayingListAndPlay(String playlistId, final int row) {
 		setPlayingList(playlistId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
