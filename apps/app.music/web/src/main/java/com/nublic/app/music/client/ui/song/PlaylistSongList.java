@@ -102,7 +102,22 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		}
 		@Override
 		public void onDelete() {
-			// TODO: delete from playlist
+			// If the song removed is being played
+			if (playingIndex == row && Controller.INSTANCE.getPlayingPlaylistId().equals(playlistId)) {
+				Controller.INSTANCE.getPlayer().stopMedia();
+			}
+			// Remove from server
+			Controller.INSTANCE.getModel().removeFromPlaylist(playlistId, row, new DeleteButtonHandler() {
+				@Override
+				public void onDelete() {
+					// Remove from interface
+					grid.removeRow(row);
+					// If we are being played
+					if (Controller.INSTANCE.getPlayingPlaylistId().equals(playlistId)) {
+						Controller.INSTANCE.getPlayer().removeFromPlaylist(row);
+					}
+				}
+			});
 		}
 	}
 	
