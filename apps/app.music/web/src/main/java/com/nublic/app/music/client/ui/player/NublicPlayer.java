@@ -279,6 +279,11 @@ public class NublicPlayer extends CustomAudioPlayer {
 		}
 	}
 	
+	public void nublicRemoveFromPlaylist(int index) {
+		playlist.remove(index);
+		removeFromPlaylist(index);
+	}
+	
 	// To fix that ugly bug on loading
 //	public void addErrorHandler(ErrorHandler h) {
 //		errorHandlers.add(h);
