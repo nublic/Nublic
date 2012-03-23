@@ -45,7 +45,7 @@ public class AlbumSongList extends SongList {
 		}
 		@Override
 		public void onAddAtEnd() {
-			Controller.INSTANCE.addAtEndOfCurrentPlaylist(song);
+			Controller.INSTANCE.addAtEndOfPlayingPlaylist(song);
 		}
 	}
 	

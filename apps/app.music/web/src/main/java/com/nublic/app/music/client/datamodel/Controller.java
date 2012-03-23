@@ -11,6 +11,7 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.TagKind;
@@ -103,9 +104,10 @@ public class Controller {
 		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				setPlayingList(Constants.CURRENT_PLAYLIST_ID);
+//				setPlayingList(Constants.CURRENT_PLAYLIST_ID);
+				playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
 				model.clearCurrentPlaylist();
-				model.addToCurrentPlaylist(answerList);
+				model.addToPlaylist(Constants.CURRENT_PLAYLIST_ID, answerList);
 				ui.getPlayer().clearNublicPlaylist();
 				ui.getPlayer().addSongsToPlaylist(answerList);
 				ui.getPlayer().nublicPlay();
@@ -117,21 +119,25 @@ public class Controller {
 		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				model.addToCurrentPlaylist(answerList);
-				ui.getPlayer().addSongsToPlaylist(answerList);
+				addAtEndOfPlayingPlaylist(answerList);
 			}
 		}, false);
 	}
+	
+	public void addAtEndOfPlayingPlaylist(List<SongInfo> songList) {
+		model.addToPlaylist(playingPlaylistId, songList);
+		ui.getPlayer().addSongsToPlaylist(songList);
+	}
 
-	public void addAtEndOfCurrentPlaylist(SongInfo s) {
-		model.addToCurrentPlaylist(s);
+	public void addAtEndOfPlayingPlaylist(SongInfo s) {
+		model.addToPlaylist(playingPlaylistId, s);
 		ui.getPlayer().addSongToPlaylist(s);
 	}
 	
 	// Plays a song from a collection
 	public void play(SongInfo s) {
 		setPlayingList(Constants.CURRENT_PLAYLIST_ID);
-		addAtEndOfCurrentPlaylist(s);
+		addAtEndOfPlayingPlaylist(s);
 		ui.getPlayer().playSong(ui.getPlayer().getNublicPlaylistSize() -1);
 	}
 	
@@ -152,7 +158,7 @@ public class Controller {
 		tp.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
 			@Override
 			public void onClicked(PopupButton button, ClickEvent event) {
-				model.saveCurrentPlaylist(tp.getText());
+				model.saveCurrentPlaylist(tp.getText(), new MySavePlaylistSuccessHandler());
 				tp.hide();
 			}
 		});
@@ -161,6 +167,14 @@ public class Controller {
 		tp.selectAndFocus();
 	}
 	
+	private class MySavePlaylistSuccessHandler implements SavePlaylistSuccessHandler {
+		@Override
+		public void onSaveSuccess(String newPlaylistId) {
+			if (isBeingPlayed(Constants.CURRENT_PLAYLIST_ID)) {
+				playingPlaylistId = newPlaylistId; 
+			}
+		}
+	}
 	
 	// Deletion method
 	public void deleteTag(final String id, final TagKind tagKind) {
@@ -171,7 +185,7 @@ public class Controller {
 			public void onClicked(PopupButton button, ClickEvent event) {
 				switch (tagKind) {
 				case COLLECTION:
-					model.deleteTag(id);					
+					model.deleteTag(id);
 					break;
 				case PLAYLIST:
 					model.deletePlaylist(id);
@@ -182,6 +196,11 @@ public class Controller {
 		});
 		confirmDeletion.setHeight("175px");
 		confirmDeletion.center();
+	}
+	
+	// Useful auxiliar method for check if a playlist is being played
+	public boolean isBeingPlayed(String playlistId) {
+		return playlistId.equals(Controller.INSTANCE.getPlayingPlaylistId());
 	}
 
 	

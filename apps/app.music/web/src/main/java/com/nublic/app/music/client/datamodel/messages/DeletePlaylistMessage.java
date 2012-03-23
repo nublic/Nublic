@@ -33,6 +33,9 @@ public class DeletePlaylistMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
+			if (Controller.INSTANCE.isBeingPlayed(id)) {
+				Controller.INSTANCE.getPlayer().clearNublicPlaylist();
+			}
 			List<Playlist> involvedSet = new ArrayList<Playlist>();
 			involvedSet.add(new Playlist(id, id));
 			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_REMOVED, involvedSet);

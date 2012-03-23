@@ -11,6 +11,7 @@ import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEvent;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEventType;
+import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.NublicLists;
 import com.nublic.util.messages.Message;
@@ -23,10 +24,12 @@ import com.nublic.util.messages.Message;
 public class SavePlaylistMessage extends Message {
 	String name;
 	List<SongInfo> songList;
+	SavePlaylistSuccessHandler spsh;
 	
-	public SavePlaylistMessage(String name, List<SongInfo> songList) {
+	public SavePlaylistMessage(String name, List<SongInfo> songList, SavePlaylistSuccessHandler spsh) {
 		this.name = name;
 		this.songList = songList;
+		this.spsh = spsh;
 	}
 	
 	@Override
@@ -48,6 +51,7 @@ public class SavePlaylistMessage extends Message {
 			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
 			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
 			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
+			spsh.onSaveSuccess(text);
 		} else {
 			onError();
 		}

@@ -43,7 +43,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void onPlayStateChanged(PlayStateEvent event) {
-		if (event != null && Controller.INSTANCE.getPlayingPlaylistId().equals(playlistId)) {
+		if (event != null && Controller.INSTANCE.isBeingPlayed(playlistId)) {
 			switch (event.getPlayState()) {
 			case Paused:
 				setSongPaused(event.getItemIndex());
@@ -104,7 +104,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		@Override
 		public void onDelete() {
 			// If the song removed is being played
-			if (playingIndex == row && Controller.INSTANCE.getPlayingPlaylistId().equals(playlistId)) {
+			if (playingIndex == row && Controller.INSTANCE.isBeingPlayed(playlistId)) {
 				Controller.INSTANCE.getPlayer().stopMedia();
 			}
 			// Remove from server
@@ -114,7 +114,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 					// Remove from interface
 					grid.removeRow(row);
 					// If we are being played
-					if (Controller.INSTANCE.getPlayingPlaylistId().equals(playlistId)) {
+					if (Controller.INSTANCE.isBeingPlayed(playlistId)) {
 						Controller.INSTANCE.getPlayer().nublicRemoveFromPlaylist(row);
 					}
 					for (int i = row; i < grid.getRowCount() ; i++) {

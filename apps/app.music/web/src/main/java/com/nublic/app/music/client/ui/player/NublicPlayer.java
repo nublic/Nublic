@@ -100,7 +100,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             public void run() {
             	// Playing progress
             	controls.setCurrentProgress(getPlayPosition());
-            	// Loading progres
+            	// Loading progress
             	double loadingProgress = (getMediaDuration() / controls.getTotalDuration());
                 controls.setLoadingProgress(loadingProgress);
             }
@@ -117,7 +117,7 @@ public class NublicPlayer extends CustomAudioPlayer {
             	switch (event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
-            		timer.cancel();
+//            		timer.cancel(); // Leave it running to update download progress
             		break;
             	case Started:
             		controls.setPlaying(true);
@@ -125,9 +125,6 @@ public class NublicPlayer extends CustomAudioPlayer {
             		timer.scheduleRepeating(Constants.UPDATE_SAMPLE_MILLISECONDS);
             		break;
             	case Stopped:
-            		controls.setPlaying(false);
-            		timer.cancel();
-            		break;
             	case Finished:
             		controls.setPlaying(false);
             		controls.setCurrentProgress(0);

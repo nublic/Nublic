@@ -13,12 +13,14 @@ import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEvent;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEvent;
 import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
+import com.nublic.app.music.client.datamodel.messages.AddToPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistMessage;
@@ -220,8 +222,8 @@ public class DataModel {
 		SequenceHelper.sendJustOne(apm, RequestBuilder.PUT);
 	}
 	
-	public void saveCurrentPlaylist(String name) {
-		SavePlaylistMessage spm = new SavePlaylistMessage(name, currentPlaylist);
+	public void saveCurrentPlaylist(String name, SavePlaylistSuccessHandler spsh) {
+		SavePlaylistMessage spm = new SavePlaylistMessage(name, currentPlaylist, spsh);
 		SequenceHelper.sendJustOne(spm, RequestBuilder.PUT);
 	}
 	
@@ -239,10 +241,24 @@ public class DataModel {
 	public void addToCurrentPlaylist(SongInfo s) {
 		currentPlaylist.add(s);
 	}
-
-	public void addToCurrentPlaylist(List<SongInfo> songList) {
-		for (SongInfo s : songList) {
+	
+	public void addToPlaylist(String playlistId, SongInfo s) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
 			addToCurrentPlaylist(s);
+		} else {
+			AddToPlaylistMessage atpm = new AddToPlaylistMessage(playlistId, s);
+			SequenceHelper.sendJustOne(atpm, RequestBuilder.PUT);
+		}
+	}
+
+	public void addToPlaylist(String playlistId, List<SongInfo> songList) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			for (SongInfo s : songList) {
+				addToCurrentPlaylist(s);
+			}
+		} else {
+			AddToPlaylistMessage atpm = new AddToPlaylistMessage(playlistId, songList);
+			SequenceHelper.sendJustOne(atpm, RequestBuilder.PUT);
 		}
 	}
 	
