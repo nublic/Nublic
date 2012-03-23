@@ -6,13 +6,16 @@ import java.util.List;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.Random;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
+import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
+import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
 import com.nublic.util.widgets.PopupButtonHandler;
 import com.nublic.util.widgets.PopupColor;
@@ -65,7 +68,7 @@ public class Controller {
 		});
 	}
 	
-	private void setPlayingListAndPlay(String playlistId, final int row) {
+	public void setPlayingListAndPlay(String playlistId, final int row) {
 		setPlayingList(playlistId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
@@ -75,6 +78,25 @@ public class Controller {
 			}
 		});
 		
+	}
+	
+	// Plays a playlist
+	public void play(final String playlistId) {
+		setPlayingList(playlistId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				// Load the new playlist and play
+				ui.getPlayer().addSongsToPlaylist(answerList);
+				int playlistSize = ui.getPlayer().getPlaylistSize();
+				if (playlistSize > 0) {
+					if (ui.getPlayer().isShuffleEnabled()) {
+						play(Random.nextInt() % playlistSize, playlistId);				
+					} else {
+						play(0, playlistId);
+					}
+				}
+			}
+		});
 	}
 
 	public void play(String artistId, String albumId, String collectionId) {
@@ -138,7 +160,32 @@ public class Controller {
 		tp.center();
 		tp.selectAndFocus();
 	}
+	
+	
+	// Deletion method
+	public void deleteTag(final String id, final TagKind tagKind) {
+		EnumSet<PopupButton> set = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
+		final MessagePopup confirmDeletion = new MessagePopup(Constants.CONFIRM_DELETION_TITLE, Constants.CONFIRM_DELETION_INFO, set);
+		confirmDeletion.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
+				switch (tagKind) {
+				case COLLECTION:
+					model.deleteTag(id);					
+					break;
+				case PLAYLIST:
+					model.deletePlaylist(id);
+					break;
+				}
+				confirmDeletion.hide();
+			}
+		});
+		confirmDeletion.setHeight("175px");
+		confirmDeletion.center();
+	}
 
+	
+	// +++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private void addPlayHandler() {
 		if (ui.getPlayer() != null) {
 			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {

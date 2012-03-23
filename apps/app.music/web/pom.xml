@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava-gwt</artifactId>
-			<version>10.0.1</version>
+			<version>11.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.bramosystems.oss.player</groupId>

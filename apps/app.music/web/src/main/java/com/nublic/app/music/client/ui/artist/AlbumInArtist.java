@@ -38,7 +38,7 @@ public class AlbumInArtist extends Composite {
 		albumImage.addErrorHandler(new ErrorHandler() {
 			@Override
 			public void onError(ErrorEvent event) {
-				albumImage.setResource(Resources.INSTANCE.artist());
+				albumImage.setResource(Resources.INSTANCE.album());
 			}
 		});
 		albumImage.setUrl(album.getImageUrl());
