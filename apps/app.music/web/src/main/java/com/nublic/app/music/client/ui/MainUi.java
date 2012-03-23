@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
@@ -33,6 +34,8 @@ public class MainUi extends Composite {
 //	@UiField HorizontalPanel playerPanel;
 	NublicPlayer player;
 	DataModel model;
+	
+	boolean currentPlaylistBeingShown = false;
 
 	public MainUi(DataModel model) {
 		createPlayer();
@@ -119,12 +122,20 @@ public class MainUi extends Composite {
 		} else {
 			navigationPanel.selectCollection(collectionId);
 		}
+		currentPlaylistBeingShown = false;
 	}
 	private void setSelectedPlaylist(String playlistId) {
 		if (playlistId == null) {
 			navigationPanel.selectAllMusic();
 		} else {
 			navigationPanel.selectPlaylist(playlistId);
+			
+			// Only to know when are we shoing current playlist
+			if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+				currentPlaylistBeingShown = true;
+			} else {
+				currentPlaylistBeingShown = false;
+			}
 		}
 	}
 	
@@ -177,6 +188,10 @@ public class MainUi extends Composite {
 		} else {
 			navigationPanel.pausePlaylist(playlistId);
 		}
+	}
+	
+	public boolean isCurrentPlaylistBeingShown() {
+		return currentPlaylistBeingShown;
 	}
 	
 	public void error(String message) {

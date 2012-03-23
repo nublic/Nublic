@@ -6,6 +6,7 @@ import java.util.List;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Random;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
@@ -170,9 +171,26 @@ public class Controller {
 	private class MySavePlaylistSuccessHandler implements SavePlaylistSuccessHandler {
 		@Override
 		public void onSaveSuccess(String newPlaylistId) {
+			// If we are playing current playlist
 			if (isBeingPlayed(Constants.CURRENT_PLAYLIST_ID)) {
-				playingPlaylistId = newPlaylistId; 
+				playingPlaylistId = newPlaylistId;
+				PlayStateEvent e = ui.getPlayer().getLastEvent();
+				if (e != null) {
+					switch (e.getPlayState()) {
+					case Started:
+						ui.setPlaying(newPlaylistId);
+						break;
+					case Stopped:
+						ui.setPaused(newPlaylistId);
+						break;
+					}
+				}
 			}
+			// If we are showing current playlist
+			if (ui.isCurrentPlaylistBeingShown()) {
+				History.newItem(Constants.PARAM_PLAYLIST + "=" + newPlaylistId);
+			}
+			model.clearCurrentPlaylist();
 		}
 	}
 	
