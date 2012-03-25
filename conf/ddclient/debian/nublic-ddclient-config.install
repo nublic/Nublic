@@ -1,1 +1,2 @@
 ddclient.conf /etc
+ddclient /etc/default
