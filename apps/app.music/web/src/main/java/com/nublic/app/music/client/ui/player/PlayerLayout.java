@@ -26,6 +26,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.kiouri.sliderbar.client.event.BarValueChangedEvent;
 import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
 import com.kiouri.sliderbar.client.solution.simplevertical.SliderBarSimpleVertical;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
@@ -44,7 +45,6 @@ public class PlayerLayout extends Composite {
 		String nobackground();
 		String toggled();
 		String marginleft();
-		String moremarginleft();
 		String smallround();
 		String biground();
 		String glow();
@@ -79,7 +79,7 @@ public class PlayerLayout extends Composite {
 	List<RepeatHandler> repeatHandlers = new ArrayList<RepeatHandler>();
 	List<ShuffleHandler> shuffleHandlers = new ArrayList<ShuffleHandler>();
 	
-	double totalDuration = 0;
+	double totalDuration = 0; // Milliseconds
 	boolean shuffleActive = false;
 	boolean repeatActive = false;
 	boolean volumeActive = false;
@@ -116,7 +116,11 @@ public class PlayerLayout extends Composite {
 	}
 	
 	public void setLoadingProgress(double progress) {
-		seekBar.setLoadingProgress(progress);		
+		double _progress = progress;
+		if (progress > Constants.LOADING_ERROR_MARGIN) {
+			_progress = 1.0;
+		}
+		seekBar.setLoadingProgress(_progress);		
 	}
 	
 	public void setCurrentProgress(double playPosition) {
@@ -131,14 +135,14 @@ public class PlayerLayout extends Composite {
 	
 	public void setSongInfo(SongInfo s) {
 		if (s == null) {
-			setTotalTime(0);
+			setTotalDuration(0);
 			artistLabel.setVisible(false);
 			albumLabel.setVisible(false);
 			songLabel.setVisible(false);
 			albumArt.setVisible(false);
 		} else {
-			setTotalTime(s.getLength() * 1000);
-			Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+			setTotalDuration(s.getLength() * 1000);
+			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
@@ -147,7 +151,7 @@ public class PlayerLayout extends Composite {
 				}
 			});
 			artistCache.obtain(s.getArtistId());
-			Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+			Cache<String, AlbumInfo> albumCache = Controller.INSTANCE.getModel().getAlbumCache();
 			albumCache.addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 				@Override
 				public void onCacheUpdated(String k, AlbumInfo v) {
@@ -183,9 +187,13 @@ public class PlayerLayout extends Composite {
 		}
 	}
 
-	public void setTotalTime(double totalTime) {
+	public void setTotalDuration(double totalTime) {
 		totalDuration = totalTime;
 		totalDurationLabel.setText(SongInfo.getFormattedLength(totalTime/1000));
+	}
+	
+	public double getTotalDuration() {
+		return totalDuration;
 	}
 
 	// Add handlers
@@ -204,6 +212,7 @@ public class PlayerLayout extends Composite {
 		for (PrevHandler h : prevHandlers) {
 			h.onPrev();
 		}
+		prevButton.setFocus(false);
 	}
 
 	@UiHandler("playButton")
@@ -211,6 +220,7 @@ public class PlayerLayout extends Composite {
 		for (PlayHandler h : playHandlers) {
 			h.onPlay();
 		}
+		playButton.setFocus(false);
 	}
 	
 	@UiHandler("pauseButton")
@@ -218,6 +228,7 @@ public class PlayerLayout extends Composite {
 		for (PauseHandler h : pauseHandlers) {
 			h.onPause();
 		}
+		pauseButton.setFocus(false);
 	}
 
 	@UiHandler("nextButton")
@@ -225,6 +236,7 @@ public class PlayerLayout extends Composite {
 		for (NextHandler h : nextHandlers) {
 			h.onNext();
 		}
+		nextButton.setFocus(false);
 	}
 	
 	// Secondary buttons handlers

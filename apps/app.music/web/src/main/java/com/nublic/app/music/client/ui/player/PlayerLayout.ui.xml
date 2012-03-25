@@ -17,17 +17,14 @@
 			padding: 0;
 			opacity: 0.4;
 		}
-		.toggled {
+		.nobackground:hover {
 			opacity: 1.0;
 		}
-		.nobackground:hover {
+		.toggled {
 			opacity: 1.0;
 		}
 		.marginleft {
 			margin-left: 10px;
-		}
-		.moremarginleft {
-			margin-left: 20px;
 		}
 		.smallround {
 			-webkit-border-radius: 17px;
@@ -46,6 +43,10 @@
 			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 			outline: 0;
 			outline: thin dotted 9;
+		}
+		.artlimits {
+			max-height: 48px;
+			max-width: 48px;
 		}
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
@@ -66,8 +67,8 @@
 		</g:PushButton>
 		
 		<!-- Progress bar -->
-		<g:VerticalPanel width="300px" horizontalAlignment="right">
-			<b:CSSSeekBar ui:field="seekBar" addStyleNames="{style.glow} {style.marginleft}"/>
+		<g:VerticalPanel width="315px" horizontalAlignment="right">
+			<b:CSSSeekBar ui:field="seekBar" width="300px" addStyleNames="{style.glow}"/>
 			<g:HorizontalPanel>
 				<g:Label ui:field="currentTime" text="0:00"/>
 				<g:Label text="/"/>
@@ -76,7 +77,7 @@
 		</g:VerticalPanel>
 
 		<!-- Volume panel -->
-		<g:HorizontalPanel addStyleNames="{style.moremarginleft}" verticalAlignment="middle" width="80px">
+		<g:HorizontalPanel addStyleNames="{style.marginleft}" verticalAlignment="middle" width="90px">
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
 					<g:PushButton ui:field="shuffleButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
@@ -95,9 +96,11 @@
 		</g:HorizontalPanel>
 		
 		<!-- Info panel -->
-		<g:HorizontalPanel verticalAlignment="middle">	
-			<g:Image ui:field="albumArt" height="48px" width="48px" addStyleNames="{style.marginleft}"/>
-			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}">
+		<g:HorizontalPanel width="548px" verticalAlignment="middle" horizontalAlignment="right">
+			<g:HorizontalPanel verticalAlignment="middle" horizontalAlignment="center" width="48" height="48px">	
+				<g:Image ui:field="albumArt" addStyleNames="{style.marginleft} {style.artlimits}"/>
+			</g:HorizontalPanel>
+			<g:VerticalPanel width="500px" height="100%" addStyleNames="{style.marginleft}" horizontalAlignment="left">
 				<g:Label ui:field="artistLabel"/>
 				<g:Label ui:field="albumLabel"/>
 				<g:Label ui:field="songLabel"/>

@@ -4,18 +4,20 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
@@ -46,7 +48,6 @@ public class ArtistWidget extends Composite {
 	@UiField ArtistStyle style;
 	@UiField Image artistImage;
 	@UiField Hyperlink artistNameLabel;
-//	@UiField AbsolutePanel artistPanel;
 	@UiField FlowPanel albumsPanel;
 	@UiField HorizontalPanel labelAndButtonsPanel;
 	
@@ -90,27 +91,23 @@ public class ArtistWidget extends Composite {
 				artistImage.setResource(Resources.INSTANCE.artist());
 			}
 		});
-//		artistImage.setUrl(URL.encode(imageUrl.toString()));
 		artistImage.setUrl(artist.getImageUrl());
 	}
 
 	private void setClickTarget() {
-		StringBuilder target = new StringBuilder();		
-		if (collectionId != null) {
-			target.append(Constants.PARAM_COLLECTION);
-			target.append("=");
-			target.append(collectionId);
-			target.append("&");
-		}
-		target.append(Constants.PARAM_ARTIST);
-		target.append("=");
-		target.append(artist.getId());
-		artistNameLabel.setTargetHistoryToken(target.toString());
+		final String target = artist.getTargetHistoryToken(collectionId);
+		artistNameLabel.setTargetHistoryToken(target);
+		artistImage.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				History.newItem(target);
+			}
+		});
 	}
 
 	// To handle answers to album messages and add album widgets
 	private void setMyselfAsAlbumHandler() {
-		Controller.getModel().askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
+		Controller.INSTANCE.getModel().askForAlbums(artist.getId(), collectionId, new AlbumHandler() {
 			@Override
 			public void onAlbumChange(List<AlbumInfo> answerList) {
 				for (AlbumInfo a : answerList) {
@@ -136,7 +133,7 @@ public class ArtistWidget extends Composite {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override
 			public void onAddAtEnd() {
-				Controller.addAtEnd(artist.getId(), null, collectionId);
+				Controller.INSTANCE.addAtEnd(artist.getId(), null, collectionId);
 			}
 		});
 	}
@@ -145,7 +142,7 @@ public class ArtistWidget extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				Controller.play(artist.getId(), null, collectionId);
+				Controller.INSTANCE.play(artist.getId(), null, collectionId);
 			}
 		});
 	}

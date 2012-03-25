@@ -116,7 +116,7 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
     val username = user.getUsername()
     val user_favs = get_favourites_for(username)
     if (apps.contains(id) && user_favs.contains(id)) {
-      set_favourites_for(username, user_favs.remove(_ == id))
+      set_favourites_for(username, user_favs.filter(_ != id))
     }
     halt(200)
   } }

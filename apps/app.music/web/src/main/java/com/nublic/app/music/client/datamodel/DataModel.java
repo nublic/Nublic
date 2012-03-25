@@ -11,18 +11,24 @@ import com.google.gwt.http.client.URL;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
+import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEvent;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEvent;
 import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
+import com.nublic.app.music.client.datamodel.messages.AddToPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
+import com.nublic.app.music.client.datamodel.messages.DeletePlaylistMessage;
+import com.nublic.app.music.client.datamodel.messages.DeletePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
+import com.nublic.app.music.client.datamodel.messages.SavePlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.SongMessage;
 import com.nublic.app.music.client.datamodel.messages.TagsMessage;
 import com.nublic.util.cache.Cache;
@@ -45,6 +51,9 @@ public class DataModel {
 	Cache<String, ArtistInfo> artistCache;
 	HashMap<String, Tag> tagCache = new HashMap<String, Tag>();
 	HashMap<String, Playlist> playlistCache = new HashMap<String, Playlist>();
+	
+	// Playlist Delete Locker
+	boolean areWeDeleting = false;
 	
 	public DataModel() {
 		// Initialize variables
@@ -213,24 +222,65 @@ public class DataModel {
 		SequenceHelper.sendJustOne(apm, RequestBuilder.PUT);
 	}
 	
+	public void saveCurrentPlaylist(String name, SavePlaylistSuccessHandler spsh) {
+		SavePlaylistMessage spm = new SavePlaylistMessage(name, currentPlaylist, spsh);
+		SequenceHelper.sendJustOne(spm, RequestBuilder.PUT);
+	}
+	
 	public void deleteTag(String tagId) {
 		DeleteTagMessage dtm = new DeleteTagMessage(tagId);
 		SequenceHelper.sendJustOne(dtm, RequestBuilder.DELETE);
+	}
+	
+	public void deletePlaylist(String id) {
+		DeletePlaylistMessage dpm = new DeletePlaylistMessage(id);
+		SequenceHelper.sendJustOne(dpm, RequestBuilder.DELETE);
 	}
 	
 	// current playlist manage methods
 	public void addToCurrentPlaylist(SongInfo s) {
 		currentPlaylist.add(s);
 	}
-
-	public void addToCurrentPlaylist(List<SongInfo> songList) {
-		for (SongInfo s : songList) {
+	
+	public void addToPlaylist(String playlistId, SongInfo s) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
 			addToCurrentPlaylist(s);
+		} else {
+			AddToPlaylistMessage atpm = new AddToPlaylistMessage(playlistId, s);
+			SequenceHelper.sendJustOne(atpm, RequestBuilder.PUT);
+		}
+	}
+
+	public void addToPlaylist(String playlistId, List<SongInfo> songList) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			for (SongInfo s : songList) {
+				addToCurrentPlaylist(s);
+			}
+		} else {
+			AddToPlaylistMessage atpm = new AddToPlaylistMessage(playlistId, songList);
+			SequenceHelper.sendJustOne(atpm, RequestBuilder.PUT);
 		}
 	}
 	
 	public void clearCurrentPlaylist() {
 		currentPlaylist.clear();
+	}
+
+	public synchronized void removeFromPlaylist(String playlistId, int row, DeleteButtonHandler dbh) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			currentPlaylist.remove(row);
+			dbh.onDelete();
+		} else {
+			if (!areWeDeleting) {
+				areWeDeleting = true;
+				DeletePlaylistSongMessage dpsm = new DeletePlaylistSongMessage(playlistId, row, dbh);
+				SequenceHelper.sendJustOne(dpsm, RequestBuilder.DELETE);
+			}
+		}
+	}
+	
+	public synchronized void setDeleting(boolean b) {
+		areWeDeleting = b;
 	}
 
 }

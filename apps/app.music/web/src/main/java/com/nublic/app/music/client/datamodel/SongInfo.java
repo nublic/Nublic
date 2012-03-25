@@ -63,4 +63,9 @@ public class SongInfo {
 		return GWT.getHostPageBaseURL() + "server/view/" + id + ".mp3";
 	}
 	
+	@Override
+	public String toString() {
+		return id;
+	}
+	
 }

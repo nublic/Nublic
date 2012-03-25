@@ -236,7 +236,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	protected void setAlbum(int row, int column, SongInfo s) {
 		final Label albumLabel = new Label();
 		albumLabel.getElement().addClassName(style.leftmargin());
-		Cache<String, AlbumInfo> albumCache = Controller.getModel().getAlbumCache();
+		Cache<String, AlbumInfo> albumCache = Controller.INSTANCE.getModel().getAlbumCache();
 		albumCache.addHandler(s.getAlbumId(), new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
@@ -250,7 +250,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	protected void setArtist(int row, int column, SongInfo s) {
 		final Label artistLabel = new Label();
 		artistLabel.getElement().addClassName(style.leftmargin());
-		Cache<String, ArtistInfo> artistCache = Controller.getModel().getArtistCache();
+		Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 		artistCache.addHandler(s.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {

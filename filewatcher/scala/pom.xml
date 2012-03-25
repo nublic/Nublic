@@ -44,7 +44,7 @@
     <dependency>
     	<groupId>org.squeryl</groupId>
     	<artifactId>squeryl_2.9.0-1</artifactId>
-    	<version>0.9.4</version>
+    	<version>0.9.5</version>
     </dependency>
     <dependency>
     	<groupId>org.freedesktop</groupId>

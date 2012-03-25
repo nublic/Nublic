@@ -7,6 +7,7 @@ import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
+import com.nublic.app.music.client.ui.ButtonLine;
 
 public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
@@ -16,13 +17,13 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		super(numberOfSongs, scrollPanel);
 		this.playlistId = playlistId;
 		
-		Controller.getPlayer().addPlayStateHandler(this);
-		this.onPlayStateChanged(Controller.getPlayer().getLastEvent());
+		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
+		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getLastEvent());
 	}
 
 	@Override
 	public void askForsongs(int from, int to) {
-		Controller.getModel().askForPlaylistSongs(from, to, playlistId, songHandler);
+		Controller.INSTANCE.getModel().askForPlaylistSongs(from, to, playlistId, songHandler);
 	}
 	
 	@Override
@@ -42,7 +43,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void onPlayStateChanged(PlayStateEvent event) {
-		if (event != null && Controller.getPlayingPlaylistId().equals(playlistId)) {
+		if (event != null && Controller.INSTANCE.isBeingPlayed(playlistId)) {
 			switch (event.getPlayState()) {
 			case Paused:
 				setSongPaused(event.getItemIndex());
@@ -91,7 +92,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		}
 		@Override
 		public void onPlay() {
-			Controller.play(row, playlistId);
+			Controller.INSTANCE.play(row, playlistId);
 		}
 	}
 	
@@ -102,7 +103,31 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		}
 		@Override
 		public void onDelete() {
-			// TODO: delete from playlist
+			// If the song removed is being played
+			if (playingIndex == row && Controller.INSTANCE.isBeingPlayed(playlistId)) {
+				Controller.INSTANCE.getPlayer().stopMedia();
+			}
+			// Remove from server
+			Controller.INSTANCE.getModel().removeFromPlaylist(playlistId, row, new DeleteButtonHandler() {
+				@Override
+				public void onDelete() {
+					// Remove from interface
+					grid.removeRow(row);
+					// If we are being played
+					if (Controller.INSTANCE.isBeingPlayed(playlistId)) {
+						Controller.INSTANCE.getPlayer().nublicRemoveFromPlaylist(row);
+					}
+					for (int i = row; i < grid.getRowCount() ; i++) {
+						Widget w = grid.getWidget(i, 0);
+						if (w instanceof SongLocalizer) {
+							((SongLocalizer)w).setPosition(i);
+						} else {
+							((ButtonLine)w).setPlayButtonHandler(new MyPlayHandler(i));
+							((ButtonLine)w).setDeleteButtonHandler(new MyDeleteHandler(i));
+						}
+					}
+				}
+			});
 		}
 	}
 	

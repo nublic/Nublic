@@ -18,6 +18,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.song.PlaylistSongList;
 import com.nublic.app.music.client.ui.song.SongList;
 
@@ -29,10 +30,13 @@ public class PlaylistPanel extends Composite {
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
 	
+	String playlistId;
+	
 	public PlaylistPanel(String id) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		titleLabel.setText(Controller.getModel().getPlaylistCache().get(id).getName());
+		this.playlistId = id;
+		titleLabel.setText(Controller.INSTANCE.getModel().getPlaylistCache().get(id).getName());
 
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.PLAY);
@@ -46,7 +50,7 @@ public class PlaylistPanel extends Composite {
 	}
 	
 	
-	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String playlistId) {
+	public void setSongList(int total, int from, int to, List<SongInfo> answerList) {
 		SongList sl = new PlaylistSongList(playlistId, total, mainPanel);
 		sl.addSongs(total, from, to, answerList);
 
@@ -57,7 +61,7 @@ public class PlaylistPanel extends Composite {
 		b.setDeleteButtonHandler(new DeleteButtonHandler() {
 			@Override
 			public void onDelete() {
-				// TODO delete
+				Controller.INSTANCE.deleteTag(playlistId, TagKind.PLAYLIST);
 			}
 		});
 	}
@@ -66,7 +70,7 @@ public class PlaylistPanel extends Composite {
 		b.setPlayButtonHandler(new PlayButtonHandler() {
 			@Override
 			public void onPlay() {
-				// TODO: play
+				Controller.INSTANCE.play(playlistId);
 			}
 		});
 	}

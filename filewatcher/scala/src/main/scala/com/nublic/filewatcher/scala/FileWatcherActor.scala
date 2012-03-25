@@ -13,6 +13,7 @@ import org.squeryl.SessionFactory
 import FileWatcherDatabase._
 import java.util.HashMap
 //import java.util.logging.Logger
+import java.lang.Integer
 
 object FileWatcherActor extends DBusSigHandler[FileWatcher.file_changed] {
   var lock: AnyRef = new Object()  

@@ -1,0 +1,28 @@
+{ "id" : "photos"
+, "name" : {
+    "default"   : "Photos"
+  , "localized" : {
+      "es": "Fotos"
+    }
+  }
+, "developer" : "Nublic"
+, "dark_icon" : {
+    "16" : "/var/lib/nublic/app-images/photos_dark_16.png"
+  , "24" : "/var/lib/nublic/app-images/photos_dark_24.png"
+  , "32" : "/var/lib/nublic/app-images/photos_dark_32.png"
+  , "48" : "/var/lib/nublic/app-images/photos_dark_48.png"
+  }
+, "light_icon" : {
+    "16" : "/var/lib/nublic/app-images/photos_light_16.png"
+  , "24" : "/var/lib/nublic/app-images/photos_light_24.png"
+  , "32" : "/var/lib/nublic/app-images/photos_light_32.png"
+  , "48" : "/var/lib/nublic/app-images/photos_light_48.png"
+  }
+, "web" : {
+    "path" : "#"
+  }
+, "filewatcher" : {
+    "supported" : true
+  , "paths"     : [ ".*/[^/]*(ph|f)oto[^/]*$" ]
+  }
+}

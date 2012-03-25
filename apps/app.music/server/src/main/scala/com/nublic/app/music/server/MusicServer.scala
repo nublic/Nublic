@@ -33,8 +33,10 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
   val THE_REST = "splat"
   val ALL_OF_SOMETHING = "all"
+    
+  val TRUE: LogicalBoolean = 1 === 1
   
-  val watcher = new MusicActor(servletContext)
+  val watcher = new MusicActor(applicationContext)
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
@@ -218,7 +220,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       halt(500)
     } else {
       transaction {
-        Database.collections.lookup(id) match {
+        Database.playlists.lookup(id) match {
           case None     => { /* There is no playlist like that */ }
           case Some(pl) => {
             Database.songPlaylists.deleteWhere(sp => sp.playlistId === pl.id)
@@ -290,13 +292,13 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         if (from < to) {
           // In [from + 1, to] put one position up
           update(Database.songPlaylists)(sp =>
-            where(sp.playlistId === id.~ and sp.position > from and sp.position <= to)
+            where((sp.playlistId === id.~) and (sp.position > from.~) and (sp.position <= to.~))
             set(sp.position := sp.position - 1)
           )
         } else if (from > to) {
           // In [from, to - 1] put one position down
           update(Database.songPlaylists)(sp =>
-            where(sp.playlistId === id.~ and sp.position >= from and sp.position < to)
+            where((sp.playlistId === id.~) and (sp.position >= from.~) and (sp.position < to.~))
             set(sp.position := sp.position + 1)
           )
         } else {
@@ -370,12 +372,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  getUser("/artist-art/:artistid.png") { _ =>
-    val artist_id = Long.parseLong(params("artistid"))
-    val place = new File(MusicFolder.getArtistFolder(artist_id), MusicFolder.THUMBNAIL_FILENAME)
-    if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
-  }
-  
   def artist_to_json(a: GroupWithMeasures[LongType, Product3[StringType, LongType, LongType]]) =
     JsonArtist(a.key, a.measures._1, a.measures._2, a.measures._3)
   
@@ -405,7 +401,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get query about artists
     val artistid = params("artistid")
     val artist_query: Song => LogicalBoolean = if(artistid == ALL_OF_SOMETHING) {
-      s: Song => true
+      s: Song => 1 === 1
     } else {
       val artistN = Long.parseLong(artistid)
       s: Song => s.artistId === artistN
@@ -460,21 +456,54 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  getUser("/album-art/:albumid.png") { _ =>
-    val album_id = Long.parseLong(params("albumid"))
-    val place = new File(MusicFolder.getAlbumFolder(album_id), MusicFolder.THUMBNAIL_FILENAME)
-    if (place.exists()) { response.setContentType("image/png"); place } else halt(404)
-  }
-  
   def album_to_json(a: GroupWithMeasures[LongType, Product2[StringType, LongType]]) = {
     val artists = transaction {
       val query = from(Database.songs, Database.artists)((s, ar) =>
       	where(s.albumId === a.key and s.artistId === ar.id)
       	select(ar.id)
       )
-      query.toList.removeDuplicates
+      query.toList.distinct
     }
     JsonAlbum(a.key, a.measures._1, a.measures._2, artists)
+  }
+  
+  // Getting images
+  // ==============
+  
+  val ONE_MONTH_IN_MS = 30 * ONE_DAY_IN_MS
+  val ONE_DAY_IN_MS = 24 * ONE_HOUR_IN_MS
+  val ONE_HOUR_IN_MS = 1 * 3600 * 1000
+  
+  def sendImageIfNewer(place: File, last_modified: Long): Any = {
+    if (!place.exists()) {
+      halt(404)
+    } else {
+      if (last_modified == -1 || last_modified < place.lastModified()) {
+        response.setContentType("image/png")
+        response.setDateHeader("Last-Modified", place.lastModified())
+        response.setDateHeader("Expires", place.lastModified() + ONE_DAY_IN_MS)
+        
+        place
+      } else {
+        halt(304)
+      }
+    }
+  }
+  
+  getUser("/artist-art/:artistid.png") { _ =>
+    val artist_id = Long.parseLong(params("artistid"))
+    val last_modified = request.getDateHeader("If-Modified-Since")
+    val place = new File(MusicFolder.getArtistFolder(artist_id), MusicFolder.THUMBNAIL_FILENAME)
+    
+    sendImageIfNewer(place, last_modified)
+  }
+  
+  getUser("/album-art/:albumid.png") { _ =>
+    val album_id = Long.parseLong(params("albumid"))
+    val last_modified = request.getDateHeader("If-Modified-Since")
+    val place = new File(MusicFolder.getAlbumFolder(album_id), MusicFolder.THUMBNAIL_FILENAME)
+    
+    sendImageIfNewer(place, last_modified)
   }
   
   // Songs
@@ -507,7 +536,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get query about artists
     val artistid = params("artistid")
     val artist_query: Song => LogicalBoolean = if(artistid == ALL_OF_SOMETHING) {
-      s: Song => true
+      s: Song => TRUE
     } else {
       val artistN = Long.parseLong(artistid)
       s: Song => s.artistId === artistN
@@ -515,7 +544,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     // Get query about albums
     val albumid = params("albumid")
     val album_query: Song => LogicalBoolean = if(albumid == ALL_OF_SOMETHING) {
-      s: Song => true
+      s: Song => TRUE
     } else {
       val albumN = Long.parseLong(albumid)
       s: Song => s.albumId === albumN

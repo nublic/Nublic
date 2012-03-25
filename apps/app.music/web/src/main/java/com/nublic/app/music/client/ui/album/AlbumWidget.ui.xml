@@ -14,13 +14,19 @@
 		.myh3andahalf {
 			font-size: 16px;
 		}
+		.artlimits {
+			max-height: 96px;
+			max-width: 96px;
+		}
 	</ui:style>
 	
 	<g:FlowPanel>
 		<!-- Album display -->
 <!-- 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel"> -->
 		<g:HorizontalPanel verticalAlignment="top">
-			<g:Image ui:field="albumImage" height="96px" width="96px"/>
+			<g:HorizontalPanel width="96px" height="96px" horizontalAlignment="center" verticalAlignment="middle">
+				<g:Image ui:field="albumImage" addStyleNames="{style.artlimits}"/>
+			</g:HorizontalPanel>
 			<g:VerticalPanel addStyleNames="{style.leftmargin}">
 				<g:HorizontalPanel ui:field="labelAndButtonsPanel" addStyleNames="translucidPanel {style.topmargin}">
 					<g:Hyperlink ui:field="albumNameLabel" text="Album name" addStyleNames="{style.rightmargin} {style.myh3andahalf}"/>

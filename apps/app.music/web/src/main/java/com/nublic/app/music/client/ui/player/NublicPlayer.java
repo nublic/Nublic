@@ -11,8 +11,6 @@ import com.bramosystems.oss.player.core.client.PluginNotFoundException;
 import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.bramosystems.oss.player.core.client.RepeatMode;
 import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
-import com.bramosystems.oss.player.core.event.client.LoadingProgressEvent;
-import com.bramosystems.oss.player.core.event.client.LoadingProgressHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
@@ -20,9 +18,12 @@ import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
 import com.bramosystems.oss.player.core.event.client.SeekChangeEvent;
 import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.util.error.ErrorPopup;
 
@@ -33,6 +34,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 	Timer timer;
 	PlayStateEvent lastStateEvent;
 	boolean isShuffleEnabled = false;
+	
+	// To fix that ugly bug on loading
+//	List<ErrorHandler> errorHandlers = new ArrayList<ErrorHandler>();
 	
 	public static Widget create() {
 		try {
@@ -49,15 +53,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	public NublicPlayer(Plugin p) throws PluginNotFoundException, PluginVersionException, LoadException {
-		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "800px");
+		super(p, GWT.getModuleBaseURL() + "void.mp3", false, "65px", "850px");
 
-		controls = new PlayerLayout();
-		addControlHandlers();				// For buttons clicks
-		setPlayerControlWidget(controls);	// Set player widget showing
-		addPlayHandler();					// Control what happens when state changes (stop, play, ..)
-		addLoadingHandler();				// Update the view with progress of the song
-		setTimer();							// Monitor playing progress & update timer display ...
-		addPlayerHandler();					// Clear the initial playlist
+		addPlayerHandler();					// Init all the interface
 	}
 	
 	public PlayStateEvent getLastEvent() { return lastStateEvent; }
@@ -67,30 +65,46 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onPlayerStateChanged(PlayerStateEvent event) {
 				if (event.getPlayerState() == PlayerStateEvent.State.Ready) {
-					clearPlaylist();
-					setVolume(1);
+					// Deferred command because if something is not ready sometimes it crash...
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						@Override
+						public void execute() {
+							initPlayer();
+						}
+					});
 				}
 			}
 		});
+	}
+	
+	private void initPlayer() {
+		try {
+			clearPlaylist();
+			setVolume(1);
+			
+			setTimer();							// Monitor playing progress & update timer display ...
+			controls = new PlayerLayout();
+			addControlHandlers();				// For buttons clicks
+			setPlayerControlWidget(controls);	// Set player widget showing
+			addPlayHandler();					// Control what happens when state changes (stop, play, ..)
+		} catch (Exception e) {
+//			for (ErrorHandler eh : errorHandlers) {
+//				eh.onError(null);
+//			}
+		}
 	}
 
 	private void setTimer() {
         timer = new Timer() {
             @Override
             public void run() {
+            	// Playing progress
             	controls.setCurrentProgress(getPlayPosition());
+            	// Loading progress
+            	double loadingProgress = (getMediaDuration() / controls.getTotalDuration());
+                controls.setLoadingProgress(loadingProgress);
             }
         };
-	}
-
-	private void addLoadingHandler() {
-		// monitor loading progress and indicate on seekbar
-        addLoadingProgressHandler(new LoadingProgressHandler() {
-            @Override
-            public void onLoadingProgress(LoadingProgressEvent event) {
-                controls.setLoadingProgress(event.getProgress());
-            }
-        });
 	}
 
 	private void addPlayHandler() {
@@ -103,22 +117,19 @@ public class NublicPlayer extends CustomAudioPlayer {
             	switch (event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
-            		timer.cancel();
+//            		timer.cancel(); // Leave it running to update download progress
             		break;
             	case Started:
             		controls.setPlaying(true);
             		controls.setSongInfo(song);
-            		timer.scheduleRepeating(200);
+            		timer.scheduleRepeating(Constants.UPDATE_SAMPLE_MILLISECONDS);
             		break;
             	case Stopped:
-            		controls.setPlaying(false);
-            		timer.cancel();
-            		break;
             	case Finished:
             		controls.setPlaying(false);
             		controls.setCurrentProgress(0);
             		controls.setSongInfo(null);
-            		controls.setTotalTime(0);
+            		controls.setTotalDuration(0);
             		timer.cancel();
             		break;
                }
@@ -181,8 +192,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			}
 		});
 	}
-	
-	
+
 	// Utils
 	public void addSongToPlaylist(SongInfo song) {
 		playlist.add(song);
@@ -217,13 +227,13 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-		if (isShuffleEnabled) {
-			setShuffleEnabled(false);
+//		if (isShuffleEnabled) {
+//			setShuffleEnabled(false);
 			play(index);
-			setShuffleEnabled(true);
-		} else {
-			play(index);			
-		}
+//			setShuffleEnabled(true);
+//		} else {
+//			play(index);			
+//		}
 	}
 	
 	// secure play methods
@@ -265,4 +275,14 @@ public class NublicPlayer extends CustomAudioPlayer {
 			stopMedia();
 		}
 	}
+	
+	public void nublicRemoveFromPlaylist(int index) {
+		playlist.remove(index);
+		removeFromPlaylist(index);
+	}
+	
+	// To fix that ugly bug on loading
+//	public void addErrorHandler(ErrorHandler h) {
+//		errorHandlers.add(h);
+//	}
 }

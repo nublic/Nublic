@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
@@ -29,13 +30,15 @@ public class MainUi extends Composite {
 	
 	@UiField SimplePanel mainPanel;
 	@UiField NavigationPanel navigationPanel;
-	@UiField(provided=true) Widget _player = NublicPlayer.create();
+	@UiField(provided=true) Widget _player;
+//	@UiField HorizontalPanel playerPanel;
 	NublicPlayer player;
 	DataModel model;
+	
+	boolean currentPlaylistBeingShown = false;
 
 	public MainUi(DataModel model) {
-		_player = NublicPlayer.create();
-		player = _player instanceof NublicPlayer ? (NublicPlayer)_player : null;
+		createPlayer();
 
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -43,6 +46,32 @@ public class MainUi extends Composite {
 
 		addTagsChangeHandler();
 		addPlaylistsChangeHandler();
+	}
+
+	private void createPlayer() {
+		_player = NublicPlayer.create();
+//		if (_player instanceof NublicPlayer) {
+//			player = (NublicPlayer) _player;
+//			player.addErrorHandler(new ErrorHandler() {
+//				@Override
+//				public void onError(ErrorEvent event) {
+//					Timer t = new Timer() {
+//						@Override
+//						public void run() {
+//							Window.alert("Creating new player...");
+//							_player = NublicPlayer.create();
+//							player = (NublicPlayer) _player;
+//							playerPanel.clear();
+//							playerPanel.add(player);
+//						}
+//					};
+//					t.schedule(1000);
+//				}
+//			});
+//		} else {
+//			player = null;
+//		}
+		player = _player instanceof NublicPlayer ? (NublicPlayer) _player : null;
 	}
 
 	// Handler to handle changes in playlists list
@@ -93,12 +122,20 @@ public class MainUi extends Composite {
 		} else {
 			navigationPanel.selectCollection(collectionId);
 		}
+		currentPlaylistBeingShown = false;
 	}
 	private void setSelectedPlaylist(String playlistId) {
 		if (playlistId == null) {
 			navigationPanel.selectAllMusic();
 		} else {
 			navigationPanel.selectPlaylist(playlistId);
+			
+			// Only to know when are we shoing current playlist
+			if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+				currentPlaylistBeingShown = true;
+			} else {
+				currentPlaylistBeingShown = false;
+			}
 		}
 	}
 	
@@ -126,7 +163,7 @@ public class MainUi extends Composite {
 		setSelectedPlaylist(playlistId);
 		
 		PlaylistPanel plPanel = new PlaylistPanel(playlistId);
-		plPanel.setSongList(total, from, to, answerList, playlistId);
+		plPanel.setSongList(total, from, to, answerList);
 		mainPanel.setWidget(plPanel);
 	}
 	
@@ -151,6 +188,10 @@ public class MainUi extends Composite {
 		} else {
 			navigationPanel.pausePlaylist(playlistId);
 		}
+	}
+	
+	public boolean isCurrentPlaylistBeingShown() {
+		return currentPlaylistBeingShown;
 	}
 	
 	public void error(String message) {
