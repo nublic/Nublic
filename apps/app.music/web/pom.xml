@@ -76,6 +76,11 @@
 			<artifactId>gwt-slider-bar</artifactId>
 			<version>1.0</version>
 		</dependency>
+		<dependency>
+			<groupId>com.allen_sauer</groupId>
+			<artifactId>gwt-dnd</artifactId>
+			<version>3.1.2-2</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -18,6 +18,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,6 +34,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.dnd.SongDragHandler;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
@@ -95,6 +97,13 @@ public abstract class SongList extends Composite implements ScrollHandler {
 				onScroll(null);				
 			}
 		});
+		
+		createDropController();
+	}
+
+	// To handle drag and drop
+	private void createDropController() {
+		Controller.INSTANCE.createCenterDropController(grid, new SongDragHandler());
 	}
 
 	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -259,6 +268,12 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		});
 		artistCache.obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
+	}
+	
+	protected void setGrabber(int row, int column) {
+		HTML grabber = new HTML("[Grab me]");
+		grid.setWidget(row, column, grabber);
+		Controller.INSTANCE.makeDraggable(grabber);
 	}
 
 }

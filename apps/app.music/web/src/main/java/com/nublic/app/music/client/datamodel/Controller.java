@@ -1,13 +1,17 @@
 package com.nublic.app.music.client.datamodel;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.allen_sauer.gwt.dnd.client.DragHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
@@ -16,6 +20,8 @@ import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.TagKind;
+import com.nublic.app.music.client.ui.dnd.SongDragController;
+import com.nublic.app.music.client.ui.dnd.SongDropController;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
@@ -30,6 +36,14 @@ public class Controller {
 	
 	// Depending on what is being played
 	String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
+	
+	// Drag and drop support
+	SongDragController songDragController = new SongDragController();
+	SongDropController centerDropController = null;
+	SongDropController leftDropController = null;
+	List<DragHandler> centerDragHandlers = new ArrayList<DragHandler>();
+	List<DragHandler> leftDragHandlers = new ArrayList<DragHandler>();
+	List<Widget> draggableWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
 		if (INSTANCE == null) {
@@ -50,6 +64,47 @@ public class Controller {
 	public void setPlayingPlaylistId(String playingPlaylistId) { this.playingPlaylistId = playingPlaylistId; }
 	public DataModel getModel() { return model; }
 	public void setModel(DataModel model) { this.model = model; }
+//	public SongDragController getSongDragController() { return songDragController; }
+//	public void setSongDragController(SongDragController songDragController) { this.songDragController = songDragController; }
+
+	// Drag and drop stuff
+	public void makeDraggable(Widget w) {
+		draggableWidgets.add(w);
+		songDragController.makeDraggable(w);
+	}
+	
+	public void createCenterDropController(Panel dropTarget, DragHandler dh) {
+		centerDropController = createDropController(centerDropController, centerDragHandlers, dropTarget, dh);
+		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
+		// And we remove them to avoid memory leaks.
+		for (Widget w : draggableWidgets) {
+			songDragController.makeNotDraggable(w);
+		}
+		draggableWidgets.clear();
+	}
+	
+	public void createLeftDropController(Panel dropTarget, DragHandler dh) {
+		leftDropController = createDropController(leftDropController, leftDragHandlers, dropTarget, dh);
+	}
+	
+	public SongDropController createDropController(SongDropController oldDropController, List<DragHandler> dhList, Panel dropTarget, DragHandler dh) {
+		SongDropController newDropController;
+		if (oldDropController != null) {
+			// Remove old drop handler
+			for (DragHandler oldDH : dhList) {
+				songDragController.removeDragHandler(oldDH);
+			}
+			dhList.clear();
+			// Remove old drop controller
+			songDragController.unregisterDropController(oldDropController);
+		}
+		// Create new drop controller
+		newDropController = new SongDropController(dropTarget);
+		songDragController.addDragHandler(dh);
+		dhList.add(dh);
+		songDragController.registerDropController(newDropController);
+		return newDropController;
+	}
 	
 	// Utils to music reproduction
 	public void setPlayingList(String playlistId, SongHandler sh) {

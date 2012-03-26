@@ -33,12 +33,13 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void setSong(int row, SongInfo s) {
-		setButtons(row, 0, s, new MyPlayHandler(row), new MyDeleteHandler(row));	// Column 0
-		setTrackNumber(row, 1, s.getTrack());										// Column 1
-		setTitle(row, 2, s.getTitle());												// Column 2
-		setLenght(row, 3, s.getFormattedLength());									// Column 3
-		setAlbum(row, 4, s);														// Column 4
-		setArtist(row, 5, s);														// Column 5
+		setGrabber(row, 0);															// Column 0
+		setButtons(row, 1, s, new MyPlayHandler(row), new MyDeleteHandler(row));	// Column 1
+		setTrackNumber(row, 2, s.getTrack());										// Column 2
+		setTitle(row, 3, s.getTitle());												// Column 3
+		setLenght(row, 4, s.getFormattedLength());									// Column 4
+		setAlbum(row, 5, s);														// Column 5
+		setArtist(row, 6, s);														// Column 6
 	}
 
 	@Override

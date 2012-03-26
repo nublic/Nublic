@@ -27,14 +27,14 @@ public class AlbumSongList extends SongList {
 	@Override
 	protected void prepareGrid() {
 		grid.resize(numberOfSongs, 2);
-//		grid.getColumnFormatter().setWidth(0, Constants.FIRST_COLUMN_WIDTH);		
 	}
 	
 	@Override
 	public void setSong(int row, SongInfo s) {
-		setTrackNumber(row, 0, s.getTrack());									   // Column 0
-		setTitleLenght(row, 1, s,												   // Column 1
-			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 1)
+		setGrabber(row, 0);														   // Column 0
+		setTrackNumber(row, 1, s.getTrack());									   // Column 1
+		setTitleLenght(row, 2, s,												   // Column 2
+			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 3)
 	}
 	
 	// +++ Handlers for buttons +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
