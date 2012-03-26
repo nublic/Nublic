@@ -1,0 +1,3 @@
+run_ipup="false"
+run_daemon="true"
+daemon_interval="300"
