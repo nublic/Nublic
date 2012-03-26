@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-manager-welcome
 Architecture: all
-Depends: ${misc:Depends}, tomcat6
+Depends: ${misc:Depends}, tomcat7
 Description: Nublic Manager app - Welcome page
  Manager app for the Nublic platform - Welcome page
