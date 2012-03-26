@@ -143,6 +143,7 @@ build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
+cp 3rd-party-libs/scala/*.deb ${TARGET_DIR}
 build_deb_package 3rd-party-libs/guava
 # download_serviio 0.6.0.1
 # build_submodule_lib serviio

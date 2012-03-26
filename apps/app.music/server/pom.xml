@@ -69,32 +69,32 @@
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>2.9.0-1</version>
+			<version>2.9.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.scalatra</groupId>
-			<artifactId>scalatra_2.9.0-1</artifactId>
+			<artifactId>scalatra_2.9.1</artifactId>
 			<version>2.1.0.M1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scalatra</groupId>
-			<artifactId>scalatra-scalate_2.9.0-1</artifactId>
+			<artifactId>scalatra-scalate_2.9.1</artifactId>
 			<version>2.1.0.M1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scalatra</groupId>
-			<artifactId>scalatra-scalatest_2.9.0-1</artifactId>
+			<artifactId>scalatra-scalatest_2.9.1</artifactId>
 			<version>2.1.0.M1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.scalatra</groupId>
-			<artifactId>scalatra-lift-json_2.9.0-1</artifactId>
+			<artifactId>scalatra-lift-json_2.9.1</artifactId>
 			<version>2.1.0.M1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.liftweb</groupId>
-			<artifactId>lift-json_2.9.0-1</artifactId>
+			<artifactId>lift-json_2.9.1</artifactId>
 			<version>2.4</version>
 		</dependency>
 		<dependency>
@@ -156,8 +156,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.squeryl</groupId>
-			<artifactId>squeryl_2.9.0-1</artifactId>
-			<version>0.9.5</version>
+			<artifactId>squeryl_2.9.1</artifactId>
+			<version>0.9.5-RC2</version>
 		</dependency>
 		<dependency>
 			<groupId>postgresql</groupId>
