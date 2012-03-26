@@ -14,7 +14,7 @@ import java.io.FileWriter
 import java.io.PrintWriter
 //import java.util.logging.Logger
 
-class PhotoActor(val servletContext : ServletContext) extends FileWatcherActor("Photos") {  
+class PhotoActor extends FileWatcherActor("Photos") {  
   
   loadPhotosDb()
   
