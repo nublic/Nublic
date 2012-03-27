@@ -28,7 +28,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 	
 	@Override
 	protected void prepareGrid() {
-		grid.resize(numberOfSongs, 6);
+		grid.resize(numberOfSongs, 7);
 	}
 
 	@Override

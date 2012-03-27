@@ -28,6 +28,13 @@ h1 {
   color: red;
 }
 
+
+/* For drag and drop */ 
+html body {
+	height: 100%;
+}
+
+/* For translucid buttons */
 .translucidPanel .translucidButton {
   opacity: 0.02;
 }

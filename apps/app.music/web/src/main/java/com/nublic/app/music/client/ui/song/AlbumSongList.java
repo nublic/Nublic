@@ -26,7 +26,7 @@ public class AlbumSongList extends SongList {
 
 	@Override
 	protected void prepareGrid() {
-		grid.resize(numberOfSongs, 2);
+		grid.resize(numberOfSongs, 3);
 	}
 	
 	@Override
