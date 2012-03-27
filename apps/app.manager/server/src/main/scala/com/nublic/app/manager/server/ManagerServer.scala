@@ -20,7 +20,7 @@ import scala.util.Random
 import java.util.Date
 import java.io.PrintWriter
 
-class ManagerServer extends ScalatraFilter with JsonSupport {
+class ManagerServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_APP_DATA_ROOT = "/var/lib/nublic/apps"

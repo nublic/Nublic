@@ -23,7 +23,7 @@ import java.util.Date
 import scala.util.Random
 import org.apache.commons.lang3.StringUtils
 
-class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSupport {
+class BrowserServer extends ScalatraServlet with JsonSupport with FileUploadSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"

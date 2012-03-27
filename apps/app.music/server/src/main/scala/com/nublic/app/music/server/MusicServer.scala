@@ -27,7 +27,7 @@ import org.scalatra.util.MultiMapHeadView
 import com.nublic.filesAndUsers.java._
 import com.nublic.app.music.server.model._
 
-class MusicServer extends ScalatraFilter with JsonSupport {
+class MusicServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
