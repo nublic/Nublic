@@ -13,7 +13,7 @@ export REPO_DIR="${TARGET_DIR}/repo"
 export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
 export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
 export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
-export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
+export DEBUILD="debuild -d -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
 export MAVEN_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=1024m"
 
 # Config options
@@ -140,7 +140,7 @@ initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
-build_submodule_lib sunburnt
+# build_submodule_lib sunburnt
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/scala/*.deb ${TARGET_DIR}
@@ -182,6 +182,7 @@ build_deb_package conf/apache
 build_deb_package conf/samba
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
+build_deb_package conf/tomcat7
 build_deb_package conf/minidlna
 build_deb_package conf/upstart
 build_deb_package conf/lshell

@@ -1,0 +1,14 @@
+Source: nublic-tomcat7-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-tomcat7-config
+Architecture: all
+Depends: ${misc:Depends}, tomcat7
+Replaces: tomcat7
+Description: Nublic Tomcat 7 configuration files
+ Nublic Tomcat7 configuration files

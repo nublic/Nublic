@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-music-web
 Architecture: all
-Depends: ${misc:Depends}, tomcat6
+Depends: ${misc:Depends}, tomcat7
 Description: Nublic Music app - server
  Music app for the Nublic platform - server part

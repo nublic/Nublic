@@ -9,6 +9,9 @@ import com.nublic.app.photos.server.model._
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.util.logging.Logger
+import com.drew.imaging.ImageMetadataReader
+import com.drew.metadata.exif.ExifDirectory
+import java.util.Date
 
 class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, true) {
   
@@ -25,8 +28,37 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
     }
   }
   
-  def process_updated_file(filename: String, context: String): Unit = {
-    
+  def now() = new Date().getTime()
+  
+  def process_updated_file(filename: String, context: String): Unit = {    
+    if (Solr.getMimeType(filename).startsWith("image/")) {
+      inTransaction {
+        val img_file = new File(filename)
+        val metadata = ImageMetadataReader.readMetadata(img_file)
+        val exif_dir = metadata.getDirectory(classOf[ExifDirectory])
+        val original_date = 
+          if (exif_dir.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL)) {
+            exif_dir.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL).getTime()
+          } else {
+            img_file.lastModified()
+          }
+        Database.photoByFilename(filename) match {
+          case Some(photo) => {
+            photo.date = original_date
+            photo.lastModified = now()
+            Database.photos.update(photo)
+          }
+          case None       => { 
+            // Add to database
+            
+          }
+        }
+      }
+    }
+  }
+  
+  def ensure_album_exists(name: String): Album = {
+    null
   }
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {

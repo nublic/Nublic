@@ -26,7 +26,7 @@ case "$1" in
         chmod 777 /var/nublic/fs/music
         chown nublic /var/nublic/fs/music
         chgrp nublic /var/nublic/fs/music
-        setfacl -Rdm u:tomcat6:rwx /var/nublic/fs/music
+        setfacl -Rdm u:tomcat7:rwx /var/nublic/fs/music
         service nublic-app-music-fs start
         echo "Service started"
         set -e

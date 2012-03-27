@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-example-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat6, scala-library
+Depends: ${misc:Depends}, tomcat7, scala-library
 Description: Nublic Example app - server
  Example app for the Nublic platform - server part

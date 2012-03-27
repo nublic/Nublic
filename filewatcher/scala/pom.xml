@@ -9,7 +9,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <encoding>UTF-8</encoding>
-    <scala.version>2.9.0-1</scala.version>
+    <scala.version>2.9.1</scala.version>
   </properties>
 
   <repositories>
@@ -43,8 +43,8 @@
     </dependency>
     <dependency>
     	<groupId>org.squeryl</groupId>
-    	<artifactId>squeryl_2.9.0-1</artifactId>
-    	<version>0.9.5</version>
+    	<artifactId>squeryl_2.9.1</artifactId>
+    	<version>0.9.5-RC2</version>
     </dependency>
     <dependency>
     	<groupId>org.freedesktop</groupId>
