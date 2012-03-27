@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="http://java.sun.com/xml/ns/javaee"
-    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-    version="2.5">
-	<filter>
-		<filter-name>scalatra</filter-name>
-		<filter-class>
-			com.nublic.app.music.server.MusicServer
-		</filter-class>
-	</filter>
+    xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 	
-	<filter-mapping>
-		<filter-name>scalatra</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+	<servlet>
+        <servlet-name>scalatra</servlet-name>
+        <servlet-class>com.nublic.app.music.server.MusicServer</servlet-class>
+        <load-on-startup>10</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>scalatra</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+    
 </web-app>
