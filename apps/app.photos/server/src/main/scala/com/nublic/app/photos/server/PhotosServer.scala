@@ -180,14 +180,14 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   
   get("/photos/") {
     // Typical setup: 20 first elements in alphabetical order
-    redirect("alpha/asc/0/20/")
+    redirect("title/asc/0/20/")
   }
   
-  get("/songs/:order/:asc/:start/:length") {
+  get("/photos/:order/:asc/:start/:length") {
     redirect(params("length") + "/")
   }
   
-  getUser("/songs/:order/:asc/:start/:length/*") { _ =>
+  getUser("/photos/:order/:asc/:start/:length/*") { _ =>
     // Get start and length
     val start = Integer.parseInt(params("start"))
     val length = Integer.parseInt(params("length"))
@@ -295,14 +295,14 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
     }
   }
   
-  getUser("/view/:photoid.mp3") { _ =>
+  getUser("/view/:photoid.png") { _ =>
     val photo_id = Long.parseLong(params("photoid"))
     val last_modified = request.getDateHeader("If-Modified-Since")
     val photo: Option[Photo] = transaction { Database.photos.lookup(photo_id) }
     get_image_using(photo, last_modified, BrowserFolder.getImage)
   }
   
-  getUser("/thumbnail/:photoid.mp3") { _ =>
+  getUser("/thumbnail/:photoid.png") { _ =>
     val photo_id = Long.parseLong(params("photoid"))
     val last_modified = request.getDateHeader("If-Modified-Since")
     val photo: Option[Photo] = transaction { Database.photos.lookup(photo_id) }
