@@ -9,7 +9,7 @@ Homepage: http://nublic.com
 Package: nublic-ddclient-config
 Architecture: all
 Depends: ${misc:Depends}, ddclient 
-Replaces: 
+Replaces: ddclient
 Description: Nublic ddclient configuration files
  Required Nublic configuration for ddclient.
  Include the needed configuration for freeDNS and no-ip.com
