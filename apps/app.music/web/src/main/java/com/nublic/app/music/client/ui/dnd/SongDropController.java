@@ -2,10 +2,15 @@ package com.nublic.app.music.client.ui.dnd;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractPositioningDropController;
+import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.datamodel.Controller;
 
 public class SongDropController extends AbstractPositioningDropController {
 
+	int targetRow = -1;
+	
 	public SongDropController(Panel dropTarget) {
 		super(dropTarget);
 	}
@@ -14,42 +19,7 @@ public class SongDropController extends AbstractPositioningDropController {
 //
 //	private FlexTable flexTable;
 //
-//	private InsertPanel flexTableRowsAsIndexPanel = new InsertPanel() {
-//
-//		@Override
-//		public void add(Widget w) {
-//			throw new UnsupportedOperationException();
-//		}
-//
-//		@Override
-//		public Widget getWidget(int index) {
-//			return flexTable.getWidget(index, 0);
-//		}
-//
-//		@Override
-//		public int getWidgetCount() {
-//			return flexTable.getRowCount();
-//		}
-//
-//		@Override
-//		public int getWidgetIndex(Widget child) {
-//			throw new UnsupportedOperationException();
-//		}
-//
-//		@Override
-//		public void insert(Widget w, int beforeIndex) {
-//			throw new UnsupportedOperationException();
-//		}
-//
-//		@Override
-//		public boolean remove(int index) {
-//			throw new UnsupportedOperationException();
-//		}
-//	};
-//
 //	private Widget positioner = null;
-//
-//	private int targetRow;
 //
 //	public FlexTableRowDropController(FlexTable flexTable) {
 //		super(flexTable);
@@ -58,10 +28,8 @@ public class SongDropController extends AbstractPositioningDropController {
 //
 	@Override
 	public void onDrop(DragContext context) {
-		SongDragController trDragController = (SongDragController) context.dragController;
-		// TODO: move row in table
-//		FlexTableUtil.moveRow(trDragController.getDraggableTable(), flexTable,
-//				trDragController.getDragRow(), targetRow + 1);
+		SongDragController sDragController = (SongDragController) context.dragController;
+		Controller.INSTANCE.moveSongInPlaylist(sDragController.getDraggingRow(), targetRow);
 		super.onDrop(context);
 	}
 //
@@ -71,20 +39,20 @@ public class SongDropController extends AbstractPositioningDropController {
 //		positioner = newPositioner(context);
 //	}
 //
-//	@Override
-//	public void onLeave(DragContext context) {
+	@Override
+	public void onLeave(DragContext context) {
 //		positioner.removeFromParent();
 //		positioner = null;
-//		super.onLeave(context);
-//	}
+		targetRow = -1;
+		super.onLeave(context);
+	}
 //
-//	@Override
-//	public void onMove(DragContext context) {
-//		super.onMove(context);
-//		targetRow = DOMUtil.findIntersect(flexTableRowsAsIndexPanel,
-//				new CoordinateLocation(context.mouseX, context.mouseY),
-//				LocationWidgetComparator.BOTTOM_HALF_COMPARATOR) - 1;
-//
+	@Override
+	public void onMove(DragContext context) {
+		super.onMove(context);
+		targetRow = findRowOnGrid(((Grid)context.draggable.getParent()), context.mouseX, context.mouseY);
+		
+
 //		if (flexTable.getRowCount() > 0) {
 //			Widget w = flexTable.getWidget(targetRow == -1 ? 0 : targetRow, 0);
 //			Location widgetLocation = new WidgetLocation(w,
@@ -97,7 +65,7 @@ public class SongDropController extends AbstractPositioningDropController {
 //					widgetLocation.getTop()
 //							+ (targetRow == -1 ? 0 : w.getOffsetHeight()));
 //		}
-//	}
+	}
 //
 //	Widget newPositioner(DragContext context) {
 //		Widget p = new SimplePanel();
@@ -105,5 +73,24 @@ public class SongDropController extends AbstractPositioningDropController {
 //		p.setPixelSize(flexTable.getOffsetWidth(), 1);
 //		return p;
 //	}
+
+	private int findRowOnGrid(Grid grid, int mouseX, int mouseY) {
+		boolean found = false; 
+		int i = 0;
+
+		while (i < grid.getRowCount() && !found) {
+			Widget w = grid.getWidget(i, 0);
+			if (mouseY > w.getAbsoluteTop() && mouseY < w.getAbsoluteTop() + w.getOffsetHeight()) {
+				found = true;
+			} else {
+				i++;
+			}
+		}
+		if (found) {
+			return i;
+		} else {
+			return -1;
+		}
+	}
 
 }
