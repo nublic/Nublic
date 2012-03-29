@@ -21,7 +21,7 @@
   <!-- Other module inherits                                      -->
 
   <!-- Specify the app entry point class.                         -->
-  <entry-point class='com.nublic.app.photos.app.client.PhotosApp'/>
+  <entry-point class='com.nublic.app.photos.web.client.PhotosApp'/>
 
   <!-- Specify the paths for translatable code                    -->
   <source path='client'/>
