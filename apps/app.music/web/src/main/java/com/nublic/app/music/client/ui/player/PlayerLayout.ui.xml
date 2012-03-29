@@ -81,7 +81,7 @@
 			<g:VerticalPanel>
 				<g:HorizontalPanel>
 					<g:PushButton ui:field="shuffleButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
-						<g:upFace image="{res.shufle}"/>
+						<g:upFace image="{res.shuffle}"/>
 					</g:PushButton>
 					<g:PushButton ui:field="repeatButton" height="16px" width="16px" addStyleNames="{style.nobackground}">
 						<g:upFace image="{res.repeat}"/>

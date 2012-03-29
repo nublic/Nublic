@@ -61,6 +61,6 @@ public interface Resources extends ClientBundle {
 	@Source("images/repeat.png")
 	ImageResource repeat();
 	
-	@Source("images/shufle.png")
-	ImageResource shufle();
+	@Source("images/shuffle.png")
+	ImageResource shuffle();
 }
