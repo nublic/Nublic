@@ -340,14 +340,14 @@ class MusicServer extends ScalatraServlet with JsonSupport {
           where(a.id === s.artistId)
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
-          // orderBy(asc_desc(a.name))
+          orderBy(asc_desc(a.name))
         )
       } else {
         from(Database.artists, Database.songs, Database.songCollections)((a, s, st) =>
           where((a.id === s.artistId) and (st.songId === s.id) and (st.collectionId in collections))
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
-          // orderBy(asc_desc(a.name))
+          orderBy(asc_desc(a.name))
         )
       }
       (query.count(_ => true), query.page(start, length).toList)

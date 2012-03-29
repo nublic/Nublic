@@ -5,10 +5,10 @@
 	<!-- POM file generated with GWT webAppCreator -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.nublic</groupId>
-	<artifactId>app.browser.web</artifactId>
+	<artifactId>app.photos.web</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>Browser app GWT client</name>
+	<name>Photos app - GWT client</name>
 
 	<properties>
 		<!-- Convenience property to set the GWT version -->
@@ -57,11 +57,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.bramosystems.oss.player</groupId>
-			<artifactId>bst-player-api</artifactId>
-			<version>1.4-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>com.nublic</groupId>
 			<artifactId>util.gwt</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
@@ -71,16 +66,6 @@
 			<artifactId>guava-gwt</artifactId>
 			<version>11.0.2</version>
 		</dependency>
-		<dependency>
-			<groupId>com.allen_sauer</groupId>
-			<artifactId>gwt-dnd</artifactId>
-			<version>3.1.2-2</version>
-		</dependency>
-		<dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>easyuploads</artifactId>
-            <version>0.5.1</version>
-        </dependency>
 	</dependencies>
 
 	<build>
@@ -124,7 +109,7 @@
 					documentation at codehaus.org -->
 				<configuration>
 					<!-- URL that should be automatically opened in the GWT shell (gwt:run). -->
-					<runTarget>BrowserApp.html</runTarget>
+					<runTarget>BrowserWelcomeApp.html</runTarget>
 					<!-- Location of the develop-mode web application structure (gwt:run). -->
 					<hostedWebapp>target/www</hostedWebapp>
 					<!-- Ask GWT to create the Story of Your Compile (SOYC) (gwt:compile) -->
@@ -184,7 +169,7 @@
 				<configuration>
 					<filesets>
 						<fileset>
-							<directory>src/main/webapp/browserapp</directory>
+							<directory>src/main/webapp/welcomeapp</directory>
 						</fileset>
 						<fileset>
 							<directory>src/main/webapp/WEB-INF/classes</directory>
@@ -219,6 +204,7 @@
 					</additionalProjectnatures>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
@@ -226,10 +212,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-            <id>vaadin-addons</id>
-            <url>http://maven.vaadin.com/vaadin-addons</url>
-        </repository>
-	</repositories>
 </project>

@@ -63,6 +63,10 @@ class EventHandler(pyinotify.ProcessEvent):
                                 # sys.stderr.write("Added!\n")
                                 self.config[u'apps'][app_id].append(account_path + '/')
                                 apps.write_app_config(self.config)
+                                # Add to current signalers
+                                for signaler in self.signalers:
+                                    if signaler.app_name == app_id.title():
+                                        signaler.add_context(account_path + '/')
                                 
             # Touch all files
             for inner_file in os.listdir(event.pathname):
@@ -84,6 +88,10 @@ class EventHandler(pyinotify.ProcessEvent):
             for app_id, _ in self.config[u'apps'].iteritems():
                 if account_path in self.config[u'apps'][app_id]:
                     self.config[u'apps'][app_id].remove(account_path)
+                    # Remove signaler
+                    for signaler in self.signalers:
+                        if signaler.app_name == app_id.title():
+                            signaler.remove_context(account_path)
             apps.write_app_config(self.config)
         # Notify via D-Bus
         self.handle_process("delete", event)
@@ -140,6 +148,9 @@ class EventHandler(pyinotify.ProcessEvent):
                     if account_path_from in self.config[u'apps'][app_id]:
                         self.config[u'apps'][app_id].remove(account_path_from)
                         self.config[u'apps'][app_id].append(account_path_to)
+                    for signaler in self.signalers:
+                        if signaler.app_name == app_id.title():
+                            signaler.replace_context(account_path_from, account_path_to)
                 apps.write_app_config(self.config)
             # Change in Solr
             if solr.has_doc(event.src_pathname):

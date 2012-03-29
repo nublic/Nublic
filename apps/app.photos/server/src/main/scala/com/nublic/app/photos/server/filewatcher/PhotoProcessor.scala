@@ -50,15 +50,32 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
           }
           case None       => { 
             // Add to database
-            
+            val photo = new Photo()
+            photo.file = filename
+            photo.date = original_date
+            photo.lastModified = now()
+            photo.title = FilenameUtils.getBaseName(filename)
+            Database.photos.insert(photo)
+            // Create initial album
+            // Get album name
+            val ctx = new File(context)
+            val parent = img_file.getParentFile()
+            val album_name = 
+              if (parent.equals(ctx)) {
+                None
+              } else if (parent.getParentFile().equals(ctx)) {
+                Some(parent.getName())
+              } else {
+                Some(parent.getParentFile().getName() + "/" + parent.getName())
+              }
+            if (album_name.isDefined) {
+              val album = Database.getOrCreateAlbum(album_name.get)
+              Database.photoAlbums.insert(new PhotoAlbum(photo.id, album.id))
+            }
           }
         }
       }
     }
-  }
-  
-  def ensure_album_exists(name: String): Album = {
-    null
   }
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {
