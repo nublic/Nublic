@@ -30,7 +30,7 @@ h1 {
 
 
 /* For drag and drop */ 
-html body {
+body, html {
 	height: 100%;
 }
 
