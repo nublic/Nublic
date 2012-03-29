@@ -18,7 +18,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -34,7 +33,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.app.music.client.ui.dnd.SongDragHandler;
+import com.nublic.app.music.client.ui.dnd.Draggable;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
@@ -103,7 +102,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	// To handle drag and drop
 	private void createDropController() {
-		Controller.INSTANCE.createCenterDropController(grid, new SongDragHandler());
+		Controller.INSTANCE.createCenterDropController(grid);
 	}
 
 	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -271,7 +270,8 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	}
 	
 	protected void setGrabber(int row, int column) {
-		HTML grabber = new HTML("[Grab me]");
+//		HTML grabber = new HTML("[Grab me]");
+		Draggable grabber = new Draggable(row);
 		grid.setWidget(row, column, grabber);
 		Controller.INSTANCE.makeDraggable(grabber);
 	}

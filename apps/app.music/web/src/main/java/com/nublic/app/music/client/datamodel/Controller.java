@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.allen_sauer.gwt.dnd.client.DragHandler;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -40,9 +39,10 @@ public class Controller {
 	// Drag and drop support
 	SongDragController songDragController = new SongDragController();
 	SongDropController centerDropController = null;
+//	List<SongDropController> centerDropControllers = new ArrayList<SongDropController>();
 	SongDropController leftDropController = null;
-	List<DragHandler> centerDragHandlers = new ArrayList<DragHandler>();
-	List<DragHandler> leftDragHandlers = new ArrayList<DragHandler>();
+//	List<DragHandler> centerDragHandlers = new ArrayList<DragHandler>();
+//	List<DragHandler> leftDragHandlers = new ArrayList<DragHandler>();
 	List<Widget> draggableWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
@@ -73,8 +73,8 @@ public class Controller {
 		songDragController.makeDraggable(w);
 	}
 	
-	public void createCenterDropController(Panel dropTarget, DragHandler dh) {
-		centerDropController = createDropController(centerDropController, centerDragHandlers, dropTarget, dh);
+	public void createCenterDropController(Panel dropTarget) {
+		centerDropController = createDropController(centerDropController, dropTarget);
 		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
 		// And we remove them to avoid memory leaks.
 		for (Widget w : draggableWidgets) {
@@ -83,25 +83,18 @@ public class Controller {
 		draggableWidgets.clear();
 	}
 	
-	public void createLeftDropController(Panel dropTarget, DragHandler dh) {
-		leftDropController = createDropController(leftDropController, leftDragHandlers, dropTarget, dh);
+	public void createLeftDropController(Panel dropTarget) {
+		leftDropController = createDropController(leftDropController, dropTarget);
 	}
 	
-	public SongDropController createDropController(SongDropController oldDropController, List<DragHandler> dhList, Panel dropTarget, DragHandler dh) {
+	public SongDropController createDropController(SongDropController oldDropController, Panel dropTarget) {
 		SongDropController newDropController;
 		if (oldDropController != null) {
-			// Remove old drop handler
-			for (DragHandler oldDH : dhList) {
-				songDragController.removeDragHandler(oldDH);
-			}
-			dhList.clear();
 			// Remove old drop controller
 			songDragController.unregisterDropController(oldDropController);
 		}
 		// Create new drop controller
 		newDropController = new SongDropController(dropTarget);
-		songDragController.addDragHandler(dh);
-		dhList.add(dh);
 		songDragController.registerDropController(newDropController);
 		return newDropController;
 	}
@@ -276,6 +269,11 @@ public class Controller {
 		return playlistId.equals(Controller.INSTANCE.getPlayingPlaylistId());
 	}
 
+	
+	public void moveSongInPlaylist(int draggingRow, int targetRow) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	// +++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private void addPlayHandler() {

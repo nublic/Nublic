@@ -8,7 +8,7 @@ import com.allen_sauer.gwt.dnd.client.VetoDragException;
 public class SongDragHandler implements DragHandler {
 	@Override
 	public void onDragEnd(DragEndEvent event) {
-		
+		// TODO: are we using this?
 	}
 
 	@Override
