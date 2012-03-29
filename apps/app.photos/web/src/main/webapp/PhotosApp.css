@@ -40,3 +40,16 @@ h1 {
   text-align: center;
 }
 
+/* For translucid buttons */
+.translucidPanel .translucidButton {
+  opacity: 0.02;
+}
+
+.translucidPanel:hover .translucidButton {
+  opacity: 0.4;
+}
+
+.translucidPanel:hover .translucidButton:hover {
+  opacity: 1.0;
+}
+
