@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-photos
 Architecture: all
-Depends: ${misc:Depends}, nublic-app-photos-server
+Depends: ${misc:Depends}, nublic-app-photos-server, nublic-app-photos-web
 Description: Nublic Photos app
  Photos app for the Nublic platform - metapackage
