@@ -1,0 +1,74 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style type='com.nublic.app.photos.web.client.ThumbnailWidget.Style'>
+		.inLine {
+			display: inline-table;
+			margin: 15px;
+		}
+		.maxheight {
+			max-height: 96px;
+			vertical-align: middle;
+		}
+		.ellipcenter {
+			text-align: center;
+			white-space: nowrap;
+			width: 96px;								/* IE6 needs any width */  
+			overflow: hidden;							/* "overflow" value must be different from "visible" */   
+			-o-text-overflow: ellipsis;					/* Opera 9-10 */  
+			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
+			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
+		}
+		/*.shadowed {
+			-webkit-box-shadow: 0 0 10px rgba(100,100,100,.5);  
+  			-moz-box-shadow: 0 0 10px rgba(100,100,100,.5);  
+  			box-shadow: 0 0 10px rgba(100,100,100,.5);  
+		}*/ /* nice exterior shadow */
+		.shadowed {
+	    	opacity: 0.5;
+		}
+		.nobackground {
+			background: transparent;
+			padding: 0px;
+			border: none;
+		}
+		.smartbutton {
+			padding: 1px;
+		}
+		.parentForHover .childForHoverNotSelected {
+	        display: none;
+	    }
+	    .parentForHover .childForHoverSelected {
+	        display: block !important;
+	    }
+	    .parentForHover:hover .childForHoverNotSelected {
+	        display: block;
+	    }
+	    .parentForHover:hover .childForHoverSelected {
+            display: block;
+        }
+	</ui:style>
+
+	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}">
+		<g:AbsolutePanel width="96px" height="96px" addStyleNames="{style.parentForHover}">
+			<g:at left='0' top='0'>
+				<g:VerticalPanel ui:field="imagePanel" verticalAlignment="middle" horizontalAlignment="center" width="96px" height="96px">
+		<!-- 			<g:Hyperlink ui:field="fileThumbnail" styleName="{style.maxheight}"/> -->
+				</g:VerticalPanel>
+			</g:at>
+			<g:at left='0' top='0' width="20px">
+				<g:CheckBox ui:field="selectedBox" width="20px"  addStyleNames="{style.childForHoverNotSelected}">
+				</g:CheckBox>
+			</g:at>
+			<g:at left='74' top='74'>
+				<g:PushButton ui:field="playButton" addStyleNames="{style.smartbutton} {style.childForHoverNotSelected}">
+					|&gt; <!-- <g:upFace image="{res.download}"/> -->
+				</g:PushButton>
+			</g:at>
+		</g:AbsolutePanel>
+		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
+<!--			<g:Hyperlink ui:field="fileName" styleName="{style.ellipcenter}"/>	--> <!-- To place the name -->
+		</g:VerticalPanel>
+	</g:VerticalPanel>
+	
+</ui:UiBinder>

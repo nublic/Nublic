@@ -1,6 +1,11 @@
 package com.nublic.app.photos.web.client;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -8,10 +13,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.model.AlbumInfo;
+import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
+import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 
-public class ShowAsCellsWidget extends Composite {
+public class ShowAsCellsWidget extends Composite implements ScrollHandler {
 
 	private static ShowAsCellsWidgetUiBinder uiBinder = GWT.create(ShowAsCellsWidgetUiBinder.class);
 
@@ -23,6 +31,7 @@ public class ShowAsCellsWidget extends Composite {
 	@UiField FlowPanel mainPanel;
 	
 	long id;
+	Set<ThumbnailWidget> unloadedWidgets = new HashSet<ThumbnailWidget>();
 
 	public ShowAsCellsWidget(long id) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -45,6 +54,41 @@ public class ShowAsCellsWidget extends Composite {
 		}
 		
 		// Set inner widgets
+		PhotosModel.get().startNewAlbum(id, AlbumOrder.TITLE_ASC);
+		PhotosModel.get().rowCount(new CallbackRowCount() {
+			
+			@Override
+			public void rowCount(AlbumInfo info, long rowCount) {
+				for (long i = 0; i < rowCount; i++) {
+					ThumbnailWidget photo = new ThumbnailWidget(info, i);
+					mainPanel.add(photo);
+				}
+			}
+			
+			@Override
+			public void error() {
+				// Do nothing
+			}
+		});
+		
+	}
+	
+	// For handling lazy scroll loading of ArtistWidgets
+	@Override
+	public void onScroll(ScrollEvent event) {
+		Set<Widget> loadedInThisScroll = new HashSet<Widget>();
+		int panelTop = mainPanel.getAbsoluteTop();
+		int panelBottom = panelTop + mainPanel.getOffsetHeight();
+		for (ThumbnailWidget aw : unloadedWidgets) {
+			int widgetTop = aw.getAbsoluteTop();
+			int widgetBottom = widgetTop + aw.getOffsetHeight();
+			// If widget enters a visible zone we load it
+			if (widgetBottom > panelTop && widgetTop < panelBottom) {
+				aw.lazyLoad();
+				loadedInThisScroll.add(aw);
+			}
+		}
+		unloadedWidgets.removeAll(loadedInThisScroll);
 	}
 
 }
