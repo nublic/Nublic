@@ -16,7 +16,7 @@ public class JsonPhoto extends JavaScriptObject {
 	  return this.title;
     }-*/;
 	
-	public Date getDate() {
+	public final Date getDate() {
 		return new Date(Math.round(_getDate()));
 	}
 	

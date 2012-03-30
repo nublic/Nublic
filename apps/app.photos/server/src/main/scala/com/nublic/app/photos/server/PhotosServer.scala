@@ -282,7 +282,6 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
         halt(304)
       }
     }
-    halt(500)
   }
   
   def get_image_using(photo: Option[Photo], last_modified: Long, f: String => File) = {

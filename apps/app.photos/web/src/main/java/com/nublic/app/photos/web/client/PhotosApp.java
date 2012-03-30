@@ -23,5 +23,8 @@ public class PhotosApp implements EntryPoint {
 		// theUi = new WelcomePage();
 		RootLayoutPanel rp = RootLayoutPanel.get();
 	    // rp.add(theUi);
+		
+		ShowAsCellsWidget w = new ShowAsCellsWidget(-1);
+		rp.add(w);
 	}	
 }

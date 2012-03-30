@@ -4,10 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -19,7 +24,7 @@ import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 
-public class ShowAsCellsWidget extends Composite implements ScrollHandler {
+public class ShowAsCellsWidget extends Composite implements ScrollHandler, ResizeHandler {
 
 	private static ShowAsCellsWidgetUiBinder uiBinder = GWT.create(ShowAsCellsWidgetUiBinder.class);
 
@@ -62,7 +67,19 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler {
 				for (long i = 0; i < rowCount; i++) {
 					ThumbnailWidget photo = new ThumbnailWidget(info, i);
 					mainPanel.add(photo);
+					unloadedWidgets.add(photo);
 				}
+				
+				mainPanel.addDomHandler(ShowAsCellsWidget.this, ScrollEvent.getType());
+				Window.addResizeHandler(ShowAsCellsWidget.this);
+				
+				Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+					
+					@Override
+					public void execute() {
+						onScroll(null);
+					}
+				});
 			}
 			
 			@Override
@@ -70,10 +87,8 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler {
 				// Do nothing
 			}
 		});
-		
 	}
 	
-	// For handling lazy scroll loading of ArtistWidgets
 	@Override
 	public void onScroll(ScrollEvent event) {
 		Set<Widget> loadedInThisScroll = new HashSet<Widget>();
@@ -89,6 +104,11 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler {
 			}
 		}
 		unloadedWidgets.removeAll(loadedInThisScroll);
+	}
+
+	@Override
+	public void onResize(ResizeEvent arg0) {
+		onScroll(null);
 	}
 
 }
