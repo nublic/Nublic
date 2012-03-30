@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client;
+package com.nublic.app.photos.web.client.view.album;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;

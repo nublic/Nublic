@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client;
+package com.nublic.app.photos.web.client.view.album;
 
 import java.util.HashSet;
 import java.util.Set;
