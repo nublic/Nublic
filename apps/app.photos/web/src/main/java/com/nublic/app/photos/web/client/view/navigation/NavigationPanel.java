@@ -1,5 +1,6 @@
 package com.nublic.app.photos.web.client.view.navigation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,8 @@ public class NavigationPanel extends Composite {
 	TagWidget allPhotos;
 	boolean loaded = false;
 	long activeId = -1;
+	
+	ArrayList<PutTagHandler> putTagHandlers = new ArrayList<PutTagHandler>();
 	
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -78,12 +81,18 @@ public class NavigationPanel extends Composite {
 		}
 	}
 	
+	public void addPutTagHandler(PutTagHandler h) {
+		putTagHandlers.add(h);
+	}
+	
 	// Handler to notify model that the user has added a tag
 	private void addAddTagsHandlers() {
 		addAlbum.addPutTagHandler(new PutTagHandler() {
 			@Override
 			public void onPutTag(String newTagName) {
-				// Do nothing by now
+				for (PutTagHandler h : putTagHandlers) {
+					h.onPutTag(newTagName);
+				}
 			}
 		});
 	}

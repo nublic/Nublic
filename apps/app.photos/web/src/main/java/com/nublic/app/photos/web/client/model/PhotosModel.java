@@ -190,4 +190,43 @@ public class PhotosModel {
 			}
 		}
 	}
+	
+	public void newAlbum(final String name, final CallbackOneAlbum cb) {
+		// Don't allow to send already-existing album ids
+		if (albumCache.containsValue(name)) {
+			cb.error();
+			return;
+		}
+		
+		SequenceHelper.sendJustOne(new Message() {
+			
+			@Override
+			public String getURL() {
+				addParam("name", name);
+				return LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/albums");
+			}
+			
+			@Override
+			public void onSuccess(Response response) {
+				if (response.getStatusCode() == Response.SC_OK) {
+					long newId = Long.valueOf(response.getText());
+					// Again, don't allow duplicate album names
+					if (!albumCache.containsKey(newId)) {
+						albumCache.put(newId, name);
+						cb.list(newId, name);
+					} else {
+						cb.error();
+					}
+				} else {
+					cb.error();
+				}
+			}
+			
+			@Override
+			public void onError() {
+				cb.error();
+			}
+			
+		}, RequestBuilder.PUT);
+	}
 }

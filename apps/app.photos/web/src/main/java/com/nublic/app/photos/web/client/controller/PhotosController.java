@@ -1,11 +1,18 @@
 package com.nublic.app.photos.web.client.controller;
 
+import java.util.EnumSet;
+
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
+import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
+import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.MainUi;
 import com.nublic.app.photos.web.client.view.album.ShowAsCellsWidget;
+import com.nublic.app.photos.web.client.view.navigation.PutTagHandler;
+import com.nublic.util.widgets.MessagePopup;
+import com.nublic.util.widgets.PopupButton;
 
-public class PhotosController {
+public class PhotosController implements PutTagHandler {
 
 	private MainUi theUi;
 	
@@ -21,6 +28,8 @@ public class PhotosController {
 		this.album = -1;
 		this.view = View.AS_CELLS;
 		this.order = AlbumOrder.TITLE_ASC;
+		
+		this.theUi.getNavigationPanel().addPutTagHandler(this);
 	}
 	
 	public void changeTo(ParamsHashMap params) {
@@ -53,5 +62,24 @@ public class PhotosController {
 				theUi.getNavigationPanel().selectCollection(this.album);
 			}
 		}
+	}
+
+	@Override
+	public void onPutTag(String newTagName) {
+		PhotosModel.get().newAlbum(newTagName, new CallbackOneAlbum() {
+			
+			@Override
+			public void list(long id, String name) {
+				theUi.getNavigationPanel().addAlbum(name, id);
+			}
+			
+			@Override
+			public void error() {
+				MessagePopup popup = new MessagePopup("Error creating album",
+						"Check an album with that name doesn't already exist",
+						EnumSet.of(PopupButton.OK));
+				popup.center();
+			}
+		});
 	}
 }
