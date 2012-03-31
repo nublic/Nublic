@@ -109,8 +109,8 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
       Database.albumByName(name) match {
         case Some(c) => c.id
         case None    => {
-          val newAlbum = new Album(name)
-          Database.albums.insert(new Album)
+          val newAlbum = new Album()
+          Database.albums.insert(newAlbum)
           newAlbum.id.toString()
         }
       }
