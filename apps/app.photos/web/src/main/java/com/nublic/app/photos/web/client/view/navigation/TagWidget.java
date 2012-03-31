@@ -40,7 +40,7 @@ public class TagWidget extends Composite {
 	private Element getLiElement() {
 //		return this.getElement().getFirstChildElement().getFirstChildElement();
 		// <li> is child of <ul>, child of two <div>)
-		return this.getElement().getFirstChildElement().getFirstChildElement().getFirstChildElement();
+		return this.getElement().getFirstChildElement().getFirstChildElement();
 	}
 
 }

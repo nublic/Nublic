@@ -6,8 +6,8 @@
 		.leftPanelPadding {
 			padding: 10px 10px 30px 10px;
 		}
-		.leftpadding {
-			padding-left: 10px;
+		.centerpadding {
+			padding: 10px;
 		}
 		.scroll {
 	        overflow-x: hidden;
@@ -21,7 +21,7 @@
 			</g:FlowPanel>
 		</g:west>
 		<g:center>
-			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.leftpadding}">
+			<g:SimplePanel ui:field="mainPanel" addStyleNames="{style.centerpadding}">
 <!-- 				<g:Label text="main panel"/> -->
 			</g:SimplePanel>
 		</g:center>

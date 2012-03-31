@@ -1,6 +1,7 @@
 package com.nublic.app.photos.web.client.view.navigation;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.AttachEvent;
@@ -10,6 +11,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
+import com.nublic.app.photos.web.client.model.PhotosModel;
 
 public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
@@ -20,7 +23,8 @@ public class NavigationPanel extends Composite {
 	@UiField AddWidget addAlbum;
 	HashMap<Long, TagWidget> albums = new HashMap<Long, TagWidget>();
 	TagWidget allPhotos;
-	TagWidget activeTag;
+	boolean loaded = false;
+	long activeId = -1;
 	
 	public NavigationPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -30,8 +34,7 @@ public class NavigationPanel extends Composite {
 			public void onAttachOrDetach(AttachEvent event) {
 				if (event.isAttached()) {
 					addAllPhotos();
-					activeTag = allPhotos;
-					selectAllPhotos();
+					addExistingAlbums();
 					addAddTagsHandlers();
 				}
 			}
@@ -42,6 +45,7 @@ public class NavigationPanel extends Composite {
 	public void addAllPhotos() {
 		allPhotos = new TagWidget("All photos", -1);
 		libraryPanel.add(allPhotos);
+		albums.put(-1L, allPhotos);
 	}
 
 	public void addAlbum(String name, long id) {
@@ -51,27 +55,27 @@ public class NavigationPanel extends Composite {
 	}
 	
 	// Removing methods
-	public void removeAlbum(String id) {
+	public void removeAlbum(long id) {
 		TagWidget tagToRemove = albums.get(id);
-		if (activeTag == tagToRemove) {
-			activeTag = allPhotos;
+		if (activeId == id) {
+			selectAllPhotos();
 		}
 		tagToRemove.removeFromParent();
 	}
 	
 	// Selecting methods
 	public void selectAllPhotos() {
-		select(allPhotos);
+		selectCollection(-1);
 	}
 
-	public void selectCollection(long id) {
-		select(albums.get(id));
-	}
-
-	public void select(TagWidget e) {
-		activeTag.select(false);
-		activeTag = e;
-		e.select(true);
+	public synchronized void selectCollection(long id) {
+		if (albums.get(activeId) != null) {
+			albums.get(activeId).select(false);
+		}
+		activeId = id;
+		if (albums.get(activeId) != null) {
+			albums.get(activeId).select(true);
+		}
 	}
 	
 	// Handler to notify model that the user has added a tag
@@ -80,6 +84,24 @@ public class NavigationPanel extends Composite {
 			@Override
 			public void onPutTag(String newTagName) {
 				// Do nothing by now
+			}
+		});
+	}
+	
+	public void addExistingAlbums() {
+		PhotosModel.get().albums(new CallbackListOfAlbums() {
+			
+			@Override
+			public void list(Map<Long, String> albums) {
+				for (Map.Entry<Long, String> album : albums.entrySet()) {
+					addAlbum(album.getValue(), album.getKey());
+				}
+				selectCollection(activeId);
+			}
+			
+			@Override
+			public void error() {
+				// Do nothing
 			}
 		});
 	}

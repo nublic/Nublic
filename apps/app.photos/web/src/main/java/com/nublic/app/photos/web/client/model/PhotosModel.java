@@ -98,7 +98,7 @@ public class PhotosModel {
 	// Album cache management
 	private Object albumLock = new Object();
 	private boolean isAlbumListDownloaded = false;
-	private boolean isAlbumListDownloading = true;
+	private boolean isAlbumListDownloading = false;
 	private List<CallbackListOfAlbums> tmpAlbumsCb = new ArrayList<CallbackListOfAlbums>();
 	private Multimap<Long, CallbackOneAlbum> tmpOneAlbumCb = ArrayListMultimap.create();
 	private Map<Long, String> albumCache = new HashMap<Long, String>();
@@ -121,6 +121,8 @@ public class PhotosModel {
 							JsonAlbum json_album = albums.get(i);
 							albumCache.put((long)json_album.getId(), json_album.getName());
 						}
+						isAlbumListDownloaded = true;
+						isAlbumListDownloading = false;
 						// Send callbacks
 						for (CallbackListOfAlbums cb : tmpAlbumsCb) {
 							cb.list(albumCache);

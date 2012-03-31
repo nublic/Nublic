@@ -38,13 +38,13 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	long id;
 	Set<ThumbnailWidget> unloadedWidgets = new HashSet<ThumbnailWidget>();
 
-	public ShowAsCellsWidget(long id) {
+	public ShowAsCellsWidget(long id, AlbumOrder order) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		// Set title label
 		this.id = id;
 		if (id == -1) {
-			titleLabel.setText("All albums");
+			titleLabel.setText("All photos");
 		} else {
 			PhotosModel.get().album(id, new CallbackOneAlbum() {
 				@Override
@@ -59,7 +59,7 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 		}
 		
 		// Set inner widgets
-		PhotosModel.get().startNewAlbum(id, AlbumOrder.TITLE_ASC);
+		PhotosModel.get().startNewAlbum(id, order);
 		PhotosModel.get().rowCount(new CallbackRowCount() {
 			
 			@Override
