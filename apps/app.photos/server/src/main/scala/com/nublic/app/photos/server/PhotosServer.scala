@@ -97,7 +97,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   // ===========
   getUser("/albums") { _ =>
     transaction {
-      val albums = Database.albums.toList
+      val albums = Database.albums.toList.sort((a1, a2) => a1.name.compareToIgnoreCase(a2.name) < 0)
       val json_albums = albums.map(c => JsonAlbum(c.id, c.name))
       write(json_albums)
     }
