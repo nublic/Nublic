@@ -60,11 +60,11 @@
 				<g:CheckBox ui:field="selectedBox" width="20px"  addStyleNames="{style.childForHoverNotSelected}">
 				</g:CheckBox>
 			</g:at>
-			<g:at left='74' top='74'>
+			<!-- <g:at left='74' top='74'>
 				<g:PushButton ui:field="playButton" addStyleNames="{style.smartbutton} {style.childForHoverNotSelected}">
-					|&gt; <!-- <g:upFace image="{res.download}"/> -->
+					|&gt; <g:upFace image="{res.download}"/>
 				</g:PushButton>
-			</g:at>
+			</g:at> -->
 		</g:AbsolutePanel>
 		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
 <!--			<g:Hyperlink ui:field="fileName" styleName="{style.ellipcenter}"/>	--> <!-- To place the name -->

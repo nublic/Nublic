@@ -90,6 +90,6 @@ public class ParamsHashMap extends HashMap<String, String> {
 				return v;
 			}
 		}
-		return null;
+		return View.AS_CELLS;
 	}
 }

@@ -15,12 +15,10 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
@@ -50,7 +48,7 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 	@UiField VerticalPanel textPanel;
 	@UiField Style style;
 	@UiField CheckBox selectedBox;
-	@UiField PushButton playButton;
+	// @UiField PushButton playButton;
 	
 	AlbumInfo album;
 	long photoPosition;
@@ -89,6 +87,11 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 				fileName.setText(photo.getTitle());
 				fileName.setTitle(photo.getTitle());
 				
+				// Set up target
+				String target = "album=" + info.getId() + "&view=presentation&photo=" + photoPosition;
+				fileThumbnail.setTargetHistoryToken(target);
+				fileName.setTargetHistoryToken(target);
+				
 				// Add the widgets to the panels
 				imagePanel.add(fileThumbnail);
 				textPanel.add(fileName);
@@ -119,10 +122,10 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 	}
 
 	
-	@UiHandler("playButton")
+	/* @UiHandler("playButton")
 	void onPlayButtonMouseDown(MouseDownEvent event) {
 		// Do nothing by now
-	}
+	} */
 	
 	public boolean isChecked() {
 		return selectedBox.getValue();

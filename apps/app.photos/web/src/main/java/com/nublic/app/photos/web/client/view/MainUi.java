@@ -23,8 +23,11 @@ public class MainUi extends Composite {
 	}
 	
 	public void setInnerWidget(Widget w) {
-		mainPanel.clear();
-		mainPanel.add(w);
+		mainPanel.setWidget(w);
+	}
+	
+	public Widget getInnerWidget() {
+		return mainPanel.getWidget();
 	}
 	
 	public NavigationPanel getNavigationPanel() {

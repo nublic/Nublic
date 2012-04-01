@@ -8,6 +8,7 @@ import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.MainUi;
 import com.nublic.app.photos.web.client.view.album.ShowAsCellsWidget;
+import com.nublic.app.photos.web.client.view.album.ShowAsPresentationWidget;
 import com.nublic.app.photos.web.client.view.navigation.PutTagHandler;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
@@ -47,7 +48,7 @@ public class PhotosController implements PutTagHandler {
 			Widget w;
 			switch(this.view) {
 			case AS_PRESENTATION:
-				w = new ShowAsCellsWidget(this.album, this.order);
+				w = new ShowAsPresentationWidget(this.album, this.order);
 				break;
 			default:
 				w = new ShowAsCellsWidget(this.album, this.order);
@@ -55,11 +56,18 @@ public class PhotosController implements PutTagHandler {
 			}
 			// Show the widget
 			theUi.setInnerWidget(w);
+			if (view == View.AS_PRESENTATION) {
+				((ShowAsPresentationWidget)theUi.getInnerWidget()).setPosition(params.getPhotoPosition());
+			}
 			// Select the album
 			if (this.album == -1) {
 				theUi.getNavigationPanel().selectAllPhotos();
 			} else {
 				theUi.getNavigationPanel().selectCollection(this.album);
+			}
+		} else {
+			if (view == View.AS_PRESENTATION) {
+				((ShowAsPresentationWidget)theUi.getInnerWidget()).setPosition(params.getPhotoPosition());
 			}
 		}
 	}
