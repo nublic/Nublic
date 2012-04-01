@@ -18,6 +18,10 @@
 	        max-height: 64px;
 	        max-width: 64px;
 	    }
+	    .lightInfo {
+	        color: #DDDDDD;
+	        font-size: 90%;
+	    }
     </ui:style>
     <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
     
@@ -53,6 +57,14 @@
                         </n:AnchorPanel>
                     </g:HorizontalPanel>
                 </g:east>
+                <g:center>
+                    <g:VerticalPanel height="100%" width="100%" verticalAlignment="MIDDLE">
+                        <g:HTMLPanel width="100%" addStyleNames="{style.alignedVerticalMiddleAndCenter}" >
+                            <h3><g:Label ui:field="photoTitleLabel" /></h3>
+                            <g:Label ui:field="photoDateLabel" addStyleNames="{style.lightInfo}" />
+                        </g:HTMLPanel>
+                    </g:VerticalPanel>
+                </g:center>
             </g:DockLayoutPanel>
         </g:south>
         <g:center>

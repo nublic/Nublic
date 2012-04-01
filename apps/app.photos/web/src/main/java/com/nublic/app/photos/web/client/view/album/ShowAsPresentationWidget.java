@@ -7,6 +7,8 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -39,6 +41,8 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 	@UiField Label titleLabel;
 	@UiField AnchorPanel centralContainer;
 	@UiField Image centralImage;
+	@UiField Label photoTitleLabel;
+	@UiField Label photoDateLabel;
 	
 	@UiField HorizontalPanel prevPanel;
 	@UiField AnchorPanel prevLink1;
@@ -145,6 +149,9 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 					// Set inner image
 					String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
 					centralImage.setUrl(imageUrl);
+					photoTitleLabel.setText(photo.getTitle());
+					DateTimeFormat formatter = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
+					photoDateLabel.setText("Taken on " + formatter.format(photo.getDate()));
 					// Set prev and next buttons
 					String nextTarget = "album=" + info.getId() + "&view=presentation&photo=" +
 							(position < rowCount - 1 ? position + 1 : rowCount - 1);
