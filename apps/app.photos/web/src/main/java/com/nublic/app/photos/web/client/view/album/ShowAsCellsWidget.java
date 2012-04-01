@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
@@ -40,6 +41,9 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 
 	public ShowAsCellsWidget(long id, AlbumOrder order) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		// Set white background
+		RootPanel.get().removeStyleName("darkBackground");
 		
 		// Set title label
 		this.id = id;

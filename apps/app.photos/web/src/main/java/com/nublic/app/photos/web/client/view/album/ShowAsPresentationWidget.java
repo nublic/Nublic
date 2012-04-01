@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
@@ -54,6 +55,9 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 
 	public ShowAsPresentationWidget(long id, AlbumOrder order) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		// Set dark background
+		RootPanel.get().addStyleName("darkBackground");
 		
 		// Set title label
 		this.id = id;

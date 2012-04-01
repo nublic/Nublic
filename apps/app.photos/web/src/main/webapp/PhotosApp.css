@@ -53,3 +53,10 @@ h1 {
   opacity: 1.0;
 }
 
+.darkBackground {
+  background-color: #333333;
+}
+
+.darkBackground h3 {
+  color: #FFFFFF;
+}

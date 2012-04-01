@@ -68,7 +68,9 @@ public class PhotosModel {
 	}
 	
 	void setCurrentAlbum(long albumId, AlbumOrder order) {
-		this.currentAlbum = new AlbumInfo(albumId, order);
+		if (albumId != this.currentAlbum.getId() || order != this.currentAlbum.getOrder()) {
+			this.currentAlbum = new AlbumInfo(albumId, order);
+		}
 	}
 	
 	void updatePhotos(JsonRowCount info, long initialPos) {
