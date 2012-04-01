@@ -15,8 +15,16 @@ import com.nublic.app.photos.web.client.view.MainUi;
  */
 public class PhotosApp implements EntryPoint, ValueChangeHandler<String> {
 
-	MainUi theUi;
-	PhotosController controller;
+	static MainUi theUi;
+	static PhotosController controller;
+	
+	public static MainUi getUi() {
+		return theUi;
+	}
+	
+	public static PhotosController getController() {
+		return controller;
+	}
 	
 	/**
 	 * This is the entry point method.

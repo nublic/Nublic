@@ -168,7 +168,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 						PhotosModel.get().photo(position + 1, new CallbackOnePhoto() {
 							@Override
 							public void list(AlbumInfo info, PhotoInfo photo) {
-								String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
+								String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + photo.getId() + ".png");
 								nextImage.setUrl(imageUrl);
 							}
 							@Override
@@ -184,7 +184,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 						PhotosModel.get().photo(position - 1, new CallbackOnePhoto() {
 							@Override
 							public void list(AlbumInfo info, PhotoInfo photo) {
-								String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
+								String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + photo.getId() + ".png");
 								prevImage.setUrl(imageUrl);
 							}
 							@Override

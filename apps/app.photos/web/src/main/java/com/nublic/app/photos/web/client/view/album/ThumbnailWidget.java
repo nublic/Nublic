@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.CallbackOnePhoto;
 import com.nublic.app.photos.web.client.model.PhotoInfo;
@@ -50,13 +51,15 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 	@UiField CheckBox selectedBox;
 	// @UiField PushButton playButton;
 	
+	PhotosController controller;
 	AlbumInfo album;
 	long photoPosition;
 	
 	// path is the path of the folder where the file is placed
-	public ThumbnailWidget(AlbumInfo album, long photoPosition) {
+	public ThumbnailWidget(PhotosController controller, AlbumInfo album, long photoPosition) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
+		this.controller = controller;
 		this.album = album;
 		this.photoPosition = photoPosition;
 	}
@@ -65,7 +68,7 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 		PhotosModel.get().photo(photoPosition, new CallbackOnePhoto() {
 			
 			@Override
-			public void list(AlbumInfo info, PhotoInfo photo) {
+			public void list(final AlbumInfo info, final PhotoInfo photo) {
 				// Set the thumbnail
 				Element divImage = DOM.createDiv();
 				String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + photo.getId() + ".png");
@@ -105,11 +108,12 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 						if (event.getValue()) {
 							selectedBox.removeStyleName(style.childForHoverNotSelected());
 							selectedBox.addStyleName(style.childForHoverSelected());
+							controller.select(photo.getId());
 						} else {
 							selectedBox.removeStyleName(style.childForHoverSelected());
 							selectedBox.addStyleName(style.childForHoverNotSelected());
+							controller.unselect(photo.getId());
 						}
-						// TODO: Notify other elements
 					}
 				});
 			}
@@ -132,7 +136,8 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	public void setChecked(boolean checked) {
-		selectedBox.setValue(checked);
+		// selectedBox.setValue(checked);
+		selectedBox.setValue(checked, true);
 	}
 
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {

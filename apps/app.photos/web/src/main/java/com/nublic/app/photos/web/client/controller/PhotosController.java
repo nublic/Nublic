@@ -1,6 +1,8 @@
 package com.nublic.app.photos.web.client.controller;
 
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
@@ -23,12 +25,16 @@ public class PhotosController implements PutTagHandler {
 	View view;
 	AlbumOrder order;
 	
-	public PhotosController(MainUi ui) {
+	Set<Long> selectedPhotos;
+	
+	public PhotosController(MainUi ui) {	
 		this.theUi = ui;
 		this.initialized = false;
 		this.album = -1;
 		this.view = View.AS_CELLS;
 		this.order = AlbumOrder.TITLE_ASC;
+		// Initialize drag and drop
+		this.selectedPhotos = new HashSet<Long>();
 		
 		this.theUi.getNavigationPanel().addPutTagHandler(this);
 	}
@@ -51,9 +57,11 @@ public class PhotosController implements PutTagHandler {
 				w = new ShowAsPresentationWidget(this.album, this.order);
 				break;
 			default:
-				w = new ShowAsCellsWidget(this.album, this.order);
+				w = new ShowAsCellsWidget(this, this.album, this.order);
 				break;
 			}
+			// Unselect everything
+			clearSelection();
 			// Show the widget
 			theUi.setInnerWidget(w);
 			if (view == View.AS_PRESENTATION) {
@@ -70,6 +78,10 @@ public class PhotosController implements PutTagHandler {
 				((ShowAsPresentationWidget)theUi.getInnerWidget()).setPosition(params.getPhotoPosition());
 			}
 		}
+	}
+	
+	public long getCurrentAlbumId() {
+		return this.album;
 	}
 
 	@Override
@@ -89,5 +101,17 @@ public class PhotosController implements PutTagHandler {
 				popup.center();
 			}
 		});
+	}
+	
+	public void clearSelection() {
+		selectedPhotos.clear();
+	}
+	
+	public void select(long id) {
+		selectedPhotos.add(id);
+	}
+	
+	public void unselect(long id) {
+		selectedPhotos.remove(id);
 	}
 }

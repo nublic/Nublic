@@ -19,6 +19,8 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.PhotosApp;
+import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
@@ -36,11 +38,14 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	@UiField Label titleLabel;
 	@UiField FlowPanel mainPanel;
 	
+	PhotosController controller;
 	long id;
 	Set<ThumbnailWidget> unloadedWidgets = new HashSet<ThumbnailWidget>();
 
-	public ShowAsCellsWidget(long id, AlbumOrder order) {
+	public ShowAsCellsWidget(PhotosController c, long id, AlbumOrder order) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		this.controller = c;
 		
 		// Set white background
 		RootPanel.get().removeStyleName("darkBackground");
@@ -69,9 +74,10 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 			@Override
 			public void rowCount(AlbumInfo info, long rowCount) {
 				for (long i = 0; i < rowCount; i++) {
-					ThumbnailWidget photo = new ThumbnailWidget(info, i);
+					ThumbnailWidget photo = new ThumbnailWidget(controller, info, i);
 					mainPanel.add(photo);
 					unloadedWidgets.add(photo);
+					PhotosApp.getUi().getDragController().makeDraggable(photo);
 				}
 				
 				mainPanel.addDomHandler(ShowAsCellsWidget.this, ScrollEvent.getType());
@@ -113,6 +119,12 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	@Override
 	public void onResize(ResizeEvent arg0) {
 		onScroll(null);
+	}
+	
+	public void dispose() {
+		for (int i = 0; i < mainPanel.getWidgetCount(); i++) {
+			PhotosApp.getUi().getDragController().makeNotDraggable(mainPanel.getWidget(i));
+		}
 	}
 
 }

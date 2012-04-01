@@ -18,12 +18,14 @@ public class TagWidget extends Composite {
 		String innerImage();
 	}
 
+	long id;
 	@UiField TagStyle style;
 	@UiField InlineHyperlink anchor;
 
 	public TagWidget(String text, long id) {
 		initWidget(uiBinder.createAndBindUi(this));
 
+		this.id = id;
 		anchor.setText(text);
 		anchor.setTargetHistoryToken("album=" + id);
 	}
@@ -41,6 +43,10 @@ public class TagWidget extends Composite {
 //		return this.getElement().getFirstChildElement().getFirstChildElement();
 		// <li> is child of <ul>, child of two <div>)
 		return this.getElement().getFirstChildElement().getFirstChildElement();
+	}
+	
+	public long getAlbumId() {
+		return this.id;
 	}
 
 }

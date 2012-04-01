@@ -66,6 +66,11 @@
 			<artifactId>guava-gwt</artifactId>
 			<version>11.0.2</version>
 		</dependency>
+		<dependency>
+            <groupId>com.allen_sauer</groupId>
+            <artifactId>gwt-dnd</artifactId>
+            <version>3.1.2-2</version>
+        </dependency>
 	</dependencies>
 
 	<build>

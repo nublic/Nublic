@@ -12,8 +12,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.controller.AlbumDropController;
 import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
 import com.nublic.app.photos.web.client.model.PhotosModel;
+import com.nublic.app.photos.web.client.view.MainUi;
 
 public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
@@ -29,8 +31,11 @@ public class NavigationPanel extends Composite {
 	
 	ArrayList<PutTagHandler> putTagHandlers = new ArrayList<PutTagHandler>();
 	
-	public NavigationPanel() {
+	MainUi ui;
+	
+	public NavigationPanel(MainUi ui) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.ui = ui;
 		
 		this.addAttachHandler(new Handler() {
 			@Override
@@ -55,6 +60,9 @@ public class NavigationPanel extends Composite {
 		TagWidget col = new TagWidget(name, id);
 		albumPanel.add(col);
 		albums.put(id, col);
+		// Add drop controller
+		AlbumDropController controller = new AlbumDropController(col);
+		ui.getDragController().registerDropController(controller);
 	}
 	
 	// Removing methods
