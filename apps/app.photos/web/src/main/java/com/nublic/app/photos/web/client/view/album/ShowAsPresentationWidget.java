@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
@@ -25,6 +24,7 @@ import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.util.gwt.LocationUtil;
+import com.nublic.util.widgets.AnchorPanel;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
 
@@ -37,14 +37,24 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 	
 	@UiField HorizontalPanel titlePanel;
 	@UiField Label titleLabel;
-	@UiField SimplePanel centralContainer;
+	@UiField AnchorPanel centralContainer;
 	@UiField Image centralImage;
+	
+	@UiField HorizontalPanel prevPanel;
+	@UiField AnchorPanel prevLink1;
+	@UiField AnchorPanel prevLink2;
+	@UiField Image prevImage;
+	
+	@UiField HorizontalPanel nextPanel;
+	@UiField AnchorPanel nextLink1;
+	@UiField AnchorPanel nextLink2;
+	@UiField Image nextImage;
 	
 	public String initialContainerStyle;
 	public int LEFT_SPACE = 230;
 	public int RIGHT_SPACE = 10;
 	public int TOP_SPACE = 45;
-	public int BOTTOM_SPACE = 80;
+	public int BOTTOM_SPACE = 95;
 
 	long id;
 	long position = -1;
@@ -132,8 +142,52 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				
 				@Override
 				public void list(AlbumInfo info, PhotoInfo photo) {
+					// Set inner image
 					String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
 					centralImage.setUrl(imageUrl);
+					// Set prev and next buttons
+					String nextTarget = "album=" + info.getId() + "&view=presentation&photo=" +
+							(position < rowCount - 1 ? position + 1 : rowCount - 1);
+					String prevTarget = "album=" + info.getId() + "&view=presentation&photo=" +
+							(position > 0 ? position - 1 : 0);
+					centralContainer.setHref("#" + nextTarget);
+					nextLink1.setHref("#" + nextTarget);
+					nextLink2.setHref("#" + nextTarget);
+					prevLink1.setHref("#" + prevTarget);
+					prevLink2.setHref("#" + prevTarget);
+					// Show and hide elements
+					if (position < rowCount - 1) {
+						nextPanel.setVisible(true);
+						PhotosModel.get().photo(position + 1, new CallbackOnePhoto() {
+							@Override
+							public void list(AlbumInfo info, PhotoInfo photo) {
+								String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
+								nextImage.setUrl(imageUrl);
+							}
+							@Override
+							public void error() {
+								// Do nothing
+							}
+						});
+					} else {
+						nextPanel.setVisible(false);
+					}
+					if (position > 0) {
+						prevPanel.setVisible(true);
+						PhotosModel.get().photo(position - 1, new CallbackOnePhoto() {
+							@Override
+							public void list(AlbumInfo info, PhotoInfo photo) {
+								String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
+								prevImage.setUrl(imageUrl);
+							}
+							@Override
+							public void error() {
+								// Do nothing
+							}
+						});
+					} else {
+						prevPanel.setVisible(false);
+					}
 				}
 				
 				@Override
