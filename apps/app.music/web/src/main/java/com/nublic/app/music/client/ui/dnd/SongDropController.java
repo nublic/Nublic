@@ -10,9 +10,12 @@ import com.nublic.app.music.client.datamodel.Controller;
 public class SongDropController extends AbstractPositioningDropController {
 
 	int targetRow = -1;
+	String playlistId;
 	
-	public SongDropController(Panel dropTarget) {
+	public SongDropController(Panel dropTarget, String playlistId) {
 		super(dropTarget);
+		
+		this.playlistId = playlistId;
 	}
 
 //	private static final String CSS_DEMO_TABLE_POSITIONER = "demo-table-positioner";
@@ -29,7 +32,7 @@ public class SongDropController extends AbstractPositioningDropController {
 	@Override
 	public void onDrop(DragContext context) {
 		SongDragController sDragController = (SongDragController) context.dragController;
-		Controller.INSTANCE.moveSongInPlaylist(sDragController.getDraggingRow(), targetRow);
+		Controller.INSTANCE.moveSongInPlaylist(playlistId, sDragController.getDraggingRow(), targetRow);
 		super.onDrop(context);
 	}
 //
@@ -77,20 +80,16 @@ public class SongDropController extends AbstractPositioningDropController {
 	private int findRowOnGrid(Grid grid, int mouseX, int mouseY) {
 		boolean found = false; 
 		int i = 0;
-
+		
 		while (i < grid.getRowCount() && !found) {
 			Widget w = grid.getWidget(i, 0);
-			if (mouseY > w.getAbsoluteTop() && mouseY < w.getAbsoluteTop() + w.getOffsetHeight()) {
-				found = true;
-			} else {
+			if (mouseY > w.getAbsoluteTop() + (w.getOffsetHeight() / 2)) {
 				i++;
+			} else {
+				found = true;
 			}
 		}
-		if (found) {
-			return i;
-		} else {
-			return -1;
-		}
+		return i;
 	}
 
 }

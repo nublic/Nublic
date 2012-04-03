@@ -9,12 +9,14 @@ import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.ParamsHashMap;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
@@ -73,28 +75,28 @@ public class Controller {
 		songDragController.makeDraggable(w);
 	}
 	
-	public void createCenterDropController(Panel dropTarget) {
-		centerDropController = createDropController(centerDropController, dropTarget);
+	public void createCenterDropController(Panel dropTarget, String playlistId) {
+		centerDropController = createDropController(centerDropController, dropTarget, playlistId);
 		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
-		// And we remove them to avoid memory leaks.
-		for (Widget w : draggableWidgets) {
-			songDragController.makeNotDraggable(w);
-		}
-		draggableWidgets.clear();
+		// And we remove them to avoid memory leaks. It fails
+//		for (Widget w : draggableWidgets) {
+//			songDragController.makeNotDraggable(w);
+//		}
+//		draggableWidgets.clear();
 	}
 	
 	public void createLeftDropController(Panel dropTarget) {
-		leftDropController = createDropController(leftDropController, dropTarget);
+//		leftDropController = createDropController(leftDropController, dropTarget);
 	}
 	
-	public SongDropController createDropController(SongDropController oldDropController, Panel dropTarget) {
+	public SongDropController createDropController(SongDropController oldDropController, Panel dropTarget, String playlistId) {
 		SongDropController newDropController;
 		if (oldDropController != null) {
 			// Remove old drop controller
 			songDragController.unregisterDropController(oldDropController);
 		}
 		// Create new drop controller
-		newDropController = new SongDropController(dropTarget);
+		newDropController = new SongDropController(dropTarget, playlistId);
 		songDragController.registerDropController(newDropController);
 		return newDropController;
 	}
@@ -270,9 +272,18 @@ public class Controller {
 	}
 
 	
-	public void moveSongInPlaylist(int draggingRow, int targetRow) {
-		// TODO Auto-generated method stub
-		
+	public void moveSongInPlaylist(String playlistId, int draggingRow, int targetRow) {
+		if (draggingRow == targetRow || draggingRow == targetRow +1) {
+			// IGNORE! They are moving the song before itself or after itself, which leaves it at the same position
+		} else {
+			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
+				@Override
+				public void onSongMoved(String playlistId, int from, int to) {
+					// TODO: move song in UI
+				}
+			});
+		}
+		Window.alert("Moving from " + draggingRow + " to " + targetRow);
 	}
 	
 	// +++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -19,6 +19,13 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		
 		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
 		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getLastEvent());
+		
+		createDropController();
+	}
+	
+	// To handle drag and drop
+	private void createDropController() {
+		Controller.INSTANCE.createCenterDropController(grid, playlistId);
 	}
 
 	@Override
