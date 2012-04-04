@@ -26,8 +26,9 @@ import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.PhotosModel;
+import com.nublic.app.photos.web.client.view.DisposableWidget;
 
-public class ShowAsCellsWidget extends Composite implements ScrollHandler, ResizeHandler {
+public class ShowAsCellsWidget extends Composite implements ScrollHandler, ResizeHandler, DisposableWidget {
 
 	private static ShowAsCellsWidgetUiBinder uiBinder = GWT.create(ShowAsCellsWidgetUiBinder.class);
 
@@ -123,7 +124,14 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	
 	public void dispose() {
 		for (int i = 0; i < mainPanel.getWidgetCount(); i++) {
-			PhotosApp.getUi().getDragController().makeNotDraggable(mainPanel.getWidget(i));
+			try {
+				Widget w = mainPanel.getWidget(i);
+				if (w instanceof ThumbnailWidget) {
+					PhotosApp.getUi().getDragController().makeNotDraggable(w);
+				}
+			} catch (NullPointerException e) {
+				// Do nothing
+			}
 		}
 	}
 

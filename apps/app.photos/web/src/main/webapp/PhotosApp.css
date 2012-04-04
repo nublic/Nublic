@@ -64,6 +64,6 @@ h1 {
   color: #FFFFFF;
 }
 
-.dropOver {
-	text-weight: bold;
+.dropOver ul li a {
+	font-weight: bold;
 }

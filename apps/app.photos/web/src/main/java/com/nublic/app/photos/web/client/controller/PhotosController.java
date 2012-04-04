@@ -103,6 +103,10 @@ public class PhotosController implements PutTagHandler {
 		});
 	}
 	
+	public Set<Long> getSelectedPhotos() {
+		return selectedPhotos;
+	}
+	
 	public void clearSelection() {
 		selectedPhotos.clear();
 	}
