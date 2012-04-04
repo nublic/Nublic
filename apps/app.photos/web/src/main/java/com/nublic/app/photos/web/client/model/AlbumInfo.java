@@ -90,6 +90,15 @@ public class AlbumInfo {
 		}
 	}
 	
+	public long findPhotoPosition(final long photoId) {
+		for (Map.Entry<Long, PhotoInfo> e : this.photos.entrySet()) {
+			if (e.getValue().getId() == photoId) {
+				return e.getKey();
+			}
+		}
+		return -1L;
+	}
+	
 	/* public void replacePosition(long oldPos, long newPos) {
 		
 	} */

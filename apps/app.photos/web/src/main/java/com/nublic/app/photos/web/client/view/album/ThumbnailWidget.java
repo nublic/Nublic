@@ -55,6 +55,10 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 	AlbumInfo album;
 	long photoPosition;
 	
+	boolean initialized = false;
+	Element divImage;
+	Hyperlink fileName;
+	
 	// path is the path of the folder where the file is placed
 	public ThumbnailWidget(PhotosController controller, AlbumInfo album, long photoPosition) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -69,53 +73,59 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 			
 			@Override
 			public void list(final AlbumInfo info, final PhotoInfo photo) {
-				// Set the thumbnail
-				Element divImage = DOM.createDiv();
+				if (!initialized) {
+					// Set the thumbnail
+					divImage = DOM.createDiv();
+					
+					// Create the widgets
+					Hyperlink fileThumbnail = new Hyperlink();
+					fileName = new Hyperlink();
+					
+					// Associate CSS styles
+					fileThumbnail.getElement().addClassName(style.maxheight());
+					fileName.getElement().addClassName(style.ellipcenter());
+					
+					// Add image
+					fileThumbnail.getElement().getChild(0).appendChild(divImage);
+					
+					// Set up target
+					String target = "album=" + info.getId() + "&view=presentation&photo=" + photoPosition;
+					fileThumbnail.setTargetHistoryToken(target);
+					fileName.setTargetHistoryToken(target);
+					
+					// Add the widgets to the panels
+					imagePanel.add(fileThumbnail);
+					textPanel.add(fileName);
+					
+					// Set up selected boxes
+					selectedBox.setValue(false, false);
+					selectedBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+						@Override
+						public void onValueChange(ValueChangeEvent<Boolean> event) {
+							// Set CSS style
+							if (event.getValue()) {
+								selectedBox.removeStyleName(style.childForHoverNotSelected());
+								selectedBox.addStyleName(style.childForHoverSelected());
+								controller.select(photo.getId());
+							} else {
+								selectedBox.removeStyleName(style.childForHoverSelected());
+								selectedBox.addStyleName(style.childForHoverNotSelected());
+								controller.unselect(photo.getId());
+							}
+						}
+					});
+					
+					initialized = true;
+				}
+				
+				// Set up image
 				String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + photo.getId() + ".png");
 				divImage.setAttribute("style", "height: 96px; width: 96px; background-image: url('" + imageUrl + "');" +
 						" background-position: center center; background-repeat: no-repeat;");
 				
-				// Create the widgets
-				Hyperlink fileThumbnail = new Hyperlink();
-				Hyperlink fileName = new Hyperlink();
-				
-				// Associate CSS styles
-				fileThumbnail.getElement().addClassName(style.maxheight());
-				fileName.getElement().addClassName(style.ellipcenter());
-				
-				// Add image
-				fileThumbnail.getElement().getChild(0).appendChild(divImage);
-				
 				// Set up name
 				fileName.setText(photo.getTitle());
 				fileName.setTitle(photo.getTitle());
-				
-				// Set up target
-				String target = "album=" + info.getId() + "&view=presentation&photo=" + photoPosition;
-				fileThumbnail.setTargetHistoryToken(target);
-				fileName.setTargetHistoryToken(target);
-				
-				// Add the widgets to the panels
-				imagePanel.add(fileThumbnail);
-				textPanel.add(fileName);
-				
-				// Set up selected boxes
-				selectedBox.setValue(false, false);
-				selectedBox.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-					@Override
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						// Set CSS style
-						if (event.getValue()) {
-							selectedBox.removeStyleName(style.childForHoverNotSelected());
-							selectedBox.addStyleName(style.childForHoverSelected());
-							controller.select(photo.getId());
-						} else {
-							selectedBox.removeStyleName(style.childForHoverSelected());
-							selectedBox.addStyleName(style.childForHoverNotSelected());
-							controller.unselect(photo.getId());
-						}
-					}
-				});
 			}
 			
 			@Override

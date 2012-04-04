@@ -29,6 +29,7 @@ import com.nublic.app.photos.web.client.controller.SelectedPhotosChangeHandler;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
+import com.nublic.app.photos.web.client.model.CallbackPhotosRemoval;
 import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.DisposableWidget;
@@ -84,7 +85,9 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 		deleteLink.setVisible(id != -1);
 		deleteLink.addClickHandler(new DeleteClickHandler(this));
 		removeSelectedImage.setVisible(false);
+		removeSelectedImage.addClickHandler(new RemoveFilesHandler(this));
 		removeSelectedLink.setVisible(false);
+		removeSelectedLink.addClickHandler(new RemoveFilesHandler(this));
 		PhotosApp.getController().addSelectionChangeHandler(this);
 		
 		// Set inner widgets
@@ -137,7 +140,7 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	}
 
 	@Override
-	public void onResize(ResizeEvent arg0) {
+	public void onResize(ResizeEvent r) {
 		onScroll(null);
 	}
 	
@@ -157,12 +160,47 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 
 	@Override
 	public void selectedPhotosChanged(Set<Long> selectedIds) {
-		removeSelectedImage.setVisible(!selectedIds.isEmpty());
-		removeSelectedLink.setVisible(!selectedIds.isEmpty());
+		if (this.id != -1) {
+			removeSelectedImage.setVisible(!selectedIds.isEmpty());
+			removeSelectedLink.setVisible(!selectedIds.isEmpty());
+		}
+	}
+	
+	public void removeTheLastNThumbnails(long n) {
+		// Get number of thumbnail widgets
+		int noWidgets = 0;
+		for (int i = 0; i < mainPanel.getWidgetCount(); i++) {
+			try {
+				Widget w = mainPanel.getWidget(i);
+				if (w instanceof ThumbnailWidget) {
+					noWidgets++;
+				}
+			} catch (NullPointerException e) {
+				// Do nothing
+			}
+		}
+		// Remove not used widgets
+		for (int i = mainPanel.getWidgetCount() - 1; i >= 0; i--) {
+			try {
+				Widget w = mainPanel.getWidget(i);
+				if (w instanceof ThumbnailWidget) {
+					if (i < (noWidgets - n)) {
+						ThumbnailWidget tw = (ThumbnailWidget)w;
+						unloadedWidgets.add(tw);
+						tw.setChecked(false);
+					} else {
+						mainPanel.remove(i);
+					}
+				}
+			} catch (NullPointerException e) {
+				// Do nothing
+			}
+		}
+		// Now try to scroll
+		onScroll(null);
 	}
 	
 	public class DeleteClickHandler implements ClickHandler {
-		
 		ShowAsCellsWidget w;
 		
 		public DeleteClickHandler(ShowAsCellsWidget w) {
@@ -172,6 +210,32 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 		@Override
 		public void onClick(ClickEvent e) {
 			PhotosApp.getController().deleteAlbum(w.id);
+		}
+	}
+	
+	public class RemoveFilesHandler implements ClickHandler {
+		ShowAsCellsWidget w;
+		
+		public RemoveFilesHandler(ShowAsCellsWidget w) {
+			this.w = w;
+		}
+		
+		@Override
+		public void onClick(ClickEvent e) {
+			PhotosModel.get().deletePhotos(PhotosApp.getController().getSelectedPhotos(),
+					new CallbackPhotosRemoval() {
+						
+						@Override
+						public void list(AlbumInfo album, Set<Long> deletedPositions) {
+							w.removeTheLastNThumbnails(deletedPositions.size());
+							PhotosApp.getController().clearSelection();
+						}
+						
+						@Override
+						public void error() {
+							// Do nothing
+						}
+					});
 		}
 	}
 

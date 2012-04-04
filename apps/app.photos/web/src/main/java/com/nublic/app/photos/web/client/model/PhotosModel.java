@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
@@ -67,8 +68,8 @@ public class PhotosModel {
 		return currentAlbum;
 	}
 	
-	void setCurrentAlbum(long albumId, AlbumOrder order) {
-		if (albumId != this.currentAlbum.getId() || order != this.currentAlbum.getOrder()) {
+	void setCurrentAlbum(long albumId, AlbumOrder order, boolean force) {
+		if (albumId != this.currentAlbum.getId() || order != this.currentAlbum.getOrder() || force) {
 			this.currentAlbum = new AlbumInfo(albumId, order);
 		}
 	}
@@ -80,9 +81,17 @@ public class PhotosModel {
 		}
 	}
 	
+	public long findPhotoPosition(long photoId) {
+		return currentAlbum.findPhotoPosition(photoId);
+	}
+	
 	// Outside-word models
 	public void startNewAlbum(long album, AlbumOrder order) {
-		offerRequest(new RequestStartAlbum(this, album, order));
+		offerRequest(new RequestStartAlbum(this, album, order, false));
+	}
+	
+	public void startNewAlbum(long album, AlbumOrder order, boolean force) {
+		offerRequest(new RequestStartAlbum(this, album, order, force));
 	}
 	
 	public void rowCount(CallbackRowCount cb) {
@@ -95,6 +104,12 @@ public class PhotosModel {
 	
 	public void photo(long position, CallbackOnePhoto cb) {
 		offerRequest(new RequestOnePhoto(this, cb, position));
+	}
+	
+	public void deletePhotos(Set<Long> photoIds, CallbackPhotosRemoval cb) {
+		offerRequest(new RequestPhotosRemoval(this, cb, photoIds));
+		// TODO: by now, just reload everything
+		startNewAlbum(currentAlbum.getId(), currentAlbum.getOrder(), true);
 	}
 
 	// Album cache management
