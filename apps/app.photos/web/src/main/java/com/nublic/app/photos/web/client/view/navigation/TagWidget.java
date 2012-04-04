@@ -27,7 +27,7 @@ public class TagWidget extends Composite {
 
 		this.id = id;
 		anchor.setText(text);
-		anchor.setTargetHistoryToken("album=" + id);
+		anchor.setTargetHistoryToken("album=" + id + "&view=cells");
 	}
 	
 	public void select(boolean setSelected) {

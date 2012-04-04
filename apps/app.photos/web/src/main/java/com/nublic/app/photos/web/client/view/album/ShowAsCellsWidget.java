@@ -6,6 +6,8 @@ import java.util.Set;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
@@ -13,14 +15,17 @@ import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.PhotosApp;
 import com.nublic.app.photos.web.client.controller.PhotosController;
+import com.nublic.app.photos.web.client.controller.SelectedPhotosChangeHandler;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
@@ -28,7 +33,7 @@ import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.DisposableWidget;
 
-public class ShowAsCellsWidget extends Composite implements ScrollHandler, ResizeHandler, DisposableWidget {
+public class ShowAsCellsWidget extends Composite implements ScrollHandler, ResizeHandler, DisposableWidget, SelectedPhotosChangeHandler {
 
 	private static ShowAsCellsWidgetUiBinder uiBinder = GWT.create(ShowAsCellsWidgetUiBinder.class);
 
@@ -38,6 +43,11 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	@UiField HorizontalPanel titlePanel;
 	@UiField Label titleLabel;
 	@UiField FlowPanel mainPanel;
+	
+	@UiField Image deleteImage;
+	@UiField Anchor deleteLink;
+	@UiField Image removeSelectedImage;
+	@UiField Anchor removeSelectedLink;
 	
 	PhotosController controller;
 	long id;
@@ -67,6 +77,15 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 				}
 			});
 		}
+		
+		// Set shown buttons
+		deleteImage.setVisible(id != -1);
+		deleteImage.addClickHandler(new DeleteClickHandler(this));
+		deleteLink.setVisible(id != -1);
+		deleteLink.addClickHandler(new DeleteClickHandler(this));
+		removeSelectedImage.setVisible(false);
+		removeSelectedLink.setVisible(false);
+		PhotosApp.getController().addSelectionChangeHandler(this);
 		
 		// Set inner widgets
 		PhotosModel.get().startNewAlbum(id, order);
@@ -132,6 +151,27 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 			} catch (NullPointerException e) {
 				// Do nothing
 			}
+		}
+		PhotosApp.getController().removeSelectionChangeHandler(this);
+	}
+
+	@Override
+	public void selectedPhotosChanged(Set<Long> selectedIds) {
+		removeSelectedImage.setVisible(!selectedIds.isEmpty());
+		removeSelectedLink.setVisible(!selectedIds.isEmpty());
+	}
+	
+	public class DeleteClickHandler implements ClickHandler {
+		
+		ShowAsCellsWidget w;
+		
+		public DeleteClickHandler(ShowAsCellsWidget w) {
+			this.w = w;
+		}
+		
+		@Override
+		public void onClick(ClickEvent e) {
+			PhotosApp.getController().deleteAlbum(w.id);
 		}
 	}
 

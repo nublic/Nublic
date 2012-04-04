@@ -15,5 +15,17 @@ public interface Images extends ClientBundle {
 	
 	@Source("images/next_photo.png")
 	ImageResource nextPhoto();
+	
+	@Source("images/delete_black.png")
+	ImageResource deleteAlbumBlack();
+	
+	@Source("images/delete_white.png")
+	ImageResource deleteAlbumWhite();
+	
+	@Source("images/grid.png")
+	ImageResource showAsGrid();
+	
+	@Source("images/remove_files.png")
+	ImageResource removeFiles();
 
 }

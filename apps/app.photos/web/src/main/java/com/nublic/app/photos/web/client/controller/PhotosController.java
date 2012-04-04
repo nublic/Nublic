@@ -1,9 +1,13 @@
 package com.nublic.app.photos.web.client.controller;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
@@ -14,6 +18,7 @@ import com.nublic.app.photos.web.client.view.album.ShowAsPresentationWidget;
 import com.nublic.app.photos.web.client.view.navigation.PutTagHandler;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
+import com.nublic.util.widgets.PopupButtonHandler;
 
 public class PhotosController implements PutTagHandler {
 
@@ -26,6 +31,7 @@ public class PhotosController implements PutTagHandler {
 	AlbumOrder order;
 	
 	Set<Long> selectedPhotos;
+	List<SelectedPhotosChangeHandler> selectionH = new ArrayList<SelectedPhotosChangeHandler>();
 	
 	public PhotosController(MainUi ui) {	
 		this.theUi = ui;
@@ -37,6 +43,28 @@ public class PhotosController implements PutTagHandler {
 		this.selectedPhotos = new HashSet<Long>();
 		
 		this.theUi.getNavigationPanel().addPutTagHandler(this);
+		
+		PhotosModel.get().addAlbumAddedHandler(new CallbackOneAlbum() {
+			@Override
+			public void list(long id, String name) {
+				theUi.getNavigationPanel().addAlbum(name, id);
+			}
+			@Override
+			public void error() {
+				// Do nothing
+			}
+		});
+		
+		PhotosModel.get().addAlbumDeletedHandler(new CallbackOneAlbum() {
+			@Override
+			public void list(long id, String name) {
+				theUi.getNavigationPanel().removeAlbum(id);
+			}
+			@Override
+			public void error() {
+				// Do nothing
+			}
+		});
 	}
 	
 	public void changeTo(ParamsHashMap params) {
@@ -90,7 +118,8 @@ public class PhotosController implements PutTagHandler {
 			
 			@Override
 			public void list(long id, String name) {
-				theUi.getNavigationPanel().addAlbum(name, id);
+				// This is now done as handler
+				// theUi.getNavigationPanel().addAlbum(name, id);
 			}
 			
 			@Override
@@ -107,15 +136,59 @@ public class PhotosController implements PutTagHandler {
 		return selectedPhotos;
 	}
 	
+	public void addSelectionChangeHandler(SelectedPhotosChangeHandler h) {
+		selectionH.add(h);
+	}
+	
+	public void removeSelectionChangeHandler(SelectedPhotosChangeHandler h) {
+		selectionH.remove(h);
+	}
+	
+	private void notifySelectionChanged() {
+		for (SelectedPhotosChangeHandler h : selectionH) {
+			h.selectedPhotosChanged(selectedPhotos);
+		}
+	}
+	
 	public void clearSelection() {
 		selectedPhotos.clear();
+		notifySelectionChanged();
 	}
 	
 	public void select(long id) {
 		selectedPhotos.add(id);
+		notifySelectionChanged();
 	}
 	
 	public void unselect(long id) {
 		selectedPhotos.remove(id);
+		notifySelectionChanged();
+	}
+	
+	public void deleteAlbum(final long id) {
+		final MessagePopup popup = new MessagePopup("Delete album",
+				"Do you want to deleted the selected album?\nPhotos will still be available in all photos view.",
+				EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL));
+		popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
+			@Override
+			public void onClicked(PopupButton button, ClickEvent event) {
+				PhotosModel.get().deleteAlbum(id, new CallbackOneAlbum() {
+					
+					@Override
+					public void list(long id, String name) {
+						// Move to initial view
+						History.newItem("");
+					}
+					
+					@Override
+					public void error() {
+						// Do nothing
+					}
+				});
+				popup.hide();
+			}
+		});
+		popup.setInnerHeight(140);
+		popup.center();
 	}
 }

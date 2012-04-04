@@ -9,7 +9,15 @@
         .rightmargin {
             margin-right: 15px;
         }
+        .smallleftmargin {
+            margin-left: 5px;
+        }
+        .handpointer {
+	        cursor: pointer;
+	        cursor: hand;
+	    }
     </ui:style>
+    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
 
     <g:DockLayoutPanel width="100%" height="100%">
         <g:north size='35'>
@@ -17,6 +25,10 @@
             <div class="page-header" style="width: 100%;">
               <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
                 <g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
+                <g:Image ui:field="deleteImage" resource="{images.deleteAlbumBlack}" addStyleNames="{style.handpointer}" />
+                <g:Anchor ui:field="deleteLink" addStyleNames="{style.smallleftmargin} {style.handpointer} {style.rightmargin}">Delete this album</g:Anchor>
+                <g:Image ui:field="removeSelectedImage" resource="{images.removeFiles}" addStyleNames="{style.handpointer}" />
+                <g:Anchor ui:field="removeSelectedLink" addStyleNames="{style.smallleftmargin} {style.handpointer} {style.rightmargin}">Remove selected photos from this album</g:Anchor>
               </g:HorizontalPanel>
             </div>
           </g:HTMLPanel>

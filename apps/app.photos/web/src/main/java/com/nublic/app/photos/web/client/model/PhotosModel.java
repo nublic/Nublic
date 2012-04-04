@@ -105,6 +105,17 @@ public class PhotosModel {
 	private Multimap<Long, CallbackOneAlbum> tmpOneAlbumCb = ArrayListMultimap.create();
 	private Map<Long, String> albumCache = new HashMap<Long, String>();
 	
+	public List<CallbackOneAlbum> albumAddedH = new ArrayList<CallbackOneAlbum>();
+	public List<CallbackOneAlbum> albumDeletedH = new ArrayList<CallbackOneAlbum>();
+	
+	public void addAlbumAddedHandler(CallbackOneAlbum h) {
+		albumAddedH.add(h);
+	}
+	
+	public void addAlbumDeletedHandler(CallbackOneAlbum h) {
+		albumDeletedH.add(h);
+	}
+	
 	private void startDownloadingAlbumCache() {
 		isAlbumListDownloading = true;
 		
@@ -216,6 +227,10 @@ public class PhotosModel {
 					if (!albumCache.containsKey(newId)) {
 						albumCache.put(newId, name);
 						cb.list(newId, name);
+						// Notify handlers
+						for (CallbackOneAlbum h : albumAddedH) {
+							h.list(newId, name);
+						}
 					} else {
 						cb.error();
 					}
@@ -230,5 +245,42 @@ public class PhotosModel {
 			}
 			
 		}, RequestBuilder.PUT);
+	}
+	
+	public void deleteAlbum(final long id, final CallbackOneAlbum cb) {
+		// Don't allow to send non existing album ids
+		if (!albumCache.containsKey(id)) {
+			cb.error();
+			return;
+		}
+		
+		SequenceHelper.sendJustOne(new Message() {
+			
+			@Override
+			public String getURL() {
+				addParam("id", String.valueOf(id));
+				return LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/albums");
+			}
+			
+			@Override
+			public void onSuccess(Response response) {
+				if (response.getStatusCode() == Response.SC_OK) {
+					String name = albumCache.get(id);
+					albumCache.remove(id);
+					cb.list(id, name);
+					for (CallbackOneAlbum h : albumDeletedH) {
+						h.list(id, name);
+					}
+				} else {
+					cb.error();
+				}
+			}
+			
+			@Override
+			public void onError() {
+				cb.error();
+			}
+			
+		}, RequestBuilder.DELETE);
 	}
 }
