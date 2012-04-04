@@ -97,7 +97,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   // ===========
   getUser("/albums") { _ =>
     transaction {
-      val albums = Database.albums.toList.sort((a1, a2) => a1.name.compareToIgnoreCase(a2.name) < 0)
+      val albums = Database.albums.toList.sortWith((a1, a2) => a1.name.compareToIgnoreCase(a2.name) < 0)
       val json_albums = albums.map(c => JsonAlbum(c.id, c.name))
       write(json_albums)
     }
@@ -134,7 +134,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   
   putUser("/album/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val photos = splitThatRespectsReasonableSemantics(",")(params("photos")).map(Long.parseLong(_))
+    val photos = splitThatRespectsReasonableSemantics(",")(extraParams("photos")).map(Long.parseLong(_))
     transaction {
       Database.albums.lookup(id).map(album =>
         photos.map(photoId => 
@@ -155,7 +155,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   
   deleteUser("/album/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val photos = splitThatRespectsReasonableSemantics(",")(params("photos")).map(Long.parseLong(_))
+    val photos = splitThatRespectsReasonableSemantics(",")(extraParams("photos")).map(Long.parseLong(_))
     transaction {
       Database.albums.lookup(id).map(album =>
         Database.photoAlbums.deleteWhere(x =>
