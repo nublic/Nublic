@@ -148,6 +148,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				public void list(AlbumInfo info, PhotoInfo photo) {
 					// Set inner image
 					String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
+					centralImage.setUrl(""); // To make the image disappear and realod
 					centralImage.setUrl(imageUrl);
 					photoTitleLabel.setText(photo.getTitle());
 					DateTimeFormat formatter = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);

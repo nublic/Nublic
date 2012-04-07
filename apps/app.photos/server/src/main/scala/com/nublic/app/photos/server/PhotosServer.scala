@@ -25,6 +25,7 @@ import java.util.Hashtable
 import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import com.nublic.filesAndUsers.java._
+import scala.util.Random
 
 class PhotosServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -307,6 +308,26 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
     val last_modified = request.getDateHeader("If-Modified-Since")
     val photo: Option[Photo] = transaction { Database.photos.lookup(photo_id) }
     get_image_using(photo, last_modified, BrowserFolder.getThumbnail)
+  }
+  
+  getUser("/random/:albumid.png") { _ =>
+    transaction {
+      val albumid = Long.parseLong(params("albumid"));
+      Database.albums.lookup(albumid) match {
+        case None        => halt(404)
+        case Some(album) => {
+          val no_photos = album.photos.count(_ => true)
+          if (no_photos == 0) {
+            halt(404)
+          } else {
+            val r = new Random()
+            val photo = album.photos.drop(r.nextInt(no_photos) - 1).head
+            response.setContentType("image/png")
+            BrowserFolder.getThumbnail(photo.file)
+          }
+        }
+      }
+    }
   }
   
   notFound {  // Executed when no other route succeeds

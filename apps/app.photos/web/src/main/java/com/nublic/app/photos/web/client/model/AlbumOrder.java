@@ -2,7 +2,7 @@ package com.nublic.app.photos.web.client.model;
 
 public enum AlbumOrder {
 	DATE_ASC("date/asc"),
-	DATE_DES("date/desc"),
+	DATE_DESC("date/desc"),
 	TITLE_ASC("title/asc"),
 	TITLE_DESC("title/desc");
 	

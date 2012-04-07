@@ -1,6 +1,7 @@
 package com.nublic.app.photos.web.client.controller;
 
 public enum View {
+	AS_ALBUMS("albums"),
 	AS_CELLS("cells"),
 	AS_PRESENTATION("presentation");
 	

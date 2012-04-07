@@ -54,10 +54,10 @@ public class ParamsHashMap extends HashMap<String, String> {
 			try {
 				return Long.parseLong(this.get("album"));
 			} catch (Throwable e) {
-				return -1;
+				return -2; // All albums
 			}
 		} else {
-			return -1;
+			return -2; // All albums
 		}
 	}
 	
@@ -90,6 +90,6 @@ public class ParamsHashMap extends HashMap<String, String> {
 				return v;
 			}
 		}
-		return View.AS_CELLS;
+		return View.AS_ALBUMS;
 	}
 }
