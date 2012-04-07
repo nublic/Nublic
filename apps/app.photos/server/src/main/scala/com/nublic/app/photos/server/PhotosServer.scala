@@ -97,7 +97,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   // ===========
   getUser("/albums") { _ =>
     transaction {
-      val albums = Database.albums.toList
+      val albums = Database.albums.toList.sortWith((a1, a2) => a1.name.compareToIgnoreCase(a2.name) < 0)
       val json_albums = albums.map(c => JsonAlbum(c.id, c.name))
       write(json_albums)
     }
@@ -109,8 +109,9 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
       Database.albumByName(name) match {
         case Some(c) => c.id
         case None    => {
-          val newAlbum = new Album(name)
-          Database.albums.insert(new Album)
+          val newAlbum = new Album()
+          newAlbum.name = name
+          Database.albums.insert(newAlbum)
           newAlbum.id.toString()
         }
       }
@@ -133,7 +134,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   
   putUser("/album/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val photos = splitThatRespectsReasonableSemantics(",")(params("photos")).map(Long.parseLong(_))
+    val photos = splitThatRespectsReasonableSemantics(",")(extraParams("photos")).map(Long.parseLong(_))
     transaction {
       Database.albums.lookup(id).map(album =>
         photos.map(photoId => 
@@ -154,7 +155,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   
   deleteUser("/album/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val photos = splitThatRespectsReasonableSemantics(",")(params("photos")).map(Long.parseLong(_))
+    val photos = splitThatRespectsReasonableSemantics(",")(extraParams("photos")).map(Long.parseLong(_))
     transaction {
       Database.albums.lookup(id).map(album =>
         Database.photoAlbums.deleteWhere(x =>
@@ -282,7 +283,6 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
         halt(304)
       }
     }
-    halt(500)
   }
   
   def get_image_using(photo: Option[Photo], last_modified: Long, f: String => File) = {

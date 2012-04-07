@@ -15,4 +15,13 @@ public enum AlbumOrder {
 	public String getParameter() {
 		return this.param;
 	}
+	
+	public static AlbumOrder fromParameter(String p) {
+		for (AlbumOrder v : values()) {
+			if (v.param.equals(p)) {
+				return v;
+			}
+		}
+		return null;
+	}
 }
