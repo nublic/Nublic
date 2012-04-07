@@ -9,7 +9,6 @@ import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Random;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
@@ -276,6 +275,7 @@ public class Controller {
 		if (draggingRow == targetRow || draggingRow +1 == targetRow) {
 			// IGNORE! They are moving the song before itself or after itself, which leaves it at the same position
 		} else {
+			// TODO if playlist is being played, move it as well inside player
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
 				public void onSongMoved(String playlistId, int from, int to) {
@@ -283,7 +283,7 @@ public class Controller {
 				}
 			});
 		}
-		Window.alert("Moving from " + draggingRow + " to " + targetRow);
+//		Window.alert("Moving from " + draggingRow + " to " + targetRow);
 	}
 	
 	// +++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

@@ -270,7 +270,9 @@ public class DataModel {
 	
 	public void moveSongInPlaylist(String playlistId, int from, int to, MoveSongHandler msh) {
 		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
-			// TODO: move song in current playlist
+			SongInfo s = currentPlaylist.get(from);
+			currentPlaylist.add(to, s);
+			currentPlaylist.remove(from > to ? from + 1 : from);
 			msh.onSongMoved(playlistId, from, to);
 		} else {
 			MovePlaylistSongMessage mpsm = new MovePlaylistSongMessage(playlistId, from, to, msh);
