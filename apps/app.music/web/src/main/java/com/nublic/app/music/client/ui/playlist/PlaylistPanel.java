@@ -20,7 +20,6 @@ import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.song.PlaylistSongList;
-import com.nublic.app.music.client.ui.song.SongList;
 
 public class PlaylistPanel extends Composite {
 	private static PlaylistPanelUiBinder uiBinder = GWT.create(PlaylistPanelUiBinder.class);
@@ -31,6 +30,7 @@ public class PlaylistPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	
 	String playlistId;
+	PlaylistSongList songList;
 	
 	public PlaylistPanel(String id) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -49,12 +49,17 @@ public class PlaylistPanel extends Composite {
 		titlePanel.add(b);
 	}
 	
+	public void moveRowsInPlaylist(String id, int from, int to) {
+		if (id.equals(playlistId)) {
+			songList.moveRows(from, to);
+		}
+	}
 	
 	public void setSongList(int total, int from, int to, List<SongInfo> answerList) {
-		SongList sl = new PlaylistSongList(playlistId, total, mainPanel);
-		sl.addSongs(total, from, to, answerList);
+		songList = new PlaylistSongList(playlistId, total, mainPanel);
+		songList.addSongs(total, from, to, answerList);
 
-		mainPanel.add(sl);
+		mainPanel.add(songList);
 	}
 	
 	private void setDeleteButtonHandler(ButtonLine b) {

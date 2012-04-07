@@ -194,6 +194,15 @@ public class MainUi extends Composite {
 		return currentPlaylistBeingShown;
 	}
 	
+	public void moveRowsInPlaylist(String playlistId, int from, int to) {
+		Widget centralWidget = mainPanel.getWidget();
+		
+		if (centralWidget instanceof PlaylistPanel) {
+			PlaylistPanel playlistPanel = (PlaylistPanel) centralWidget;
+			playlistPanel.moveRowsInPlaylist(playlistId, from, to);
+		}
+	}
+	
 	public void error(String message) {
 		ErrorPopup.showError(message);
 	}

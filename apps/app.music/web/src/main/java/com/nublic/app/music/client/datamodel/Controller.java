@@ -273,13 +273,13 @@ public class Controller {
 
 	
 	public void moveSongInPlaylist(String playlistId, int draggingRow, int targetRow) {
-		if (draggingRow == targetRow || draggingRow == targetRow +1) {
+		if (draggingRow == targetRow || draggingRow +1 == targetRow) {
 			// IGNORE! They are moving the song before itself or after itself, which leaves it at the same position
 		} else {
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
 				public void onSongMoved(String playlistId, int from, int to) {
-					// TODO: move song in UI
+					ui.moveRowsInPlaylist(playlistId, from, to);
 				}
 			});
 		}
