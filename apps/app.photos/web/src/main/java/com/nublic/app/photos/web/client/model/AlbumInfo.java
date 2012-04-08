@@ -99,6 +99,15 @@ public class AlbumInfo {
 		return -1L;
 	}
 	
+	public void changeTitle(long photoId, String newTitle) {
+		for (Map.Entry<Long, PhotoInfo> e : this.photos.entrySet()) {
+			if (e.getValue().getId() == photoId) {
+				e.getValue().changeTitle(newTitle);
+				break;
+			}
+		}
+	}
+	
 	/* public void replacePosition(long oldPos, long newPos) {
 		
 	} */

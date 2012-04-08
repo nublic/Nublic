@@ -7,8 +7,11 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -27,21 +30,27 @@ import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.widgets.AnchorPanel;
+import com.nublic.util.widgets.EditableLabel;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
 
-public class ShowAsPresentationWidget extends Composite implements ResizeHandler {
+public class ShowAsPresentationWidget extends Composite implements ResizeHandler, ValueChangeHandler<String> {
 
 	private static ShowAsPresentationWidgetUiBinder uiBinder = GWT.create(ShowAsPresentationWidgetUiBinder.class);
 
 	interface ShowAsPresentationWidgetUiBinder extends UiBinder<Widget, ShowAsPresentationWidget> {
 	}
 	
+	interface Style extends CssResource {
+		String alignedVerticalMiddleAndCenter();
+		String darkTextBox();
+	}
+	
 	@UiField HorizontalPanel titlePanel;
 	@UiField Label titleLabel;
 	@UiField AnchorPanel centralContainer;
 	@UiField Image centralImage;
-	@UiField Label photoTitleLabel;
+	@UiField EditableLabel photoTitleLabel;
 	@UiField Label photoDateLabel;
 	
 	@UiField HorizontalPanel prevPanel;
@@ -54,11 +63,14 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 	@UiField AnchorPanel nextLink2;
 	@UiField Image nextImage;
 	
+	@UiField Style style;
+	
 	public String initialContainerStyle;
 	public int LEFT_SPACE = 230;
 	public int RIGHT_SPACE = 10;
 	public int TOP_SPACE = 45;
 	public int BOTTOM_SPACE = 95;
+	public int INNER_DETAILS_SPACE = 260;
 
 	long id;
 	long position = -1;
@@ -69,6 +81,10 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 
 	public ShowAsPresentationWidget(long id, AlbumOrder order) {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		photoTitleLabel.getEditBox().addStyleName(style.alignedVerticalMiddleAndCenter());
+		photoTitleLabel.getEditBox().addStyleName(style.darkTextBox());
+		photoTitleLabel.addValueChangeHandler(this);
 		
 		// Set dark background
 		RootPanel.get().addStyleName("darkBackground");
@@ -129,6 +145,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 		int width = Window.getClientWidth() - LEFT_SPACE - RIGHT_SPACE;
 		centralImage.getElement().setAttribute("style", "max-height: " + height + "px; max-width: " + width + "px;");
 		centralContainer.getElement().setAttribute("style", initialContainerStyle + " line-height: " + height + "px;");
+		photoTitleLabel.getEditBox().getElement().setAttribute("style", "width: " + (width - INNER_DETAILS_SPACE) + "px; height: 100%;");
 	}
 	
 	public void setPosition(long newPosition) {
@@ -207,6 +224,22 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				}
 			});
 		}
+	}
+
+
+	@Override
+	public void onValueChange(final ValueChangeEvent<String> e) {
+		// Get the current photo id
+		PhotosModel.get().photo(position, new CallbackOnePhoto() {
+			@Override
+			public void list(final AlbumInfo info, final PhotoInfo photo) {
+				PhotosModel.get().changePhotoTitle(photo.getId(), e.getValue());
+			}
+			@Override
+			public void error() {
+				// Do nothing
+			}
+		});
 	}
 
 }

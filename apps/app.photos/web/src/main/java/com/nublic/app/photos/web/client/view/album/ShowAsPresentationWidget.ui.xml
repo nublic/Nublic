@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.util.widgets">
-	<ui:style>
+	<ui:style type='com.nublic.app.photos.web.client.view.album.ShowAsPresentationWidget.Style'>
         .scroll {
             overflow-x: hidden;
             overflow-y: auto;
@@ -14,6 +14,10 @@
 	        vertical-align: middle;
 	        text-align: center;
 	    }
+	    .thumbnailPlace {
+	        height: 64px;
+            width: 64px;
+	    }
 	    .thumbnailMax {
 	        max-height: 64px;
 	        max-width: 64px;
@@ -21,6 +25,12 @@
 	    .lightInfo {
 	        color: #DDDDDD;
 	        font-size: 90%;
+	    }
+	    .darkTextBox {
+	        color: #FFFFFF;
+	        background-color: #333333;
+	        border: 0 !important;
+	        box-shadow: 0 !important;
 	    }
     </ui:style>
     <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
@@ -37,19 +47,19 @@
         </g:north>
         <g:south size="85">
             <g:DockLayoutPanel width="100%">
-                <g:west size="120">
+                <g:west size="110">
                     <g:HorizontalPanel ui:field="prevPanel" height="100%" verticalAlignment="MIDDLE">
                         <n:AnchorPanel ui:field="prevLink1" addStyleNames="{style.alignedVerticalMiddleAndCenter}">
                             <g:Image resource="{images.prevPhoto}" />
                         </n:AnchorPanel>
-                        <n:AnchorPanel ui:field="prevLink2" addStyleNames="{style.alignedVerticalMiddleAndCenter}">
+                        <n:AnchorPanel ui:field="prevLink2" addStyleNames="{style.alignedVerticalMiddleAndCenter} {style.thumbnailPlace}">
                             <g:Image ui:field="prevImage" addStyleNames="{style.thumbnailMax}" />
                         </n:AnchorPanel>
                     </g:HorizontalPanel>
                 </g:west>
-                <g:east size="120">
+                <g:east size="110">
                     <g:HorizontalPanel ui:field="nextPanel" height="100%" verticalAlignment="MIDDLE">
-                        <n:AnchorPanel ui:field="nextLink1" addStyleNames="{style.alignedVerticalMiddleAndCenter}">
+                        <n:AnchorPanel ui:field="nextLink1" addStyleNames="{style.alignedVerticalMiddleAndCenter} {style.thumbnailPlace}">
                             <g:Image ui:field="nextImage" addStyleNames="{style.thumbnailMax}" />
                         </n:AnchorPanel>
                         <n:AnchorPanel ui:field="nextLink2" addStyleNames="{style.alignedVerticalMiddleAndCenter}">
@@ -60,7 +70,7 @@
                 <g:center>
                     <g:VerticalPanel height="100%" width="100%" verticalAlignment="MIDDLE">
                         <g:HTMLPanel width="100%" addStyleNames="{style.alignedVerticalMiddleAndCenter}" >
-                            <h3><g:Label ui:field="photoTitleLabel" /></h3>
+                            <h3><n:EditableLabel ui:field="photoTitleLabel" /></h3>
                             <g:Label ui:field="photoDateLabel" addStyleNames="{style.lightInfo}" />
                         </g:HTMLPanel>
                     </g:VerticalPanel>
