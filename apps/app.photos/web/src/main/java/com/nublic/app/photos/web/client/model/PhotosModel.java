@@ -110,6 +110,10 @@ public class PhotosModel {
 		offerRequest(new RequestOnePhoto(this, cb, position));
 	}
 	
+	public void photosAround(long position, CallbackThreePhotos cb) {
+		offerRequest(new RequestPhotosAround(this, cb, position));
+	}
+	
 	public void changePhotoTitle(final long id, String newTitle) {
 		offerRequest(new RequestPhotoTitleChange(this, id, newTitle));
 	}

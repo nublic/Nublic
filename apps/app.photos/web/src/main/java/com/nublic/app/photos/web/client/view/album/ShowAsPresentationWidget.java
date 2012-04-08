@@ -27,6 +27,7 @@ import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.CallbackOnePhoto;
 import com.nublic.app.photos.web.client.model.CallbackRowCount;
+import com.nublic.app.photos.web.client.model.CallbackThreePhotos;
 import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.util.gwt.LocationUtil;
@@ -168,13 +169,62 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 	
 	private void _setPosition() {
 		if (position != -1) {
+			PhotosModel.get().photosAround(position, new CallbackThreePhotos() {
+				
+				@Override
+				public void list(AlbumInfo info, PhotoInfo prev, PhotoInfo current, PhotoInfo next) {
+					// Set inner image
+					String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + current.getId() + ".png");
+					centralImage.setUrl(""); // To make the image disappear and reload
+					centralImage.setUrl(imageUrl);
+					photoTitleLabel.setText(current.getTitle());
+					DateTimeFormat formatter = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
+					photoDateLabel.setText("Taken on " + formatter.format(current.getDate()));
+					// Set prev and next buttons
+					String nextTarget = "album=" + info.getId() + "&view=presentation&photo=" +
+							(position < rowCount - 1 ? position + 1 : rowCount - 1);
+					String prevTarget = "album=" + info.getId() + "&view=presentation&photo=" +
+							(position > 0 ? position - 1 : 0);
+					centralContainer.setHref("#" + nextTarget);
+					nextLink1.setHref("#" + nextTarget);
+					nextLink2.setHref("#" + nextTarget);
+					prevLink1.setHref("#" + prevTarget);
+					prevLink2.setHref("#" + prevTarget);
+					
+					// Show and hide elements
+					if (position < rowCount - 1) {
+						nextPanel.setVisible(true);
+						String nextImageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + next.getId() + ".png");
+						nextImage.setUrl(nextImageUrl);
+						Image.prefetch(nextImageUrl);
+					} else {
+						nextPanel.setVisible(false);
+					}
+					if (position > 0) {
+						prevPanel.setVisible(true);
+						String prevImageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + prev.getId() + ".png");
+						prevImage.setUrl(prevImageUrl);
+					} else {
+						prevPanel.setVisible(false);
+					}
+				}
+				
+				@Override
+				public void error() {
+					MessagePopup popup = new MessagePopup("Error loading photo", 
+							"Something strange happened while loading the photo", 
+							EnumSet.of(PopupButton.OK));
+					popup.center();
+				}
+			});
+			
 			PhotosModel.get().photo(position, new CallbackOnePhoto() {
 				
 				@Override
 				public void list(AlbumInfo info, PhotoInfo photo) {
 					// Set inner image
 					String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png");
-					centralImage.setUrl(""); // To make the image disappear and realod
+					centralImage.setUrl(""); // To make the image disappear and reload
 					centralImage.setUrl(imageUrl);
 					photoTitleLabel.setText(photo.getTitle());
 					DateTimeFormat formatter = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
@@ -226,10 +276,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				
 				@Override
 				public void error() {
-					MessagePopup popup = new MessagePopup("Error loading photo", 
-							"Something strange happened while loading the photo", 
-							EnumSet.of(PopupButton.OK));
-					popup.center();
+					
 				}
 			});
 		}
