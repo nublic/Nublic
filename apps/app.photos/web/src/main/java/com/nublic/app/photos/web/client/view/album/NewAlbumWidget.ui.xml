@@ -1,0 +1,69 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.util.widgets">
+	<ui:style>
+		.inLine {
+			display: inline-table;
+			margin: 15px;
+		}
+		.maxheight {
+			max-height: 96px;
+			vertical-align: middle;
+		}
+		.ellipcenter {
+			text-align: center;
+			white-space: nowrap;
+			width: 96px;								/* IE6 needs any width */  
+			overflow: hidden;							/* "overflow" value must be different from "visible" */   
+			-o-text-overflow: ellipsis;					/* Opera 9-10 */  
+			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
+			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
+		}
+		/*.shadowed {
+			-webkit-box-shadow: 0 0 10px rgba(100,100,100,.5);  
+  			-moz-box-shadow: 0 0 10px rgba(100,100,100,.5);  
+  			box-shadow: 0 0 10px rgba(100,100,100,.5);  
+		}*/ /* nice exterior shadow */
+		.shadowed {
+	    	opacity: 0.5;
+		}
+		.nobackground {
+			background: transparent;
+			padding: 0px;
+			border: none;
+		}
+        .maxImageDimensions {
+	        max-height: 96px;
+	        max-width: 96px;
+	    }
+	    .centerImage {
+	        vertical-align: middle;
+	        text-align: center;
+	        line-height: 96px;
+	    }
+	    .addAlbum {
+	        text-decoration: none;
+	        cursor: pointer;
+	        cursor: hand;
+	    }
+	    .addAlbum:hover {
+	        text-decoration: none;
+	    }
+	</ui:style>
+	<ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
+
+	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}" verticalAlignment="MIDDLE">
+		<g:AbsolutePanel width="96px" height="96px" addStyleNames="{style.centerImage}">
+			<g:at left='0' top='0'>
+			    <g:PushButton ui:field="newButton" width="96px" height="96px" addStyleNames="{style.nobackground}" >
+			       <g:upFace image="{images.newAlbum}"></g:upFace>
+			    </g:PushButton>
+			</g:at>
+		</g:AbsolutePanel>
+		<g:VerticalPanel verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
+            <g:Anchor ui:field="fileName" addStyleNames="{style.addAlbum}">Add new album</g:Anchor>
+		</g:VerticalPanel>
+	</g:VerticalPanel>
+	
+</ui:UiBinder>

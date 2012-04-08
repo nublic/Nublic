@@ -47,6 +47,10 @@ public class ShowAllAlbumsWidget extends Composite implements ScrollHandler, Res
 		// Set white background
 		RootPanel.get().removeStyleName("darkBackground");
 		
+		// Add "new album" button
+		NewAlbumWidget newWidget = new NewAlbumWidget(c);
+		mainPanel.add(newWidget);
+		
 		PhotosModel.get().albums(new CallbackListOfAlbums() {
 			
 			@Override

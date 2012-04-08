@@ -133,6 +133,7 @@ public class PhotosController implements PutTagHandler {
 				MessagePopup popup = new MessagePopup("Error creating album",
 						"Check an album with that name doesn't already exist",
 						EnumSet.of(PopupButton.OK));
+				popup.addButtonHandler(PopupButton.OK, popup.POPUP_CLOSE);
 				popup.center();
 			}
 		});
