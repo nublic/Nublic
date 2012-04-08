@@ -17,6 +17,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -62,6 +63,9 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 	@UiField AnchorPanel nextLink1;
 	@UiField AnchorPanel nextLink2;
 	@UiField Image nextImage;
+	
+	@UiField AnchorPanel gridImage;
+	@UiField Hyperlink gridLink;
 	
 	@UiField Style style;
 	
@@ -136,6 +140,11 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				onResize(null);
 			}
 		});
+		
+		// Set place to go to grid view
+		String target = "album=" + id + "&view=cells";
+		gridImage.setHref("#" + target);
+		gridLink.setTargetHistoryToken(target);
 	}
 
 

@@ -32,6 +32,29 @@
 	        border: 0 !important;
 	        box-shadow: 0 !important;
 	    }
+	    .smallleftmargin {
+            margin-left: 5px;
+        }
+        .handpointer {
+            cursor: pointer;
+            cursor: hand;
+        }
+        .action {
+            opacity: 0.3 !important;
+            color: white !important;
+        }
+        .action:hover, .action:active {
+            opacity: 1.0 !important;
+            color: white !important;
+            text-decoration: none !important;
+        }
+        .action a {
+            color: white !important;
+        }
+        .action a:hover {
+            /* color: black !important; */
+            text-decoration: none !important;
+        }
     </ui:style>
     <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
     
@@ -41,6 +64,12 @@
             <div class="page-header" style="width: 100%;">
               <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
                 <g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
+                <g:HorizontalPanel verticalAlignment="MIDDLE" addStyleNames="{style.handpointer} {style.action}">
+                    <n:AnchorPanel ui:field="gridImage">
+                        <g:Image resource="{images.showAsGrid}" />
+                    </n:AnchorPanel>
+                    <g:Hyperlink ui:field="gridLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}">Switch to grid view</g:Hyperlink>
+                </g:HorizontalPanel>
               </g:HorizontalPanel>
             </div>
           </g:HTMLPanel>
