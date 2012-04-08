@@ -310,7 +310,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
     get_image_using(photo, last_modified, BrowserFolder.getThumbnail)
   }
   
-  getUser("/random/:albumid.png") { _ =>
+  getUser("/random/:time/:albumid.png") {_ =>
     transaction {
       val albumid = Long.parseLong(params("albumid"));
       Database.albums.lookup(albumid) match {
@@ -328,6 +328,10 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
         }
       }
     }
+  }
+  
+  getUser("/random/:albumid.png") { _ =>
+    redirect(System.currentTimeMillis() + "/" + params("albumid") + ".png")
   }
   
   notFound {  // Executed when no other route succeeds

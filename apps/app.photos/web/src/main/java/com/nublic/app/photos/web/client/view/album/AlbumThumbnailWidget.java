@@ -14,6 +14,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
@@ -46,25 +47,57 @@ public class AlbumThumbnailWidget extends Composite implements HasMouseDownHandl
 	@UiField Style style;
 	// @UiField CheckBox selectedBox;
 	// @UiField PushButton playButton;
+	boolean initialized = false;
+	boolean loading_error = false;
 	
 	PhotosController controller;
 	long id;
 	String name;
 	
+	Timer imageTimer;
+	
 	// path is the path of the folder where the file is placed
-	public AlbumThumbnailWidget(PhotosController controller, long id, String name) {
+	public AlbumThumbnailWidget(PhotosController controller, final long id, final String name) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		image.addErrorHandler(new ErrorHandler() {
-			@Override
-			public void onError(ErrorEvent e) {
-				image.setResource(Images.INSTANCE.emptyAlbum());
-			}
-		});
 		
 		this.controller = controller;
 		this.id = id;
 		this.name = name;
+		
+		image.addErrorHandler(new ErrorHandler() {
+			@Override
+			public void onError(ErrorEvent e) {
+				loading_error = true;
+				image.setResource(Images.INSTANCE.emptyAlbum());
+			}
+		});
+		
+		// Timers and handlers for changing the album image
+		
+		imageTimer = new Timer() {
+			@Override
+			public void run() {
+				// Set a new URL
+				String imageUrl = LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/random/" + System.currentTimeMillis() + "/" + id + ".png");
+				image.setUrl(imageUrl);
+			}
+		};
+		
+		image.addMouseOverHandler(new MouseOverHandler() {
+			@Override
+			public void onMouseOver(MouseOverEvent e) {
+				if (initialized && !loading_error) {
+					imageTimer.scheduleRepeating(1500);
+				}
+			}
+		});
+		
+		image.addMouseOutHandler(new MouseOutHandler() {
+			@Override
+			public void onMouseOut(MouseOutEvent e) {
+				imageTimer.cancel();
+			}
+		});
 	}
 	
 	public void lazyLoad() {
@@ -84,6 +117,9 @@ public class AlbumThumbnailWidget extends Composite implements HasMouseDownHandl
 				String target = "album=" + id + "&view=cells";
 				fileName.setTargetHistoryToken(target);
 				imagePanel.setHref("#" + target);
+				
+				// Tell it is initialized
+				initialized = true;
 			}
 			
 			@Override
