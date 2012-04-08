@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
+import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 
 public class ShowAllAlbumsWidget extends Composite implements ScrollHandler, ResizeHandler {
@@ -51,9 +52,7 @@ public class ShowAllAlbumsWidget extends Composite implements ScrollHandler, Res
 			@Override
 			public void list(Map<Long, String> albums) {
 				for (Map.Entry<Long, String> album : albums.entrySet()) {
-					AlbumThumbnailWidget w = new AlbumThumbnailWidget(controller, album.getKey(), album.getValue());
-					mainPanel.add(w);
-					unloadedWidgets.add(w);
+					addNewAlbum(album.getKey(), album.getValue());
 				}
 				
 				mainPanel.addDomHandler(ShowAllAlbumsWidget.this, ScrollEvent.getType());
@@ -73,6 +72,44 @@ public class ShowAllAlbumsWidget extends Composite implements ScrollHandler, Res
 				// Do nothing
 			}
 		});
+		
+		PhotosModel.get().addAlbumAddedHandler(new CallbackOneAlbum() {
+			
+			@Override
+			public void list(long id, String name) {
+				addNewAlbum(id, name);
+				onScroll(null);
+			}
+			
+			@Override
+			public void error() {
+				// Do nothing
+			}
+		});
+	}
+	
+	public void addNewAlbum(long key, String value) {
+		AlbumThumbnailWidget toInsert = new AlbumThumbnailWidget(controller, key, value);
+		
+		// Find place to insert the album
+		int index = -1;
+		for (int i = 0; i < mainPanel.getWidgetCount(); i++) {
+			if (mainPanel.getWidget(i) instanceof AlbumThumbnailWidget) {
+				AlbumThumbnailWidget w = (AlbumThumbnailWidget)mainPanel.getWidget(i);
+				if (toInsert.getName().compareToIgnoreCase(w.getName()) < 0) {
+					index = i;
+					break;
+				}
+			}
+		}
+		// Now insert
+		if (index == -1) {
+			mainPanel.add(toInsert);
+		} else {
+			mainPanel.insert(toInsert, index);
+		}
+		
+		unloadedWidgets.add(toInsert);
 	}
 	
 	@Override

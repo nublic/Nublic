@@ -27,5 +27,14 @@ public interface Images extends ClientBundle {
 	
 	@Source("images/remove_files.png")
 	ImageResource removeFiles();
+	
+	@Source("images/empty_album.png")
+	ImageResource emptyAlbum();
+	
+	@Source("images/image.png")
+	ImageResource image();
+	
+	@Source("images/new_album.png")
+	ImageResource newAlbum();
 
 }
