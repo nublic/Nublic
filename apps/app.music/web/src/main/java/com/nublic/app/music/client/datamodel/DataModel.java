@@ -12,6 +12,7 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
@@ -26,6 +27,7 @@ import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
+import com.nublic.app.music.client.datamodel.messages.MovePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
 import com.nublic.app.music.client.datamodel.messages.SavePlaylistMessage;
@@ -265,6 +267,22 @@ public class DataModel {
 	public void clearCurrentPlaylist() {
 		currentPlaylist.clear();
 	}
+	
+	public void moveSongInPlaylist(String playlistId, int from, int to, MoveSongHandler msh) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			SongInfo s = currentPlaylist.get(from);
+			currentPlaylist.add(to, s);
+			currentPlaylist.remove(from > to ? from + 1 : from);
+			msh.onSongMoved(playlistId, from, to);
+		} else {
+			MovePlaylistSongMessage mpsm = new MovePlaylistSongMessage(playlistId, from, to, msh);
+			SequenceHelper.sendJustOne(mpsm, RequestBuilder.POST);
+		}
+	}
+	
+	public void updateMoveInCache(String id, int from, int to) {
+		
+	}
 
 	public synchronized void removeFromPlaylist(String playlistId, int row, DeleteButtonHandler dbh) {
 		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
@@ -282,5 +300,7 @@ public class DataModel {
 	public synchronized void setDeleting(boolean b) {
 		areWeDeleting = b;
 	}
+
+
 
 }

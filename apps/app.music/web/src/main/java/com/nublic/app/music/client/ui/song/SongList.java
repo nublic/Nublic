@@ -90,19 +90,12 @@ public abstract class SongList extends Composite implements ScrollHandler {
 			});
 		}
 
-		Window.addResizeHandler(new ResizeHandler() {			
+		Window.addResizeHandler(new ResizeHandler() {
 			@Override
 			public void onResize(ResizeEvent event) {
-				onScroll(null);				
+				onScroll(null);
 			}
 		});
-		
-		createDropController();
-	}
-
-	// To handle drag and drop
-	private void createDropController() {
-		Controller.INSTANCE.createCenterDropController(grid);
 	}
 
 	// +++ Things related to lazy loading +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

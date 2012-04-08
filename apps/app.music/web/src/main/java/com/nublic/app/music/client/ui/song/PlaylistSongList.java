@@ -8,6 +8,7 @@ import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.dnd.Draggable;
 
 public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
@@ -19,6 +20,13 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		
 		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
 		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getLastEvent());
+		
+		createDropController();
+	}
+	
+	// To handle drag and drop
+	private void createDropController() {
+		Controller.INSTANCE.createCenterDropController(grid, playlistId);
 	}
 
 	@Override
@@ -118,17 +126,42 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 					if (Controller.INSTANCE.isBeingPlayed(playlistId)) {
 						Controller.INSTANCE.getPlayer().nublicRemoveFromPlaylist(row);
 					}
-					for (int i = row; i < grid.getRowCount() ; i++) {
-						Widget w = grid.getWidget(i, 0);
-						if (w instanceof SongLocalizer) {
-							((SongLocalizer)w).setPosition(i);
-						} else {
-							((ButtonLine)w).setPlayButtonHandler(new MyPlayHandler(i));
-							((ButtonLine)w).setDeleteButtonHandler(new MyDeleteHandler(i));
-						}
-					}
+					rearrangeRows(row, grid.getRowCount() -1);
 				}
 			});
+		}
+	}
+	
+	public void moveRows(int from, int to) {
+		// Insert new row
+		grid.insertRow(to);
+		grid.getRowFormatter().getElement(to).addClassName("translucidPanel");
+		
+		int newFrom = to < from ? from + 1 : from;
+		
+		// Copy the old one to the new row
+		for (int i = 0; i < grid.getColumnCount(); i++) {
+			grid.setWidget(to, i, grid.getWidget(newFrom, i));
+		}
+		
+		// Remove old copy
+		grid.removeRow(newFrom);
+		
+		int rearrangePoint = newFrom < to ? newFrom : to;
+		rearrangeRows(rearrangePoint, grid.getRowCount() -1);
+	}
+	
+	public void rearrangeRows(int from, int to) {
+		for (int i = from; i <= to ; i++) {
+			Widget w = grid.getWidget(i, 0);
+			if (w instanceof SongLocalizer) {
+				((SongLocalizer)w).setPosition(i);
+			} else {
+				((Draggable)w).setRow(i);
+				ButtonLine bl = (ButtonLine)grid.getWidget(i, 1);
+				bl.setPlayButtonHandler(new MyPlayHandler(i));
+				bl.setDeleteButtonHandler(new MyDeleteHandler(i));
+			}
 		}
 	}
 	
