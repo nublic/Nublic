@@ -26,6 +26,8 @@ import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import com.nublic.filesAndUsers.java._
 import com.nublic.app.music.server.model._
+import org.squeryl.Table
+import org.squeryl.KeyedEntity
 
 class MusicServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -187,7 +189,7 @@ class MusicServer extends ScalatraServlet with JsonSupport {
   }
   
   def addSongsToPlaylist(songsP: String, pl: Playlist) = {
-    val db_pos = pl.songs.count(_ => true)
+    val db_pos = Database.getPlaylistCount(pl.id)
     val songs = splitThatRespectsReasonableSemantics(",")(songsP).map(Long.parseLong(_))
     val songs_filtered = songs.filter(sid => Database.songs.lookup(sid).isDefined)
     val song_pos = songs_filtered.zip(new Range(db_pos, db_pos + songs_filtered.length, 1))
@@ -248,6 +250,13 @@ class MusicServer extends ScalatraServlet with JsonSupport {
     }
   }
   
+  def inefficientUpdate[A <: KeyedEntity[_]](t: Table[A], q: A => LogicalBoolean, f: A => Unit): Unit = {
+    for (r <- t.where(q).forUpdate.toList) {
+      f(r)
+      t.update(r)
+    }
+  }
+  
   deleteUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
     val is_of_user = transaction {
@@ -262,10 +271,9 @@ class MusicServer extends ScalatraServlet with JsonSupport {
         Database.songPlaylists.deleteWhere(x =>
           x.playlistId === id and x.position === position)
         // Update the position of following songs
-        update(Database.songPlaylists)(sp =>
-          where(sp.playlistId === id.~ and sp.position > position.~)
-          set(sp.position := sp.position - 1)
-        )
+        inefficientUpdate[SongPlaylist](Database.songPlaylists, 
+          sp => sp.playlistId === id.~ and sp.position > position.~,
+          sp => sp.position = sp.position - 1)
       }
       halt(200)
     }
@@ -279,28 +287,28 @@ class MusicServer extends ScalatraServlet with JsonSupport {
     val from = Long.parseLong(params("from"))
     val to = Long.parseLong(params("to"))
     val db_count = transaction {
-      Database.playlists.lookup(id).get.songs.count(_ => true)
+      Database.getPlaylistCount(id)
     }
     if (!is_of_user || from < 0 || to < 0 || from >= db_count || to >= db_count) {
       halt(500)
     } else {
       transaction {
         // Delete the song
-        Database.songPlaylists.deleteWhere(x =>
-          x.playlistId === id and x.position === from)
+        if (from != to) {
+          Database.songPlaylists.deleteWhere(x =>
+            x.playlistId === id and x.position === from)
+        }
         // Different cases
         if (from < to) {
           // In [from + 1, to] put one position up
-          update(Database.songPlaylists)(sp =>
-            where((sp.playlistId === id.~) and (sp.position > from.~) and (sp.position <= to.~))
-            set(sp.position := sp.position - 1)
-          )
+          inefficientUpdate[SongPlaylist](Database.songPlaylists, 
+            sp => (sp.playlistId === id.~) and (sp.position > from.~) and (sp.position <= to.~),
+            sp => sp.position = sp.position - 1)
         } else if (from > to) {
           // In [from, to - 1] put one position down
-          update(Database.songPlaylists)(sp =>
-            where((sp.playlistId === id.~) and (sp.position >= from.~) and (sp.position < to.~))
-            set(sp.position := sp.position + 1)
-          )
+          inefficientUpdate[SongPlaylist](Database.songPlaylists, 
+            sp => (sp.playlistId === id.~) and (sp.position >= from.~) and (sp.position < to.~),
+            sp => sp.position = sp.position + 1)
         } else {
           // from == to => Do nothing
         }

@@ -19,6 +19,7 @@ public class TagWidget extends Composite {
 	}
 
 	long id;
+	String text;
 	@UiField TagStyle style;
 	@UiField InlineHyperlink anchor;
 
@@ -26,8 +27,17 @@ public class TagWidget extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.id = id;
+		this.text = text;
 		anchor.setText(text);
 		anchor.setTargetHistoryToken("album=" + id + "&view=cells");
+	}
+	
+	public void setTargetToken(String t) {
+		anchor.setTargetHistoryToken(t);
+	}
+	
+	public String getText() {
+		return this.text;
 	}
 	
 	public void select(boolean setSelected) {

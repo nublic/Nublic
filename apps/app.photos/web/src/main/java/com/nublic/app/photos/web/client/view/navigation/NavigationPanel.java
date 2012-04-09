@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -20,11 +23,15 @@ import com.nublic.app.photos.web.client.view.MainUi;
 public class NavigationPanel extends Composite {
 	private static NavigationPanelUiBinder uiBinder = GWT.create(NavigationPanelUiBinder.class);
 	interface NavigationPanelUiBinder extends UiBinder<Widget, NavigationPanel> { }
+	
+	public static final int ALL_ALBUMS = -2;
+	public static final int ALL_PHOTOS = -1;
 
 	@UiField HTMLPanel libraryPanel;
 	@UiField HTMLPanel albumPanel;
 	@UiField AddWidget addAlbum;
 	HashMap<Long, TagWidget> albums = new HashMap<Long, TagWidget>();
+	TagWidget allAlbums;
 	TagWidget allPhotos;
 	boolean loaded = false;
 	long activeId = -1;
@@ -41,24 +48,51 @@ public class NavigationPanel extends Composite {
 			@Override
 			public void onAttachOrDetach(AttachEvent event) {
 				if (event.isAttached()) {
+					addAllAlbums();
 					addAllPhotos();
-					addExistingAlbums();
 					addAddTagsHandlers();
+					
+					Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+						@Override
+						public void execute() {
+							addExistingAlbums();
+						}
+					});
 				}
 			}
 		});
 	}
 	
 	// Adding methods
+	public void addAllAlbums() {
+		allAlbums = new TagWidget("All albums", -2);
+		allAlbums.setTargetToken("view=albums");
+		libraryPanel.add(allAlbums);
+		albums.put(-2L, allAlbums);
+	}
+	
 	public void addAllPhotos() {
 		allPhotos = new TagWidget("All photos", -1);
 		libraryPanel.add(allPhotos);
 		albums.put(-1L, allPhotos);
 	}
 
-	public void addAlbum(String name, long id) {
+	public synchronized void addAlbum(String name, long id) {
 		TagWidget col = new TagWidget(name, id);
+		// Find place to insert the album
+		Element nodeToInsertAt = null;
+		for (int i = 0; i < albumPanel.getWidgetCount(); i++) {
+			if (albumPanel.getWidget(i) instanceof TagWidget) {
+				TagWidget w = (TagWidget)albumPanel.getWidget(i);
+				if (name.compareToIgnoreCase(w.getText()) < 0) {
+					nodeToInsertAt = w.getElement();
+					break;
+				}
+			}
+		}
 		albumPanel.add(col);
+		albumPanel.getElement().insertBefore(col.getElement(), nodeToInsertAt);
+		// Add to list
 		albums.put(id, col);
 		// Add drop controller
 		AlbumDropController controller = new AlbumDropController(col);
@@ -75,8 +109,12 @@ public class NavigationPanel extends Composite {
 	}
 	
 	// Selecting methods
+	public void selectAllAlbums() {
+		selectCollection(ALL_ALBUMS);
+	}
+	
 	public void selectAllPhotos() {
-		selectCollection(-1);
+		selectCollection(ALL_PHOTOS);
 	}
 
 	public synchronized void selectCollection(long id) {

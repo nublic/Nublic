@@ -81,6 +81,10 @@ public class PhotosModel {
 		}
 	}
 	
+	void updatePhotoTitle(long id, String newTitle) {
+		currentAlbum.changeTitle(id, newTitle);
+	}
+	
 	public long findPhotoPosition(long photoId) {
 		return currentAlbum.findPhotoPosition(photoId);
 	}
@@ -104,6 +108,14 @@ public class PhotosModel {
 	
 	public void photo(long position, CallbackOnePhoto cb) {
 		offerRequest(new RequestOnePhoto(this, cb, position));
+	}
+	
+	public void photosAround(long position, CallbackThreePhotos cb) {
+		offerRequest(new RequestPhotosAround(this, cb, position));
+	}
+	
+	public void changePhotoTitle(final long id, String newTitle) {
+		offerRequest(new RequestPhotoTitleChange(this, id, newTitle));
 	}
 	
 	public void deletePhotos(Set<Long> photoIds, CallbackPhotosRemoval cb) {

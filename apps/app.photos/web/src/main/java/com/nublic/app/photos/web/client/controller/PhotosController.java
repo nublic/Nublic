@@ -13,6 +13,7 @@ import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.MainUi;
+import com.nublic.app.photos.web.client.view.album.ShowAllAlbumsWidget;
 import com.nublic.app.photos.web.client.view.album.ShowAsCellsWidget;
 import com.nublic.app.photos.web.client.view.album.ShowAsPresentationWidget;
 import com.nublic.app.photos.web.client.view.navigation.PutTagHandler;
@@ -37,8 +38,8 @@ public class PhotosController implements PutTagHandler {
 		this.theUi = ui;
 		this.initialized = false;
 		this.album = -1;
-		this.view = View.AS_CELLS;
-		this.order = AlbumOrder.TITLE_ASC;
+		this.view = View.AS_ALBUMS;
+		this.order = AlbumOrder.DATE_DESC;
 		// Initialize drag and drop
 		this.selectedPhotos = new HashSet<Long>();
 		
@@ -81,11 +82,14 @@ public class PhotosController implements PutTagHandler {
 			// Create the widget
 			Widget w;
 			switch(this.view) {
+			case AS_CELLS:
+				w = new ShowAsCellsWidget(this, this.album, this.order);
+				break;
 			case AS_PRESENTATION:
 				w = new ShowAsPresentationWidget(this.album, this.order);
 				break;
 			default:
-				w = new ShowAsCellsWidget(this, this.album, this.order);
+				w = new ShowAllAlbumsWidget(this);
 				break;
 			}
 			// Unselect everything
@@ -96,7 +100,9 @@ public class PhotosController implements PutTagHandler {
 				((ShowAsPresentationWidget)theUi.getInnerWidget()).setPosition(params.getPhotoPosition());
 			}
 			// Select the album
-			if (this.album == -1) {
+			if (this.album == -2) {
+				theUi.getNavigationPanel().selectAllAlbums();
+			} else if (this.album == -1) {
 				theUi.getNavigationPanel().selectAllPhotos();
 			} else {
 				theUi.getNavigationPanel().selectCollection(this.album);
@@ -127,6 +133,7 @@ public class PhotosController implements PutTagHandler {
 				MessagePopup popup = new MessagePopup("Error creating album",
 						"Check an album with that name doesn't already exist",
 						EnumSet.of(PopupButton.OK));
+				popup.addButtonHandler(PopupButton.OK, popup.POPUP_CLOSE);
 				popup.center();
 			}
 		});

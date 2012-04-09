@@ -37,8 +37,12 @@ public class MainUi extends Composite {
 	}
 	
 	public void setInnerWidget(Widget w) {
-		if (mainPanel.getWidget() != null && mainPanel.getWidget() instanceof DisposableWidget) {
-			((DisposableWidget)mainPanel.getWidget()).dispose();
+		try {
+			if (mainPanel.getWidget() != null && mainPanel.getWidget() instanceof DisposableWidget) {
+				((DisposableWidget)mainPanel.getWidget()).dispose();
+			}
+		} catch (Exception e) {
+			// Window.alert(e.getMessage());
 		}
 		mainPanel.setWidget(w);
 	}
