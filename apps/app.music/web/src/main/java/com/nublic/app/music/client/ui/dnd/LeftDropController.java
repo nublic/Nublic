@@ -2,6 +2,8 @@ package com.nublic.app.music.client.ui.dnd;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
+import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagWidget;
 
@@ -9,6 +11,7 @@ public class LeftDropController extends AbstractDropController {
 
 	NavigationPanel dropTarget;
 	TagWidget originalySelected;
+	TagWidget overTag;
 	
 	public LeftDropController(NavigationPanel dropTarget) {
 		super(dropTarget);
@@ -27,39 +30,48 @@ public class LeftDropController extends AbstractDropController {
 //		this.flexTable = flexTable;
 //	}
 //
-//	@Override
-//	public void onDrop(DragContext context) {
-//		SongDragController sDragController = (SongDragController) context.dragController;
-//		Controller.INSTANCE.moveSongInPlaylist(playlistId, sDragController.getDraggingRow(), targetRow);
-//		super.onDrop(context);
-//	}
-//
+	@Override
+	public void onDrop(DragContext context) {
+		SongDragController sDragController = (SongDragController) context.dragController;
+		SongInfo draggingSong = sDragController.getDraggingSong();
+		
+		switch (overTag.getKind()) {
+		case COLLECTION:
+			// TODO: Add to collection
+			break;
+		case PLAYLIST:
+			Controller.INSTANCE.addAtEndOfPlaylist(overTag.getId(), draggingSong);
+			break;
+		}
+
+		super.onDrop(context);
+	}
+
 	@Override
 	public void onEnter(DragContext context) {
 		originalySelected = dropTarget.getSelectedTag();
-		setNewOverItem(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
+		setNewOverTag(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
+		super.onEnter(context);
 	}
 	
 	@Override
 	public void onMove(DragContext context) {
-		setNewOverItem(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
+		setNewOverTag(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
+		super.onMove(context);
 	}
 
 
-	private void setNewOverItem(TagWidget intersectionTag) {
+	private void setNewOverTag(TagWidget intersectionTag) {
+		overTag = intersectionTag;
 		dropTarget.select(intersectionTag);
 	}
 
-//
-//	@Override
-//	public void onLeave(DragContext context) {
-//		targetRow = -1;
-//		super.onLeave(context);
-//	}
 	
 	@Override
 	public void onLeave(DragContext context) {
+		overTag = null;
 		dropTarget.select(originalySelected);
+		super.onLeave(context);
 	}
 
 

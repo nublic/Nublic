@@ -31,7 +31,7 @@ public class AlbumSongList extends SongList {
 	
 	@Override
 	public void setSong(int row, SongInfo s) {
-		setGrabber(row, 0);														   // Column 0
+		setGrabber(row, 0, s);														   // Column 0
 		setTrackNumber(row, 1, s.getTrack());									   // Column 1
 		setTitleLenght(row, 2, s,												   // Column 2
 			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 3)

@@ -89,6 +89,13 @@ public class Controller {
 //		draggableWidgets.clear();
 	}
 	
+	public void removeCentreDropController() {
+		if (centerDropController != null) {
+			songDragController.unregisterDropController(centerDropController);
+			centerDropController = null;
+		}
+	}
+	
 	public void createLeftDropController(NavigationPanel navigationPanel) {
 		if (leftDropController != null) {
 			// Remove old drop controller
@@ -172,14 +179,26 @@ public class Controller {
 		}, false);
 	}
 	
+	public void addAtEndOfPlaylist(String playlistId, SongInfo s) {
+		model.addToPlaylist(playlistId, s);
+		if (playlistId.equals(playingPlaylistId)) {
+			ui.getPlayer().addSongToPlaylist(s);
+		}
+	}
+	
+	public void addAtEndOfPlaylist(String playlistId, List<SongInfo> songList) {
+		model.addToPlaylist(playlistId, songList);
+		if (playlistId.equals(playingPlaylistId)) {
+			ui.getPlayer().addSongsToPlaylist(songList);
+		}
+	}
+	
 	public void addAtEndOfPlayingPlaylist(List<SongInfo> songList) {
-		model.addToPlaylist(playingPlaylistId, songList);
-		ui.getPlayer().addSongsToPlaylist(songList);
+		addAtEndOfPlaylist(playingPlaylistId, songList);
 	}
 
 	public void addAtEndOfPlayingPlaylist(SongInfo s) {
-		model.addToPlaylist(playingPlaylistId, s);
-		ui.getPlayer().addSongToPlaylist(s);
+		addAtEndOfPlaylist(playingPlaylistId, s);
 	}
 	
 	// Plays a song from a collection

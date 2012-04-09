@@ -28,6 +28,9 @@ public class TagWidget extends Composite {
 //	@UiField Image icon;
 	@UiField PushButton icon;
 	
+	TagKind kind;
+	String name;
+	String id;
 	boolean isStopped = true;
 	
 	private static String getTargetToken(String id, TagKind k) {
@@ -46,14 +49,17 @@ public class TagWidget extends Composite {
 	}
 
 	public TagWidget(TagKind k, String name, String id) {
-		this(name, getTargetToken(id, k), null);
-	}
-	
-	public TagWidget(TagKind k, String name, String id, Image iconImage) {
-		this(name, getTargetToken(id, k), iconImage);
+		this(k, name, id, null);
 	}
 
-	public TagWidget(String text, String targetHistoryToken, Image iconImage) {
+	public TagWidget(TagKind k, String name, String id, Image iconImage) {
+		this(name, getTargetToken(id, k), iconImage);
+		this.kind = k;
+		this.name = name;
+		this.id = id;
+	}
+
+	private TagWidget(String text, String targetHistoryToken, Image iconImage) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		if (iconImage == null) {
@@ -66,6 +72,10 @@ public class TagWidget extends Composite {
 		anchor.setText(text);
 		anchor.setTargetHistoryToken(targetHistoryToken);
 	}
+	
+	public TagKind getKind() { return kind; }
+	public String getName() { return name; }
+	public String getId() { return id; }
 	
 	public void addIconAction(ClickHandler ch) {
 		icon.addClickHandler(ch);
