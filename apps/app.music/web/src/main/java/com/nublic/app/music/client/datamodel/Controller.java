@@ -19,7 +19,9 @@ import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
+import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
+import com.nublic.app.music.client.ui.dnd.LeftDropController;
 import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.dnd.SongDropController;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
@@ -40,10 +42,7 @@ public class Controller {
 	// Drag and drop support
 	SongDragController songDragController = new SongDragController();
 	SongDropController centerDropController = null;
-//	List<SongDropController> centerDropControllers = new ArrayList<SongDropController>();
-	SongDropController leftDropController = null;
-//	List<DragHandler> centerDragHandlers = new ArrayList<DragHandler>();
-//	List<DragHandler> leftDragHandlers = new ArrayList<DragHandler>();
+	LeftDropController leftDropController = null;
 	List<Widget> draggableWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
@@ -65,17 +64,23 @@ public class Controller {
 	public void setPlayingPlaylistId(String playingPlaylistId) { this.playingPlaylistId = playingPlaylistId; }
 	public DataModel getModel() { return model; }
 	public void setModel(DataModel model) { this.model = model; }
-//	public SongDragController getSongDragController() { return songDragController; }
-//	public void setSongDragController(SongDragController songDragController) { this.songDragController = songDragController; }
 
-	// Drag and drop stuff
+	// +++++ Drag and drop stuff +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public void makeDraggable(Widget w) {
 		draggableWidgets.add(w);
 		songDragController.makeDraggable(w);
 	}
 	
 	public void createCenterDropController(Panel dropTarget, String playlistId) {
-		centerDropController = createDropController(centerDropController, dropTarget, playlistId);
+		if (centerDropController != null) {
+			// Remove old drop controller
+			songDragController.unregisterDropController(centerDropController);
+		}
+		// Create new drop controller
+		centerDropController = new SongDropController(dropTarget, playlistId);
+		songDragController.registerDropController(centerDropController);
+		
+		
 		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
 		// And we remove them to avoid memory leaks. It fails
 //		for (Widget w : draggableWidgets) {
@@ -84,23 +89,16 @@ public class Controller {
 //		draggableWidgets.clear();
 	}
 	
-	public void createLeftDropController(Panel dropTarget) {
-//		leftDropController = createDropController(leftDropController, dropTarget);
-	}
-	
-	public SongDropController createDropController(SongDropController oldDropController, Panel dropTarget, String playlistId) {
-		SongDropController newDropController;
-		if (oldDropController != null) {
+	public void createLeftDropController(NavigationPanel navigationPanel) {
+		if (leftDropController != null) {
 			// Remove old drop controller
-			songDragController.unregisterDropController(oldDropController);
+			songDragController.unregisterDropController(leftDropController);
 		}
-		// Create new drop controller
-		newDropController = new SongDropController(dropTarget, playlistId);
-		songDragController.registerDropController(newDropController);
-		return newDropController;
+		leftDropController = new LeftDropController(navigationPanel);
+		songDragController.registerDropController(leftDropController);
 	}
 	
-	// Utils to music reproduction
+	// +++++ Utils to music reproduction +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public void setPlayingList(String playlistId, SongHandler sh) {
 		if (!playlistId.equals(playingPlaylistId)) {
 			ui.getPlayer().clearNublicPlaylist();
@@ -286,7 +284,7 @@ public class Controller {
 //		Window.alert("Moving from " + draggingRow + " to " + targetRow);
 	}
 	
-	// +++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+	// +++++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	private void addPlayHandler() {
 		if (ui.getPlayer() != null) {
 			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {

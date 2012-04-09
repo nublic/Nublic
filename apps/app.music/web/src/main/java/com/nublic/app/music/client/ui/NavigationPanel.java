@@ -46,6 +46,7 @@ public class NavigationPanel extends Composite {
 					activeTag = allMusic;
 					selectAllMusic();
 					addAddTagsHandlers();
+					Controller.INSTANCE.createLeftDropController(NavigationPanel.this);
 				}
 			}
 		});
@@ -103,7 +104,37 @@ public class NavigationPanel extends Composite {
 		tagToRemove.removeFromParent();
 	}
 	
-	// Selecting methods
+	// Getters
+	public TagWidget getSelectedTag() {
+		return activeTag;
+	}
+	
+	public TagWidget getIntersectionTag(int mouseX, int mouseY) {
+		// is all music
+		if (intersects(mouseX, mouseY, allMusic)) {
+			return allMusic;
+		}
+		// is a collection
+		for (TagWidget col : collections.values()) {
+			if (intersects(mouseX, mouseY, col)) {
+				return col;
+			}
+		}
+		// is a playlist
+		for (TagWidget pl : playlists.values()) {
+			if (intersects(mouseX, mouseY, pl)) {
+				return pl;
+			}
+		}
+		return null;
+	}
+	
+	public boolean intersects(int mouseX, int mouseY, TagWidget tw) {
+		// Only checking Y coordinate..
+		return (tw.getAbsoluteTop() < mouseY && mouseY < tw.getAbsoluteTop() + tw.getOffsetHeight());
+	}
+	
+	// Selecting methods	
 	public void selectAllMusic() {
 		select(allMusic);
 	}
@@ -117,9 +148,13 @@ public class NavigationPanel extends Composite {
 	}
 
 	public void select(TagWidget e) {
-		activeTag.select(false);
+		if (activeTag != null) {
+			activeTag.select(false);
+		}
 		activeTag = e;
-		e.select(true);
+		if (e != null) {
+			e.select(true);
+		}
 	}
 
 	// Playing methods
