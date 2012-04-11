@@ -24,11 +24,11 @@ public class SongDragController extends PickupDragController {
 	
 	@Override
 	protected Widget newDragProxy(DragContext context) {
-//		proxy.addStyleName(CSS_DEMO_FLEX_TABLE_ROW_EXAMPLE_TABLE_PROXY);
 		draggingRow = ((Draggable) context.draggable).getRow();
 		draggingSong = ((Draggable) context.draggable).getSong();
 		
 //		HorizontalPanel proxy = new HorizontalPanel();
+//		proxy.addStyleName(CSS_DEMO_FLEX_TABLE_ROW_EXAMPLE_TABLE_PROXY);
 //		proxy.add(new Label(draggingSong.getTitle()));
 				
 //		return proxy;

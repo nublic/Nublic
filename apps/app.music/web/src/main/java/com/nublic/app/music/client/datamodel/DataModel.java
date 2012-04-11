@@ -21,6 +21,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.Pla
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEvent;
 import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
+import com.nublic.app.music.client.datamodel.messages.AddToCollectionMessage;
 import com.nublic.app.music.client.datamodel.messages.AddToPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
@@ -212,7 +213,6 @@ public class DataModel {
 		currentScreen++;
 	}
 
-	
 	// methods to change the data in server and where proceeds
 	public void putNewTag(String name) {
 		AddTagMessage atm = new AddTagMessage(name);
@@ -237,6 +237,11 @@ public class DataModel {
 	public void deletePlaylist(String id) {
 		DeletePlaylistMessage dpm = new DeletePlaylistMessage(id);
 		SequenceHelper.sendJustOne(dpm, RequestBuilder.DELETE);
+	}
+	
+	public void addToCollection(String collectionId, SongInfo song) {
+		AddToCollectionMessage atc = new AddToCollectionMessage(collectionId, song);
+		SequenceHelper.sendJustOne(atc, RequestBuilder.PUT);
 	}
 	
 	// current playlist manage methods
@@ -281,7 +286,7 @@ public class DataModel {
 	}
 	
 	public void updateMoveInCache(String id, int from, int to) {
-		
+		// TODO: updateMoveInCache (we're not implementing cache yet)
 	}
 
 	public synchronized void removeFromPlaylist(String playlistId, int row, DeleteButtonHandler dbh) {
@@ -300,7 +305,6 @@ public class DataModel {
 	public synchronized void setDeleting(boolean b) {
 		areWeDeleting = b;
 	}
-
 
 
 }

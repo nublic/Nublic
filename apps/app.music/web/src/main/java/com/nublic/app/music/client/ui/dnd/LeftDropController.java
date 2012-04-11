@@ -19,29 +19,21 @@ public class LeftDropController extends AbstractDropController {
 		this.dropTarget = dropTarget;
 	}
 
-//	private static final String CSS_DEMO_TABLE_POSITIONER = "demo-table-positioner";
-//
-//	private FlexTable flexTable;
-//
-//	private Widget positioner = null;
-//
-//	public FlexTableRowDropController(FlexTable flexTable) {
-//		super(flexTable);
-//		this.flexTable = flexTable;
-//	}
-//
 	@Override
 	public void onDrop(DragContext context) {
 		SongDragController sDragController = (SongDragController) context.dragController;
 		SongInfo draggingSong = sDragController.getDraggingSong();
 		
-		switch (overTag.getKind()) {
-		case COLLECTION:
-			// TODO: Add to collection
-			break;
-		case PLAYLIST:
-			Controller.INSTANCE.addAtEndOfPlaylist(overTag.getId(), draggingSong);
-			break;
+		if (overTag != null && overTag.getKind() != null) {
+			// If it's defined and it's not "all music" tag
+			switch (overTag.getKind()) {
+			case COLLECTION:
+				Controller.INSTANCE.addToCollection(overTag.getId(), draggingSong);
+				break;
+			case PLAYLIST:
+				Controller.INSTANCE.addAtEndOfPlaylist(overTag.getId(), draggingSong);
+				break;
+			}
 		}
 
 		super.onDrop(context);
@@ -60,20 +52,16 @@ public class LeftDropController extends AbstractDropController {
 		super.onMove(context);
 	}
 
-
 	private void setNewOverTag(TagWidget intersectionTag) {
 		overTag = intersectionTag;
 		dropTarget.select(intersectionTag);
 	}
 
-	
 	@Override
 	public void onLeave(DragContext context) {
 		overTag = null;
 		dropTarget.select(originalySelected);
 		super.onLeave(context);
 	}
-
-
 
 }

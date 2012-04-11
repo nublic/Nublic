@@ -292,7 +292,7 @@ public class Controller {
 		if (draggingRow == targetRow || draggingRow +1 == targetRow) {
 			// IGNORE! They are moving the song before itself or after itself, which leaves it at the same position
 		} else {
-			// TODO if playlist is being played, move it as well inside player
+			// TODO: if playlist is being played, move it as well inside player
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
 				public void onSongMoved(String playlistId, int from, int to) {
@@ -398,6 +398,12 @@ public class Controller {
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
 			ui.showPlaylist(total, from, to, answerList, playlistId);
 		}
+	}
+
+	
+	// Collections handle
+	public void addToCollection(String collectionId, SongInfo song) {
+		model.addToCollection(collectionId, song);
 	}
 
 }
