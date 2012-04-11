@@ -9,4 +9,4 @@
 	url = git://github.com/serras/bootstrap.git
 [submodule "player"]
 	path = player
-	url = git+ssh://github.com/nublic/bst-player.git
+	url = ssh://git@github.com/nublic/bst-player.git
