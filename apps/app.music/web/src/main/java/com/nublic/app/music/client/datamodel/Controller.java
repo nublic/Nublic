@@ -23,7 +23,7 @@ import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.dnd.LeftDropController;
 import com.nublic.app.music.client.ui.dnd.SongDragController;
-import com.nublic.app.music.client.ui.dnd.SongDropController;
+import com.nublic.app.music.client.ui.dnd.ListDropController;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
@@ -41,7 +41,7 @@ public class Controller {
 	
 	// Drag and drop support
 	SongDragController songDragController = new SongDragController();
-	SongDropController centerDropController = null;
+	ListDropController centerDropController = null;
 	LeftDropController leftDropController = null;
 	List<Widget> draggableWidgets = new ArrayList<Widget>();
 	
@@ -77,7 +77,7 @@ public class Controller {
 			songDragController.unregisterDropController(centerDropController);
 		}
 		// Create new drop controller
-		centerDropController = new SongDropController(dropTarget, playlistId);
+		centerDropController = new ListDropController(dropTarget, playlistId);
 		songDragController.registerDropController(centerDropController);
 		
 		
