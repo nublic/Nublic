@@ -1,0 +1,13 @@
+Source: libnublic-ws-json-scala
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), scala, junit4
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: libnublic-ws-json-scala
+Architecture: all
+Depends: ${misc:Depends}, scala-library
+Description: Library for using JSON-RPC over Websockets
+ Library for using JSON-RPC over Websockets
