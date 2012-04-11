@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.panel {
+			border: 1px solid white !important;
+			-webkit-border-radius: 4px;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			background-color: #0088CC;
+    		color: #FFFFFF;
+		}
+		.text {
+			margin: 4px;
+		}
+		.plus {
+			color: #FFFFFF;
+			font-size: 17px;
+			line-height: 9px;
+			padding-left: 1px;
+			height: 12px;
+			width: 12px;
+			font-weight: bold;
+			text-shadow: 0 1px 0 #BBBBBB;
+			background-color: #20AA10;
+			-webkit-border-radius: 6px;
+			-moz-border-radius: 6px;
+			border-radius: 6px;
+			margin-left: 2px;
+		}
+	</ui:style>
+
+	<g:HorizontalPanel>
+		<g:HTMLPanel addStyleNames="{style.panel}">
+<!-- 			<div class="panel"> -->
+				<g:Label ui:field="text" addStyleNames="{style.text}"/>
+<!-- 			</div> -->
+		</g:HTMLPanel>
+		<g:Label ui:field="plusLabel" addStyleNames="{style.plus}" text="+"/>
+	</g:HorizontalPanel>
+</ui:UiBinder> 

@@ -12,6 +12,7 @@ public class LeftDropController extends AbstractDropController {
 	NavigationPanel dropTarget;
 	TagWidget originalySelected;
 	TagWidget overTag;
+	DragProxy proxy = null;
 	
 	public LeftDropController(NavigationPanel dropTarget) {
 		super(dropTarget);
@@ -41,6 +42,7 @@ public class LeftDropController extends AbstractDropController {
 
 	@Override
 	public void onEnter(DragContext context) {
+		proxy = ((SongDragController) context.dragController).getProxy();
 		originalySelected = dropTarget.getSelectedTag();
 		setNewOverTag(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
 		super.onEnter(context);
@@ -54,12 +56,21 @@ public class LeftDropController extends AbstractDropController {
 
 	private void setNewOverTag(TagWidget intersectionTag) {
 		overTag = intersectionTag;
+		// To give feedback on drag proxy
+		if (overTag != null && overTag.getKind() != null) {
+			proxy.showPlus(true);
+		} else {
+			proxy.showPlus(false);
+		}
+		// To give feedback on drop panel
 		dropTarget.select(intersectionTag);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		overTag = null;
+		proxy.showPlus(false);
+		proxy = null;
 		dropTarget.select(originalySelected);
 		super.onLeave(context);
 	}

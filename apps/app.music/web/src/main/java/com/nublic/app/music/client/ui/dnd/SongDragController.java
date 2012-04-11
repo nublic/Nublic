@@ -5,7 +5,6 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.SongInfo;
@@ -14,6 +13,7 @@ public class SongDragController extends PickupDragController {
 
 	int draggingRow = -1;
 	SongInfo draggingSong = null;
+	DragProxy proxy = null;
 	
 	public SongDragController() {
 		super(RootPanel.get(), false);
@@ -26,13 +26,9 @@ public class SongDragController extends PickupDragController {
 	protected Widget newDragProxy(DragContext context) {
 		draggingRow = ((Draggable) context.draggable).getRow();
 		draggingSong = ((Draggable) context.draggable).getSong();
-		
-//		HorizontalPanel proxy = new HorizontalPanel();
-//		proxy.addStyleName(CSS_DEMO_FLEX_TABLE_ROW_EXAMPLE_TABLE_PROXY);
-//		proxy.add(new Label(draggingSong.getTitle()));
-				
-//		return proxy;
-		return new Label(draggingSong.getTitle());
+
+		proxy = new DragProxy(draggingSong);
+		return proxy;
 	}
 
 	public int getDraggingRow() {
@@ -41,6 +37,10 @@ public class SongDragController extends PickupDragController {
 	
 	public SongInfo getDraggingSong() {
 		return draggingSong;
+	}
+	
+	public DragProxy getProxy() {
+		return proxy;
 	}
 
 	@SuppressWarnings("unused")
