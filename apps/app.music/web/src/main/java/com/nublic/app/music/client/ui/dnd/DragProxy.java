@@ -3,6 +3,7 @@ package com.nublic.app.music.client.ui.dnd;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.Controller;
@@ -16,7 +17,7 @@ public class DragProxy extends Composite {
 	interface DragProxyUiBinder extends UiBinder<Widget, DragProxy> {}
 	
 	@UiField Label text;
-	@UiField Label plusLabel;
+	@UiField SimplePanel plusPanel;
 	
 	public DragProxy(final SongInfo draggingSong) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -24,7 +25,7 @@ public class DragProxy extends Composite {
 		Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingSong.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {
-				text.setText(draggingSong.getTitle() + " - " + v.getName());
+				text.setText(v.getName() + " - " + draggingSong.getTitle());
 			}
 		});
 		Controller.INSTANCE.getModel().getArtistCache().obtain(draggingSong.getArtistId());
@@ -38,7 +39,7 @@ public class DragProxy extends Composite {
 	}
 	
 	public void showPlus(boolean show) {
-		plusLabel.setVisible(show);
+		plusPanel.setVisible(show);
 	}
 
 }
