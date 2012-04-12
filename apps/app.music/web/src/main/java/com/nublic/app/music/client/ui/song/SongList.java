@@ -262,9 +262,9 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		grid.setWidget(row, column, artistLabel);
 	}
 	
-	protected void setGrabber(int row, int column) {
+	protected void setGrabber(int row, int column, SongInfo s) {
 //		HTML grabber = new HTML("[Grab me]");
-		Draggable grabber = new Draggable(row);
+		Draggable grabber = new Draggable(row, s);
 		grid.setWidget(row, column, grabber);
 		Controller.INSTANCE.makeDraggable(grabber);
 	}

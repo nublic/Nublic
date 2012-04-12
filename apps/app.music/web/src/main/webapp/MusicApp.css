@@ -112,3 +112,13 @@ body, html {
 .bold-link a {
 	font-weight: bold;
 }
+
+/** Styles to indicate drop targets on rows */ 
+.insertup {
+	border-top: 2px solid #0088CC;
+}
+
+.insertdown {
+	border-bottom: 2px solid #0088CC;
+}
+
