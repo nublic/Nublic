@@ -18,6 +18,8 @@ public class DragProxy extends Composite {
 	
 	@UiField Label text;
 	@UiField SimplePanel plusPanel;
+	@UiField SimplePanel upPanel;
+	@UiField SimplePanel downPanel;
 	
 	public DragProxy(final SongInfo draggingSong) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -31,15 +33,17 @@ public class DragProxy extends Composite {
 		Controller.INSTANCE.getModel().getArtistCache().obtain(draggingSong.getArtistId());
 		
 
-		showPlus(false);
+		setState(ProxyState.NONE);
 	}
 	
 	public void setText(String text) {
 		this.text.setText(text);
 	}
 	
-	public void showPlus(boolean show) {
-		plusPanel.setVisible(show);
+	public void setState(ProxyState state) {
+		plusPanel.setVisible(state == ProxyState.PLUS);
+		upPanel.setVisible(state == ProxyState.UP);
+		downPanel.setVisible(state == ProxyState.DOWN);
 	}
 
 }

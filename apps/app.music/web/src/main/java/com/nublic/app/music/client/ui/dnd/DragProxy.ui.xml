@@ -3,7 +3,6 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.panel {
-			/* border: 1px solid white !important; */
 			-webkit-border-radius: 4px;
 			-moz-border-radius: 4px;
 			border-radius: 4px;
@@ -18,32 +17,44 @@
 			padding: 1px 20px 1px 20px;
 		}
 		.pluspanel {
+			border: 1px solid #A5A5A5 !important;
 			color: #FFFFFF;
+			text-shadow: 1px #AAAAAA;
+			font-weight: bold;
 			font-size: 20px;
-			line-height: 14px;
 			height: 18px;
 			width: 18px;
-			font-weight: bold;
-			text-shadow: 0 1px 0 #BBBBBB;
-			background-color: #20AA10;
 			-webkit-border-radius: 9px;
 			-moz-border-radius: 9px;
 			border-radius: 9px;
+			/* line-height: 14px; */
 		}
 		.plus {
+			margin-top: -3px; /* TODO: fix plus top margin on chrome */
 			margin-left: 3px;
 		}
 	</ui:style>
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 
 	<g:AbsolutePanel width="700px" height="40px">
-		<g:at left='6' top='6'>
+		<g:at left='8' top='8'>
 			<g:SimplePanel addStyleNames="{style.panel}">
 				<g:Label ui:field="text"/>
 			</g:SimplePanel>
 		</g:at>
-		<g:at left='0' top='0'>
-			<g:SimplePanel ui:field="plusPanel" addStyleNames="{style.pluspanel}">
+		<g:at left='1' top='1'>
+			<g:SimplePanel ui:field="plusPanel" addStyleNames="{style.pluspanel} plusbackground">
 				<g:Label addStyleNames="{style.plus}" text="+"/>
+			</g:SimplePanel>
+		</g:at>
+		<g:at left='1' top='1'>
+			<g:SimplePanel ui:field="upPanel">
+				<g:Image resource='{res.upArrow}'/>
+			</g:SimplePanel>
+		</g:at>
+		<g:at left='1' top='1'>
+			<g:SimplePanel ui:field="downPanel">
+				<g:Image resource='{res.downArrow}'/>
 			</g:SimplePanel>
 		</g:at>
 	</g:AbsolutePanel>

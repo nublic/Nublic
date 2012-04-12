@@ -11,12 +11,12 @@
   			<li class="nav-header">Library</li>
 		</ul>
 		<g:HTMLPanel ui:field="libraryPanel"/>									<!-- Library panel -->
-		<ul class="nav nav-list">												<!-- Collections title -->
+		<ul class="nav nav-list"  style="margin-top: 15px;">					<!-- Collections title -->
 			<li class="nav-header">Collections</li>
 		</ul>
 		<g:HTMLPanel ui:field="collectionPanel"/>								<!-- Collections panel -->
 		<my:AddWidget ui:field="addCollection" defaultText="New Collection"/>	<!-- Collections adder -->
-		<ul class="nav nav-list">												<!-- Playlists title -->
+		<ul class="nav nav-list"  style="margin-top: 15px;">					<!-- Playlists title -->
 			<li class="nav-header">Playlists</li>
 		</ul>
 		<g:HTMLPanel ui:field="playlistPanel"/>									<!-- Playlists panel -->

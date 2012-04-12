@@ -63,4 +63,28 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/shuffle.png")
 	ImageResource shuffle();
+	
+	@Source("images/down_arrow.png")
+	ImageResource downArrow();
+	
+	@Source("images/up_arrow.png")
+	ImageResource upArrow();
+	
+	@Source("images/drag1.png")
+	ImageResource drag1();
+	
+	@Source("images/drag2.png")
+	ImageResource drag2();
+	
+	@Source("images/drag3.png")
+	ImageResource drag3();
+	
+	@Source("images/drag4.png")
+	ImageResource drag4();
+	
+	@Source("images/drag5.png")
+	ImageResource drag5();
+	
+	@Source("images/drag6.png")
+	ImageResource drag6();
 }

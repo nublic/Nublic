@@ -21,7 +21,7 @@ public class Constants {
 	public static final int UPDATE_SAMPLE_MILLISECONDS = 200;
 	public static final double LOADING_ERROR_MARGIN = 0.97; // if we have loaded more than this we consider it to be all
 
-	public static final String GRABBER_WIDTH = "60px";
+	public static final String GRABBER_WIDTH = "36px";
 	public static final String BUTTONS_WIDTH = "48px";
 	public static final String TRACK_NUMBER_WIDTH = "40px";
 	

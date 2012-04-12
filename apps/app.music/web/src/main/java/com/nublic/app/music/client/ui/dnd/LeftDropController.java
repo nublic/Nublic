@@ -19,6 +19,14 @@ public class LeftDropController extends AbstractDropController {
 		
 		this.dropTarget = dropTarget;
 	}
+	
+	@Override
+	public void onEnter(DragContext context) {
+		proxy = ((SongDragController) context.dragController).getProxy();
+		originalySelected = dropTarget.getSelectedTag();
+		setNewOverTag(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
+		super.onEnter(context);
+	}
 
 	@Override
 	public void onDrop(DragContext context) {
@@ -39,14 +47,6 @@ public class LeftDropController extends AbstractDropController {
 
 		super.onDrop(context);
 	}
-
-	@Override
-	public void onEnter(DragContext context) {
-		proxy = ((SongDragController) context.dragController).getProxy();
-		originalySelected = dropTarget.getSelectedTag();
-		setNewOverTag(dropTarget.getIntersectionTag(context.mouseX, context.mouseY));
-		super.onEnter(context);
-	}
 	
 	@Override
 	public void onMove(DragContext context) {
@@ -56,20 +56,19 @@ public class LeftDropController extends AbstractDropController {
 
 	private void setNewOverTag(TagWidget intersectionTag) {
 		overTag = intersectionTag;
-		// To give feedback on drag proxy
 		if (overTag != null && overTag.getKind() != null) {
-			proxy.showPlus(true);
+			dropTarget.select(intersectionTag);		// To give feedback on the drop panel
+			proxy.setState(ProxyState.PLUS);		// To give feedback on the drag proxy
 		} else {
-			proxy.showPlus(false);
+			dropTarget.select(null);
+			proxy.setState(ProxyState.NONE);
 		}
-		// To give feedback on drop panel
-		dropTarget.select(intersectionTag);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
 		overTag = null;
-		proxy.showPlus(false);
+		proxy.setState(ProxyState.NONE);
 		proxy = null;
 		dropTarget.select(originalySelected);
 		super.onLeave(context);
