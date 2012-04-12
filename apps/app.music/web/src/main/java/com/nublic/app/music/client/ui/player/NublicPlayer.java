@@ -236,6 +236,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 //		}
 	}
 	
+	public void reorderNublicPlaylist(int from, int to) {
+		// TODO: implement reordering
+//		playlist.add(e)
+//		reorderPlaylist(from, to);
+	}
+	
 	// secure play methods
 	public void nublicPlayNext() {
 		try {

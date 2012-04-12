@@ -289,9 +289,8 @@ public class Controller {
 
 	
 	public void moveSongInPlaylist(String playlistId, int draggingRow, int targetRow) {
-		if (draggingRow == targetRow || draggingRow +1 == targetRow) {
-			// IGNORE! They are moving the song before itself or after itself, which leaves it at the same position
-		} else {
+		// IGNORE OTHERS! They are moving the song before itself or after itself, which leaves it at the same position
+		if (!(draggingRow == targetRow || draggingRow +1 == targetRow)) {
 			// TODO: if playlist is being played, move it as well inside player
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
@@ -300,7 +299,6 @@ public class Controller {
 				}
 			});
 		}
-//		Window.alert("Moving from " + draggingRow + " to " + targetRow);
 	}
 	
 	// +++++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

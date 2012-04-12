@@ -19,7 +19,7 @@
 		}
 	</ui:style>
 	<g:FlowPanel addStyleNames="{style.bottommargin} {style.alignmiddle}">
-		<g:Grid ui:field="grid">
+		<g:Grid ui:field="grid" addStyleNames="stripped">
 		</g:Grid>
 	</g:FlowPanel>
 </ui:UiBinder> 

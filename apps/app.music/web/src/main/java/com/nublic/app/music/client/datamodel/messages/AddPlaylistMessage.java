@@ -27,6 +27,7 @@ public class AddPlaylistMessage extends Message {
 	@Override
 	public String getURL() {
 		addParam("name", name);
+		addParam("songs", "");
 		return URL.encode(GWT.getHostPageBaseURL() + "server/playlists");
 	}
 
