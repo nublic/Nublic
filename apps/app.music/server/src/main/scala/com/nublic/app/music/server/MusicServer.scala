@@ -138,7 +138,7 @@ class MusicServer extends ScalatraServlet with JsonSupport {
   
   putUser("/collection/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
+    val songs = splitThatRespectsReasonableSemantics(",")(extraParams("songs")).map(Long.parseLong(_))
     transaction {
       Database.collections.lookup(id).map(coll =>
         songs.map(songId => 
@@ -159,7 +159,7 @@ class MusicServer extends ScalatraServlet with JsonSupport {
   
   deleteUser("/collection/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
+    val songs = splitThatRespectsReasonableSemantics(",")(extraParams("songs")).map(Long.parseLong(_))
     transaction {
       Database.collections.lookup(id).map(coll =>
         Database.songCollections.deleteWhere(x =>
@@ -293,6 +293,13 @@ class MusicServer extends ScalatraServlet with JsonSupport {
       halt(500)
     } else {
       transaction {
+	// Get the song to move
+	val mSong = Database.maybe(Database.songPlaylists.where(x => x.playlistId === id and x.position === from))
+	// If not existing, halt
+	if (!mSong.isDefined) {
+	  halt(500)
+	}
+	val song = mSong.get
         // Delete the song
         if (from != to) {
           Database.songPlaylists.deleteWhere(x =>
@@ -300,15 +307,17 @@ class MusicServer extends ScalatraServlet with JsonSupport {
         }
         // Different cases
         if (from < to) {
-          // In [from + 1, to] put one position up
+          // In [from + 1, to - 1] put one position up
           inefficientUpdate[SongPlaylist](Database.songPlaylists, 
-            sp => (sp.playlistId === id.~) and (sp.position > from.~) and (sp.position <= to.~),
+            sp => (sp.playlistId === id.~) and (sp.position > from.~) and (sp.position < to.~),
             sp => sp.position = sp.position - 1)
+	  Database.songPlaylists.insert(new SongPlaylist(song.songId, id, to - 1L))
         } else if (from > to) {
-          // In [from, to - 1] put one position down
+          // In [to, from - 1] put one position down
           inefficientUpdate[SongPlaylist](Database.songPlaylists, 
-            sp => (sp.playlistId === id.~) and (sp.position >= from.~) and (sp.position < to.~),
+            sp => (sp.playlistId === id.~) and (sp.position >= to.~) and (sp.position < from.~),
             sp => sp.position = sp.position + 1)
+	  Database.songPlaylists.insert(new SongPlaylist(song.songId, id, to))
         } else {
           // from == to => Do nothing
         }

@@ -67,9 +67,9 @@ class Playlist(val id: Long, var name: String, var user: String) extends KeyedEn
   lazy val songs = Database.songPlaylists.right(this)
 }
 
-class SongPlaylist(val id: Long, val songId: Long, val playlistId: Long, var position: Int) extends KeyedEntity[Long] {
+class SongPlaylist(val id: Long, val songId: Long, val playlistId: Long, var position: Long) extends KeyedEntity[Long] {
   def this() = this(0, 0, 0, 0)
-  def this(songId: Long, playlistId: Long, position: Int) = this(0, songId, playlistId, position)
+  def this(songId: Long, playlistId: Long, position: Long) = this(0, songId, playlistId, position)
 }
 
 object Database extends Schema {
