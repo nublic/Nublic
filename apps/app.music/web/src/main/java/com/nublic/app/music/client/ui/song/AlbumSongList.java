@@ -1,6 +1,7 @@
 package com.nublic.app.music.client.ui.song;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
@@ -27,6 +28,8 @@ public class AlbumSongList extends SongList {
 	@Override
 	protected void prepareGrid() {
 		grid.resize(numberOfSongs, 3);
+		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
+		grid.getColumnFormatter().setWidth(1, Constants.TRACK_NUMBER_WIDTH);
 	}
 	
 	@Override

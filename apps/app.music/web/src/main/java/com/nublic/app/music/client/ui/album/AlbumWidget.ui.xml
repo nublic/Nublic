@@ -20,21 +20,21 @@
 		}
 	</ui:style>
 	
-	<g:FlowPanel>
 		<!-- Album display -->
-<!-- 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel"> -->
-		<g:HorizontalPanel verticalAlignment="top">
-			<g:HorizontalPanel width="96px" height="96px" horizontalAlignment="center" verticalAlignment="middle">
-				<g:Image ui:field="albumImage" addStyleNames="{style.artlimits}"/>
-			</g:HorizontalPanel>
-			<g:VerticalPanel addStyleNames="{style.leftmargin}">
+	<g:FlowPanel>
+		<g:HorizontalPanel verticalAlignment="top" width="100%">
+			<g:cell width="96px">
+				<g:HorizontalPanel width="96px" height="96px" horizontalAlignment="center" verticalAlignment="middle" addStyleNames="{style.artlimits}">
+					<g:Image ui:field="albumImage" addStyleNames="{style.artlimits}"/>
+				</g:HorizontalPanel>
+			</g:cell>
+			<g:VerticalPanel addStyleNames="{style.leftmargin}" width="100%">
 				<g:HorizontalPanel ui:field="labelAndButtonsPanel" addStyleNames="translucidPanel {style.topmargin}">
 					<g:Hyperlink ui:field="albumNameLabel" text="Album name" addStyleNames="{style.rightmargin} {style.myh3andahalf}"/>
 				</g:HorizontalPanel>
 				<!-- Songs display -->
-				<g:FlowPanel ui:field="songsPanel" addStyleNames="{style.topmargin}"/>
+				<g:FlowPanel ui:field="songsPanel" addStyleNames="{style.topmargin}" width="100%"/>
 			</g:VerticalPanel>
 		</g:HorizontalPanel>
-
 	</g:FlowPanel>
 </ui:UiBinder> 

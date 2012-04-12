@@ -19,5 +19,10 @@ public class Constants {
 	public static final int NEXT_SONGS_TO_ASK = 24;
 	public static final int NEAR_TO_SCREEN = 100; // pixels from screen since we start loading objects, to anticipate user scrolling
 	public static final int UPDATE_SAMPLE_MILLISECONDS = 200;
-	public static final double LOADING_ERROR_MARGIN = 0.97;
+	public static final double LOADING_ERROR_MARGIN = 0.97; // if we have loaded more than this we consider it to be all
+
+	public static final String GRABBER_WIDTH = "60px";
+	public static final String BUTTONS_WIDTH = "48px";
+	public static final String TRACK_NUMBER_WIDTH = "40px";
+	
 }

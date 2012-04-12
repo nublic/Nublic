@@ -17,9 +17,15 @@
 		.bottommargin {
 			margin-bottom: 15px;
 		}
+		.row > tbody > tr {
+			border-top: 2px solid #F4F4F4;
+		}
+		.row > tbody > tr:last-child {
+			border-bottom: 2px solid #F4F4F4;
+		}
 	</ui:style>
-	<g:FlowPanel addStyleNames="{style.bottommargin} {style.alignmiddle}">
-		<g:Grid ui:field="grid" addStyleNames="stripped">
+	<g:FlowPanel addStyleNames="{style.bottommargin} {style.alignmiddle} {style.rightmargin}">
+		<g:Grid ui:field="grid" addStyleNames="stripped {style.row}" width="100%">
 		</g:Grid>
 	</g:FlowPanel>
 </ui:UiBinder> 

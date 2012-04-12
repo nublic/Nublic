@@ -202,7 +202,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	protected void setButtons(int row, int column, SongInfo s, PlayButtonHandler pbh, DeleteButtonHandler dbh) {
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
-		buttonLine.getElement().addClassName(style.rightmargin());
+//		buttonLine.getElement().addClassName(style.rightmargin());
 		buttonLine.setPlayButtonHandler(pbh);
 		buttonLine.setDeleteButtonHandler(dbh);
 		grid.setWidget(row, column, buttonLine);
