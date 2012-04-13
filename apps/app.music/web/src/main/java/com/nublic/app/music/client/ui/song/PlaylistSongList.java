@@ -41,6 +41,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
 		grid.getColumnFormatter().setWidth(1, Constants.BUTTONS_WIDTH);
 		grid.getColumnFormatter().setWidth(2, Constants.TRACK_NUMBER_WIDTH);
+		updateEmptyness();
 	}
 
 	@Override
@@ -131,6 +132,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 						Controller.INSTANCE.getPlayer().nublicRemoveFromPlaylist(row);
 					}
 					rearrangeRows(row, grid.getRowCount() -1);
+					updateEmptyness();
 				}
 			});
 		}

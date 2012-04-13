@@ -56,7 +56,7 @@ public class AlbumMessage extends Message {
 		} else {
 			url.append("all");
 		}
-		url.append("/desc/0/32000/");
+		url.append("/asc/0/32000/");
 		// Add possible collection filter
 		if (inCollection != null) {
 			url.append(inCollection);

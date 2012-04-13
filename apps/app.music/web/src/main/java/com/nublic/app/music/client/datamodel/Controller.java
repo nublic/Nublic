@@ -107,52 +107,60 @@ public class Controller {
 	
 	// +++++ Utils to music reproduction +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public void setPlayingList(String playlistId, SongHandler sh) {
-		if (!playlistId.equals(playingPlaylistId)) {
-			ui.getPlayer().clearNublicPlaylist();
-			playingPlaylistId = playlistId;
-			model.askForPlaylistSongs(0, 32000, playlistId, sh, false);
-		}
+		ui.getPlayer().clearNublicPlaylist();
+		playingPlaylistId = playlistId;
+		model.askForPlaylistSongs(0, 32000, playlistId, sh, false);
 	}
 	
 	public void setPlayingList(String playlistId) {
-		setPlayingList(playlistId, new SongHandler() {
-			@Override
-			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				// Load the new playlist
-				ui.getPlayer().addSongsToPlaylist(answerList);
-			}
-		});
+		if (!playlistId.equals(playingPlaylistId)) {
+			setPlayingList(playlistId, new SongHandler() {
+				@Override
+				public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+					// Load the new playlist
+					ui.getPlayer().addSongsToPlaylist(answerList);
+				}
+			});
+		}
 	}
 	
 	public void setPlayingListAndPlay(String playlistId, final int row) {
-		setPlayingList(playlistId, new SongHandler() {
-			@Override
-			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				// Load the new playlist and play
-				ui.getPlayer().addSongsToPlaylist(answerList);
-				ui.getPlayer().playSong(row);
-			}
-		});
+		if (!playlistId.equals(playingPlaylistId)) {
+			setPlayingList(playlistId, new SongHandler() {
+				@Override
+				public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+					// Load the new playlist and play
+					ui.getPlayer().addSongsToPlaylist(answerList);
+					ui.getPlayer().playSong(row);
+				}
+			});
+		} else {
+			ui.getPlayer().play(row);
+		}
 		
 	}
 	
 	// Plays a playlist
 	public void play(final String playlistId) {
-		setPlayingList(playlistId, new SongHandler() {
-			@Override
-			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				// Load the new playlist and play
-				ui.getPlayer().addSongsToPlaylist(answerList);
-				int playlistSize = ui.getPlayer().getPlaylistSize();
-				if (playlistSize > 0) {
-					if (ui.getPlayer().isShuffleEnabled()) {
-						play(Random.nextInt() % playlistSize, playlistId);				
-					} else {
-						play(0, playlistId);
+		if (!playlistId.equals(playingPlaylistId)) {
+			setPlayingList(playlistId, new SongHandler() {
+				@Override
+				public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+					// Load the new playlist and play
+					ui.getPlayer().addSongsToPlaylist(answerList);
+					int playlistSize = ui.getPlayer().getPlaylistSize();
+					if (playlistSize > 0) {
+						if (ui.getPlayer().isShuffleEnabled()) {
+							play(Random.nextInt() % playlistSize, playlistId);				
+						} else {
+							play(0, playlistId);
+						}
 					}
 				}
-			}
-		});
+			});
+		} else {
+			ui.getPlayer().play(0);
+		}
 	}
 
 	public void play(String artistId, String albumId, String collectionId) {
@@ -262,24 +270,32 @@ public class Controller {
 	
 	// Deletion method
 	public void deleteTag(final String id, final TagKind tagKind) {
-		EnumSet<PopupButton> set = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
-		final MessagePopup confirmDeletion = new MessagePopup(Constants.CONFIRM_DELETION_TITLE, Constants.CONFIRM_DELETION_INFO, set);
-		confirmDeletion.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
-			@Override
-			public void onClicked(PopupButton button, ClickEvent event) {
-				switch (tagKind) {
-				case COLLECTION:
-					model.deleteTag(id);
-					break;
-				case PLAYLIST:
-					model.deletePlaylist(id);
-					break;
-				}
-				confirmDeletion.hide();
+		if (tagKind == TagKind.PLAYLIST && id.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			model.clearCurrentPlaylist();
+			if (isBeingPlayed(Constants.CURRENT_PLAYLIST_ID)) {
+				ui.getPlayer().clearNublicPlaylist();
 			}
-		});
-		confirmDeletion.setHeight("175px");
-		confirmDeletion.center();
+			model.askForPlaylistSongs(Constants.CURRENT_PLAYLIST_ID, new MyPlaylistHandler(Constants.CURRENT_PLAYLIST_ID), true);
+		} else {
+			EnumSet<PopupButton> set = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
+			final MessagePopup confirmDeletion = new MessagePopup(Constants.CONFIRM_DELETION_TITLE, Constants.CONFIRM_DELETION_INFO, set);
+			confirmDeletion.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
+				@Override
+				public void onClicked(PopupButton button, ClickEvent event) {
+					switch (tagKind) {
+					case COLLECTION:
+						model.deleteTag(id);
+						break;
+					case PLAYLIST:
+						model.deletePlaylist(id);
+						break;
+					}
+					confirmDeletion.hide();
+				}
+			});
+			confirmDeletion.setHeight("175px");
+			confirmDeletion.center();
+		}
 	}
 	
 	// Useful auxiliar method for check if a playlist is being played

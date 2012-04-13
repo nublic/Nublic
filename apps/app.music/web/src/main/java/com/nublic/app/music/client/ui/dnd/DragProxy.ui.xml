@@ -27,11 +27,12 @@
 			-webkit-border-radius: 9px;
 			-moz-border-radius: 9px;
 			border-radius: 9px;
-			/* line-height: 14px; */
+			vertical-align: middle;
 		}
 		.plus {
-			margin-top: -3px; /* TODO: fix plus top margin on chrome */
+			/* margin-top: -3px;  TODO: fix plus top margin on chrome */
 			margin-left: 3px;
+			line-height: 16px;
 		}
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>

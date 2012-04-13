@@ -40,6 +40,7 @@ import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.range.Range;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class SongList extends Composite implements ScrollHandler {
 	private static SongListUiBinder uiBinder = GWT.create(SongListUiBinder.class);
@@ -56,6 +57,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
+	@UiField SimplePanel emptyPanel;
 	Widget scrollPanel;
 	int numberOfSongs;	
 	
@@ -186,6 +188,10 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	
 	public abstract void setSong(int row, SongInfo s);
 	protected abstract void prepareGrid();
+	
+	public void updateEmptyness() {
+		emptyPanel.setVisible(grid.getRowCount() <= 0);
+	}
 
 	// +++ Methods to fill the grid +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	protected void setLenght(int row, int column, String formattedLength) {
@@ -202,7 +208,6 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	protected void setButtons(int row, int column, SongInfo s, PlayButtonHandler pbh, DeleteButtonHandler dbh) {
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
-//		buttonLine.getElement().addClassName(style.rightmargin());
 		buttonLine.setPlayButtonHandler(pbh);
 		buttonLine.setDeleteButtonHandler(dbh);
 		grid.setWidget(row, column, buttonLine);

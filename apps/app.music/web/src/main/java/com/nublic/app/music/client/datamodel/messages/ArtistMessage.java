@@ -50,7 +50,7 @@ public class ArtistMessage extends Message {
 		StringBuilder url = new StringBuilder();
 		url.append(GWT.getHostPageBaseURL());
 		url.append("server/artists");
-		url.append("/desc/0/32000/");
+		url.append("/asc/0/32000/");
 		if (collectionId != null) {
 			url.append(collectionId);
 		}
