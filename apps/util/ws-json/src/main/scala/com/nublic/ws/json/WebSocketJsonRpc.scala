@@ -9,13 +9,13 @@ import net.liftweb.util.ClassHelpers
 import com.nublic.ws.WebSocketClient
 
 abstract class WebSocketJsonRpcCallback {
-  def execute(method: String, result: Response[JValue]): Unit
+  def execute(result: Response[JValue]): Unit
 }
 
 abstract class Callback[R](implicit m: Manifest[R]) extends WebSocketJsonRpcCallback {
   implicit val formats = Serialization.formats(NoTypeHints)
-  def response(method: String, result: Response[R]): Unit
-  def execute(method: String, result: Response[JValue]): Unit = response(method, result.map(_.extract[R]))
+  def response(result: Response[R]): Unit
+  def execute(result: Response[JValue]): Unit = response(result.map(_.extract[R]))
 }
 
 sealed abstract class Response[R] {
@@ -58,7 +58,7 @@ abstract class WebSocketJsonRpc {
   private var _nextId: Long = 1
   private var _locks: scala.collection.mutable.Map[Long, Object] = 
     new scala.collection.mutable.HashMap()
-  private var _results: scala.collection.mutable.Map[Long, Result[JValue]] = 
+  private var _results: scala.collection.mutable.Map[Long, Response[JValue]] = 
     new scala.collection.mutable.HashMap()
   private var _callbacks: scala.collection.mutable.Map[Long, WebSocketJsonRpcCallback] =
     new scala.collection.mutable.HashMap()
@@ -108,10 +108,8 @@ abstract class WebSocketJsonRpc {
 
       // Once we've been notified, we should have
       // the result in the _results map
-      val result = _globalLock.synchronized {
-        _locks.remove(id)
-        _results.remove(id).get // Returns the removed value
-      }
+      val result = _results.remove(id).get // Returns the removed value
+      _locks.remove(id)
 
       return result
     }
@@ -173,13 +171,85 @@ abstract class WebSocketJsonRpc {
 
   class JsonParseException(message: String) extends Exception(message)
 
-  private def handleMessageReceived(json: JObject) = {
-    if (json.values.get("method").isDefined) {
-      // This is a notification
-    } else if (json.values.get("result").isDefined) {
-      // This is a method invocation result
+  private def _isNotificationMessage(fields: List[JField]) = fields.exists(f => f.name == "method")
+  private def _isResultMessage(fields: List[JField]) = fields.exists(f => f.name == "result")
+
+  private def handleMessageReceived(json: JValue) = json match {
+    case JObject(fields) => {
+      if (_isNotificationMessage(fields)) {
+	handleNotificationMessage(fields)
+      } else if (_isResultMessage(fields)) {
+	handleResultMessage(fields)
+      } else {
+	onError(new JsonParseException("Received JSON value is not in correct format"))
+      }
+    }
+    case _ => onError(new JsonParseException("Received JSON value is not an object"))
+  }
+
+  private def handleNotificationMessage(fields: List[JField]) = {
+    // Get method name
+    val method = fields.find(f => f.name == "method") match {
+      case Some(JField(_, JString(s))) => Some(s)
+      case _                           => None
+    }
+    // Get parameters
+    val params = fields.find(f => f.name == "params") match {
+      case Some(JField(_, JArray(p))) => Some(p)
+      case _                          => None
+    }
+    // Send notification
+    if (method.isDefined && params.isDefined) {
+      _onNotification(method.get, params.get.toArray)
     } else {
-      throw new JsonParseException("Received JSON value is not in correct format")
+      onError(new JsonParseException("Received notification with bad format"))
+    }
+  }
+
+  private def handleResultMessage(fields: List[JField]): Unit = {
+    // Get id
+    val msgId = fields.find(f => f.name == "id") match {
+      case Some(JField(_, JInt(i))) => Some(i)
+      case _                        => None
+    }
+    // Get result
+    val result = fields.find(f => f.name == "result") match {
+      case Some(JField(_, JNull)) => None
+      case Some(JField(_, r))     => Some(r)
+      case _                      => None
+    }
+    // Get error
+    val error = fields.find(f => f.name == "error") match {
+      case Some(JField(_, JNull)) => None
+      case Some(JField(_, e))     => Some(e)
+      case _                      => None
+    }
+    // Check we have all the fields
+    val correctResponse = (result.isDefined && !error.isDefined) || (!result.isDefined && error.isDefined) 
+    if (msgId.isDefined && correctResponse) {
+      // Create response
+      val response: Response[JValue] = if (result.isDefined) Result(result.get) else Error(error.get)
+      // Tell the corresponding manager
+      val id = msgId.get.asInstanceOf[Long]
+      _globalLock.synchronized {
+	if (_locks.contains(id)) {
+	  // We have a sync request waiting
+	  // So, put result on result map...
+	  _results += id -> response
+	  // ...and notify the waiting element
+	  _locks.get(id).get.notify()
+	} else if (_callbacks.contains(id)) {
+	  // We have an async request
+	  // So, call the callback...
+	  _callbacks.get(id).get.execute(response)
+	  // ...and delete the callback
+	  _callbacks.remove(id)
+	} else {
+	  // We had a no-response request
+	}
+      }
+    } else {
+      onError(new JsonParseException("Received result with bad format"))
     }
   }
 
@@ -195,10 +265,7 @@ abstract class WebSocketJsonRpc {
     def onMessage(client: WebSocketClient, message: String) {
       // The difficult things happen here...
       try {
-	parse(message) match {
-	  case json: JObject => rpc.handleMessageReceived(json)
-	  case _             => rpc.onError(new JsonParseException("Received JSON value is not an object"))
-	}
+	rpc.handleMessageReceived(parse(message))
       } catch {
 	case e: Throwable => rpc.onError(e)
       }
