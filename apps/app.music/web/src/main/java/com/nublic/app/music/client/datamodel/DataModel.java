@@ -47,7 +47,7 @@ public class DataModel {
 	List<PlaylistsChangeHandler> playlistsHandlers = new ArrayList<PlaylistsChangeHandler>();
 
 	// Sending messages
-	int currentScreen = 0;
+	int currentScreen = 0; // newScreen means that further received messages are ignored if have a currentScreen number less than current one
 	
 	// Caches to archive albums and artists
 	Cache<String, AlbumInfo> albumCache;

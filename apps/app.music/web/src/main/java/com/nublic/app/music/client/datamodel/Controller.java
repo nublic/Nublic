@@ -270,24 +270,32 @@ public class Controller {
 	
 	// Deletion method
 	public void deleteTag(final String id, final TagKind tagKind) {
-		EnumSet<PopupButton> set = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
-		final MessagePopup confirmDeletion = new MessagePopup(Constants.CONFIRM_DELETION_TITLE, Constants.CONFIRM_DELETION_INFO, set);
-		confirmDeletion.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
-			@Override
-			public void onClicked(PopupButton button, ClickEvent event) {
-				switch (tagKind) {
-				case COLLECTION:
-					model.deleteTag(id);
-					break;
-				case PLAYLIST:
-					model.deletePlaylist(id);
-					break;
-				}
-				confirmDeletion.hide();
+		if (tagKind == TagKind.PLAYLIST && id.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			model.clearCurrentPlaylist();
+			if (isBeingPlayed(Constants.CURRENT_PLAYLIST_ID)) {
+				ui.getPlayer().clearNublicPlaylist();
 			}
-		});
-		confirmDeletion.setHeight("175px");
-		confirmDeletion.center();
+			model.askForPlaylistSongs(Constants.CURRENT_PLAYLIST_ID, new MyPlaylistHandler(Constants.CURRENT_PLAYLIST_ID), true);
+		} else {
+			EnumSet<PopupButton> set = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
+			final MessagePopup confirmDeletion = new MessagePopup(Constants.CONFIRM_DELETION_TITLE, Constants.CONFIRM_DELETION_INFO, set);
+			confirmDeletion.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
+				@Override
+				public void onClicked(PopupButton button, ClickEvent event) {
+					switch (tagKind) {
+					case COLLECTION:
+						model.deleteTag(id);
+						break;
+					case PLAYLIST:
+						model.deletePlaylist(id);
+						break;
+					}
+					confirmDeletion.hide();
+				}
+			});
+			confirmDeletion.setHeight("175px");
+			confirmDeletion.center();
+		}
 	}
 	
 	// Useful auxiliar method for check if a playlist is being played
