@@ -107,52 +107,60 @@ public class Controller {
 	
 	// +++++ Utils to music reproduction +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	public void setPlayingList(String playlistId, SongHandler sh) {
-		if (!playlistId.equals(playingPlaylistId)) {
-			ui.getPlayer().clearNublicPlaylist();
-			playingPlaylistId = playlistId;
-			model.askForPlaylistSongs(0, 32000, playlistId, sh, false);
-		}
+		ui.getPlayer().clearNublicPlaylist();
+		playingPlaylistId = playlistId;
+		model.askForPlaylistSongs(0, 32000, playlistId, sh, false);
 	}
 	
 	public void setPlayingList(String playlistId) {
-		setPlayingList(playlistId, new SongHandler() {
-			@Override
-			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				// Load the new playlist
-				ui.getPlayer().addSongsToPlaylist(answerList);
-			}
-		});
+		if (!playlistId.equals(playingPlaylistId)) {
+			setPlayingList(playlistId, new SongHandler() {
+				@Override
+				public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+					// Load the new playlist
+					ui.getPlayer().addSongsToPlaylist(answerList);
+				}
+			});
+		}
 	}
 	
 	public void setPlayingListAndPlay(String playlistId, final int row) {
-		setPlayingList(playlistId, new SongHandler() {
-			@Override
-			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				// Load the new playlist and play
-				ui.getPlayer().addSongsToPlaylist(answerList);
-				ui.getPlayer().playSong(row);
-			}
-		});
+		if (!playlistId.equals(playingPlaylistId)) {
+			setPlayingList(playlistId, new SongHandler() {
+				@Override
+				public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+					// Load the new playlist and play
+					ui.getPlayer().addSongsToPlaylist(answerList);
+					ui.getPlayer().playSong(row);
+				}
+			});
+		} else {
+			ui.getPlayer().play(row);
+		}
 		
 	}
 	
 	// Plays a playlist
 	public void play(final String playlistId) {
-		setPlayingList(playlistId, new SongHandler() {
-			@Override
-			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				// Load the new playlist and play
-				ui.getPlayer().addSongsToPlaylist(answerList);
-				int playlistSize = ui.getPlayer().getPlaylistSize();
-				if (playlistSize > 0) {
-					if (ui.getPlayer().isShuffleEnabled()) {
-						play(Random.nextInt() % playlistSize, playlistId);				
-					} else {
-						play(0, playlistId);
+		if (!playlistId.equals(playingPlaylistId)) {
+			setPlayingList(playlistId, new SongHandler() {
+				@Override
+				public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+					// Load the new playlist and play
+					ui.getPlayer().addSongsToPlaylist(answerList);
+					int playlistSize = ui.getPlayer().getPlaylistSize();
+					if (playlistSize > 0) {
+						if (ui.getPlayer().isShuffleEnabled()) {
+							play(Random.nextInt() % playlistSize, playlistId);				
+						} else {
+							play(0, playlistId);
+						}
 					}
 				}
-			}
-		});
+			});
+		} else {
+			ui.getPlayer().play(0);
+		}
 	}
 
 	public void play(String artistId, String albumId, String collectionId) {
