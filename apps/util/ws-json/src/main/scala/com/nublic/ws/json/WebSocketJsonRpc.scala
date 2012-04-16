@@ -141,7 +141,7 @@ abstract class WebSocketJsonRpc {
   def asyncSend(method: String, params: List[AnyRef], cb: WebSocketJsonRpcCallback): Unit = 
     _asyncSend(method, params.map(_toJson), cb)
 
-  def notify(method: String, params: List[AnyRef]): Unit = _notify(method, params.map(_toJson))
+  def shoot(method: String, params: List[AnyRef]): Unit = _notify(method, params.map(_toJson))
 
   // Notifications
   // =============
