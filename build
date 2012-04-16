@@ -172,6 +172,8 @@ install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nu
 # Utilities
 build_deb_package apps/util/gwt
 install_in_maven_repo apps/util/gwt/target/*.jar com.nublic util.gwt 0.0.1-SNAPSHOT
+build_deb_package apps/util/ws-json
+install_in_maven_repo apps/util/gwt/target/*.jar com.nublic websockets-json 0.0.1-SNAPSHOT
 # Manager App
 build_deb_package apps/app.manager/server
 build_deb_package apps/app.manager/web
