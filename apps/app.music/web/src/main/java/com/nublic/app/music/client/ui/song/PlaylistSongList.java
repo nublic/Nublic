@@ -1,6 +1,7 @@
 package com.nublic.app.music.client.ui.song;
 
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
@@ -20,7 +21,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		this.playlistId = playlistId;
 		
 		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
-		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getLastEvent());
+		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getState(), Controller.INSTANCE.getPlayer().getPlayingIndex());
 		
 		createDropController();
 	}
@@ -57,16 +58,20 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void onPlayStateChanged(PlayStateEvent event) {
-		if (event != null && Controller.INSTANCE.isBeingPlayed(playlistId)) {
-			switch (event.getPlayState()) {
+		onPlayStateChanged(event.getPlayState(), event.getItemIndex());
+	}
+	
+	public void onPlayStateChanged(State s, int index) {
+		if (s != null && Controller.INSTANCE.isBeingPlayed(playlistId)) {
+			switch (s) {
 			case Paused:
-				setSongPaused(event.getItemIndex());
+				setSongPaused(index);
 				break;
 			case Started:
-				setSongPlaying(event.getItemIndex());
+				setSongPlaying(index);
 				break;
 			case Stopped:
-				unmark(event.getItemIndex());
+				unmark(index);
 				break;
 			case Finished:
 				unmark(playingIndex);
@@ -139,9 +144,12 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 	}
 	
 	public void moveRows(int from, int to) {
+		// get old style to apply to new one
+		String oldClassName = grid.getRowFormatter().getElement(from).getClassName();
+
 		// Insert new row
 		grid.insertRow(to);
-		grid.getRowFormatter().getElement(to).addClassName("translucidPanel");
+		grid.getRowFormatter().getElement(to).setClassName(oldClassName);
 		
 		int newFrom = to < from ? from + 1 : from;
 		

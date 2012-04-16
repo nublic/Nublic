@@ -12,6 +12,7 @@ import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.bramosystems.oss.player.core.client.RepeatMode;
 import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
@@ -32,7 +33,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
-	PlayStateEvent lastStateEvent;
+//	PlayStateEvent lastStateEvent;
+	int playingIndex = -1; // TODO: remove this and use internal method
+	State state = null; // TODO: remove this and use internal method
 	boolean isShuffleEnabled = false;
 	
 	// To fix that ugly bug on loading
@@ -58,7 +61,10 @@ public class NublicPlayer extends CustomAudioPlayer {
 		addPlayerHandler();					// Init all the interface
 	}
 	
-	public PlayStateEvent getLastEvent() { return lastStateEvent; }
+//	public PlayStateEvent getLastEvent() { return lastStateEvent; }
+	public State getState() { return state; }
+	public int getPlayingIndex() { return playingIndex; }
+	
 	
 	private void addPlayerHandler() {
 		addPlayerStateHandler(new PlayerStateHandler() {
@@ -112,8 +118,11 @@ public class NublicPlayer extends CustomAudioPlayer {
         addPlayStateHandler(new PlayStateHandler() {
             @Override
             public void onPlayStateChanged(PlayStateEvent event) {
-            	SongInfo song = playlist.get(event.getItemIndex());
-            	lastStateEvent = event;
+            	playingIndex = event.getItemIndex();
+            	state = event.getPlayState();
+            	SongInfo song = playlist.get(playingIndex);
+//            	SongInfo song = playlist.get(event.getItemIndex());
+//            	lastStateEvent = event;
             	switch (event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
@@ -165,7 +174,8 @@ public class NublicPlayer extends CustomAudioPlayer {
 		controls.addSeekChangeHandler(new SeekChangeHandler() {
 			@Override
 			public void onSeekChanged(SeekChangeEvent event) {
-				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
+//				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
+				setPlayPosition(event.getSeekPosition() * playlist.get(playingIndex).getLength() * 1000);
 			}
 		});
 		controls.addVolumeHandler(new VolumeHandler() {
@@ -227,25 +237,28 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-//		if (isShuffleEnabled) {
-//			setShuffleEnabled(false);
-			play(index);
-//			setShuffleEnabled(true);
-//		} else {
-//			play(index);			
-//		}
+		play(index);
 	}
 	
 	public void reorderNublicPlaylist(int from, int to) {
-//		playlist.add(e)
-//		reorderPlaylist(from, to);
+		// Reorder our info
+		SongInfo s = playlist.get(from);
+		playlist.add(to, s);
+		playlist.remove(from > to ? from + 1 : from);
+		
+		// Reorder internal info of player
+		reorderPlaylist(from, to);
+		
+		// reordering could have moved playing index
+		//playingIndex = getPlaylistIndex(); // TODO: remove to do..
 	}
 	
 	// secure play methods
 	public void nublicPlayNext() {
 		try {
 			if (isShuffleEnabled ||
-					(lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1)) {
+					(playingIndex != getPlaylistSize() - 1)) {
+//					(lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1)) {
 				playNext();
 			}
 		} catch (PlayException e) {
@@ -257,7 +270,8 @@ public class NublicPlayer extends CustomAudioPlayer {
 	public void nublicPlayPrev() {
 		try {
 			if (isShuffleEnabled ||
-					(lastStateEvent != null && lastStateEvent.getItemIndex() != 0)) {
+					(playingIndex != 0)) {
+//					(lastStateEvent != null && lastStateEvent.getItemIndex() != 0)) {
 				playPrevious();
 			}
 		} catch (PlayException e) {

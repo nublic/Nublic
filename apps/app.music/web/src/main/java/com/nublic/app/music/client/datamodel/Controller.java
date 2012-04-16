@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
@@ -248,9 +249,9 @@ public class Controller {
 			// If we are playing current playlist
 			if (isBeingPlayed(Constants.CURRENT_PLAYLIST_ID)) {
 				playingPlaylistId = newPlaylistId;
-				PlayStateEvent e = ui.getPlayer().getLastEvent();
-				if (e != null) {
-					switch (e.getPlayState()) {
+				State s = ui.getPlayer().getState();
+				if (s != null) {
+					switch (s) {
 					case Started:
 						ui.setPlaying(newPlaylistId);
 						break;
@@ -307,11 +308,14 @@ public class Controller {
 	public void moveSongInPlaylist(String playlistId, int draggingRow, int targetRow) {
 		// IGNORE OTHERS! They are moving the song before itself or after itself, which leaves it at the same position
 		if (!(draggingRow == targetRow || draggingRow +1 == targetRow)) {
-			// TODO: if playlist is being played, move it as well inside player
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
 				public void onSongMoved(String playlistId, int from, int to) {
 					ui.moveRowsInPlaylist(playlistId, from, to);
+					if (isBeingPlayed(playlistId)) {
+						// if playlist is being played, move it as well inside player
+						ui.getPlayer().reorderNublicPlaylist(from, to);
+					}
 				}
 			});
 		}
