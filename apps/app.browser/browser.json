@@ -1,8 +1,8 @@
 { "id" : "browser"
 , "name" : {
-    "default"   : "Browser"
+    "default"   : "Files"
   , "localized" : {
-      "es": "Navegador"
+      "es": "Archivos"
     }
   }
 , "developer" : "Nublic"
