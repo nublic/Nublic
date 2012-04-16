@@ -237,7 +237,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 	
 	public void reorderNublicPlaylist(int from, int to) {
-		// TODO: implement reordering
 //		playlist.add(e)
 //		reorderPlaylist(from, to);
 	}
@@ -245,23 +244,25 @@ public class NublicPlayer extends CustomAudioPlayer {
 	// secure play methods
 	public void nublicPlayNext() {
 		try {
-			if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
+			if (isShuffleEnabled ||
+					(lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1)) {
 				playNext();
 			}
 		} catch (PlayException e) {
-			ErrorPopup.showError(e.getMessage());
-			e.printStackTrace();
+			// No more entries exception
+			nublicStop();
 		}
 	}
 	
 	public void nublicPlayPrev() {
 		try {
-			if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
+			if (isShuffleEnabled ||
+					(lastStateEvent != null && lastStateEvent.getItemIndex() != 0)) {
 				playPrevious();
 			}
 		} catch (PlayException e) {
-			ErrorPopup.showError(e.getMessage());
-			e.printStackTrace();
+			// No more entries exception
+			// We do nothing for this case, this is on purpose
 		}	
 	}
 	
