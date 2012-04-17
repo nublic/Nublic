@@ -70,7 +70,7 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   }
   
   def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
-    def v = s.trim()
+    val v = s.trim()
     if (v == "") {
       List()
     } else {
