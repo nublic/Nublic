@@ -311,11 +311,11 @@ public class Controller {
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
 				public void onSongMoved(String playlistId, int from, int to) {
-					ui.moveRowsInPlaylist(playlistId, from, to);
 					if (isBeingPlayed(playlistId)) {
 						// if playlist is being played, move it as well inside player
 						ui.getPlayer().reorderNublicPlaylist(from, to);
 					}
+					ui.moveRowsInPlaylist(playlistId, from, to);
 				}
 			});
 		}
