@@ -34,8 +34,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
 //	PlayStateEvent lastStateEvent;
-	int playingIndex = -1; // TODO: remove this and use internal method
-	State state = null; // TODO: remove this and use internal method
+	State state = null;
 	boolean isShuffleEnabled = false;
 	
 	// To fix that ugly bug on loading
@@ -63,7 +62,6 @@ public class NublicPlayer extends CustomAudioPlayer {
 	
 //	public PlayStateEvent getLastEvent() { return lastStateEvent; }
 	public State getState() { return state; }
-	public int getPlayingIndex() { return playingIndex; }
 	
 	
 	private void addPlayerHandler() {
@@ -118,11 +116,9 @@ public class NublicPlayer extends CustomAudioPlayer {
         addPlayStateHandler(new PlayStateHandler() {
             @Override
             public void onPlayStateChanged(PlayStateEvent event) {
-            	playingIndex = event.getItemIndex();
             	state = event.getPlayState();
-            	SongInfo song = playlist.get(playingIndex);
-//            	SongInfo song = playlist.get(event.getItemIndex());
-//            	lastStateEvent = event;
+            	int index = getPlaylistIndex();
+            	SongInfo song = playlist.get(getPlaylistIndex());
             	switch (event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
@@ -175,7 +171,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 			@Override
 			public void onSeekChanged(SeekChangeEvent event) {
 //				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
-				setPlayPosition(event.getSeekPosition() * playlist.get(playingIndex).getLength() * 1000);
+				setPlayPosition(event.getSeekPosition() * playlist.get(getPlaylistIndex()).getLength() * 1000);
 			}
 		});
 		controls.addVolumeHandler(new VolumeHandler() {
@@ -246,8 +242,10 @@ public class NublicPlayer extends CustomAudioPlayer {
 		playlist.add(to, s);
 		playlist.remove(from > to ? from + 1 : from);
 		
+		int antes = getPlaylistIndex();
 		// Reorder internal info of player
 		reorderPlaylist(from, to);
+		int despues = getPlaylistIndex();
 		
 		// reordering could have moved playing index
 		//playingIndex = getPlaylistIndex(); // TODO: remove to do..
@@ -257,9 +255,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 	public void nublicPlayNext() {
 		try {
 			if (isShuffleEnabled ||
-					(playingIndex != getPlaylistSize() - 1)) {
+					(getPlaylistIndex() != getPlaylistSize() - 1)) {
 //					(lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1)) {
+				int antes = getPlaylistIndex();
 				playNext();
+				int despues = getPlaylistIndex();
+				int a = 1;
 			}
 		} catch (PlayException e) {
 			// No more entries exception
@@ -270,9 +271,12 @@ public class NublicPlayer extends CustomAudioPlayer {
 	public void nublicPlayPrev() {
 		try {
 			if (isShuffleEnabled ||
-					(playingIndex != 0)) {
+					(getPlaylistIndex() != 0)) {
 //					(lastStateEvent != null && lastStateEvent.getItemIndex() != 0)) {
+				int antes = getPlaylistIndex();
 				playPrevious();
+				int despues = getPlaylistIndex();
+				int a = 1;
 			}
 		} catch (PlayException e) {
 			// No more entries exception

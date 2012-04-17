@@ -21,7 +21,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		this.playlistId = playlistId;
 		
 		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
-		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getState(), Controller.INSTANCE.getPlayer().getPlayingIndex());
+		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getState(), Controller.INSTANCE.getPlayer().getPlaylistIndex());
 		
 		createDropController();
 	}
@@ -163,6 +163,9 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		
 		int rearrangePoint = newFrom < to ? newFrom : to;
 		rearrangeRows(rearrangePoint, grid.getRowCount() -1);
+		
+		// Keep playingIndex updated
+		playingIndex = from > to ? to : to - 1;
 	}
 	
 	public void rearrangeRows(int from, int to) {

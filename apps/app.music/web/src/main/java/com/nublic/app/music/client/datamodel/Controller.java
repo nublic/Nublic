@@ -22,7 +22,7 @@ import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
-import com.nublic.app.music.client.ui.dnd.LeftDropController;
+import com.nublic.app.music.client.ui.dnd.LeftSongDropController;
 import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.dnd.ListDropController;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
@@ -43,7 +43,7 @@ public class Controller {
 	// Drag and drop support
 	SongDragController songDragController = new SongDragController();
 	ListDropController centerDropController = null;
-	LeftDropController leftDropController = null;
+	LeftSongDropController leftDropController = null;
 	List<Widget> draggableWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
@@ -83,7 +83,7 @@ public class Controller {
 		
 		
 		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
-		// And we remove them to avoid memory leaks. It fails
+		// And we remove them to avoid memory leaks. It fails, that's why it is commented
 //		for (Widget w : draggableWidgets) {
 //			songDragController.makeNotDraggable(w);
 //		}
@@ -102,7 +102,7 @@ public class Controller {
 			// Remove old drop controller
 			songDragController.unregisterDropController(leftDropController);
 		}
-		leftDropController = new LeftDropController(navigationPanel);
+		leftDropController = new LeftSongDropController(navigationPanel);
 		songDragController.registerDropController(leftDropController);
 	}
 	
