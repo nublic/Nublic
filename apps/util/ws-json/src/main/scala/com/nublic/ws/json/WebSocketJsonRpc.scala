@@ -21,11 +21,11 @@ abstract class Callback[R](implicit m: Manifest[R]) extends WebSocketJsonRpcCall
 sealed abstract class Response[R] {
   def map[S](f: R => S): Response[S] = this match {
     case Result(result) => Result(f(result))
-    case Error(error)   => Error(error)
+    case Error(c, m, e) => Error(c, m, e)
   }
 }
 case class Result[R](val result: R) extends Response[R]
-case class Error[R](val error: JValue) extends Response[R]
+case class Error[R](val code: Long, val message: String, val error: Option[JValue]) extends Response[R]
 
 abstract class WebSocketJsonRpc {
 
@@ -83,9 +83,10 @@ abstract class WebSocketJsonRpc {
   private def _createMessage(id: Long, method: String, params: List[JValue]): String = {
     // Create the JSON-RPC message...
     val message = JObject(List(
-      JField("method", JString(method)),
-      JField("params", JArray(params)),
-      JField("id", JInt(id))
+      JField("jsonrpc", JString("2.0")),
+      JField("method",  JString(method)),
+      JField("params",  JArray(params)),
+      JField("id",      JInt(id))
     ))
     // ...and send it
     return compact(render(message))
@@ -196,7 +197,8 @@ abstract class WebSocketJsonRpc {
     // Get parameters
     val params = fields.find(f => f.name == "params") match {
       case Some(JField(_, JArray(p))) => Some(p)
-      case _                          => None
+      // params may not be included
+      case _                          => Some(List())
     }
     // Send notification
     if (method.isDefined && params.isDefined) {
@@ -220,15 +222,32 @@ abstract class WebSocketJsonRpc {
     }
     // Get error
     val error = fields.find(f => f.name == "error") match {
-      case Some(JField(_, JNull)) => None
-      case Some(JField(_, e))     => Some(e)
-      case _                      => None
+      case Some(JField(_, JNull))      => None
+      case Some(JField(_, JObject(f))) => Some(f)
+      case _                           => None
     }
     // Check we have all the fields
     val correctResponse = (result.isDefined && !error.isDefined) || (!result.isDefined && error.isDefined) 
     if (msgId.isDefined && correctResponse) {
       // Create response
-      val response: Response[JValue] = if (result.isDefined) Result(result.get) else Error(error.get)
+      val response: Response[JValue] = if (result.isDefined) {
+        Result(result.get)
+      } else {
+        val error_fields = error.get
+        val e_code: Long = error_fields.find(f => f.name == "code") match {
+          case Some(JField(_, JInt(c))) => c.asInstanceOf[Long]
+          case _                        => -1
+        }
+        val e_message = error_fields.find(f => f.name == "message") match {
+          case Some(JField(_, JString(s))) => s
+          case _                           => ""
+        }
+        val e_data = error_fields.find(f => f.name == "data") match {
+          case Some(JField(_, d)) => Some(d)
+          case _                  => None
+        }
+        Error(e_code, e_message, e_data)
+      }
       // Tell the corresponding manager
       val id = msgId.get.asInstanceOf[Long]
       _globalLock.synchronized {
