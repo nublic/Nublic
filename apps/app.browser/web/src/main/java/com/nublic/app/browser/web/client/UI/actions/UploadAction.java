@@ -102,6 +102,7 @@ public class UploadAction extends ActionWidget implements Handler {
 		builder.setButtonPlaceholderID(replacedChildName);
 		builder.setButtonWidth(width);
 		builder.setButtonHeight(height);
+                builder.preventSWFCaching(false);
 		if (text != null) {
 			builder.setButtonText(text);
 		}
