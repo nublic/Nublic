@@ -22,6 +22,10 @@ import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
+import com.nublic.app.music.client.ui.artist.AlbumInArtist;
+import com.nublic.app.music.client.ui.dnd.AlbumDragController;
+import com.nublic.app.music.client.ui.dnd.DraggableSong;
+import com.nublic.app.music.client.ui.dnd.LeftAlbumDropController;
 import com.nublic.app.music.client.ui.dnd.LeftSongDropController;
 import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.dnd.ListDropController;
@@ -41,10 +45,12 @@ public class Controller {
 	String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
 	
 	// Drag and drop support
-	SongDragController songDragController = new SongDragController();
+	SongDragController songDragController = new SongDragController();  // Add only DraggableSong widgets to it
+	AlbumDragController albumDragController = new AlbumDragController(); // Add only HasAlbumId widgets to it (AlbumInArtist and ..)
 	ListDropController centerDropController = null;
-	LeftSongDropController leftDropController = null;
-	List<Widget> draggableWidgets = new ArrayList<Widget>();
+	LeftSongDropController leftSongDropController = null;
+	LeftAlbumDropController leftAlbumDropController = null;
+	List<Widget> draggableSongWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
 		if (INSTANCE == null) {
@@ -67,9 +73,14 @@ public class Controller {
 	public void setModel(DataModel model) { this.model = model; }
 
 	// +++++ Drag and drop stuff +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	public void makeDraggable(Widget w) {
-		draggableWidgets.add(w);
+	public void makeDraggable(DraggableSong w) {
+		draggableSongWidgets.add(w);
 		songDragController.makeDraggable(w);
+	}
+	
+	public void makeDraggable(AlbumInArtist w) {
+//		draggableSongWidgets.add(w);
+		albumDragController.makeDraggable(w);
 	}
 	
 	public void createCenterDropController(Panel dropTarget, String playlistId) {
@@ -83,7 +94,7 @@ public class Controller {
 		
 		
 		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
-		// And we remove them to avoid memory leaks. It fails, that's why it is commented
+		// And we remove them to avoid memory leaks. TODO: It fails, that's why it is commented
 //		for (Widget w : draggableWidgets) {
 //			songDragController.makeNotDraggable(w);
 //		}
@@ -97,13 +108,22 @@ public class Controller {
 		}
 	}
 	
-	public void createLeftDropController(NavigationPanel navigationPanel) {
-		if (leftDropController != null) {
+	public void createLeftSongDropController(NavigationPanel navigationPanel) {
+		if (leftSongDropController != null) {
 			// Remove old drop controller
-			songDragController.unregisterDropController(leftDropController);
+			songDragController.unregisterDropController(leftSongDropController);
 		}
-		leftDropController = new LeftSongDropController(navigationPanel);
-		songDragController.registerDropController(leftDropController);
+		leftSongDropController = new LeftSongDropController(navigationPanel);
+		songDragController.registerDropController(leftSongDropController);
+	}
+	
+	public void createLeftAlbumDropController(NavigationPanel navigationPanel) {
+		if (leftAlbumDropController != null) {
+			// Remove old drop controller
+			albumDragController.unregisterDropController(leftAlbumDropController);
+		}
+		leftAlbumDropController = new LeftAlbumDropController(navigationPanel);
+		albumDragController.registerDropController(leftAlbumDropController);
 	}
 	
 	// +++++ Utils to music reproduction +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -186,6 +206,11 @@ public class Controller {
 				addAtEndOfPlayingPlaylist(answerList);
 			}
 		}, false);
+	}
+	
+	public void addAtEndOfPlaylist(String playlistId, String artistId, String albumId, String collectionId) {
+		// TODO addAtEndOfPlaylist
+		
 	}
 	
 	public void addAtEndOfPlaylist(String playlistId, SongInfo s) {
@@ -418,11 +443,14 @@ public class Controller {
 			ui.showPlaylist(total, from, to, answerList, playlistId);
 		}
 	}
-
 	
-	// Collections handle
+	// +++ Collections handle ++++++++++++++++++++++++++++++++++++++++
 	public void addToCollection(String collectionId, SongInfo song) {
 		model.addToCollection(collectionId, song);
+	}
+
+	public void addToCollection(String playlistId, String artistId, String albumId, String collectionId) {
+		// TODO implement addToCollection
 	}
 
 }
