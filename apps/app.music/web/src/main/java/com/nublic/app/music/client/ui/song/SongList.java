@@ -33,7 +33,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.app.music.client.ui.dnd.Draggable;
+import com.nublic.app.music.client.ui.dnd.DraggableSong;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
@@ -269,7 +269,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	
 	protected void setGrabber(int row, int column, SongInfo s) {
 //		HTML grabber = new HTML("[Grab me]");
-		Draggable grabber = new Draggable(row, s);
+		DraggableSong grabber = new DraggableSong(row, s);
 		grid.setWidget(row, column, grabber);
 		Controller.INSTANCE.makeDraggable(grabber);
 	}

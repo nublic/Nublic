@@ -10,7 +10,7 @@ import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
-import com.nublic.app.music.client.ui.dnd.Draggable;
+import com.nublic.app.music.client.ui.dnd.DraggableSong;
 
 public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
@@ -181,7 +181,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 			if (w instanceof SongLocalizer) {
 				((SongLocalizer)w).setPosition(i);
 			} else {
-				((Draggable)w).setRow(i);
+				((DraggableSong)w).setRow(i);
 				ButtonLine bl = (ButtonLine)grid.getWidget(i, 1);
 				bl.setPlayButtonHandler(new MyPlayHandler(i));
 				bl.setDeleteButtonHandler(new MyDeleteHandler(i));

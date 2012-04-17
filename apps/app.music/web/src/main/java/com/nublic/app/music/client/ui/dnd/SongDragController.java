@@ -8,12 +8,15 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.app.music.client.ui.dnd.proxy.DragProxy;
+import com.nublic.app.music.client.ui.dnd.proxy.HasProxy;
+import com.nublic.app.music.client.ui.dnd.proxy.SongDragProxy;
 
-public class SongDragController extends PickupDragController {
+public class SongDragController extends PickupDragController implements HasProxy {
 
 	int draggingRow = -1;
 	SongInfo draggingSong = null;
-	DragProxy proxy = null;
+	SongDragProxy proxy = null;
 	
 	public SongDragController() {
 		super(RootPanel.get(), false);
@@ -24,10 +27,10 @@ public class SongDragController extends PickupDragController {
 	
 	@Override
 	protected Widget newDragProxy(DragContext context) {
-		draggingRow = ((Draggable) context.draggable).getRow();
-		draggingSong = ((Draggable) context.draggable).getSong();
+		draggingRow = ((DraggableSong) context.draggable).getRow();
+		draggingSong = ((DraggableSong) context.draggable).getSong();
 
-		proxy = new DragProxy(draggingSong);
+		proxy = new SongDragProxy(draggingSong);
 		return proxy;
 	}
 
@@ -38,7 +41,8 @@ public class SongDragController extends PickupDragController {
 	public SongInfo getDraggingSong() {
 		return draggingSong;
 	}
-	
+
+	@Override
 	public DragProxy getProxy() {
 		return proxy;
 	}

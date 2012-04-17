@@ -316,6 +316,7 @@ public class Controller {
 						ui.getPlayer().reorderNublicPlaylist(from, to);
 					}
 					ui.moveRowsInPlaylist(playlistId, from, to);
+					// This has to be done afterwards as it uses getPlaylistIndex() from player, which get updated with player reordering
 				}
 			});
 		}

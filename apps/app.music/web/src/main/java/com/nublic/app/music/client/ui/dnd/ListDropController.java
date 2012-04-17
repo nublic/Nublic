@@ -6,6 +6,8 @@ import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.ui.dnd.proxy.DragProxy;
+import com.nublic.app.music.client.ui.dnd.proxy.ProxyState;
 
 public class ListDropController extends AbstractPositioningDropController {
 
