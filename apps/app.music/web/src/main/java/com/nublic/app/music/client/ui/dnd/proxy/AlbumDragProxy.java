@@ -26,13 +26,13 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 	@UiField SimplePanel plusPanel;
 	@UiField Image albumArt;
 
-	public AlbumDragProxy(String draggingAlbumId, final String draggingArtistId) {
+	public AlbumDragProxy(String draggingAlbumId, final String draggingArtistId, final int songs) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		Controller.INSTANCE.getModel().getAlbumCache().addHandler(draggingAlbumId, new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
-				numberOfSongs.setText(v.getNumberOfSongs() + " songs");
+				numberOfSongs.setText(songs + " songs");
 				title.setText(v.getName());
 				setImage(v);
 				setArtist(draggingArtistId);

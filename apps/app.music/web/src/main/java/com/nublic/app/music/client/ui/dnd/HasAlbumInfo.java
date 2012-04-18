@@ -4,4 +4,5 @@ public interface HasAlbumInfo {
 	public String getAlbumId();
 	public String getArtistId();
 	public String getCollectionId();
+	public int getNumberOfSongs();
 }

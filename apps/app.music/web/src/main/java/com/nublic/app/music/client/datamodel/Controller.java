@@ -22,6 +22,7 @@ import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
+import com.nublic.app.music.client.ui.album.AlbumImagePanel;
 import com.nublic.app.music.client.ui.artist.AlbumInArtist;
 import com.nublic.app.music.client.ui.dnd.AlbumDragController;
 import com.nublic.app.music.client.ui.dnd.DraggableSong;
@@ -80,6 +81,10 @@ public class Controller {
 	
 	public void makeDraggable(AlbumInArtist w) {
 //		draggableSongWidgets.add(w);
+		albumDragController.makeDraggable(w);
+	}
+	
+	public void makeDraggable(AlbumImagePanel w) {
 		albumDragController.makeDraggable(w);
 	}
 	

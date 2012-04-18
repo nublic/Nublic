@@ -13,6 +13,7 @@ public class AlbumDragController extends PickupDragController implements HasProx
 	String draggingAlbumId;
 	String draggingArtistId;
 	String draggingCollectionId;
+	int numberOfSongs;
 	AlbumDragProxy proxy = null;
 
 	public AlbumDragController() {
@@ -27,8 +28,9 @@ public class AlbumDragController extends PickupDragController implements HasProx
 		draggingAlbumId = ((HasAlbumInfo) context.draggable).getAlbumId();
 		draggingArtistId = ((HasAlbumInfo) context.draggable).getArtistId();
 		draggingCollectionId = ((HasAlbumInfo) context.draggable).getCollectionId();
+		numberOfSongs = ((HasAlbumInfo) context.draggable).getNumberOfSongs();
 
-		proxy = new AlbumDragProxy(draggingAlbumId, draggingArtistId);
+		proxy = new AlbumDragProxy(draggingAlbumId, draggingArtistId, numberOfSongs);
 		return proxy;
 	}
 	

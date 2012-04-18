@@ -9,28 +9,28 @@ public class LeftAlbumDropController extends LeftDropController {
 	public LeftAlbumDropController(NavigationPanel dropTarget) {
 		super(dropTarget);
 	}
-	
+
 	@Override
 	public void dropInCollection(DragContext context, String collectionId) {
-		Controller.INSTANCE.addToCollection(overTag.getId(), getDraggingArtist(context), getDraggingAlbum(context), getDraggingCollection(context));
+		Controller.INSTANCE.addToCollection(overTag.getId(), getArtist(context), getAlbum(context), getCollection(context));
 	}
 
 	@Override
 	public void dropInPlaylist(DragContext context, String playlistId) {
-		Controller.INSTANCE.addAtEndOfPlaylist(overTag.getId(), getDraggingArtist(context), getDraggingAlbum(context), getDraggingCollection(context));	
+		Controller.INSTANCE.addAtEndOfPlaylist(overTag.getId(), getArtist(context), getAlbum(context), getCollection(context));	
 	}
-	
-	private String getDraggingAlbum(DragContext context) {
+
+	private String getAlbum(DragContext context) {
 		AlbumDragController sDragController = (AlbumDragController) context.dragController;
 		return sDragController.getDraggingAlbumId();
 	}
-	
-	private String getDraggingArtist(DragContext context) {
+
+	private String getArtist(DragContext context) {
 		AlbumDragController sDragController = (AlbumDragController) context.dragController;
 		return sDragController.getDraggingArtistId();
 	}
-	
-	private String getDraggingCollection(DragContext context) {
+
+	private String getCollection(DragContext context) {
 		AlbumDragController sDragController = (AlbumDragController) context.dragController;
 		return sDragController.getDraggingCollectionId();
 	}

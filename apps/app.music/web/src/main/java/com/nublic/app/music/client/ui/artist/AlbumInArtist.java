@@ -79,9 +79,15 @@ public class AlbumInArtist extends Composite implements HasAlbumInfo, HasMouseDo
 	public String getCollectionId() {
 		return collectionId;
 	}
+
+	@Override
+	public int getNumberOfSongs() {
+		return album.getNumberOfSongs();
+	}
 	
 	@Override
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
 		return addDomHandler(handler, MouseDownEvent.getType());
 	}
+
 }

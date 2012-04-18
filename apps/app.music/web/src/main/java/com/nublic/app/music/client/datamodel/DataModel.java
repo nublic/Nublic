@@ -191,7 +191,7 @@ public class DataModel {
 		if (newScreen) {
 			increaseCurrentScreen();
 		}
-		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen, this);
+		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	
@@ -203,7 +203,7 @@ public class DataModel {
 		if (newScreen) {
 			increaseCurrentScreen();
 		}
-		ArtistMessage am = new ArtistMessage(collection, ah, currentScreen, this);
+		ArtistMessage am = new ArtistMessage(collection, ah, currentScreen);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 
