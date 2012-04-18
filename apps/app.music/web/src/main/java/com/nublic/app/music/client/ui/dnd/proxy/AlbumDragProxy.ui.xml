@@ -34,14 +34,26 @@
 			margin-left: 3px;
 			line-height: 16px;
 		}
+		.art {
+			margin: 5px;
+			max-height: 48px;
+			max-width: 48px;
+		}
+		.rightmargin {
+			margin-right: 5px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 
-	<g:AbsolutePanel width="700px" height="40px">
+	<g:AbsolutePanel width="700px" height="80px">
 		<g:at left='8' top='8'>
-			<g:SimplePanel addStyleNames="{style.panel}">
-				<g:Label ui:field="text"/>
-			</g:SimplePanel>
+			<g:HorizontalPanel addStyleNames="{style.panel}" height="58px" verticalAlignment="middle">
+				<g:Image ui:field="albumArt" addStyleNames="{style.art}"/>
+				<g:VerticalPanel addStyleNames="{style.rightmargin}">
+					<g:Label ui:field="numberOfSongs"/>
+					<g:Label ui:field="title"/>
+				</g:VerticalPanel>
+			</g:HorizontalPanel>
 		</g:at>
 		<g:at left='1' top='1'>
 			<g:SimplePanel ui:field="plusPanel" addStyleNames="{style.pluspanel} plusbackground">
