@@ -42,6 +42,12 @@
 		.rightmargin {
 			margin-right: 5px;
 		}
+		.bold {
+			font-weight: bold;
+		}
+		.translucid {
+			opacity: 0.7;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 
@@ -50,8 +56,9 @@
 			<g:HorizontalPanel addStyleNames="{style.panel}" height="58px" verticalAlignment="middle">
 				<g:Image ui:field="albumArt" addStyleNames="{style.art}"/>
 				<g:VerticalPanel addStyleNames="{style.rightmargin}">
-					<g:Label ui:field="numberOfSongs"/>
+					<g:Label ui:field="numberOfSongs" addStyleNames="{style.bold}"/>
 					<g:Label ui:field="title"/>
+					<g:Label ui:field="artists" addStyleNames="{style.translucid}"/>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 		</g:at>

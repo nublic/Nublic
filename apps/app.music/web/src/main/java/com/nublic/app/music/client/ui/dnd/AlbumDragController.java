@@ -10,34 +10,28 @@ import com.nublic.app.music.client.ui.dnd.proxy.HasProxy;
 
 public class AlbumDragController extends PickupDragController implements HasProxy {
 
-//	int draggingRow = -1;
-//	SongInfo draggingSong = null;
 	String draggingAlbumId;
 	AlbumDragProxy proxy = null;
-	
+
 	public AlbumDragController() {
 		super(RootPanel.get(), false);
 	    setBehaviorDragProxy(true);
 	    setBehaviorMultipleSelection(false);
 	    setBehaviorDragStartSensitivity(5);
 	}
-	
+
 	@Override
 	protected Widget newDragProxy(DragContext context) {
 		draggingAlbumId = ((HasAlbumId) context.draggable).getAlbumId();
-//		draggingSong = ((DraggableSong) context.draggable).getSong();
 
 		proxy = new AlbumDragProxy(draggingAlbumId);
 		return proxy;
 	}
+	
+	public String getDraggingAlbumId() {
+		return draggingAlbumId;
+	}
 
-//	public int getDraggingRow() {
-//		return draggingRow;
-//	}
-//	
-//	public SongInfo getDraggingSong() {
-//		return draggingSong;
-//	}
 
 	@Override
 	public DragProxy getProxy() {

@@ -208,9 +208,13 @@ public class Controller {
 		}, false);
 	}
 	
-	public void addAtEndOfPlaylist(String playlistId, String artistId, String albumId, String collectionId) {
-		// TODO addAtEndOfPlaylist
-		
+	public void addAtEndOfPlaylist(final String playlistId, String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				addAtEndOfPlaylist(playlistId, answerList);
+			}
+		}, false);
 	}
 	
 	public void addAtEndOfPlaylist(String playlistId, SongInfo s) {
@@ -449,8 +453,13 @@ public class Controller {
 		model.addToCollection(collectionId, song);
 	}
 
-	public void addToCollection(String playlistId, String artistId, String albumId, String collectionId) {
-		// TODO implement addToCollection
+	public void addToCollection(final String targetCollectionId, String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				model.addToCollection(targetCollectionId, answerList);
+			}
+		}, false);
 	}
 
 }

@@ -244,6 +244,12 @@ public class DataModel {
 		SequenceHelper.sendJustOne(atc, RequestBuilder.PUT);
 	}
 	
+	public void addToCollection(String collectionId, List<SongInfo> songList) {
+		for (SongInfo s : songList) {
+			addToCollection(collectionId, s);
+		}
+	}
+	
 	// current playlist manage methods
 	public void addToCurrentPlaylist(SongInfo s) {
 		currentPlaylist.add(s);
@@ -305,6 +311,5 @@ public class DataModel {
 	public synchronized void setDeleting(boolean b) {
 		areWeDeleting = b;
 	}
-
 
 }

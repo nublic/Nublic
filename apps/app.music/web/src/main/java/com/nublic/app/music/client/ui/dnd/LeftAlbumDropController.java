@@ -21,9 +21,8 @@ public class LeftAlbumDropController extends LeftDropController {
 	}
 	
 	private String getDraggingAlbum(DragContext context) {
-//		SongDragController sDragController = (SongDragController) context.dragController;
-//		return sDragController.getDraggingSong();
-		return null;
+		AlbumDragController sDragController = (AlbumDragController) context.dragController;
+		return sDragController.getDraggingAlbumId();
 	}
 
 }
