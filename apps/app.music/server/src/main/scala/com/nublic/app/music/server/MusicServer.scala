@@ -67,6 +67,7 @@ class MusicServer extends ScalatraServlet with JsonSupport {
         if (inputLen <= 0) {
           throw new IllegalArgumentException("unable to parse body")
         }
+        offset += inputLen
       } while ((len - offset) > 0)
       val body = new String(bytes, 0, len, "8859_1");
 
@@ -75,7 +76,7 @@ class MusicServer extends ScalatraServlet with JsonSupport {
         val ct = request.getHeader("Content-Type")
         val charset_index = ct.indexOf("charset=")
         if (charset_index != -1) {
-          ct.substring(charset_index + 1).toUpperCase()
+          ct.substring(charset_index + "charset=".length()).trim().toUpperCase()
         } else {
           "UTF-8"
         }
