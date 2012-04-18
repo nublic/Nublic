@@ -1,7 +1,5 @@
 package com.nublic.app.music.client.ui.dnd.proxy;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
@@ -28,7 +26,7 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 	@UiField SimplePanel plusPanel;
 	@UiField Image albumArt;
 
-	public AlbumDragProxy(String draggingAlbumId) {
+	public AlbumDragProxy(String draggingAlbumId, final String draggingArtistId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		Controller.INSTANCE.getModel().getAlbumCache().addHandler(draggingAlbumId, new CacheHandler<String, AlbumInfo>() {
@@ -37,7 +35,7 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 				numberOfSongs.setText(v.getNumberOfSongs() + " songs");
 				title.setText(v.getName());
 				setImage(v);
-				setArtists(v.getArtistList());
+				setArtist(draggingArtistId);
 			}
 		});
 		Controller.INSTANCE.getModel().getAlbumCache().obtain(draggingAlbumId);
@@ -55,25 +53,14 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 		albumArt.setUrl(album.getImageUrl());
 	}
 	
-	private void setArtists(List<String> artistList) {
-		// Iterate through artist id's and ask for every name
-		for (String id : artistList) {
-			Controller.INSTANCE.getModel().getArtistCache().addHandler(id, new CacheHandler<String, ArtistInfo>() {
-				@Override
-				public void onCacheUpdated(String k, ArtistInfo v) {
-					addToArtistsList(v.getName());
-				}
-			});
-			Controller.INSTANCE.getModel().getArtistCache().obtain(id);
-		}
-	}
-	
-	private void addToArtistsList(String artistName) {
-		if (artists.getText().isEmpty()) {
-			artists.setText(artistName);
-		} else {
-			artists.setText(artists.getText() + ", " + artistName);
-		}
+	private void setArtist(String draggingArtistId) {
+		Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingArtistId, new CacheHandler<String, ArtistInfo>() {
+			@Override
+			public void onCacheUpdated(String k, ArtistInfo v) {
+				artists.setText(v.getName());
+			}
+		});
+		Controller.INSTANCE.getModel().getArtistCache().obtain(draggingArtistId);
 	}
 	
 	public void setText(String text) {

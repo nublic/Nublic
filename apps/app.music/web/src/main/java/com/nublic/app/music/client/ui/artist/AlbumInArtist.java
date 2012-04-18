@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.ui.dnd.HasAlbumId;
+import com.nublic.app.music.client.ui.dnd.HasAlbumInfo;
 
-public class AlbumInArtist extends Composite implements HasAlbumId, HasMouseDownHandlers {
+public class AlbumInArtist extends Composite implements HasAlbumInfo, HasMouseDownHandlers {
 	private static AlbumInArtistUiBinder uiBinder = GWT.create(AlbumInArtistUiBinder.class);
 	interface AlbumInArtistUiBinder extends UiBinder<Widget, AlbumInArtist> { }
 	
@@ -29,11 +29,13 @@ public class AlbumInArtist extends Composite implements HasAlbumId, HasMouseDown
 	@UiField Image albumImage;
 	AlbumInfo album;
 	String collectionId;
+	String inArtist;
 
-	public AlbumInArtist(AlbumInfo a, String collectionId) {
+	public AlbumInArtist(AlbumInfo a, String inArtist, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.collectionId = collectionId;
 		this.album = a;
+		this.inArtist = inArtist;
 
 		setImage();
 		albumNameLabel.setText(a.getName());
@@ -68,6 +70,16 @@ public class AlbumInArtist extends Composite implements HasAlbumId, HasMouseDown
 		return album.getId();
 	}
 
+	@Override
+	public String getArtistId() {
+		return inArtist;
+	}
+
+	@Override
+	public String getCollectionId() {
+		return collectionId;
+	}
+	
 	@Override
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
 		return addDomHandler(handler, MouseDownEvent.getType());

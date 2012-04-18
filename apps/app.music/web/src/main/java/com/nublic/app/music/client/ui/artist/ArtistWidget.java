@@ -111,7 +111,7 @@ public class ArtistWidget extends Composite {
 			@Override
 			public void onAlbumChange(List<AlbumInfo> answerList) {
 				for (AlbumInfo a : answerList) {
-					AlbumInArtist aw = new AlbumInArtist(a, collectionId);
+					AlbumInArtist aw = new AlbumInArtist(a, artist.getId(), collectionId);
 					aw.getElement().addClassName(style.inlineblock());
 					albumsPanel.add(aw);
 				}
