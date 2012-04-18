@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
@@ -21,7 +22,11 @@ import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
 import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
-import com.nublic.app.music.client.ui.dnd.LeftDropController;
+import com.nublic.app.music.client.ui.artist.AlbumInArtist;
+import com.nublic.app.music.client.ui.dnd.AlbumDragController;
+import com.nublic.app.music.client.ui.dnd.DraggableSong;
+import com.nublic.app.music.client.ui.dnd.LeftAlbumDropController;
+import com.nublic.app.music.client.ui.dnd.LeftSongDropController;
 import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.dnd.ListDropController;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
@@ -40,10 +45,12 @@ public class Controller {
 	String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
 	
 	// Drag and drop support
-	SongDragController songDragController = new SongDragController();
+	SongDragController songDragController = new SongDragController();  // Add only DraggableSong widgets to it
+	AlbumDragController albumDragController = new AlbumDragController(); // Add only HasAlbumId widgets to it (AlbumInArtist and ..)
 	ListDropController centerDropController = null;
-	LeftDropController leftDropController = null;
-	List<Widget> draggableWidgets = new ArrayList<Widget>();
+	LeftSongDropController leftSongDropController = null;
+	LeftAlbumDropController leftAlbumDropController = null;
+	List<Widget> draggableSongWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
 		if (INSTANCE == null) {
@@ -66,9 +73,14 @@ public class Controller {
 	public void setModel(DataModel model) { this.model = model; }
 
 	// +++++ Drag and drop stuff +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	public void makeDraggable(Widget w) {
-		draggableWidgets.add(w);
+	public void makeDraggable(DraggableSong w) {
+		draggableSongWidgets.add(w);
 		songDragController.makeDraggable(w);
+	}
+	
+	public void makeDraggable(AlbumInArtist w) {
+//		draggableSongWidgets.add(w);
+		albumDragController.makeDraggable(w);
 	}
 	
 	public void createCenterDropController(Panel dropTarget, String playlistId) {
@@ -82,7 +94,7 @@ public class Controller {
 		
 		
 		// When new drop controller is created for central panel we assume old draggable widgets no longer exists
-		// And we remove them to avoid memory leaks. It fails
+		// And we remove them to avoid memory leaks. TODO: It fails, that's why it is commented
 //		for (Widget w : draggableWidgets) {
 //			songDragController.makeNotDraggable(w);
 //		}
@@ -96,13 +108,22 @@ public class Controller {
 		}
 	}
 	
-	public void createLeftDropController(NavigationPanel navigationPanel) {
-		if (leftDropController != null) {
+	public void createLeftSongDropController(NavigationPanel navigationPanel) {
+		if (leftSongDropController != null) {
 			// Remove old drop controller
-			songDragController.unregisterDropController(leftDropController);
+			songDragController.unregisterDropController(leftSongDropController);
 		}
-		leftDropController = new LeftDropController(navigationPanel);
-		songDragController.registerDropController(leftDropController);
+		leftSongDropController = new LeftSongDropController(navigationPanel);
+		songDragController.registerDropController(leftSongDropController);
+	}
+	
+	public void createLeftAlbumDropController(NavigationPanel navigationPanel) {
+		if (leftAlbumDropController != null) {
+			// Remove old drop controller
+			albumDragController.unregisterDropController(leftAlbumDropController);
+		}
+		leftAlbumDropController = new LeftAlbumDropController(navigationPanel);
+		albumDragController.registerDropController(leftAlbumDropController);
 	}
 	
 	// +++++ Utils to music reproduction +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -187,6 +208,15 @@ public class Controller {
 		}, false);
 	}
 	
+	public void addAtEndOfPlaylist(final String playlistId, String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				addAtEndOfPlaylist(playlistId, answerList);
+			}
+		}, false);
+	}
+	
 	public void addAtEndOfPlaylist(String playlistId, SongInfo s) {
 		model.addToPlaylist(playlistId, s);
 		if (playlistId.equals(playingPlaylistId)) {
@@ -248,9 +278,9 @@ public class Controller {
 			// If we are playing current playlist
 			if (isBeingPlayed(Constants.CURRENT_PLAYLIST_ID)) {
 				playingPlaylistId = newPlaylistId;
-				PlayStateEvent e = ui.getPlayer().getLastEvent();
-				if (e != null) {
-					switch (e.getPlayState()) {
+				State s = ui.getPlayer().getState();
+				if (s != null) {
+					switch (s) {
 					case Started:
 						ui.setPlaying(newPlaylistId);
 						break;
@@ -307,11 +337,15 @@ public class Controller {
 	public void moveSongInPlaylist(String playlistId, int draggingRow, int targetRow) {
 		// IGNORE OTHERS! They are moving the song before itself or after itself, which leaves it at the same position
 		if (!(draggingRow == targetRow || draggingRow +1 == targetRow)) {
-			// TODO: if playlist is being played, move it as well inside player
 			model.moveSongInPlaylist(playlistId, draggingRow, targetRow, new MoveSongHandler() {
 				@Override
 				public void onSongMoved(String playlistId, int from, int to) {
+					if (isBeingPlayed(playlistId)) {
+						// if playlist is being played, move it as well inside player
+						ui.getPlayer().reorderNublicPlaylist(from, to);
+					}
 					ui.moveRowsInPlaylist(playlistId, from, to);
+					// This has to be done afterwards as it uses getPlaylistIndex() from player, which get updated with player reordering
 				}
 			});
 		}
@@ -413,11 +447,19 @@ public class Controller {
 			ui.showPlaylist(total, from, to, answerList, playlistId);
 		}
 	}
-
 	
-	// Collections handle
+	// +++ Collections handle ++++++++++++++++++++++++++++++++++++++++
 	public void addToCollection(String collectionId, SongInfo song) {
 		model.addToCollection(collectionId, song);
+	}
+
+	public void addToCollection(final String targetCollectionId, String artistId, String albumId, String collectionId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				model.addToCollection(targetCollectionId, answerList);
+			}
+		}, false);
 	}
 
 }

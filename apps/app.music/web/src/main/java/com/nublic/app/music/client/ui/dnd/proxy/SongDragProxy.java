@@ -1,4 +1,4 @@
-package com.nublic.app.music.client.ui.dnd;
+package com.nublic.app.music.client.ui.dnd.proxy;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -12,16 +12,16 @@ import com.nublic.util.cache.CacheHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 
-public class DragProxy extends Composite {
-	private static DragProxyUiBinder uiBinder = GWT.create(DragProxyUiBinder.class);
-	interface DragProxyUiBinder extends UiBinder<Widget, DragProxy> {}
+public class SongDragProxy extends Composite implements DragProxy {
+	private static SongDragProxyUiBinder uiBinder = GWT.create(SongDragProxyUiBinder.class);
+	interface SongDragProxyUiBinder extends UiBinder<Widget, SongDragProxy> {}
 	
 	@UiField Label text;
 	@UiField SimplePanel plusPanel;
 	@UiField SimplePanel upPanel;
 	@UiField SimplePanel downPanel;
 	
-	public DragProxy(final SongInfo draggingSong) {
+	public SongDragProxy(final SongInfo draggingSong) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingSong.getArtistId(), new CacheHandler<String, ArtistInfo>() {
@@ -39,7 +39,8 @@ public class DragProxy extends Composite {
 	public void setText(String text) {
 		this.text.setText(text);
 	}
-	
+
+	@Override
 	public void setState(ProxyState state) {
 		plusPanel.setVisible(state == ProxyState.PLUS);
 		upPanel.setVisible(state == ProxyState.UP);

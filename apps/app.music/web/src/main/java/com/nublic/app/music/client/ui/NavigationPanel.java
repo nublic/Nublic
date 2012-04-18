@@ -46,7 +46,8 @@ public class NavigationPanel extends Composite {
 					activeTag = allMusic;
 					selectAllMusic();
 					addAddTagsHandlers();
-					Controller.INSTANCE.createLeftDropController(NavigationPanel.this);
+					Controller.INSTANCE.createLeftSongDropController(NavigationPanel.this);
+					Controller.INSTANCE.createLeftAlbumDropController(NavigationPanel.this);
 				}
 			}
 		});

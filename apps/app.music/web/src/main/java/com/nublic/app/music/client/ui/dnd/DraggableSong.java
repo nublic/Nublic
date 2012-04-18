@@ -10,14 +10,14 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.datamodel.SongInfo;
 
-public class Draggable extends Composite implements HasMouseDownHandlers {
-	private static DraggableUiBinder uiBinder = GWT.create(DraggableUiBinder.class);
-	interface DraggableUiBinder extends UiBinder<Widget, Draggable> { }
+public class DraggableSong extends Composite implements HasMouseDownHandlers {
+	private static DraggableSongUiBinder uiBinder = GWT.create(DraggableSongUiBinder.class);
+	interface DraggableSongUiBinder extends UiBinder<Widget, DraggableSong> { }
 	
 	int row;
 	SongInfo song;
 	
-	public Draggable(int row, SongInfo song) {
+	public DraggableSong(int row, SongInfo song) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.row = row;

@@ -5,6 +5,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.ErrorEvent;
 import com.google.gwt.event.dom.client.ErrorHandler;
+import com.google.gwt.event.dom.client.HasMouseDownHandlers;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
@@ -14,8 +18,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.ui.dnd.HasAlbumInfo;
 
-public class AlbumInArtist extends Composite {
+public class AlbumInArtist extends Composite implements HasAlbumInfo, HasMouseDownHandlers {
 	private static AlbumInArtistUiBinder uiBinder = GWT.create(AlbumInArtistUiBinder.class);
 	interface AlbumInArtistUiBinder extends UiBinder<Widget, AlbumInArtist> { }
 	
@@ -23,15 +29,19 @@ public class AlbumInArtist extends Composite {
 	@UiField Image albumImage;
 	AlbumInfo album;
 	String collectionId;
+	String inArtist;
 
-	public AlbumInArtist(AlbumInfo a, String collectionId) {
+	public AlbumInArtist(AlbumInfo a, String inArtist, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.collectionId = collectionId;
 		this.album = a;
+		this.inArtist = inArtist;
 
 		setImage();
 		albumNameLabel.setText(a.getName());
 		setClickTarget();
+
+		Controller.INSTANCE.makeDraggable(this);
 	}
 
 	private void setImage() {
@@ -55,4 +65,23 @@ public class AlbumInArtist extends Composite {
 		});
 	}
 
+	@Override
+	public String getAlbumId() {
+		return album.getId();
+	}
+
+	@Override
+	public String getArtistId() {
+		return inArtist;
+	}
+
+	@Override
+	public String getCollectionId() {
+		return collectionId;
+	}
+	
+	@Override
+	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
+		return addDomHandler(handler, MouseDownEvent.getType());
+	}
 }

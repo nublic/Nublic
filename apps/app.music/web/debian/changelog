@@ -1,3 +1,9 @@
+nublic-app-music-web (2012-04-17-11-06) oneiric; urgency=low
+
+  * Building on mar abr 17 11:12:49 CEST 2012
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Tue, 17 Apr 2012 11:12:51 +0200
+
 nublic-app-music-web (0.0.1-1) unstable; urgency=low
 
   * Initial release
