@@ -8,6 +8,7 @@
 .manager
 .externalToolBuilders
 .cache
+.ensime
 
 # use glob syntax.
 syntax: glob

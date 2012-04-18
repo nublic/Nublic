@@ -1,0 +1,13 @@
+Source: nublic-app-downloads
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-downloads
+Architecture: all
+Depends: ${misc:Depends}, nublic-app-downloads-server, nublic-app-downloads-web
+Description: Nublic Downloads app
+ Downloads app for the Nublic platform - metapackage
