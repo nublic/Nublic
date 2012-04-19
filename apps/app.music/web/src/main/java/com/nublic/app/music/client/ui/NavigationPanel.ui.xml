@@ -15,12 +15,18 @@
 			<li class="nav-header">Collections</li>
 		</ul>
 		<g:HTMLPanel ui:field="collectionPanel"/>								<!-- Collections panel -->
-		<my:AddWidget ui:field="addCollection" defaultText="New Collection"/>	<!-- Collections adder -->
+
+		<!-- Collections adder -->
+		<my:AddWidget ui:field="addCollection" defaultText="New Collection" tooltip="add collection"/>
+
 		<ul class="nav nav-list"  style="margin-top: 15px;">					<!-- Playlists title -->
 			<li class="nav-header">Playlists</li>
 		</ul>
 		<g:HTMLPanel ui:field="playlistPanel"/>									<!-- Playlists panel -->
-		<my:AddWidget ui:field="addPlaylist" defaultText="New Playlist"/>		<!-- Playlists adder -->
+
+		<!-- Playlists adder -->
+		<my:AddWidget ui:field="addPlaylist" defaultText="New Playlist" tooltip="add playlist"/>
+
 	  </div>
 	</g:HTMLPanel>
 </ui:UiBinder> 
