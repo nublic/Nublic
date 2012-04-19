@@ -95,10 +95,6 @@ class MusicServer extends ScalatraServlet with JsonSupport {
     _extraParams.get
   }
   
-  /*protected val extraParams = new MultiMapHeadView[String, String] with MapWithIndifferentAccess[String] {
-    protected def multiMap = _extraParams
-  }*/
-  
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
     _extraParams = None
     action
