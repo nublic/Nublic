@@ -9,6 +9,9 @@
 		.rightmargin {
 			margin-right: 15px;
 		}
+		.leftmargin {
+			margin-left: 15px;
+		}
 	</ui:style>
 
 	<g:DockLayoutPanel width="100%" height="100%">
@@ -17,6 +20,9 @@
 		    <div class="page-header" style="width: 100%;">
 			  <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
 				<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
+				<g:Label text="artist view" addStyleNames="{style.leftmargin}"/>
+				<g:InlineHyperlink text="album view" addStyleNames="{style.leftmargin}" ui:field="albumViewLink"/>
+				<g:InlineHyperlink text="song view" addStyleNames="{style.leftmargin}" ui:field="songViewLink"/>
 			  </g:HorizontalPanel>
 			</div>
 		  </g:HTMLPanel>

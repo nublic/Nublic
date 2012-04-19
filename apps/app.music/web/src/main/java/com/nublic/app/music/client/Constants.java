@@ -5,10 +5,15 @@ public class Constants {
 	public static final String PARAM_PLAYLIST = "Playlist";
 	public static final String PARAM_ARTIST = "Artist";
 	public static final String PARAM_ALBUM = "Album";
+	public static final String PARAM_VIEW = "View";
+	public static final String VIEW_ARTISTS = "Artists";
+	public static final String VIEW_ALBUMS = "Albums";
+	public static final String VIEW_SONGS = "Songs";
 	public static final String ORDER_ALPHA = "alpha";				// alpha -> alphabetical by song title
 	public static final String ORDER_ARTIST_ALPHA = "artist_alpha"; // artist_alpha -> first artist name, then song title
 	public static final String ORDER_ARTIST_ALBUM = "artist_album"; // artist_album -> first artist name, then album name, then disc_no, then track
 	public static final String ORDER_ALBUM = "album";				// album -> first album name, then disc_no, then track
+
 	public static final String CURRENT_PLAYLIST_ID = "CurrentPlaylist";
 	public static final String CURRENT_PLAYLIST_NAME = "Current playlist";
 	public static final String ALL_MUSIC_NAME = "All music";

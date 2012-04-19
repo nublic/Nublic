@@ -9,9 +9,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.widgets.ImageHelper;
 

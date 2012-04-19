@@ -1,4 +1,4 @@
-package com.nublic.app.music.client.datamodel;
+package com.nublic.app.music.client.controller;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -13,9 +13,8 @@ import com.google.gwt.user.client.Random;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.ParamsHashMap;
-import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
-import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
+import com.nublic.app.music.client.datamodel.DataModel;
+import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
@@ -31,8 +30,8 @@ import com.nublic.app.music.client.ui.dnd.DraggableSong;
 import com.nublic.app.music.client.ui.dnd.LeftAlbumDropController;
 import com.nublic.app.music.client.ui.dnd.LeftArtistDropController;
 import com.nublic.app.music.client.ui.dnd.LeftSongDropController;
-import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.dnd.ListDropController;
+import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.player.NublicPlayer;
 import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
@@ -40,10 +39,10 @@ import com.nublic.util.widgets.PopupButtonHandler;
 import com.nublic.util.widgets.PopupColor;
 import com.nublic.util.widgets.TextPopup;
 
-public class Controller {
+public class Controller extends URLController {
 	public static Controller INSTANCE = null;
-	DataModel model;
-	MainUi ui;
+	// DataModel model;
+	// MainUi ui;
 	
 	// Depending on what is being played
 	String playingPlaylistId = Constants.CURRENT_PLAYLIST_ID;
@@ -65,10 +64,33 @@ public class Controller {
 	}
 	
 	private Controller(DataModel model, MainUi ui) {
-		this.ui = ui;
-		this.model = model;
+		super(model, ui);
 		
 		addPlayHandler();
+	}
+	
+	private void addPlayHandler() {
+		if (ui.getPlayer() != null) {
+			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
+				@Override
+				public void onPlayStateChanged(PlayStateEvent event) {
+					switch (event.getPlayState()) {
+					case Paused:
+						ui.setPaused(getPlayingPlaylistId());
+	            		break;
+	            	case Started:
+						ui.setPlaying(getPlayingPlaylistId());
+	            		break;
+	            	case Stopped:
+						ui.setPlaying(null);
+	            		break;
+	            	case Finished:
+						ui.setPlaying(null);
+	            		break;
+					}
+				}
+			});
+		}
 	}
 
 	// Getters and setters of singletones
@@ -371,103 +393,6 @@ public class Controller {
 					// This has to be done afterwards as it uses getPlaylistIndex() from player, which get updated with player reordering
 				}
 			});
-		}
-	}
-	
-	// +++++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	private void addPlayHandler() {
-		if (ui.getPlayer() != null) {
-			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
-				@Override
-				public void onPlayStateChanged(PlayStateEvent event) {
-					switch (event.getPlayState()) {
-					case Paused:
-						ui.setPaused(getPlayingPlaylistId());
-	            		break;
-	            	case Started:
-						ui.setPlaying(getPlayingPlaylistId());
-	            		break;
-	            	case Stopped:
-						ui.setPlaying(null);
-	            		break;
-	            	case Finished:
-						ui.setPlaying(null);
-	            		break;
-					}
-				}
-			});
-		}
-	}
-	
-	// When URL changes this method is called
-	public void changeState(ParamsHashMap hmap) {
-		String collection = hmap.get(Constants.PARAM_COLLECTION);
-		String playlist = hmap.get(Constants.PARAM_PLAYLIST);
-		String artist = hmap.get(Constants.PARAM_ARTIST);
-		String album = hmap.get(Constants.PARAM_ALBUM);
-
-		if (playlist != null) {
-			model.askForPlaylistSongs(playlist, new MyPlaylistHandler(playlist), true);
-		} else {
-			if (album != null) {
-				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-			} else if (artist != null) {
-				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-			} else {
-				model.askForArtists(collection, new MyArtistHandler(collection), true);
-			}
-		}
-	}
-	
-	// Song
-	class MySongHandler implements SongHandler {
-		String albumId;
-		String collectionId;	
-		public MySongHandler(String albumId, String collection) {
-			this.albumId = albumId;
-			this.collectionId = collection;
-		}
-		@Override
-		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-			ui.showSongList(total, from, to, answerList, albumId, collectionId);
-		}
-	}
-	
-	// Album
-	class MyAlbumHandler implements AlbumHandler {
-		String artistId;
-		String collectionId;	
-		public MyAlbumHandler(String artist, String collection) {
-			artistId = artist;
-			collectionId = collection;
-		}
-		@Override
-		public void onAlbumChange(List<AlbumInfo> answerList) {
-			ui.showAlbumList(answerList, artistId, collectionId);
-		}
-	}
-	
-	// Artist
-	class MyArtistHandler implements ArtistHandler {
-		String collectionId;
-		public MyArtistHandler(String collection) {
-			collectionId = collection;
-		}
-		@Override
-		public void onArtistChange(List<ArtistInfo> answerList) {
-			ui.showArtistList(answerList, collectionId);
-		}
-	}
-
-	// Playlist
-	class MyPlaylistHandler implements SongHandler {
-		String playlistId;
-		public MyPlaylistHandler(String playlistId) {
-			this.playlistId = playlistId;
-		}
-		@Override
-		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-			ui.showPlaylist(total, from, to, answerList, playlistId);
 		}
 	}
 	

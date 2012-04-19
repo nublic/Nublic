@@ -1,7 +1,7 @@
 package com.nublic.app.music.client.ui.dnd;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.ui.NavigationPanel;
 
 public class LeftAlbumDropController extends LeftDropController {

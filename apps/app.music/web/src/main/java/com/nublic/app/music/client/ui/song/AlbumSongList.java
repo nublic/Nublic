@@ -2,7 +2,7 @@ package com.nublic.app.music.client.ui.song;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;

@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 

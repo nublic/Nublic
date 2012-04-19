@@ -28,11 +28,11 @@ public class AddWidget extends Composite {
 	@UiField Label tooltipLabel;
 	String defaultText;
 	List<PutTagHandler> tagHandlerList = new ArrayList<PutTagHandler>();
-	
+
 	public AddWidget() {
 		this("New Collection", "add collection");
 	}
-	
+
 	public AddWidget(String defaultText, String tooltip) {
 		initWidget(uiBinder.createAndBindUi(this));
 		

@@ -8,7 +8,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.Tag;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEvent;
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEventType;
