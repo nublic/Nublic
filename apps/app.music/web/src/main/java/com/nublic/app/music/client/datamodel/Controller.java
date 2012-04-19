@@ -24,9 +24,12 @@ import com.nublic.app.music.client.ui.NavigationPanel;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.album.AlbumImagePanel;
 import com.nublic.app.music.client.ui.artist.AlbumInArtist;
+import com.nublic.app.music.client.ui.artist.ArtistImage;
 import com.nublic.app.music.client.ui.dnd.AlbumDragController;
+import com.nublic.app.music.client.ui.dnd.ArtistDragController;
 import com.nublic.app.music.client.ui.dnd.DraggableSong;
 import com.nublic.app.music.client.ui.dnd.LeftAlbumDropController;
+import com.nublic.app.music.client.ui.dnd.LeftArtistDropController;
 import com.nublic.app.music.client.ui.dnd.LeftSongDropController;
 import com.nublic.app.music.client.ui.dnd.SongDragController;
 import com.nublic.app.music.client.ui.dnd.ListDropController;
@@ -48,9 +51,11 @@ public class Controller {
 	// Drag and drop support
 	SongDragController songDragController = new SongDragController();  // Add only DraggableSong widgets to it
 	AlbumDragController albumDragController = new AlbumDragController(); // Add only HasAlbumId widgets to it (AlbumInArtist and ..)
+	ArtistDragController artistDragController = new ArtistDragController(); // Add only HasArtistId widgets
 	ListDropController centerDropController = null;
 	LeftSongDropController leftSongDropController = null;
 	LeftAlbumDropController leftAlbumDropController = null;
+	LeftArtistDropController leftArtistDropController = null;
 	List<Widget> draggableSongWidgets = new ArrayList<Widget>();
 	
 	public static void create(DataModel model, MainUi ui) {
@@ -88,6 +93,10 @@ public class Controller {
 		albumDragController.makeDraggable(w);
 	}
 	
+	public void makeDraggable(ArtistImage w) {
+		artistDragController.makeDraggable(w);
+	}
+	
 	public void createCenterDropController(Panel dropTarget, String playlistId) {
 		if (centerDropController != null) {
 			// Remove old drop controller
@@ -106,7 +115,7 @@ public class Controller {
 //		draggableWidgets.clear();
 	}
 	
-	public void removeCentreDropController() {
+	public void removeCenterDropController() {
 		if (centerDropController != null) {
 			songDragController.unregisterDropController(centerDropController);
 			centerDropController = null;
@@ -121,7 +130,7 @@ public class Controller {
 		leftSongDropController = new LeftSongDropController(navigationPanel);
 		songDragController.registerDropController(leftSongDropController);
 	}
-	
+
 	public void createLeftAlbumDropController(NavigationPanel navigationPanel) {
 		if (leftAlbumDropController != null) {
 			// Remove old drop controller
@@ -129,6 +138,15 @@ public class Controller {
 		}
 		leftAlbumDropController = new LeftAlbumDropController(navigationPanel);
 		albumDragController.registerDropController(leftAlbumDropController);
+	}
+	
+	public void createLeftArtistDropController(NavigationPanel navigationPanel) {
+		if (leftArtistDropController != null) {
+			// Remove old drop controller
+			artistDragController.unregisterDropController(leftArtistDropController);
+		}
+		leftArtistDropController = new LeftArtistDropController(navigationPanel);
+		artistDragController.registerDropController(leftArtistDropController);
 	}
 	
 	// +++++ Utils to music reproduction +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -466,5 +484,4 @@ public class Controller {
 			}
 		}, false);
 	}
-
 }

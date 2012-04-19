@@ -49,13 +49,17 @@ public class ArtistInfo {
 		target.append(id);
 		return target.toString();
 	}
-	
+
 	public String getImageUrl() {
+		return ArtistInfo.getImageUrl(id);
+	}
+	
+	public static String getImageUrl(String artistId) {
 		// building imageUrl as /artist-art/:artist-id
 		StringBuilder imageUrl = new StringBuilder();
 		imageUrl.append(GWT.getHostPageBaseURL());
 		imageUrl.append("server/artist-art/");
-		imageUrl.append(id);
+		imageUrl.append(artistId);
 		imageUrl.append(".png");
 		
 		return imageUrl.toString();

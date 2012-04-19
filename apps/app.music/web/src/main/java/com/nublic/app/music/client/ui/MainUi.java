@@ -171,7 +171,7 @@ public class MainUi extends Composite {
 
 	public void setMainWidget(Widget w) {
 		// If panel doesn't have a center drop controller use this method
-		Controller.INSTANCE.removeCentreDropController();
+		Controller.INSTANCE.removeCenterDropController();
 		mainPanel.setWidget(w);
 	}
 

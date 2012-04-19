@@ -48,13 +48,13 @@ public class NavigationPanel extends Composite {
 					addAddTagsHandlers();
 					Controller.INSTANCE.createLeftSongDropController(NavigationPanel.this);
 					Controller.INSTANCE.createLeftAlbumDropController(NavigationPanel.this);
+					Controller.INSTANCE.createLeftArtistDropController(NavigationPanel.this);
 				}
 			}
 		});
 	}	
 
 	public void createCurrentPlaylist() {
-//		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
 		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
 		pw.addIconAction(new ClickHandler() {
 			@Override

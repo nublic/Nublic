@@ -5,8 +5,6 @@ import java.util.EnumSet;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ErrorEvent;
-import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.History;
@@ -25,6 +23,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.song.AlbumSongList;
+import com.nublic.util.widgets.ImageHelper;
 
 public class AlbumWidget extends Composite {
 	private static AlbumWidgetUiBinder uiBinder = GWT.create(AlbumWidgetUiBinder.class);
@@ -68,13 +67,7 @@ public class AlbumWidget extends Composite {
 	}
 
 	private void setImage() {
-		albumImage.addErrorHandler(new ErrorHandler() {
-			@Override
-			public void onError(ErrorEvent event) {
-				albumImage.setResource(Resources.INSTANCE.album());
-			}
-		});
-		albumImage.setUrl(album.getImageUrl());
+		ImageHelper.setImage(albumImage, album.getImageUrl(), Resources.INSTANCE.album());
 	}
 
 	private void setClickTarget(String collectionId) {
