@@ -19,6 +19,7 @@ import org.scalatra.util.MultiMapHeadView
 import scala.util.Random
 import java.util.Date
 import java.io.PrintWriter
+import java.net.URLDecoder
 
 class ManagerServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -84,12 +85,12 @@ class ManagerServer extends ScalatraServlet with JsonSupport {
   }
   
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
   def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   

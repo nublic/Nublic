@@ -3,6 +3,7 @@ package com.nublic.app.downloads.server
 import com.nublic.filesAndUsers.java.User
 import java.io.File
 import java.lang.Long
+import java.net.URLDecoder
 import java.util.Hashtable
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpUtils
@@ -14,7 +15,7 @@ import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import scala.collection.JavaConversions
 
-class PhotosServer extends ScalatraServlet with JsonSupport {
+class DownloadsServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
@@ -75,12 +76,12 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   }
   
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
   def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   

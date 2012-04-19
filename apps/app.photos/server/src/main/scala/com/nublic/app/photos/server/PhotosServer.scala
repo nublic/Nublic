@@ -26,6 +26,7 @@ import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import com.nublic.filesAndUsers.java._
 import scala.util.Random
+import java.net.URLDecoder
 
 class PhotosServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
@@ -91,12 +92,12 @@ class PhotosServer extends ScalatraServlet with JsonSupport {
   }
   
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
   def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
