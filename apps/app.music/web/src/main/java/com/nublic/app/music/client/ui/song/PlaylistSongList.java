@@ -144,16 +144,6 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 	}
 	
 	public void moveRows(int from, int to) {
-//		// Keep playingIndex updated
-		playingIndex = Controller.INSTANCE.getPlayer().getPlaylistIndex();
-//		if (playingIndex == from) {
-//			playingIndex = from > to ? to : to - 1;			
-//		} else if (playingIndex > from && playingIndex <= to) { // from > playingIndex >= to
-//			playingIndex--;
-//		} else if (playingIndex > to && playingIndex < from) { // to > playingIndex > form
-//			playingIndex++;
-//		}
-		
 		// get old style to apply to new one
 		String oldClassName = grid.getRowFormatter().getElement(from).getClassName();
 
@@ -187,6 +177,8 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 				bl.setDeleteButtonHandler(new MyDeleteHandler(i));
 			}
 		}
+		// Keep playingIndex updated
+		playingIndex = Controller.INSTANCE.getPlayer().getPlaylistIndex();
 	}
 	
 }
