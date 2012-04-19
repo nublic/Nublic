@@ -1,7 +1,6 @@
 package com.nublic.app.music.client.datamodel;
 
 import com.google.gwt.core.client.GWT;
-import com.nublic.app.music.client.Constants;
 
 //artist ::= { "id" : $artist-id,
 //        "name": $name,
@@ -33,21 +32,7 @@ public class ArtistInfo {
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
 	
 	public String getTargetHistoryToken() {
-		return getTargetHistoryToken(null);
-	}
-	
-	public String getTargetHistoryToken(String collectionId) {
-		StringBuilder target = new StringBuilder();
-		if (collectionId != null) {
-			target.append(Constants.PARAM_COLLECTION);
-			target.append("=");
-			target.append(collectionId);
-			target.append("&");
-		}
-		target.append(Constants.PARAM_ARTIST);
-		target.append("=");
-		target.append(id);
-		return target.toString();
+		return Utils.getTargetHistoryToken(null, id, null, null);
 	}
 
 	public String getImageUrl() {

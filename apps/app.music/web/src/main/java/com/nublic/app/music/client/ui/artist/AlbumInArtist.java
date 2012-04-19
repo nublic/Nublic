@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.ui.dnd.HasAlbumInfo;
 import com.nublic.util.widgets.ImageHelper;
 
@@ -48,7 +49,7 @@ public class AlbumInArtist extends Composite implements HasAlbumInfo, HasMouseDo
 	}
 
 	private void setClickTarget() {
-		final String target = album.getTargetHistoryToken(collectionId);
+		final String target = Utils.getTargetHistoryToken(null, album.getId(), collectionId, null);
 		albumNameLabel.setTargetHistoryToken(target);	// To name label
 		albumImage.addClickHandler(new ClickHandler() { // To art image
 			@Override

@@ -86,7 +86,10 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	}
 	
 	private void setViewLinks() {
-		albumViewLink.setTargetHistoryToken(Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ALBUMS.toString()));
+		String albumTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ALBUMS.toString());
+		albumViewLink.setTargetHistoryToken(albumTarget);
+		String songTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.SONGS.toString());
+		songViewLink.setTargetHistoryToken(songTarget);
 	}
 
 	// For handling lazy scroll loading of ArtistWidgets

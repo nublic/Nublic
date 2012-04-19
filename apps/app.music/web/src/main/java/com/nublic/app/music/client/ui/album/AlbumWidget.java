@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -71,7 +72,7 @@ public class AlbumWidget extends Composite {
 	}
 
 	private void setClickTarget(String collectionId) {
-		final String target = album.getTargetHistoryToken(collectionId);
+		final String target = Utils.getTargetHistoryToken(null, album.getId(), collectionId, null);
 		albumNameLabel.setTargetHistoryToken(target);	// To name label
 		albumImage.addClickHandler(new ClickHandler() { // To art image
 			@Override

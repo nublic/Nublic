@@ -19,6 +19,7 @@ import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
@@ -91,7 +92,7 @@ public class ArtistWidget extends Composite {
 	}
 
 	private void setClickTarget() {
-		final String target = artist.getTargetHistoryToken(collectionId);
+		final String target = Utils.getTargetHistoryToken(artist.getId(), null, collectionId, null);
 		artistNameLabel.setTargetHistoryToken(target);
 		artistImage.addClickHandler(new ClickHandler() {
 			@Override
