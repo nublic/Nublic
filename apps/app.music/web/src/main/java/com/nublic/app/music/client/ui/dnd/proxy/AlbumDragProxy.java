@@ -1,5 +1,7 @@
 package com.nublic.app.music.client.ui.dnd.proxy;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,21 +27,25 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 	@UiField SimplePanel plusPanel;
 	@UiField Image albumArt;
 
-	public AlbumDragProxy(String draggingAlbumId, final String draggingArtistId, final int songs) {
+	public AlbumDragProxy(String draggingAlbumId, String draggingArtistId, final int songs) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		setImage(AlbumInfo.getAlbumImageUrl(draggingAlbumId));
+		final boolean hasToUseAlbumArtists = setArtist(draggingArtistId);
+		
 		
 		Controller.INSTANCE.getModel().getAlbumCache().addHandler(draggingAlbumId, new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
-				numberOfSongs.setText(songs + " songs");
 				title.setText(v.getName());
-				setArtist(draggingArtistId);
+				if (hasToUseAlbumArtists) {
+					setArtists(v.getArtistList());
+				}
 			}
 		});
 		Controller.INSTANCE.getModel().getAlbumCache().obtain(draggingAlbumId);
 
+		numberOfSongs.setText(songs + " songs");
 		setState(ProxyState.NONE);
 	}
 	
@@ -47,14 +53,40 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 		ImageHelper.setImage(albumArt, albumUrl, Resources.INSTANCE.album());
 	}
 	
-	private void setArtist(String draggingArtistId) {
-		Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingArtistId, new CacheHandler<String, ArtistInfo>() {
-			@Override
-			public void onCacheUpdated(String k, ArtistInfo v) {
-				artists.setText(v.getName());
-			}
-		});
-		Controller.INSTANCE.getModel().getArtistCache().obtain(draggingArtistId);
+	private boolean setArtist(String draggingArtistId) {
+		if (draggingArtistId == null) {
+			return true;
+		} else {
+			Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingArtistId, new CacheHandler<String, ArtistInfo>() {
+				@Override
+				public void onCacheUpdated(String k, ArtistInfo v) {
+					artists.setText(v.getName());
+				}
+			});
+			Controller.INSTANCE.getModel().getArtistCache().obtain(draggingArtistId);
+			return false;
+		}
+	}
+
+	private void setArtists(List<String> artistList) {
+		// Iterate through artist id's and ask for every name
+		for (String id : artistList) {
+			Controller.INSTANCE.getModel().getArtistCache().addHandler(id, new CacheHandler<String, ArtistInfo>() {
+				@Override
+				public void onCacheUpdated(String k, ArtistInfo v) {
+					addToArtistsList(v.getName());
+				}
+			});
+			Controller.INSTANCE.getModel().getArtistCache().obtain(id);
+		}
+	}
+
+	private void addToArtistsList(String artistName) {
+		if (artists.getText().isEmpty()) {
+			artists.setText(artistName);
+		} else {
+			artists.setText(artists.getText() + ", " + artistName);
+		}
 	}
 	
 	public void setText(String text) {

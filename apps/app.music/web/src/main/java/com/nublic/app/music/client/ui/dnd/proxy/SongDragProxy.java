@@ -23,7 +23,7 @@ public class SongDragProxy extends Composite implements DragProxy {
 	
 	public SongDragProxy(final SongInfo draggingSong) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingSong.getArtistId(), new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {
@@ -31,7 +31,6 @@ public class SongDragProxy extends Composite implements DragProxy {
 			}
 		});
 		Controller.INSTANCE.getModel().getArtistCache().obtain(draggingSong.getArtistId());
-		
 
 		setState(ProxyState.NONE);
 	}
