@@ -41,19 +41,25 @@ public class URLController {
 		if (playlist != null) {
 			model.askForPlaylistSongs(playlist, new MyPlaylistHandler(playlist), true);
 		} else {
-//			if (album != null) {
-//				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-//			} else if (artist != null) {
-//				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-//			} else {
-//				model.askForArtists(collection, new MyArtistHandler(collection), true);
-//			}
 			switch (viewKind) {
 			case ARTISTS:
-				model.askForArtists(collection, new MyArtistHandler(collection), true);
+				if (album != null) {
+					// User has selected a concrete album, put Songs view for this action, even when default action is artists
+					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
+				} else if (artist != null) {
+					// User has selected a concrete artist, put Albums view for this action, even when default action is artists
+					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
+				} else {
+					model.askForArtists(collection, new MyArtistHandler(collection), true);
+				}
 				break;
 			case ALBUMS:
-				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
+				if (album != null) {
+					// User has selected a concrete album, put Songs view for this action, even when default action is albums
+					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
+				} else {
+					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
+				}
 				break;
 			case SONGS:
 				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
@@ -79,7 +85,7 @@ public class URLController {
 	// Album
 	class MyAlbumHandler implements AlbumHandler {
 		String artistId;
-		String collectionId;	
+		String collectionId;
 		public MyAlbumHandler(String artist, String collection) {
 			artistId = artist;
 			collectionId = collection;

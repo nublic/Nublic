@@ -139,13 +139,13 @@ public class MainUi extends Composite {
 			}
 		}
 	}
-	
+
 	public void showAlbumList(List<AlbumInfo> albumList, String artistId, String collectionId) {
 		AlbumPanel albPanel = new AlbumPanel(artistId, collectionId);
 		albPanel.setAlbumList(albumList);
 		setMainWidget(albPanel);
 	}
-	
+
 	public void showArtistList(List<ArtistInfo> answerList, String collectionId) {
 		setSelectedCollection(collectionId);
 		
