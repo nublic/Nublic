@@ -12,6 +12,9 @@
 		.leftmargin {
 			margin-left: 30px;
 		}
+		.littleleftmargin {
+			margin-left: 15px;
+		}
 		.space {
 			margin-right: 5px;
 		}
@@ -24,6 +27,9 @@
 					<div class="page-header" style="width: 100%;">
 						<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
 							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
+							<g:InlineHyperlink text="artist view" addStyleNames="{style.littleleftmargin}" ui:field="artistViewLink"/>
+							<g:InlineHyperlink text="album view" addStyleNames="{style.littleleftmargin}" ui:field="albumViewLink"/>
+							<g:Label text="song view" addStyleNames="{style.littleleftmargin}" ui:field="songViewLabel"/>
 						</g:HorizontalPanel>
 					</div>
 				</g:HTMLPanel>

@@ -11,12 +11,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.controller.Controller;
+import com.nublic.app.music.client.controller.ViewKind;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -41,21 +44,39 @@ public class SongPanel extends Composite {
 	@UiField Label byLabel;
 	@UiField HorizontalPanel titlePanel;
 	@UiField HorizontalPanel subtitlePanel;
+	@UiField InlineHyperlink artistViewLink;
+	@UiField InlineHyperlink albumViewLink;
+	@UiField Label songViewLabel;
 	
 	String inCollection;
 	String albumId;
+	String artistId;
 
-	public SongPanel(String albumId, String collectionId) {
+	public SongPanel(String albumId, String artistId, String collectionId) {
 		initWidget(uiBinder.createAndBindUi(this));
 
 		this.albumId = albumId;
+		this.artistId = artistId;
 		this.inCollection = collectionId;
 
 		// Get album info (null means all songs)
-		if (albumId == null) {
+		if (albumId == null && artistId == null) {
 			titleLabel.setText("All songs");
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
+			setViewLinks(true, true);
+		} else if (artistId != null) {
+			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
+			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
+				@Override
+				public void onCacheUpdated(String k, ArtistInfo v) {
+					titleLabel.setText("All songs from " + v.getName());
+				}
+			});
+			artistCache.obtain(artistId);
+			byLabel.setVisible(false);
+			subtitlePanel.setVisible(false);
+			setViewLinks(false, true);
 		} else {
 			Cache<String, AlbumInfo> albumCache = Controller.INSTANCE.getModel().getAlbumCache();
 			albumCache.addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
@@ -67,6 +88,7 @@ public class SongPanel extends Composite {
 				}
 			});
 			albumCache.obtain(albumId);
+			setViewLinks(false, false);
 		}
 
 		// Create button line
@@ -75,15 +97,32 @@ public class SongPanel extends Composite {
 		ButtonLine b = new ButtonLine(buttonSet);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
-		titlePanel.add(b);
+		titlePanel.insert(b, 1);
 		
 	}
 	
-	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
-		SongList sl = new AlbumSongList(albumId, null, collectionId, total, mainPanel);
+	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
+		SongList sl = new AlbumSongList(albumId, artistId, collectionId, total, mainPanel);
 		sl.addSongs(total, from, to, answerList);
 
 		mainPanel.add(sl);
+	}
+
+	private void setViewLinks(boolean showArtist, boolean showAlbum) {
+		if (showArtist) {
+			String artistTarget = Utils.getTargetHistoryToken(artistId, albumId, inCollection, ViewKind.ARTISTS.toString());
+			artistViewLink.setTargetHistoryToken(artistTarget);
+			String albumTarget = Utils.getTargetHistoryToken(artistId, albumId, inCollection, ViewKind.ALBUMS.toString());
+			albumViewLink.setTargetHistoryToken(albumTarget);
+		} else if (showAlbum) {
+			String albumTarget = Utils.getTargetHistoryToken(artistId, albumId, inCollection, ViewKind.ALBUMS.toString());
+			albumViewLink.setTargetHistoryToken(albumTarget);
+			artistViewLink.setVisible(false);
+		} else {
+			artistViewLink.setVisible(false);
+			albumViewLink.setVisible(false);
+			songViewLabel.setVisible(false);
+		}
 	}
 
 	public void setSubtitles(List<String> artistList) {

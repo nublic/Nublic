@@ -9,11 +9,14 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.controller.Controller;
+import com.nublic.app.music.client.controller.ViewKind;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -28,6 +31,8 @@ public class AlbumPanel extends Composite {
 	@UiField FlowPanel mainPanel;
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
+	@UiField InlineHyperlink artistViewLink;
+	@UiField InlineHyperlink songViewLink;
 	
 	List<AlbumInfo> albumList;
 	String artistId;
@@ -41,7 +46,8 @@ public class AlbumPanel extends Composite {
 	
 		// Get artist info (null means all artists)
 		if (artistId == null) {
-			titleLabel.setText("All artists");
+			titleLabel.setText("All albums");
+			setViewLinks(true);
 		} else {
 			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
@@ -51,6 +57,7 @@ public class AlbumPanel extends Composite {
 				}
 			});
 			artistCache.obtain(artistId);
+			setViewLinks(false);
 		}
 
 		// Create button line
@@ -59,7 +66,7 @@ public class AlbumPanel extends Composite {
 		ButtonLine b = new ButtonLine(buttonSet);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
-		titlePanel.add(b);
+		titlePanel.insert(b, 1);
 	}
 
 	public void setAlbumList(List<AlbumInfo> albumList) {
@@ -69,6 +76,18 @@ public class AlbumPanel extends Composite {
 			AlbumWidget aw = new AlbumWidget(a, artistId, collectionId, mainPanel);
 			mainPanel.add(aw);
 		}
+	}
+	
+	private void setViewLinks(boolean shouldShowArtist) {
+		if (shouldShowArtist) {
+			String artistTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ARTISTS.toString());
+			artistViewLink.setTargetHistoryToken(artistTarget);
+			artistViewLink.setVisible(true);
+		} else {
+			artistViewLink.setVisible(false);
+		}
+		String songTarget = Utils.getTargetHistoryToken(artistId, null, collectionId, ViewKind.SONGS.toString());
+		songViewLink.setTargetHistoryToken(songTarget);
 	}
 	
 	// Handlers for button line

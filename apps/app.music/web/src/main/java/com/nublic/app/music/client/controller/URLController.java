@@ -33,7 +33,7 @@ public class URLController {
 		String album = hmap.get(Constants.PARAM_ALBUM);
 		String view = hmap.get(Constants.PARAM_VIEW);
 		ViewKind newViewKind = ViewKind.parse(view);
-		
+
 		if (newViewKind != null) {
 			viewKind = newViewKind;
 		}
@@ -41,29 +41,36 @@ public class URLController {
 		if (playlist != null) {
 			model.askForPlaylistSongs(playlist, new MyPlaylistHandler(playlist), true);
 		} else {
-			switch (viewKind) {
-			case ARTISTS:
-				if (album != null) {
-					// User has selected a concrete album, put Songs view for this action, even when default action is artists
-					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-				} else if (artist != null) {
-					// User has selected a concrete artist, put Albums view for this action, even when default action is artists
-					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-				} else {
-					model.askForArtists(collection, new MyArtistHandler(collection), true);
-				}
-				break;
-			case ALBUMS:
-				if (album != null) {
-					// User has selected a concrete album, put Songs view for this action, even when default action is albums
-					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-				} else {
-					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-				}
-				break;
-			case SONGS:
-				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-				break;
+//			switch (viewKind) {
+//			case ARTISTS:
+//				if (album != null) {
+//					// User has selected a concrete album, put Songs view for this action, even when default action is artists
+//					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
+//				} else if (artist != null) {
+//					// User has selected a concrete artist, put Albums view for this action, even when default action is artists
+//					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
+//				} else {
+//					model.askForArtists(collection, new MyArtistHandler(collection), true);
+//				}
+//				break;
+//			case ALBUMS:
+//				if (album != null) {
+//					// User has selected a concrete album, put Songs view for this action, even when default action is albums
+//					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
+//				} else {
+//					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
+//				}
+//				break;
+//			case SONGS:
+//				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
+//				break;
+//			}
+			if (viewKind == ViewKind.SONGS || album != null) {
+				model.askForSongs(album, artist, collection, new MySongHandler(album, artist, collection), true);
+			} else if (viewKind == ViewKind.ALBUMS || artist != null) {
+				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
+			} else {
+				model.askForArtists(collection, new MyArtistHandler(collection), true);
 			}
 		}
 	}
@@ -71,14 +78,16 @@ public class URLController {
 	// Song
 	class MySongHandler implements SongHandler {
 		String albumId;
-		String collectionId;	
-		public MySongHandler(String albumId, String collection) {
+		String collectionId;
+		String artistId;
+		public MySongHandler(String albumId, String artistId, String collection) {
 			this.albumId = albumId;
 			this.collectionId = collection;
+			this.artistId = artistId;
 		}
 		@Override
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-			ui.showSongList(total, from, to, answerList, albumId, collectionId);
+			ui.showSongList(total, from, to, answerList, albumId, artistId, collectionId);
 		}
 	}
 	

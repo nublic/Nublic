@@ -32,7 +32,7 @@ public class ArtistInfo {
 	public void setNumberOfSongs(int numberOfSongs) { this.numberOfSongs = numberOfSongs; }
 	
 	public String getTargetHistoryToken() {
-		return Utils.getTargetHistoryToken(null, id, null, null);
+		return Utils.getTargetHistoryToken(id, null, null, null);
 	}
 
 	public String getImageUrl() {

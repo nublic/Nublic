@@ -154,9 +154,9 @@ public class MainUi extends Composite {
 		setMainWidget(artPanel);
 	}
 	
-	public void showSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
-		SongPanel songPanel = new SongPanel(albumId, collectionId);
-		songPanel.setSongList(total, from, to, answerList, albumId, collectionId);
+	public void showSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
+		SongPanel songPanel = new SongPanel(albumId, artistId, collectionId);
+		songPanel.setSongList(total, from, to, answerList, albumId, artistId, collectionId);
 		setMainWidget(songPanel);
 	}
 	
