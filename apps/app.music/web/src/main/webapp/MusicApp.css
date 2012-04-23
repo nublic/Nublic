@@ -28,6 +28,13 @@ h1 {
   color: red;
 }
 
+
+/* For drag and drop */ 
+body, html {
+	height: 100%;
+}
+
+/* For translucid buttons */
 .translucidPanel .translucidButton {
   opacity: 0.02;
 }
@@ -104,4 +111,30 @@ h1 {
 /** So a playlist can be bold if it's being played */
 .bold-link a {
 	font-weight: bold;
+}
+
+/** Styles to indicate drop targets on rows */ 
+.insertup {
+	border-top: 2px solid #0088CC !important;
+}
+
+.insertdown {
+	border-bottom: 2px solid #0088CC !important;
+}
+
+/** background of plus feedback to add to playlists */
+.plusbackground {
+	background: #00ff0c; /* Old browsers */
+	background: -moz-linear-gradient(top, #00ff0c 0%, #025b1a 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00ff0c), color-stop(100%,#025b1a)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #00ff0c 0%,#025b1a 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #00ff0c 0%,#025b1a 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #00ff0c 0%,#025b1a 100%); /* IE10+ */
+	background: linear-gradient(top, #00ff0c 0%,#025b1a 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ff0c', endColorstr='#025b1a',GradientType=0 ); /* IE6-9 */
+}
+
+/** Stripped tables */
+.stripped > tbody > tr:nth-child(odd) > td {
+	background-color: #f9f9f9;
 }

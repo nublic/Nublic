@@ -10,22 +10,28 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.controller.Controller;
+import com.nublic.app.music.client.controller.ViewKind;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.TagKind;
+import com.google.gwt.user.client.ui.InlineHyperlink;
 
 public class ArtistPanel extends Composite implements ScrollHandler {
 	private static ArtistPanelUiBinder uiBinder = GWT.create(ArtistPanelUiBinder.class);
@@ -34,6 +40,8 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	@UiField FlowPanel mainPanel;
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
+	@UiField InlineHyperlink albumViewLink;
+	@UiField InlineHyperlink songViewLink;
 
 	String collectionId;
 	Set<ArtistWidget> unloadedWidgets = new HashSet<ArtistWidget>();
@@ -44,15 +52,29 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 
 		this.collectionId = collectionId;
 		
+		// Set title
 		if (collectionId == null) {
 			titleLabel.setText(Constants.ALL_MUSIC_NAME);
 		} else {
 			titleLabel.setText(Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName());
 		}
 		
-		// Create button line
-		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
-														ButtonLineParam.PLAY);
+		createButtonLine();
+		setViewLinks();
+
+		// For handling lazy scroll loading of ArtistWidgets
+		mainPanel.addDomHandler(this, ScrollEvent.getType());
+		
+		Window.addResizeHandler(new ResizeHandler() {
+			@Override
+			public void onResize(ResizeEvent event) {
+				onScroll(null);
+			}
+		});
+	}
+
+	private void createButtonLine() {
+		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END, ButtonLineParam.PLAY);
 		if (collectionId != null) {
 			buttonSet.add(ButtonLineParam.DELETE);
 		}
@@ -60,10 +82,14 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
-		titlePanel.add(b);
-		
-		// For handling lazy scroll loading of ArtistWidgets
-		mainPanel.addDomHandler(this, ScrollEvent.getType());
+		titlePanel.insert(b, 1);
+	}
+	
+	private void setViewLinks() {
+		String albumTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ALBUMS.toString());
+		albumViewLink.setTargetHistoryToken(albumTarget);
+		String songTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.SONGS.toString());
+		songViewLink.setTargetHistoryToken(songTarget);
 	}
 
 	// For handling lazy scroll loading of ArtistWidgets

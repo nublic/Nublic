@@ -102,6 +102,7 @@ public class EditableLabel extends Composite implements HasValue<String>, HasTex
 		editBox.setText(getValue());
 		deckPanel.showWidget(1);
 		editBox.setFocus(true);
+		editBox.setCursorPos(editBox.getText().length());
 	}
 
 	public void switchToLabel() {
@@ -142,6 +143,10 @@ public class EditableLabel extends Composite implements HasValue<String>, HasTex
 	@Override
 	public void setText(String text) {
 		setValue(text);
+	}
+	
+	public TextBox getEditBox() {
+		return this.editBox;
 	}
 
 }

@@ -9,6 +9,9 @@ import com.nublic.app.photos.server.model._
 import java.io.FileWriter
 import java.io.PrintWriter
 import java.util.logging.Logger
+import com.drew.imaging.ImageMetadataReader
+import com.drew.metadata.exif.ExifDirectory
+import java.util.Date
 
 class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, true) {
   
@@ -25,8 +28,54 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
     }
   }
   
-  def process_updated_file(filename: String, context: String): Unit = {
-    
+  def now() = new Date().getTime()
+  
+  def process_updated_file(filename: String, context: String): Unit = {    
+    if (Solr.getMimeType(filename).startsWith("image/")) {
+      inTransaction {
+        val img_file = new File(filename)
+        val metadata = ImageMetadataReader.readMetadata(img_file)
+        val exif_dir = metadata.getDirectory(classOf[ExifDirectory])
+        val original_date = 
+          if (exif_dir.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL)) {
+            exif_dir.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL).getTime()
+          } else {
+            img_file.lastModified()
+          }
+        Database.photoByFilename(filename) match {
+          case Some(photo) => {
+            photo.date = original_date
+            photo.lastModified = now()
+            Database.photos.update(photo)
+          }
+          case None       => { 
+            // Add to database
+            val photo = new Photo()
+            photo.file = filename
+            photo.date = original_date
+            photo.lastModified = now()
+            photo.title = FilenameUtils.getBaseName(filename)
+            Database.photos.insert(photo)
+            // Create initial album
+            // Get album name
+            val ctx = new File(context)
+            val parent = img_file.getParentFile()
+            val album_name = 
+              if (parent.equals(ctx)) {
+                None
+              } else if (parent.getParentFile().equals(ctx)) {
+                Some(parent.getName())
+              } else {
+                Some(parent.getParentFile().getName() + "/" + parent.getName())
+              }
+            if (album_name.isDefined) {
+              val album = Database.getOrCreateAlbum(album_name.get)
+              Database.photoAlbums.insert(new PhotoAlbum(photo.id, album.id))
+            }
+          }
+        }
+      }
+    }
   }
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {

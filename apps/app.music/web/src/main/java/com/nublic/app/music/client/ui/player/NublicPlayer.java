@@ -12,6 +12,7 @@ import com.bramosystems.oss.player.core.client.PluginVersionException;
 import com.bramosystems.oss.player.core.client.RepeatMode;
 import com.bramosystems.oss.player.core.client.skin.CustomAudioPlayer;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
+import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
 import com.bramosystems.oss.player.core.event.client.PlayerStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayerStateHandler;
@@ -32,7 +33,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 	PlayerLayout controls;
 	List<SongInfo> playlist = new ArrayList<SongInfo>();
 	Timer timer;
-	PlayStateEvent lastStateEvent;
+	State state = null;
 	boolean isShuffleEnabled = false;
 	
 	// To fix that ugly bug on loading
@@ -57,8 +58,9 @@ public class NublicPlayer extends CustomAudioPlayer {
 
 		addPlayerHandler();					// Init all the interface
 	}
+
+	public State getState() { return state; }
 	
-	public PlayStateEvent getLastEvent() { return lastStateEvent; }
 	
 	private void addPlayerHandler() {
 		addPlayerStateHandler(new PlayerStateHandler() {
@@ -112,8 +114,8 @@ public class NublicPlayer extends CustomAudioPlayer {
         addPlayStateHandler(new PlayStateHandler() {
             @Override
             public void onPlayStateChanged(PlayStateEvent event) {
-            	SongInfo song = playlist.get(event.getItemIndex());
-            	lastStateEvent = event;
+            	state = event.getPlayState();
+            	SongInfo song = playlist.get(getPlaylistIndex());
             	switch (event.getPlayState()) {
             	case Paused:
             		controls.setPlaying(false);
@@ -165,7 +167,7 @@ public class NublicPlayer extends CustomAudioPlayer {
 		controls.addSeekChangeHandler(new SeekChangeHandler() {
 			@Override
 			public void onSeekChanged(SeekChangeEvent event) {
-				setPlayPosition(event.getSeekPosition() * playlist.get(lastStateEvent.getItemIndex()).getLength() * 1000);
+				setPlayPosition(event.getSeekPosition() * playlist.get(getPlaylistIndex()).getLength() * 1000);
 			}
 		});
 		controls.addVolumeHandler(new VolumeHandler() {
@@ -227,35 +229,39 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public void playSong(int index) {
-//		if (isShuffleEnabled) {
-//			setShuffleEnabled(false);
-			play(index);
-//			setShuffleEnabled(true);
-//		} else {
-//			play(index);			
-//		}
+		play(index);
+	}
+	
+	public void reorderNublicPlaylist(int from, int to) {
+		// Reorder our info
+		SongInfo s = playlist.get(from);
+		playlist.add(to, s);
+		playlist.remove(from > to ? from + 1 : from);
+
+		// Reorder internal info of player
+		reorderPlaylist(from, to);
 	}
 	
 	// secure play methods
 	public void nublicPlayNext() {
 		try {
-			if (lastStateEvent != null && lastStateEvent.getItemIndex() != getPlaylistSize() - 1) {
+			if (isShuffleEnabled || (getPlaylistIndex() != getPlaylistSize() - 1)) {
 				playNext();
 			}
 		} catch (PlayException e) {
-			ErrorPopup.showError(e.getMessage());
-			e.printStackTrace();
+			// No more entries exception
+			nublicStop();
 		}
 	}
 	
 	public void nublicPlayPrev() {
 		try {
-			if (lastStateEvent != null && lastStateEvent.getItemIndex() != 0) {
+			if (isShuffleEnabled || (getPlaylistIndex() != 0)) {
 				playPrevious();
 			}
 		} catch (PlayException e) {
-			ErrorPopup.showError(e.getMessage());
-			e.printStackTrace();
+			// No more entries exception
+			// We do nothing for this case, this is on purpose
 		}	
 	}
 	

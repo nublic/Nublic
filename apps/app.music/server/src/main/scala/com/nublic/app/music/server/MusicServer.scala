@@ -2,6 +2,7 @@ package com.nublic.app.music.server
 
 import java.io.File
 import java.lang.Long
+import java.net.URLDecoder
 import org.scalatra._
 import org.scalatra.liftjson.JsonSupport
 import net.liftweb.json._
@@ -26,8 +27,10 @@ import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import com.nublic.filesAndUsers.java._
 import com.nublic.app.music.server.model._
+import org.squeryl.Table
+import org.squeryl.KeyedEntity
 
-class MusicServer extends ScalatraFilter with JsonSupport {
+class MusicServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
@@ -36,33 +39,69 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     
   val TRUE: LogicalBoolean = 1 === 1
   
-  val watcher = new MusicActor(applicationContext)
+  val watcher = new MusicActor()
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
-  
-  var __extraParams : Option[scala.collection.immutable.Map[String, Seq[String]]] = None
-  
-  def _extraParams : Map[String, Seq[String]] = {
-    if (__extraParams == None) {
-      val ht = HttpUtils.parsePostData(request.getContentLength(),
-          request.getInputStream())
-      __extraParams = Some(JavaConversions.mapAsScalaMap(ht.asInstanceOf[Hashtable[String, Array[String]]]).toMap.map(f => (f._1, f._2.toSeq)))
+
+  def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
+    val v = s.trim()
+    if (v == "") {
+      List()
+    } else {
+      v.split(sep).toList.map(_.trim()).filter(_ != "")
     }
-    __extraParams.get
   }
   
-  protected val extraParams = new MultiMapHeadView[String, String] with MapWithIndifferentAccess[String] {
-    protected def multiMap = _extraParams
+  var _extraParams : Option[scala.collection.immutable.Map[String, String]] = None
+  
+  def extraParams : Map[String, String] = {
+    if (_extraParams == None) {
+      // Get body
+      val len = request.getContentLength()
+      val in = request.getInputStream()
+      val bytes = new Array[Byte](len)
+      var offset = 0
+      do {
+        val inputLen = in.read(bytes, offset, len - offset)
+        if (inputLen <= 0) {
+          throw new IllegalArgumentException("unable to parse body")
+        }
+        offset += inputLen
+      } while ((len - offset) > 0)
+      val body = new String(bytes, 0, len, "8859_1");
+
+      // Try to detect charset
+      val charset = if (request.getHeader("Content-Type") != null) {
+        val ct = request.getHeader("Content-Type")
+        val charset_index = ct.indexOf("charset=")
+        if (charset_index != -1) {
+          ct.substring(charset_index + "charset=".length()).trim().toUpperCase()
+        } else {
+          "UTF-8"
+        }
+      } else {
+        "UTF-8"
+      }
+
+      // Parse body
+      val tuples = splitThatRespectsReasonableSemantics("&")(body).map(t => {
+        val e = splitThatRespectsReasonableSemantics("=")(t)
+        (URLDecoder.decode(e(0), charset), URLDecoder.decode(e(1), charset))
+      } )
+      
+      _extraParams = Some(Map() ++ tuples)
+    }
+    _extraParams.get
   }
   
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
   def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
@@ -86,16 +125,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   def deleteUser(routeMatchers: org.scalatra.RouteMatcher)(action: User => Any) = delete2(routeMatchers) {
     withUser(action)
   }
-  
-  def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
-    def v = s.trim()
-    if (v == "") {
-      List()
-    } else {
-      v.split(sep).toList.map(_.trim()).filter(_ != "")
-    }
-  }
-  
+    
   // Collections
   // ===========
   getUser("/collections") { _ =>
@@ -136,7 +166,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   putUser("/collection/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
+    val songs = splitThatRespectsReasonableSemantics(",")(extraParams("songs")).map(Long.parseLong(_))
     transaction {
       Database.collections.lookup(id).map(coll =>
         songs.map(songId => 
@@ -157,7 +187,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/collection/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val songs = splitThatRespectsReasonableSemantics(",")(params("songs")).map(Long.parseLong(_))
+    val songs = splitThatRespectsReasonableSemantics(",")(extraParams("songs")).map(Long.parseLong(_))
     transaction {
       Database.collections.lookup(id).map(coll =>
         Database.songCollections.deleteWhere(x =>
@@ -187,7 +217,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   }
   
   def addSongsToPlaylist(songsP: String, pl: Playlist) = {
-    val db_pos = pl.songs.count(_ => true)
+    val db_pos = Database.getPlaylistCount(pl.id)
     val songs = splitThatRespectsReasonableSemantics(",")(songsP).map(Long.parseLong(_))
     val songs_filtered = songs.filter(sid => Database.songs.lookup(sid).isDefined)
     val song_pos = songs_filtered.zip(new Range(db_pos, db_pos + songs_filtered.length, 1))
@@ -248,6 +278,13 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
+  def inefficientUpdate[A <: KeyedEntity[_]](t: Table[A], q: A => LogicalBoolean, f: A => Unit): Unit = {
+    for (r <- t.where(q).forUpdate.toList) {
+      f(r)
+      t.update(r)
+    }
+  }
+  
   deleteUser("/playlist/:id") { user =>
     val id = Long.parseLong(params("id"))
     val is_of_user = transaction {
@@ -262,10 +299,9 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         Database.songPlaylists.deleteWhere(x =>
           x.playlistId === id and x.position === position)
         // Update the position of following songs
-        update(Database.songPlaylists)(sp =>
-          where(sp.playlistId === id.~ and sp.position > position.~)
-          set(sp.position := sp.position - 1)
-        )
+        inefficientUpdate[SongPlaylist](Database.songPlaylists, 
+          sp => sp.playlistId === id.~ and sp.position > position.~,
+          sp => sp.position = sp.position - 1)
       }
       halt(200)
     }
@@ -279,28 +315,37 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     val from = Long.parseLong(params("from"))
     val to = Long.parseLong(params("to"))
     val db_count = transaction {
-      Database.playlists.lookup(id).get.songs.count(_ => true)
+      Database.getPlaylistCount(id)
     }
     if (!is_of_user || from < 0 || to < 0 || from >= db_count || to >= db_count) {
       halt(500)
     } else {
       transaction {
+	// Get the song to move
+	val mSong = Database.maybe(Database.songPlaylists.where(x => x.playlistId === id and x.position === from))
+	// If not existing, halt
+	if (!mSong.isDefined) {
+	  halt(500)
+	}
+	val song = mSong.get
         // Delete the song
-        Database.songPlaylists.deleteWhere(x =>
-          x.playlistId === id and x.position === from)
+        if (from != to) {
+          Database.songPlaylists.deleteWhere(x =>
+            x.playlistId === id and x.position === from)
+        }
         // Different cases
         if (from < to) {
-          // In [from + 1, to] put one position up
-          update(Database.songPlaylists)(sp =>
-            where((sp.playlistId === id.~) and (sp.position > from.~) and (sp.position <= to.~))
-            set(sp.position := sp.position - 1)
-          )
+          // In [from + 1, to - 1] put one position up
+          inefficientUpdate[SongPlaylist](Database.songPlaylists, 
+            sp => (sp.playlistId === id.~) and (sp.position > from.~) and (sp.position < to.~),
+            sp => sp.position = sp.position - 1)
+	  Database.songPlaylists.insert(new SongPlaylist(song.songId, id, to - 1L))
         } else if (from > to) {
-          // In [from, to - 1] put one position down
-          update(Database.songPlaylists)(sp =>
-            where((sp.playlistId === id.~) and (sp.position >= from.~) and (sp.position < to.~))
-            set(sp.position := sp.position + 1)
-          )
+          // In [to, from - 1] put one position down
+          inefficientUpdate[SongPlaylist](Database.songPlaylists, 
+            sp => (sp.playlistId === id.~) and (sp.position >= to.~) and (sp.position < from.~),
+            sp => sp.position = sp.position + 1)
+	  Database.songPlaylists.insert(new SongPlaylist(song.songId, id, to))
         } else {
           // from == to => Do nothing
         }
@@ -340,14 +385,14 @@ class MusicServer extends ScalatraFilter with JsonSupport {
           where(a.id === s.artistId)
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
-          // orderBy(asc_desc(a.name))
+          orderBy(asc_desc(a.name))
         )
       } else {
         from(Database.artists, Database.songs, Database.songCollections)((a, s, st) =>
           where((a.id === s.artistId) and (st.songId === s.id) and (st.collectionId in collections))
           groupBy(a.id)
           compute(a.name, countDistinct(s.id), countDistinct(s.albumId))
-          // orderBy(asc_desc(a.name))
+          orderBy(asc_desc(a.name))
         )
       }
       (query.count(_ => true), query.page(start, length).toList)

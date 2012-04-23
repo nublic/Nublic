@@ -8,9 +8,8 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
-import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.js.JSAlbum;
 import com.nublic.app.music.client.datamodel.js.JSAlbumResponse;
@@ -35,14 +34,12 @@ public class AlbumMessage extends Message {
 	AlbumHandler albumHandler;
 	// Necessary to know if handler must be called
 	int targetScreen;
-	DataModel model;
 
-	public AlbumMessage(String artistId, String inCollection, AlbumHandler ah, int currentScreen, DataModel model) {
+	public AlbumMessage(String artistId, String inCollection, AlbumHandler ah, int currentScreen) {
 		this.artistId = artistId;
 		this.inCollection = inCollection;
 		this.albumHandler = ah;
 		this.targetScreen = currentScreen;
-		this.model = model;
 	}
 
 	@Override
@@ -56,7 +53,7 @@ public class AlbumMessage extends Message {
 		} else {
 			url.append("all");
 		}
-		url.append("/desc/0/32000/");
+		url.append("/asc/0/32000/");
 		// Add possible collection filter
 		if (inCollection != null) {
 			url.append(inCollection);
@@ -80,12 +77,14 @@ public class AlbumMessage extends Message {
 
 				AlbumInfo info = new AlbumInfo(album.getId(), album.getName(), album.getSongs(), album.getArtists());
 				answerList.add(info);
-				// We take the opportunity to add the album to the model cache
-				Controller.INSTANCE.getModel().getAlbumCache().put(info.getId(), info);
+				if (inCollection == null && artistId == null) {
+					// We take the opportunity to add the album to the model cache
+					Controller.INSTANCE.getModel().getAlbumCache().put(info.getId(), info);
+				}
 			}
 
 			// Only if the message arrives on time to fill the screen it was meant for
-			if (targetScreen == model.getCurrentScreen()) {
+			if (targetScreen == Controller.INSTANCE.getModel().getCurrentScreen()) {
 				albumHandler.onAlbumChange(answerList);
 			}
 		} else {

@@ -25,7 +25,6 @@ public abstract class SequenceHelper <M extends Message> {
 	}
 	
 	public void send(final M message, RequestBuilder.Method method) {
-		
 		// Assigns a sequence number and adds the message to the list safely
 		synchronized (lock) {
 			message.setSequenceNumber(lastSequenceNumber);
@@ -46,16 +45,16 @@ public abstract class SequenceHelper <M extends Message> {
 			if (method.equals(RequestBuilder.POST)
 					|| method.equals(RequestBuilder.PUT)
 					|| method.equals(RequestBuilder.DELETE)) {
-				builder.setHeader("Content-type", "application/x-www-form-urlencoded");
+				builder.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
 				
 				HashMap<String, String> params = message.getParams();
 				for (String key : params.keySet()) {
 					if (postData.length() != 0) {
 						postData.append("&");
 					}
-					postData.append(key);
+					postData.append(URL.encodeQueryString(key));
 					postData.append("=");
-					postData.append(params.get(key));
+					postData.append(URL.encodeQueryString(params.get(key)));
 				}				
 			}
 			

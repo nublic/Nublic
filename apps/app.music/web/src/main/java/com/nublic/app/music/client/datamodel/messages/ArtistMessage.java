@@ -8,9 +8,8 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Controller;
-import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.js.JSArtist;
 import com.nublic.app.music.client.datamodel.js.JSArtistResponse;
@@ -35,14 +34,11 @@ public class ArtistMessage extends Message {
 	ArtistHandler artistHandler;
 	// Necessary to know if handler must be called
 	int targetScreen;
-	DataModel model;
-	
 
-	public ArtistMessage(String collection, ArtistHandler ah, int currentScreen, DataModel model) {
+	public ArtistMessage(String collection, ArtistHandler ah, int currentScreen) {
 		collectionId = collection;
 		artistHandler = ah;
 		this.targetScreen = currentScreen;
-		this.model = model;
 	}
 
 	@Override
@@ -50,7 +46,7 @@ public class ArtistMessage extends Message {
 		StringBuilder url = new StringBuilder();
 		url.append(GWT.getHostPageBaseURL());
 		url.append("server/artists");
-		url.append("/desc/0/32000/");
+		url.append("/asc/0/32000/");
 		if (collectionId != null) {
 			url.append(collectionId);
 		}
@@ -79,7 +75,7 @@ public class ArtistMessage extends Message {
 				}
 				
 				// Only if the message arrives on time to fill the screen it was meant for
-				if (targetScreen == model.getCurrentScreen()) {
+				if (targetScreen == Controller.INSTANCE.getModel().getCurrentScreen()) {
 					artistHandler.onArtistChange(answerList);
 				}
 			}

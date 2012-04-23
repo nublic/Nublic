@@ -67,8 +67,9 @@ class Playlist(val id: Long, var name: String, var user: String) extends KeyedEn
   lazy val songs = Database.songPlaylists.right(this)
 }
 
-class SongPlaylist(val songId: Long, var playlistId: Long, val position: Int) extends KeyedEntity[CompositeKey2[Long, Int]] {
-  def id = compositeKey(playlistId, position)
+class SongPlaylist(val id: Long, val songId: Long, val playlistId: Long, var position: Long) extends KeyedEntity[Long] {
+  def this() = this(0, 0, 0, 0)
+  def this(songId: Long, playlistId: Long, position: Long) = this(0, songId, playlistId, position)
 }
 
 object Database extends Schema {
@@ -104,7 +105,8 @@ object Database extends Schema {
   val songCollections = manyToManyRelation(songs, collections).
     via[SongCollection]((s, t, st) => (s.id === st.songId, t.id === st.collectionId))
   val songPlaylists = manyToManyRelation(songs, playlists).
-    via[SongPlaylist]((s, p, sp) => (s.id === sp.songId, p.id === sp.playlistId))
+       via[SongPlaylist]((s, p, sp) => (s.id === sp.songId, p.id === sp.playlistId))
+  // val songPlaylists = table[SongPlaylist]
   
   def songByFilename(file: String) = maybe(songs.where(s => s.file === file))
   def artistByNameNormalizing(name: String) = maybe(artists.where(a => a.normalized === StringUtil.normalize(name)))
@@ -115,6 +117,9 @@ object Database extends Schema {
   def isPlaylistOfUser(pid: Long, user: String) = playlists.lookup(pid) match {
     case None     => false
     case Some(pl) => pl.user == user
+  }
+  def getPlaylistCount(plid: Long) = inTransaction {
+    Database.songPlaylists.count(sp => sp.playlistId == plid)
   }
   
   def maybe[R](q: Query[R]): Option[R] = q.headOption

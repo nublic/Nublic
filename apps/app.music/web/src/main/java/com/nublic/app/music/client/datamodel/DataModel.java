@@ -12,6 +12,7 @@ import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler;
 import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
@@ -20,12 +21,14 @@ import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.Pla
 import com.nublic.app.music.client.datamodel.handlers.TagsChangeHandler.TagsChangeEvent;
 import com.nublic.app.music.client.datamodel.messages.AddPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AddTagMessage;
+import com.nublic.app.music.client.datamodel.messages.AddToCollectionMessage;
 import com.nublic.app.music.client.datamodel.messages.AddToPlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.AlbumMessage;
 import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
+import com.nublic.app.music.client.datamodel.messages.MovePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
 import com.nublic.app.music.client.datamodel.messages.SavePlaylistMessage;
@@ -44,7 +47,7 @@ public class DataModel {
 	List<PlaylistsChangeHandler> playlistsHandlers = new ArrayList<PlaylistsChangeHandler>();
 
 	// Sending messages
-	int currentScreen = 0;
+	int currentScreen = 0; // newScreen means that further received messages are ignored if have a currentScreen number less than current one
 	
 	// Caches to archive albums and artists
 	Cache<String, AlbumInfo> albumCache;
@@ -188,7 +191,7 @@ public class DataModel {
 		if (newScreen) {
 			increaseCurrentScreen();
 		}
-		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen, this);
+		AlbumMessage am = new AlbumMessage(artist, collection, ah, currentScreen);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 	
@@ -200,7 +203,7 @@ public class DataModel {
 		if (newScreen) {
 			increaseCurrentScreen();
 		}
-		ArtistMessage am = new ArtistMessage(collection, ah, currentScreen, this);
+		ArtistMessage am = new ArtistMessage(collection, ah, currentScreen);
 		SequenceHelper.sendJustOne(am, RequestBuilder.GET);
 	}
 
@@ -210,7 +213,6 @@ public class DataModel {
 		currentScreen++;
 	}
 
-	
 	// methods to change the data in server and where proceeds
 	public void putNewTag(String name) {
 		AddTagMessage atm = new AddTagMessage(name);
@@ -235,6 +237,17 @@ public class DataModel {
 	public void deletePlaylist(String id) {
 		DeletePlaylistMessage dpm = new DeletePlaylistMessage(id);
 		SequenceHelper.sendJustOne(dpm, RequestBuilder.DELETE);
+	}
+	
+	public void addToCollection(String collectionId, SongInfo song) {
+		AddToCollectionMessage atc = new AddToCollectionMessage(collectionId, song);
+		SequenceHelper.sendJustOne(atc, RequestBuilder.PUT);
+	}
+	
+	public void addToCollection(String collectionId, List<SongInfo> songList) {
+		for (SongInfo s : songList) {
+			addToCollection(collectionId, s);
+		}
 	}
 	
 	// current playlist manage methods
@@ -264,6 +277,22 @@ public class DataModel {
 	
 	public void clearCurrentPlaylist() {
 		currentPlaylist.clear();
+	}
+	
+	public void moveSongInPlaylist(String playlistId, int from, int to, MoveSongHandler msh) {
+		if (playlistId.equals(Constants.CURRENT_PLAYLIST_ID)) {
+			SongInfo s = currentPlaylist.get(from);
+			currentPlaylist.add(to, s);
+			currentPlaylist.remove(from > to ? from + 1 : from);
+			msh.onSongMoved(playlistId, from, to);
+		} else {
+			MovePlaylistSongMessage mpsm = new MovePlaylistSongMessage(playlistId, from, to, msh);
+			SequenceHelper.sendJustOne(mpsm, RequestBuilder.POST);
+		}
+	}
+	
+	public void updateMoveInCache(String id, int from, int to) {
+		// TODO: updateMoveInCache (we're not implementing cache yet)
 	}
 
 	public synchronized void removeFromPlaylist(String playlistId, int row, DeleteButtonHandler dbh) {

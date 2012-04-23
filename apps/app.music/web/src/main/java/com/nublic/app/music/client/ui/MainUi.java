@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.DataModel;
@@ -138,35 +139,42 @@ public class MainUi extends Composite {
 			}
 		}
 	}
-	
+
 	public void showAlbumList(List<AlbumInfo> albumList, String artistId, String collectionId) {
 		AlbumPanel albPanel = new AlbumPanel(artistId, collectionId);
 		albPanel.setAlbumList(albumList);
-		mainPanel.setWidget(albPanel);
+		setMainWidget(albPanel);
 	}
-	
+
 	public void showArtistList(List<ArtistInfo> answerList, String collectionId) {
 		setSelectedCollection(collectionId);
 		
 		ArtistPanel artPanel = new ArtistPanel(collectionId);
 		artPanel.setArtistList(answerList);
-		mainPanel.setWidget(artPanel);
+		setMainWidget(artPanel);
 	}
 	
 	public void showSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String collectionId) {
 		SongPanel songPanel = new SongPanel(albumId, collectionId);
 		songPanel.setSongList(total, from, to, answerList, albumId, collectionId);
-		mainPanel.setWidget(songPanel);
+		setMainWidget(songPanel);
 	}
+	
 	
 	public void showPlaylist(int total, int from, int to, List<SongInfo> answerList, String playlistId) {
 		setSelectedPlaylist(playlistId);
 		
 		PlaylistPanel plPanel = new PlaylistPanel(playlistId);
 		plPanel.setSongList(total, from, to, answerList);
-		mainPanel.setWidget(plPanel);
+		mainPanel.setWidget(plPanel); // Playlists do have a center drop controller
 	}
-	
+
+	public void setMainWidget(Widget w) {
+		// If panel doesn't have a center drop controller use this method
+		Controller.INSTANCE.removeCenterDropController();
+		mainPanel.setWidget(w);
+	}
+
 	public NublicPlayer getPlayer() {
 		if (player == null) {
 			error("No player plugin available");
@@ -192,6 +200,15 @@ public class MainUi extends Composite {
 	
 	public boolean isCurrentPlaylistBeingShown() {
 		return currentPlaylistBeingShown;
+	}
+	
+	public void moveRowsInPlaylist(String playlistId, int from, int to) {
+		Widget centralWidget = mainPanel.getWidget();
+		
+		if (centralWidget instanceof PlaylistPanel) {
+			PlaylistPanel playlistPanel = (PlaylistPanel) centralWidget;
+			playlistPanel.moveRowsInPlaylist(playlistId, from, to);
+		}
 	}
 	
 	public void error(String message) {

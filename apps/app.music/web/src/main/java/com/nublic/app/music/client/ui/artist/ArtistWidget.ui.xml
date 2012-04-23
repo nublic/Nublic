@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:com.nublic.app.music.client.ui.artist">
 	<ui:style type='com.nublic.app.music.client.ui.artist.ArtistWidget.ArtistStyle'>
 		.inlineblock {
 			display: inline-block;
@@ -36,7 +37,7 @@
 		<!-- Artist display -->
 		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
 			<g:HorizontalPanel width="48px" height="48px" horizontalAlignment="center" verticalAlignment="middle">
-				<g:Image ui:field="artistImage" addStyleNames="{style.artlimits} {style.handover}"/>
+				<my:ArtistImage ui:field="artistImage" addStyleNames="{style.artlimits} {style.handover}"/>
 			</g:HorizontalPanel>
 			<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.leftmargin} {style.rightmargin} {style.myh3andahalf}"/>
 		</g:HorizontalPanel>

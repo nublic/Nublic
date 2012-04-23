@@ -6,8 +6,6 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.ErrorEvent;
-import com.google.gwt.event.dom.client.ErrorHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -16,18 +14,19 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.util.widgets.ImageHelper;
 
 //GET /artist-art/:artist-id
 //* Retrieve the image associated with an artist
@@ -46,7 +45,7 @@ public class ArtistWidget extends Composite {
 	}
 
 	@UiField ArtistStyle style;
-	@UiField Image artistImage;
+	@UiField ArtistImage artistImage;
 	@UiField Hyperlink artistNameLabel;
 	@UiField FlowPanel albumsPanel;
 	@UiField HorizontalPanel labelAndButtonsPanel;
@@ -85,17 +84,15 @@ public class ArtistWidget extends Composite {
 	}
 
 	private void setImage() {
-		artistImage.addErrorHandler(new ErrorHandler() {
-			@Override
-			public void onError(ErrorEvent event) {
-				artistImage.setResource(Resources.INSTANCE.artist());
-			}
-		});
-		artistImage.setUrl(artist.getImageUrl());
+		ImageHelper.setImage(artistImage, artist.getImageUrl(), Resources.INSTANCE.artist());
+		
+		// Drag and drop
+		artistImage.setProperties(artist.getId(), collectionId, artist.getNumberOfSongs());
+		Controller.INSTANCE.makeDraggable(artistImage);
 	}
 
 	private void setClickTarget() {
-		final String target = artist.getTargetHistoryToken(collectionId);
+		final String target = Utils.getTargetHistoryToken(artist.getId(), null, collectionId, null);
 		artistNameLabel.setTargetHistoryToken(target);
 		artistImage.addClickHandler(new ClickHandler() {
 			@Override
@@ -111,7 +108,7 @@ public class ArtistWidget extends Composite {
 			@Override
 			public void onAlbumChange(List<AlbumInfo> answerList) {
 				for (AlbumInfo a : answerList) {
-					AlbumInArtist aw = new AlbumInArtist(a, collectionId);
+					AlbumInArtist aw = new AlbumInArtist(a, artist.getId(), collectionId);
 					aw.getElement().addClassName(style.inlineblock());
 					albumsPanel.add(aw);
 				}

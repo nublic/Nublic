@@ -2,12 +2,12 @@ Source: nublic-app-browser-server
 Section: nublic
 Priority: extra
 Maintainer: Nublic Packaging Team <packaging@nublic.com>
-Build-Depends: debhelper (>= 8.0.0), maven2, junit4, scala, libdbus-java
+Build-Depends: debhelper (>= 8.0.0), junit4, scala, libdbus-java
 Standards-Version: 3.9.2
 Homepage: http://nublic.com
 
 Package: nublic-app-browser-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat6, scala-library, libdbus-java, ffmpeg, lame, imagemagick, flvtool2, unoconv, libnublic-file-watcher-scala, libnublic-files-and-users-java, libavcodec-extra-53, djvulibre-bin, libtiff-tools, ghostscript
+Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, ffmpeg, lame, imagemagick, flvtool2, unoconv, libnublic-file-watcher-scala, libnublic-files-and-users-java, libavcodec-extra-53, djvulibre-bin, libtiff-tools, ghostscript
 Description: Nublic Browser app - server
  Browser app for the Nublic platform - server part

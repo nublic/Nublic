@@ -8,10 +8,6 @@ import com.bramosystems.oss.player.core.event.client.SeekChangeHandler;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ErrorEvent;
-import com.google.gwt.event.dom.client.ErrorHandler;
-import com.google.gwt.event.dom.client.LoadEvent;
-import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.resources.client.CssResource;
@@ -28,12 +24,13 @@ import com.kiouri.sliderbar.client.event.BarValueChangedHandler;
 import com.kiouri.sliderbar.client.solution.simplevertical.SliderBarSimpleVertical;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
+import com.nublic.util.widgets.ImageHelper;
 
 public class PlayerLayout extends Composite {
 	private static PlayerLayoutUiBinder uiBinder = GWT.create(PlayerLayoutUiBinder.class);
@@ -170,20 +167,8 @@ public class PlayerLayout extends Composite {
 		if (albumId == null) {
 			albumArt.setVisible(false);
 		} else {
-			albumArt.addErrorHandler(new ErrorHandler() {
-				@Override
-				public void onError(ErrorEvent event) {
-					albumArt.setResource(Resources.INSTANCE.album());
-					albumArt.setVisible(true);
-				}
-			});
-			albumArt.addLoadHandler(new LoadHandler() {
-				@Override
-				public void onLoad(LoadEvent event) {
-					albumArt.setVisible(true);					
-				}
-			});
-			albumArt.setUrl(AlbumInfo.getAlbumImageUrl(albumId));
+			ImageHelper.setImage(albumArt, AlbumInfo.getAlbumImageUrl(albumId), Resources.INSTANCE.album());
+			albumArt.setVisible(true);
 		}
 	}
 

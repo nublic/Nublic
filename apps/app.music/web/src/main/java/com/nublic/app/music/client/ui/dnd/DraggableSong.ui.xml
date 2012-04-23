@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.padding {
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+		.opacity {
+			opacity: 0.4;
+		}
+	</ui:style>
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
+	
+	<g:HTMLPanel addStyleNames="{style.padding}">
+		<g:Image resource='{res.drag4}' addStyleNames="{style.opacity}"/> <!-- 4, 5, 3, 6, 1, 2 -->
+	</g:HTMLPanel>
+</ui:UiBinder>

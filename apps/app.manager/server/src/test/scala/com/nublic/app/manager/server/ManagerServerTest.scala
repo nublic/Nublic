@@ -8,7 +8,8 @@ import org.scalatest.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner]) // makes test run with Maven Surefire
 class ManagerServerTests extends ScalatraFunSuite with ShouldMatchers {
-  addFilter(classOf[ManagerServer], "/*")
+  addServlet(classOf[ManagerServer], "/*")
+  // addFilter(classOf[ManagerServer], "/*")
 
   test("GET / returns status 200") {
     get("/") {

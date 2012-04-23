@@ -22,9 +22,9 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
@@ -33,12 +33,14 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.dnd.DraggableSong;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.range.Range;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class SongList extends Composite implements ScrollHandler {
 	private static SongListUiBinder uiBinder = GWT.create(SongListUiBinder.class);
@@ -55,6 +57,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
+	@UiField SimplePanel emptyPanel;
 	Widget scrollPanel;
 	int numberOfSongs;	
 	
@@ -89,10 +92,10 @@ public abstract class SongList extends Composite implements ScrollHandler {
 			});
 		}
 
-		Window.addResizeHandler(new ResizeHandler() {			
+		Window.addResizeHandler(new ResizeHandler() {
 			@Override
 			public void onResize(ResizeEvent event) {
-				onScroll(null);				
+				onScroll(null);
 			}
 		});
 	}
@@ -185,6 +188,10 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	
 	public abstract void setSong(int row, SongInfo s);
 	protected abstract void prepareGrid();
+	
+	public void updateEmptyness() {
+		emptyPanel.setVisible(grid.getRowCount() <= 0);
+	}
 
 	// +++ Methods to fill the grid +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	protected void setLenght(int row, int column, String formattedLength) {
@@ -201,7 +208,6 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	protected void setButtons(int row, int column, SongInfo s, PlayButtonHandler pbh, DeleteButtonHandler dbh) {
 		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
-		buttonLine.getElement().addClassName(style.rightmargin());
 		buttonLine.setPlayButtonHandler(pbh);
 		buttonLine.setDeleteButtonHandler(dbh);
 		grid.setWidget(row, column, buttonLine);
@@ -259,6 +265,13 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		});
 		artistCache.obtain(s.getArtistId());
 		grid.setWidget(row, column, artistLabel);
+	}
+	
+	protected void setGrabber(int row, int column, SongInfo s) {
+//		HTML grabber = new HTML("[Grab me]");
+		DraggableSong grabber = new DraggableSong(row, s);
+		grid.setWidget(row, column, grabber);
+		Controller.INSTANCE.makeDraggable(grabber);
 	}
 
 }

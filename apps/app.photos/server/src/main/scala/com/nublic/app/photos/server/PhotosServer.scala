@@ -25,41 +25,79 @@ import java.util.Hashtable
 import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import com.nublic.filesAndUsers.java._
+import scala.util.Random
+import java.net.URLDecoder
 
-class MusicServer extends ScalatraFilter with JsonSupport {
+class PhotosServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
   val THE_REST = "splat"
   val ALL_OF_SOMETHING = "all"
   
-  val watcher = new PhotoActor(applicationContext)
+  val watcher = new PhotoActor()
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
-  
-  var __extraParams : Option[scala.collection.immutable.Map[String, Seq[String]]] = None
-  
-  def _extraParams : Map[String, Seq[String]] = {
-    if (__extraParams == None) {
-      val ht = HttpUtils.parsePostData(request.getContentLength(),
-          request.getInputStream())
-      __extraParams = Some(JavaConversions.mapAsScalaMap(ht.asInstanceOf[Hashtable[String, Array[String]]]).toMap.map(f => (f._1, f._2.toSeq)))
+
+  def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
+    val v = s.trim()
+    if (v == "") {
+      List()
+    } else {
+      v.split(sep).toList.map(_.trim()).filter(_ != "")
     }
-    __extraParams.get
   }
   
-  protected val extraParams = new MultiMapHeadView[String, String] with MapWithIndifferentAccess[String] {
-    protected def multiMap = _extraParams
+  var _extraParams : Option[scala.collection.immutable.Map[String, String]] = None
+  
+  def extraParams : Map[String, String] = {
+    if (_extraParams == None) {
+      // Get body
+      val len = request.getContentLength()
+      val in = request.getInputStream()
+      val bytes = new Array[Byte](len)
+      var offset = 0
+      do {
+        val inputLen = in.read(bytes, offset, len - offset)
+        if (inputLen <= 0) {
+          throw new IllegalArgumentException("unable to parse body")
+        }
+        offset += inputLen
+      } while ((len - offset) > 0)
+      val body = new String(bytes, 0, len, "8859_1");
+
+      // Try to detect charset
+      val charset = if (request.getHeader("Content-Type") != null) {
+        val ct = request.getHeader("Content-Type")
+        val charset_index = ct.indexOf("charset=")
+        if (charset_index != -1) {
+          ct.substring(charset_index + "charset=".length()).trim().toUpperCase()
+        } else {
+          "UTF-8"
+        }
+      } else {
+        "UTF-8"
+      }
+
+      // Parse body
+      val tuples = splitThatRespectsReasonableSemantics("&")(body).map(t => {
+        val e = splitThatRespectsReasonableSemantics("=")(t)
+        (URLDecoder.decode(e(0), charset), URLDecoder.decode(e(1), charset))
+      } )
+      
+      _extraParams = Some(Map() ++ tuples)
+    }
+    _extraParams.get
   }
   
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
   def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
@@ -84,20 +122,11 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     withUser(action)
   }
   
-  def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
-    def v = s.trim()
-    if (v == "") {
-      List()
-    } else {
-      v.split(sep).toList.map(_.trim()).filter(_ != "")
-    }
-  }
-  
   // Collections
   // ===========
   getUser("/albums") { _ =>
     transaction {
-      val albums = Database.albums.toList
+      val albums = Database.albums.toList.sortWith((a1, a2) => a1.name.compareToIgnoreCase(a2.name) < 0)
       val json_albums = albums.map(c => JsonAlbum(c.id, c.name))
       write(json_albums)
     }
@@ -109,8 +138,9 @@ class MusicServer extends ScalatraFilter with JsonSupport {
       Database.albumByName(name) match {
         case Some(c) => c.id
         case None    => {
-          val newAlbum = new Album(name)
-          Database.albums.insert(new Album)
+          val newAlbum = new Album()
+          newAlbum.name = name
+          Database.albums.insert(newAlbum)
           newAlbum.id.toString()
         }
       }
@@ -133,7 +163,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   putUser("/album/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val photos = splitThatRespectsReasonableSemantics(",")(params("photos")).map(Long.parseLong(_))
+    val photos = splitThatRespectsReasonableSemantics(",")(extraParams("photos")).map(Long.parseLong(_))
     transaction {
       Database.albums.lookup(id).map(album =>
         photos.map(photoId => 
@@ -154,7 +184,7 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   deleteUser("/album/:id") { _ =>
     val id = Long.parseLong(params("id"))
-    val photos = splitThatRespectsReasonableSemantics(",")(params("photos")).map(Long.parseLong(_))
+    val photos = splitThatRespectsReasonableSemantics(",")(extraParams("photos")).map(Long.parseLong(_))
     transaction {
       Database.albums.lookup(id).map(album =>
         Database.photoAlbums.deleteWhere(x =>
@@ -180,14 +210,14 @@ class MusicServer extends ScalatraFilter with JsonSupport {
   
   get("/photos/") {
     // Typical setup: 20 first elements in alphabetical order
-    redirect("alpha/asc/0/20/")
+    redirect("title/asc/0/20/")
   }
   
-  get("/songs/:order/:asc/:start/:length") {
+  get("/photos/:order/:asc/:start/:length") {
     redirect(params("length") + "/")
   }
   
-  getUser("/songs/:order/:asc/:start/:length/*") { _ =>
+  getUser("/photos/:order/:asc/:start/:length/*") { _ =>
     // Get start and length
     val start = Integer.parseInt(params("start"))
     val length = Integer.parseInt(params("length"))
@@ -282,7 +312,6 @@ class MusicServer extends ScalatraFilter with JsonSupport {
         halt(304)
       }
     }
-    halt(500)
   }
   
   def get_image_using(photo: Option[Photo], last_modified: Long, f: String => File) = {
@@ -295,18 +324,42 @@ class MusicServer extends ScalatraFilter with JsonSupport {
     }
   }
   
-  getUser("/view/:photoid.mp3") { _ =>
+  getUser("/view/:photoid.png") { _ =>
     val photo_id = Long.parseLong(params("photoid"))
     val last_modified = request.getDateHeader("If-Modified-Since")
     val photo: Option[Photo] = transaction { Database.photos.lookup(photo_id) }
     get_image_using(photo, last_modified, BrowserFolder.getImage)
   }
   
-  getUser("/thumbnail/:photoid.mp3") { _ =>
+  getUser("/thumbnail/:photoid.png") { _ =>
     val photo_id = Long.parseLong(params("photoid"))
     val last_modified = request.getDateHeader("If-Modified-Since")
     val photo: Option[Photo] = transaction { Database.photos.lookup(photo_id) }
     get_image_using(photo, last_modified, BrowserFolder.getThumbnail)
+  }
+  
+  getUser("/random/:time/:albumid.png") {_ =>
+    transaction {
+      val albumid = Long.parseLong(params("albumid"));
+      Database.albums.lookup(albumid) match {
+        case None        => halt(404)
+        case Some(album) => {
+          val no_photos = album.photos.count(_ => true)
+          if (no_photos == 0) {
+            halt(404)
+          } else {
+            val r = new Random()
+            val photo = album.photos.drop(r.nextInt(no_photos) - 1).head
+            response.setContentType("image/png")
+            BrowserFolder.getThumbnail(photo.file)
+          }
+        }
+      }
+    }
+  }
+  
+  getUser("/random/:albumid.png") { _ =>
+    redirect(System.currentTimeMillis() + "/" + params("albumid") + ".png")
   }
   
   notFound {  // Executed when no other route succeeds

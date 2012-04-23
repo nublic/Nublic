@@ -14,7 +14,7 @@ import java.io.FileWriter
 import java.io.PrintWriter
 //import java.util.logging.Logger
 
-class MusicActor(val servletContext : ServletContext) extends FileWatcherActor("Music") {  
+class MusicActor extends FileWatcherActor("Music") {  
   
 //  Logger.global.severe("Starting music actor 1")
   

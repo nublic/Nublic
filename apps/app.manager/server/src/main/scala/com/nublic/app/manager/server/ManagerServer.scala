@@ -19,8 +19,9 @@ import org.scalatra.util.MultiMapHeadView
 import scala.util.Random
 import java.util.Date
 import java.io.PrintWriter
+import java.net.URLDecoder
 
-class ManagerServer extends ScalatraFilter with JsonSupport {
+class ManagerServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_APP_DATA_ROOT = "/var/lib/nublic/apps"
@@ -32,28 +33,64 @@ class ManagerServer extends ScalatraFilter with JsonSupport {
   
   implicit val formats = Serialization.formats(NoTypeHints)
   
-  var __extraParams : Option[scala.collection.immutable.Map[String, Seq[String]]] = None
-  
-  def _extraParams : Map[String, Seq[String]] = {
-    if (__extraParams == None) {
-      val ht = HttpUtils.parsePostData(request.getContentLength(),
-          request.getInputStream())
-      __extraParams = Some(JavaConversions.mapAsScalaMap(ht.asInstanceOf[Hashtable[String, Array[String]]]).toMap.map(f => (f._1, f._2.toSeq)))
+  def splitThatRespectsReasonableSemantics(sep: String)(s: String) : List[String] = {
+    val v = s.trim()
+    if (v == "") {
+      List()
+    } else {
+      v.split(sep).toList.map(_.trim()).filter(_ != "")
     }
-    __extraParams.get
   }
   
-  protected val extraParams = new MultiMapHeadView[String, String] with MapWithIndifferentAccess[String] {
-    protected def multiMap = _extraParams
+  var _extraParams : Option[scala.collection.immutable.Map[String, String]] = None
+  
+  def extraParams : Map[String, String] = {
+    if (_extraParams == None) {
+      // Get body
+      val len = request.getContentLength()
+      val in = request.getInputStream()
+      val bytes = new Array[Byte](len)
+      var offset = 0
+      do {
+        val inputLen = in.read(bytes, offset, len - offset)
+        if (inputLen <= 0) {
+          throw new IllegalArgumentException("unable to parse body")
+        }
+        offset += inputLen
+      } while ((len - offset) > 0)
+      val body = new String(bytes, 0, len, "8859_1");
+
+      // Try to detect charset
+      val charset = if (request.getHeader("Content-Type") != null) {
+        val ct = request.getHeader("Content-Type")
+        val charset_index = ct.indexOf("charset=")
+        if (charset_index != -1) {
+          ct.substring(charset_index + "charset=".length()).trim().toUpperCase()
+        } else {
+          "UTF-8"
+        }
+      } else {
+        "UTF-8"
+      }
+
+      // Parse body
+      val tuples = splitThatRespectsReasonableSemantics("&")(body).map(t => {
+        val e = splitThatRespectsReasonableSemantics("=")(t)
+        (URLDecoder.decode(e(0), charset), URLDecoder.decode(e(1), charset))
+      } )
+      
+      _extraParams = Some(Map() ++ tuples)
+    }
+    _extraParams.get
   }
   
   def put2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = put(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   
   def delete2(routeMatchers: org.scalatra.RouteMatcher)(action: =>Any) = delete(routeMatchers) {
-    __extraParams = None
+    _extraParams = None
     action
   }
   

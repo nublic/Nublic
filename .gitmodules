@@ -7,3 +7,6 @@
 [submodule "bootstrap"]
 	path = bootstrap
 	url = git://github.com/serras/bootstrap.git
+[submodule "player"]
+	path = player
+	url = ssh://git@github.com/nublic/bst-player.git

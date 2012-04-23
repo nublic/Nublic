@@ -11,9 +11,9 @@ import java.text.Normalizer
 import java.util.regex.Pattern
 import org.squeryl.dsl.CompositeKey2
 
-class Photo(val id: Long, var file: String, var title: String, var date: Long)
+class Photo(val id: Long, var file: String, var title: String, var date: Long, var lastModified: Long)
   extends KeyedEntity[Long] {
-  def this() = this(0, "", "", 0)
+  def this() = this(0, "", "", 0, 0)
   
   lazy val albums = Database.photoAlbums.left(this)
 }
@@ -47,4 +47,16 @@ object Database extends Schema {
   def photoByFilename(file: String) = maybe(photos.where(p => p.file === file))
   def albumByName(name: String) = maybe(albums.where(a => a.name === name))
   def maybe[R](q: Query[R]): Option[R] = q.headOption
+  
+  def getOrCreateAlbum(album_name: String): Album = {
+    albumByName(album_name) match {
+      case Some(album) => album
+      case None        => {
+        val album = new Album()
+        album.name = album_name
+        Database.albums.insert(album)
+        album
+      }
+    }
+  }
 }

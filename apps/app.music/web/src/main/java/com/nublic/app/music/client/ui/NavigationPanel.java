@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
-import com.nublic.app.music.client.datamodel.Controller;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 
@@ -46,13 +46,15 @@ public class NavigationPanel extends Composite {
 					activeTag = allMusic;
 					selectAllMusic();
 					addAddTagsHandlers();
+					Controller.INSTANCE.createLeftSongDropController(NavigationPanel.this);
+					Controller.INSTANCE.createLeftAlbumDropController(NavigationPanel.this);
+					Controller.INSTANCE.createLeftArtistDropController(NavigationPanel.this);
 				}
 			}
 		});
 	}	
 
 	public void createCurrentPlaylist() {
-//		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID);
 		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
 		pw.addIconAction(new ClickHandler() {
 			@Override
@@ -103,7 +105,37 @@ public class NavigationPanel extends Composite {
 		tagToRemove.removeFromParent();
 	}
 	
-	// Selecting methods
+	// Getters
+	public TagWidget getSelectedTag() {
+		return activeTag;
+	}
+	
+	public TagWidget getIntersectionTag(int mouseX, int mouseY) {
+		// is all music
+		if (intersects(mouseX, mouseY, allMusic)) {
+			return allMusic;
+		}
+		// is a collection
+		for (TagWidget col : collections.values()) {
+			if (intersects(mouseX, mouseY, col)) {
+				return col;
+			}
+		}
+		// is a playlist
+		for (TagWidget pl : playlists.values()) {
+			if (intersects(mouseX, mouseY, pl)) {
+				return pl;
+			}
+		}
+		return null;
+	}
+	
+	public boolean intersects(int mouseX, int mouseY, TagWidget tw) {
+		// Only checking Y coordinate..
+		return (tw.getAbsoluteTop() < mouseY && mouseY < tw.getAbsoluteTop() + tw.getOffsetHeight());
+	}
+	
+	// Selecting methods	
 	public void selectAllMusic() {
 		select(allMusic);
 	}
@@ -117,9 +149,13 @@ public class NavigationPanel extends Composite {
 	}
 
 	public void select(TagWidget e) {
-		activeTag.select(false);
+		if (activeTag != null) {
+			activeTag.select(false);
+		}
 		activeTag = e;
-		e.select(true);
+		if (e != null) {
+			e.select(true);
+		}
 	}
 
 	// Playing methods

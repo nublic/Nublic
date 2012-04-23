@@ -2,12 +2,12 @@ Source: nublic-app-example-server
 Section: nublic
 Priority: extra
 Maintainer: Nublic Packaging Team <packaging@nublic.com>
-Build-Depends: debhelper (>= 8.0.0), maven2, junit, scala
+Build-Depends: debhelper (>= 8.0.0), junit4, scala
 Standards-Version: 3.9.2
 Homepage: http://nublic.com
 
 Package: nublic-app-example-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat6, scala-library
+Depends: ${misc:Depends}, tomcat7, scala-library
 Description: Nublic Example app - server
  Example app for the Nublic platform - server part

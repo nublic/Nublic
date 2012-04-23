@@ -1,0 +1,10 @@
+#!/bin/bash
+
+service tomcat7 status
+EXIT=$?
+while [ $EXIT ne 0 ]
+do
+    sleep 5
+    service tomcat7 status
+    EXIT=$?
+done

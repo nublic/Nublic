@@ -13,7 +13,7 @@ export REPO_DIR="${TARGET_DIR}/repo"
 export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
 export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
 export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
-export DEBUILD="debuild -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
+export DEBUILD="debuild -d -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
 export MAVEN_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=1024m"
 
 # Config options
@@ -34,13 +34,13 @@ initialize() {
     mkdir -p "${MAVEN_REPO_DIR}"
     # Delete previous builds
     rm -rf "${TARGET_DIR}"/*.{deb,build,changes}
-    # Install dbus in maven repo
+    # Install libraries in maven repo
     install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/bst-player/bst-player-api-1.4-SNAPSHOT.jar" com.bramosystems.oss.player bst-player-api 1.4-SNAPSHOT
+    # install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/bst-player/bst-player-api-1.4-SNAPSHOT.jar" com.bramosystems.oss.player bst-player-api 1.4-SNAPSHOT
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
@@ -52,6 +52,15 @@ package_and_install() {
     cd "$1"
     ${MAVEN} clean
     ${MAVEN} install
+    cd "${INITIAL_DIR}"
+}
+
+package_and_install_dev_mode() {
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
+    cd "$1"
+    ${MAVEN} -Pdev-mode clean
+    ${MAVEN} -Pdev-mode install
     cd "${INITIAL_DIR}"
 }
 
@@ -136,6 +145,7 @@ download_serviio() {
     cd "${INITIAL_DIR}"
 }
 
+git submodule update --init --merge
 initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
@@ -143,9 +153,10 @@ build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
+cp 3rd-party-libs/scala/*.deb ${TARGET_DIR}
 build_deb_package 3rd-party-libs/guava
-# download_serviio 0.6.0.1
-# build_submodule_lib serviio
+# bst-player fork
+package_and_install_dev_mode player
 # Base modules
 build_deb_package resource/main/src
 package_and_install resource/java
@@ -161,6 +172,8 @@ install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nu
 # Utilities
 build_deb_package apps/util/gwt
 install_in_maven_repo apps/util/gwt/target/*.jar com.nublic util.gwt 0.0.1-SNAPSHOT
+build_deb_package apps/util/ws-json
+install_in_maven_repo apps/util/gwt/target/*.jar com.nublic websockets-json 0.0.1-SNAPSHOT
 # Manager App
 build_deb_package apps/app.manager/server
 build_deb_package apps/app.manager/web
@@ -176,11 +189,16 @@ build_deb_package apps/app.music/server
 build_deb_package apps/app.music/fs/src
 build_deb_package apps/app.music/web
 build_deb_package apps/app.music
+# Photos App
+build_deb_package apps/app.photos/server
+build_deb_package apps/app.photos/web
+build_deb_package apps/app.photos
 # Extra configuration packages
 build_deb_package conf/apache
 build_deb_package conf/samba
 build_deb_package conf/solr
 build_deb_package conf/tomcat6
+build_deb_package conf/tomcat7
 build_deb_package conf/minidlna
 build_deb_package conf/upstart
 build_deb_package conf/lshell

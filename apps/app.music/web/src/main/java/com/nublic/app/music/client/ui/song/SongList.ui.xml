@@ -8,6 +8,9 @@
 		.alignmiddle {
 			vertical-align: middle;
 		}
+		.aligncenter {
+			text-align: center;
+		}
 		.leftmargin {
 			margin-left: 15px;
 		}
@@ -17,9 +20,24 @@
 		.bottommargin {
 			margin-bottom: 15px;
 		}
+		.row > tbody > tr {
+			border-top: 2px solid #F4F4F4;
+		}
+		.row > tbody > tr:last-child {
+			border-bottom: 2px solid #F4F4F4;
+		}
+		.empty {
+			font-size: 40px;
+			font-weight: bold;
+			line-height: 40px;
+			opacity: 0.1;
+		}
 	</ui:style>
-	<g:FlowPanel addStyleNames="{style.bottommargin} {style.alignmiddle}">
-		<g:Grid ui:field="grid">
+	<g:FlowPanel addStyleNames="{style.bottommargin} {style.alignmiddle} {style.rightmargin}">
+		<g:SimplePanel width="100%" height="300px" addStyleNames="{style.alignmiddle} {style.aligncenter}" ui:field="emptyPanel">
+			<g:Label text="Empty" addStyleNames="{style.empty}"/>
+		</g:SimplePanel>
+		<g:Grid ui:field="grid" addStyleNames="stripped {style.row}" width="100%">
 		</g:Grid>
 	</g:FlowPanel>
 </ui:UiBinder> 

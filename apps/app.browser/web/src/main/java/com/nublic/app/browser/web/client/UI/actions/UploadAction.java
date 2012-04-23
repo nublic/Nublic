@@ -3,9 +3,9 @@ package com.nublic.app.browser.web.client.UI.actions;
 import java.util.ArrayList;
 
 import org.swfupload.client.SWFUpload;
-import org.swfupload.client.SWFUpload.ButtonAction;
-import org.swfupload.client.SWFUpload.ButtonCursor;
-import org.swfupload.client.SWFUpload.WindowMode;
+import org.swfupload.client.ButtonAction;
+import org.swfupload.client.ButtonCursor;
+import org.swfupload.client.WindowMode;
 import org.swfupload.client.UploadBuilder;
 import org.swfupload.client.event.FileDialogCompleteHandler;
 import org.swfupload.client.event.SWFUploadLoadedHandler;
@@ -102,6 +102,7 @@ public class UploadAction extends ActionWidget implements Handler {
 		builder.setButtonPlaceholderID(replacedChildName);
 		builder.setButtonWidth(width);
 		builder.setButtonHeight(height);
+                builder.preventSWFCaching(false);
 		if (text != null) {
 			builder.setButtonText(text);
 		}

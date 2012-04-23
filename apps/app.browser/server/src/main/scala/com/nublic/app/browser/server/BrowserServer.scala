@@ -1,11 +1,11 @@
 package com.nublic.app.browser.server
 
 import java.io.File
+import java.nio.charset.Charset
 import org.scalatra._
 import org.scalatra.liftjson.JsonSupport
 import net.liftweb.json._
 import net.liftweb.json.Serialization.{read, write}
-import org.apache.commons.httpclient.util.URIUtil
 import org.apache.commons.io.FilenameUtils
 import com.nublic.app.browser.server.filewatcher.FileActor
 import com.nublic.app.browser.server.filewatcher.FileFolder
@@ -23,7 +23,7 @@ import java.util.Date
 import scala.util.Random
 import org.apache.commons.lang3.StringUtils
 
-class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSupport {
+class BrowserServer extends ScalatraServlet with JsonSupport with FileUploadSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
@@ -34,7 +34,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   watcher.start()
   
   implicit val formats = Serialization.formats(NoTypeHints)
-  
+
   def withUser(action: User => Any) : Any = {
     val user = new User(request.getRemoteUser())
     action(user)
@@ -49,11 +49,13 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   }
   
   def withPath(param_name: String, allowBlank: Boolean)(action: File => Any) : Any = {
-    val path = URIUtil.decode(params(param_name))
+    val path = params(param_name)
+    Console.println(path)
     if ((path.isEmpty && !allowBlank) || path.contains("..")) {
       halt(403)
     } else {
       val nublic_path = NUBLIC_DATA_ROOT + path
+      Console.println(nublic_path)
       action(new File(nublic_path))
     }
   }
@@ -138,7 +140,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   
   get("/view/*") { // Where * = :file.:type
     withUser { user =>
-      val rest = URIUtil.decode(params(THE_REST))
+      val rest = params(THE_REST)
       if (rest.contains("..") || !rest.contains(".")) {
         // We don't want paths going upwards
         halt(403)
@@ -178,6 +180,9 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   get("/thumbnail/*") {
     withUserAndRestPath(false) { user => file =>
       if (!file.exists() || !user.canRead(file)) {
+        Console.println(Charset.defaultCharset().toString())
+        Console.println("Info for " + file.getPath())
+        Console.println(file.exists())
         halt(404)
       } else {
         val last_modified = request.getDateHeader("If-Modified-Since")
@@ -213,7 +218,7 @@ class BrowserServer extends ScalatraFilter with JsonSupport with FileUploadSuppo
   get("/generic-thumbnail/*") {
     val last_modified = request.getDateHeader("If-Modified-Since")
     if (last_modified == -1 || last_modified < ImageDatabase.LAST_MODIFIED_DATE.getTime()) {
-      val name = URIUtil.decode(params(THE_REST))
+      val name = params(THE_REST)
       response.setContentType("image/png")
       response.setDateHeader("Last-Modified", ImageDatabase.LAST_MODIFIED_DATE.getTime())
       response.setDateHeader("Expires", (new Date()).getTime() + ONE_MONTH_IN_MS)
