@@ -59,6 +59,11 @@ public class AlbumPanel extends Composite {
 			artistCache.obtain(artistId);
 			setViewLinks(false);
 		}
+		
+		if (collectionId != null) {
+			String collectionName = Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName();
+			titleLabel.setText(titleLabel.getText() + " - " + collectionName);
+		}
 
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,

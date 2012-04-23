@@ -70,7 +70,7 @@ public class SongPanel extends Composite {
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
 				@Override
 				public void onCacheUpdated(String k, ArtistInfo v) {
-					titleLabel.setText("All songs from " + v.getName());
+					titleLabel.setText(v.getName());
 				}
 			});
 			artistCache.obtain(artistId);
@@ -89,6 +89,11 @@ public class SongPanel extends Composite {
 			});
 			albumCache.obtain(albumId);
 			setViewLinks(false, false);
+		}
+		
+		if (inCollection != null) {
+			String collectionName = Controller.INSTANCE.getModel().getTagCache().get(inCollection).getName();
+			titleLabel.setText(titleLabel.getText() + " - " + collectionName);
 		}
 
 		// Create button line
