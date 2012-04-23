@@ -141,6 +141,8 @@ public class MainUi extends Composite {
 	}
 
 	public void showAlbumList(List<AlbumInfo> albumList, String artistId, String collectionId) {
+		setSelectedCollection(collectionId);
+		
 		AlbumPanel albPanel = new AlbumPanel(artistId, collectionId);
 		albPanel.setAlbumList(albumList);
 		setMainWidget(albPanel);
@@ -155,6 +157,8 @@ public class MainUi extends Composite {
 	}
 	
 	public void showSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
+		setSelectedCollection(collectionId);
+		
 		SongPanel songPanel = new SongPanel(albumId, artistId, collectionId);
 		songPanel.setSongList(total, from, to, answerList, albumId, artistId, collectionId);
 		setMainWidget(songPanel);
