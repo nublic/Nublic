@@ -40,7 +40,7 @@ initialize() {
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/guava/guava-11.0.2.jar" com.google.guava guava-gwt 11.0.2
+    #install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/guava/guava-11.0.2.jar" com.google.guava guava-gwt 11.0.2
     # install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/bst-player/bst-player-api-1.4-SNAPSHOT.jar" com.bramosystems.oss.player bst-player-api 1.4-SNAPSHOT
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
