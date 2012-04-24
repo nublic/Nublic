@@ -49,7 +49,7 @@
 			max-width: 48px;
 		}
 	</ui:style>
-	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
 	
 	<g:HorizontalPanel verticalAlignment="middle">
 		<!-- Player controls -->

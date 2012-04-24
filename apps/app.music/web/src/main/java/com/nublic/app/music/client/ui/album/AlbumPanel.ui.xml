@@ -12,13 +12,29 @@
 		.leftmargin {
 			margin-left: 15px;
 		}
+		.background {
+			background: transparent;
+			padding: 5px;
+		}
+		.glow:hover {
+			border-color: rgba(82, 168, 236, 0.8);
+			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			outline: 0;
+			outline: thin dotted 9;
+		}
 	</ui:style>
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
 
 	<g:DockLayoutPanel width="100%" height="100%">
 		<g:north size='35'>
 		  <g:HTMLPanel>
 		    <div class="page-header" style="width: 100%;">
 			  <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
+			  	<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background} {style.glow} {style.rightmargin}" title="back to collection">
+					<g:upFace image="{res.leftArrow}"/>
+				</g:PushButton>
 				<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
 				<g:InlineHyperlink text="artist view" addStyleNames="{style.leftmargin}" ui:field="artistViewLink"/>
 				<g:Label text="album view" addStyleNames="{style.leftmargin}"/>

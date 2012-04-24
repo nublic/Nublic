@@ -11,12 +11,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Utils;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.controller.ViewKind;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
-import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -33,6 +34,7 @@ public class AlbumPanel extends Composite {
 	@UiField HorizontalPanel titlePanel;
 	@UiField InlineHyperlink artistViewLink;
 	@UiField InlineHyperlink songViewLink;
+	@UiField PushButton backButton;
 	
 	List<AlbumInfo> albumList;
 	String artistId;
@@ -48,6 +50,7 @@ public class AlbumPanel extends Composite {
 		if (artistId == null) {
 			titleLabel.setText("All albums");
 			setViewLinks(true);
+			backButton.setVisible(false);
 		} else {
 			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
@@ -58,6 +61,7 @@ public class AlbumPanel extends Composite {
 			});
 			artistCache.obtain(artistId);
 			setViewLinks(false);
+			Utils.setBackButton(backButton, collectionId);
 		}
 		
 		if (collectionId != null) {
@@ -71,7 +75,7 @@ public class AlbumPanel extends Composite {
 		ButtonLine b = new ButtonLine(buttonSet);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
-		titlePanel.insert(b, 1);
+		titlePanel.insert(b, 2);
 	}
 
 	public void setAlbumList(List<AlbumInfo> albumList) {
@@ -82,7 +86,7 @@ public class AlbumPanel extends Composite {
 			mainPanel.add(aw);
 		}
 	}
-	
+
 	private void setViewLinks(boolean shouldShowArtist) {
 		if (shouldShowArtist) {
 			String artistTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ARTISTS.toString());

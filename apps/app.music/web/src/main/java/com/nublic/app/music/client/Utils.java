@@ -1,8 +1,12 @@
-package com.nublic.app.music.client.datamodel;
+package com.nublic.app.music.client;
 
 import java.util.HashMap;
 
-import com.nublic.app.music.client.Constants;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.PushButton;
+
 
 public class Utils {
 	public static String getTargetHistoryToken(String artistId, String albumId, String collectionId, String viewKind) {
@@ -34,4 +38,14 @@ public class Utils {
 		}
 		return target.toString();
 	}
+	
+	public static void setBackButton(PushButton b, final String collectionId) {
+		b.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				History.newItem(Utils.getTargetHistoryToken(null, null, collectionId, null));
+			}
+		});
+	}
+	
 }

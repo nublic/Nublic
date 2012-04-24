@@ -70,6 +70,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/up_arrow.png")
 	ImageResource upArrow();
 	
+	@Source("images/left_arrow.png")
+	ImageResource leftArrow();
+	
 	@Source("images/drag1.png")
 	ImageResource drag1();
 	

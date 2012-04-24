@@ -1,6 +1,7 @@
 package com.nublic.app.music.client.datamodel;
 
 import com.google.gwt.core.client.GWT;
+import com.nublic.app.music.client.Utils;
 
 //artist ::= { "id" : $artist-id,
 //        "name": $name,

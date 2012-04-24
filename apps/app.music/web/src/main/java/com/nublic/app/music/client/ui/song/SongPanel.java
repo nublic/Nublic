@@ -13,13 +13,14 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Utils;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.controller.ViewKind;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.SongInfo;
-import com.nublic.app.music.client.datamodel.Utils;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -47,6 +48,7 @@ public class SongPanel extends Composite {
 	@UiField InlineHyperlink artistViewLink;
 	@UiField InlineHyperlink albumViewLink;
 	@UiField Label songViewLabel;
+	@UiField PushButton backButton;
 	
 	String inCollection;
 	String albumId;
@@ -65,6 +67,7 @@ public class SongPanel extends Composite {
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
 			setViewLinks(true, true);
+			backButton.setVisible(false);
 		} else if (artistId != null) {
 			Cache<String, ArtistInfo> artistCache = Controller.INSTANCE.getModel().getArtistCache();
 			artistCache.addHandler(artistId, new CacheHandler<String, ArtistInfo>() {
@@ -77,6 +80,7 @@ public class SongPanel extends Composite {
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
 			setViewLinks(false, true);
+			Utils.setBackButton(backButton, collectionId);
 		} else {
 			Cache<String, AlbumInfo> albumCache = Controller.INSTANCE.getModel().getAlbumCache();
 			albumCache.addHandler(albumId, new CacheHandler<String, AlbumInfo>() {
@@ -89,6 +93,7 @@ public class SongPanel extends Composite {
 			});
 			albumCache.obtain(albumId);
 			setViewLinks(false, false);
+			Utils.setBackButton(backButton, collectionId);
 		}
 		
 		if (inCollection != null) {
@@ -102,7 +107,7 @@ public class SongPanel extends Composite {
 		ButtonLine b = new ButtonLine(buttonSet);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
-		titlePanel.insert(b, 1);
+		titlePanel.insert(b, 2);
 		
 	}
 	
