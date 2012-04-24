@@ -186,10 +186,10 @@ build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
 # Music App
-build_deb_package apps/app.music/server
-build_deb_package apps/app.music/fs/src
-build_deb_package apps/app.music/web
-build_deb_package apps/app.music
+#build_deb_package apps/app.music/server
+#build_deb_package apps/app.music/fs/src
+#build_deb_package apps/app.music/web
+#build_deb_package apps/app.music
 # Photos App
 build_deb_package apps/app.photos/server
 build_deb_package apps/app.photos/web
