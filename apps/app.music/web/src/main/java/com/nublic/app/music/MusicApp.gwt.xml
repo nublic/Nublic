@@ -22,7 +22,10 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
   <inherits name='com.nublic.theme.NublicTheme'/>
 
-  <!-- Other module inherits                                      -->
+  <!-- Internationalitation										  -->
+  <extend-property name="locale" values="es"/>
+  <!-- default locale... -->
+  <!-- <set-property-fallback name="locale" value="en"/> -->
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.nublic.app.music.client.MusicApp'/>
