@@ -14,7 +14,8 @@
 		}
 		.background {
 			background: transparent;
-			padding: 5px;
+			padding: 3px;
+			margin: 3px 15px 3px 3px;
 		}
 		.glow:hover {
 			border-color: rgba(82, 168, 236, 0.8);
@@ -28,7 +29,7 @@
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
 
 	<g:DockLayoutPanel width="100%" height="100%">
-		<g:north size='35'>
+		<g:north size='40'>
 		  <g:HTMLPanel>
 		    <div class="page-header" style="width: 100%;">
 			  <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
@@ -36,9 +37,13 @@
 					<g:upFace image="{res.leftArrow}"/>
 				</g:PushButton>
 				<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
-				<g:InlineHyperlink text="artist view" addStyleNames="{style.leftmargin}" ui:field="artistViewLink"/>
-				<g:Label text="album view" addStyleNames="{style.leftmargin}"/>
-				<g:InlineHyperlink text="song view" addStyleNames="{style.leftmargin}" ui:field="songViewLink"/>
+				<g:HTMLPanel height="33px">
+					<ul class="nav nav-tabs">
+	  					<li><g:InlineHyperlink ui:field="artistViewLink" text="artist view"/></li>
+						<li class="active"><g:InlineHyperlink ui:field="albumViewLink" text="album view"/></li>
+						<li><g:InlineHyperlink ui:field="songViewLink" text="song view"/></li>
+					</ul>
+				</g:HTMLPanel>
 			  </g:HorizontalPanel>
 			</div>
 		  </g:HTMLPanel>

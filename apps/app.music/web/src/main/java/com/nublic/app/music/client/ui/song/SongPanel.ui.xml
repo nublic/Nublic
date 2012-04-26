@@ -20,7 +20,8 @@
 		}
 		.background {
 			background: transparent;
-			padding: 5px;
+			padding: 3px;
+			margin: 3px 15px 3px 3px;
 		}
 		.glow:hover {
 			border-color: rgba(82, 168, 236, 0.8);
@@ -39,7 +40,7 @@
 				<g:HTMLPanel>
 					<div class="page-header" style="width: 100%;">
 						<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
-							<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background} {style.glow} {style.rightmargin}" title="back to collection">
+							<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background} {style.glow}" title="back to collection">
 								<g:upFace image="{res.leftArrow}"/>
 							</g:PushButton>
 							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
