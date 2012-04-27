@@ -26,6 +26,7 @@
   <extend-property name="locale" values="es"/>
   <!-- default locale... -->
   <!-- <set-property-fallback name="locale" value="en"/> -->
+  <set-configuration-property name="locale.useragent" value="Y"/>
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.nublic.app.music.client.MusicApp'/>
