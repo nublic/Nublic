@@ -28,7 +28,10 @@ class DbusSignaler(dbus.service.Object):
     def raise_event(self, ty, pathname, src_pathname, isdir):
         for context in self.contexts:
             if to_utf8(pathname).startswith(context):
-                # sys.stderr.write("Sending to context " + context + " and app " + self.app_name + "\n")
+                #try:
+                #    sys.stderr.write("Sending " + ty + " " +  pathname + " to app " + self.app_name + "\n")
+                #except:
+                #    sys.stderr.write("Sent " + ty + " to " + self.app_name + "\n")
                 self.file_changed(ty, pathname, src_pathname, isdir, context)
     
     def add_context(self, path):

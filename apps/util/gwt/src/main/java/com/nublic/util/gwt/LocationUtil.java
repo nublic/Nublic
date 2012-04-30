@@ -15,4 +15,8 @@ public class LocationUtil {
 	public static String encodeURL(String url) {
 		return replaceQuestionMarks(URL.encode(url));
 	}
+	
+	public static String decodeURL(String url) {
+		return URL.decode(url);
+	}
 }

@@ -5,7 +5,6 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.nublic.util.error.ErrorPopup;
-import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
 import com.nublic.util.messages.Message;
@@ -43,7 +42,7 @@ public class FolderMessage extends Message {
 
 	@Override
 	public String getURL() {
-		return LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getRealPath());
+		return GWT.getHostPageBaseURL() + "server/folders/" + depth + "/" + node.getRealPath();
 	}
 
 	@Override

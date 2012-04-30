@@ -152,6 +152,7 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+cp 3rd-party-libs/python-pyinotify/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/scala/*.deb ${TARGET_DIR}
@@ -186,10 +187,10 @@ build_deb_package apps/app.browser/server
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
 # Music App
-#build_deb_package apps/app.music/server
-#build_deb_package apps/app.music/fs/src
-#build_deb_package apps/app.music/web
-#build_deb_package apps/app.music
+build_deb_package apps/app.music/server
+build_deb_package apps/app.music/fs/src
+build_deb_package apps/app.music/web
+build_deb_package apps/app.music
 # Photos App
 build_deb_package apps/app.photos/server
 build_deb_package apps/app.photos/web

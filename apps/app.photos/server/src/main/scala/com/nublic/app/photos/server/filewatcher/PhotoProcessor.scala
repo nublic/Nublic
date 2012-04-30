@@ -20,7 +20,7 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
   def process(c: FileChange) = {
     GLOBAL_LOGGER.severe("Filewatcher: Processing " + c.toString())
     c match {
-      // case Created(filename, false)  => process_updated_file(filename)
+      case Created(filename, context, false)  => process_updated_file(filename, context)
       case Modified(filename, context, false) => process_updated_file(filename, context)
       case Moved(from, to, context, _)        => process_moved_file(from, to, context)
       case Deleted(filename, _, false)        => process_deleted_file(filename)
