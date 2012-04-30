@@ -2,6 +2,8 @@ package com.nublic.app.browser.web.client.model;
 
 import java.util.HashMap;
 
+import com.nublic.util.gwt.LocationUtil;
+
 
 public class ParamsHashMap extends HashMap<String, String> {
 	private static final long serialVersionUID = -8597576837613560863L;
@@ -41,7 +43,7 @@ public class ParamsHashMap extends HashMap<String, String> {
 				if (equalIndex == -1) {
 					put(element, "");
 				} else {
-					put(element.substring(0, equalIndex), element.substring(equalIndex + 1));
+					put(LocationUtil.decodeURL(element.substring(0, equalIndex)), LocationUtil.decodeURL(element.substring(equalIndex + 1)));
 				}
 			}
 		}

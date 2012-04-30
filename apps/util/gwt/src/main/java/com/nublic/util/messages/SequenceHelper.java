@@ -9,6 +9,7 @@ import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.lattice.GraphLattice;
 import com.nublic.util.lattice.Ordering;
 import com.nublic.util.lattice.PartialComparator;
@@ -54,7 +55,7 @@ public abstract class SequenceHelper <M extends Message> {
 					}
 					postData.append(URL.encodeQueryString(key));
 					postData.append("=");
-					postData.append(URL.encodeQueryString(params.get(key)));
+					postData.append(LocationUtil.replaceQuestionMarks(URL.encodeQueryString(params.get(key))));
 				}				
 			}
 			
