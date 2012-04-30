@@ -152,6 +152,7 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+cp 3rd-party-libs/python-pyinotify/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/scala/*.deb ${TARGET_DIR}
