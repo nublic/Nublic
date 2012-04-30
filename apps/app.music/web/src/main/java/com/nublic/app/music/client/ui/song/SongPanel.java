@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
-import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,6 +25,7 @@ import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.ViewTabs;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
@@ -46,9 +46,7 @@ public class SongPanel extends Composite {
 	@UiField Label byLabel;
 	@UiField HorizontalPanel titlePanel;
 	@UiField HorizontalPanel subtitlePanel;
-	@UiField InlineHyperlink artistViewLink;
-	@UiField InlineHyperlink albumViewLink;
-	@UiField Label songViewLabel;
+	@UiField ViewTabs viewTabs;
 	@UiField PushButton backButton;
 	
 	String inCollection;
@@ -122,18 +120,17 @@ public class SongPanel extends Composite {
 	private void setViewLinks(boolean showArtist, boolean showAlbum) {
 		if (showArtist) {
 			String artistTarget = Utils.getTargetHistoryToken(artistId, albumId, inCollection, ViewKind.ARTISTS.toString());
-			artistViewLink.setTargetHistoryToken(artistTarget);
+			viewTabs.setTarget(ViewKind.ARTISTS, artistTarget);
 			String albumTarget = Utils.getTargetHistoryToken(artistId, albumId, inCollection, ViewKind.ALBUMS.toString());
-			albumViewLink.setTargetHistoryToken(albumTarget);
+			viewTabs.setTarget(ViewKind.ALBUMS, albumTarget);
 		} else if (showAlbum) {
 			String albumTarget = Utils.getTargetHistoryToken(artistId, albumId, inCollection, ViewKind.ALBUMS.toString());
-			albumViewLink.setTargetHistoryToken(albumTarget);
-			artistViewLink.setVisible(false);
+			viewTabs.setTarget(ViewKind.ALBUMS, albumTarget);
+			viewTabs.hideTab(ViewKind.ARTISTS);
 		} else {
-			artistViewLink.setVisible(false);
-			albumViewLink.setVisible(false);
-			songViewLabel.setVisible(false);
+			viewTabs.setVisible(false);
 		}
+		viewTabs.setSelected(ViewKind.SONGS);
 	}
 
 	public void setSubtitles(List<String> artistList) {

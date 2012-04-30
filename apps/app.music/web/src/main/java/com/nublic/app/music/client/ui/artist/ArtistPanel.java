@@ -31,7 +31,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.TagKind;
-import com.google.gwt.user.client.ui.InlineHyperlink;
+import com.nublic.app.music.client.ui.ViewTabs;
 
 public class ArtistPanel extends Composite implements ScrollHandler {
 	private static ArtistPanelUiBinder uiBinder = GWT.create(ArtistPanelUiBinder.class);
@@ -40,8 +40,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	@UiField FlowPanel mainPanel;
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
-	@UiField InlineHyperlink albumViewLink;
-	@UiField InlineHyperlink songViewLink;
+	@UiField ViewTabs viewTabs;
 
 	String collectionId;
 	Set<ArtistWidget> unloadedWidgets = new HashSet<ArtistWidget>();
@@ -87,9 +86,10 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	
 	private void setViewLinks() {
 		String albumTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ALBUMS.toString());
-		albumViewLink.setTargetHistoryToken(albumTarget);
+		viewTabs.setTarget(ViewKind.ALBUMS, albumTarget);
 		String songTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.SONGS.toString());
-		songViewLink.setTargetHistoryToken(songTarget);
+		viewTabs.setTarget(ViewKind.SONGS, songTarget);
+		viewTabs.setSelected(ViewKind.ARTISTS);
 	}
 
 	// For handling lazy scroll loading of ArtistWidgets

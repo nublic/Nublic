@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:my="urn:import:com.nublic.app.music.client.ui">
 	<ui:style type='com.nublic.app.music.client.ui.song.SongPanel.SongPanelStyle'>
 		.scroll {
 	        overflow-x: hidden;
@@ -45,9 +46,7 @@
 								<g:upFace image="{res.leftArrow}"/>
 							</g:PushButton>
 							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
-							<g:InlineHyperlink text="{msg.artistView}" addStyleNames="{style.littleleftmargin}" ui:field="artistViewLink"/>
-							<g:InlineHyperlink text="{msg.albumView}" addStyleNames="{style.littleleftmargin}" ui:field="albumViewLink"/>
-							<g:Label text="{msg.songView}" addStyleNames="{style.littleleftmargin}" ui:field="songViewLabel"/>
+							<my:ViewTabs ui:field="viewTabs" addStyleNames="{style.littleleftmargin}"/>
 						</g:HorizontalPanel>
 					</div>
 				</g:HTMLPanel>

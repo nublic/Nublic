@@ -6,11 +6,9 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -24,6 +22,7 @@ import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.ViewTabs;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 
@@ -34,9 +33,7 @@ public class AlbumPanel extends Composite {
 	@UiField FlowPanel mainPanel;
 	@UiField Label titleLabel;
 	@UiField HorizontalPanel titlePanel;
-	@UiField InlineHyperlink artistViewLink;
-	@UiField InlineHyperlink albumViewLink;
-	@UiField InlineHyperlink songViewLink;
+	@UiField ViewTabs viewTabs;
 	@UiField PushButton backButton;
 	
 	List<AlbumInfo> albumList;
@@ -72,8 +69,6 @@ public class AlbumPanel extends Composite {
 			titleLabel.setText(titleLabel.getText() + " - " + collectionName);
 		}
 		
-		unableAlbumLink();
-		
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
 														ButtonLineParam.PLAY);
@@ -81,10 +76,6 @@ public class AlbumPanel extends Composite {
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.insert(b, 2);
-	}
-
-	private void unableAlbumLink() {
-		albumViewLink.setTargetHistoryToken(History.getToken());
 	}
 
 	public void setAlbumList(List<AlbumInfo> albumList) {
@@ -99,13 +90,14 @@ public class AlbumPanel extends Composite {
 	private void setViewLinks(boolean shouldShowArtist) {
 		if (shouldShowArtist) {
 			String artistTarget = Utils.getTargetHistoryToken(null, null, collectionId, ViewKind.ARTISTS.toString());
-			artistViewLink.setTargetHistoryToken(artistTarget);
-			artistViewLink.setVisible(true);
+			viewTabs.setTarget(ViewKind.ARTISTS, artistTarget);
 		} else {
-			artistViewLink.setVisible(false);
+			viewTabs.hideTab(ViewKind.ARTISTS);
 		}
 		String songTarget = Utils.getTargetHistoryToken(artistId, null, collectionId, ViewKind.SONGS.toString());
-		songViewLink.setTargetHistoryToken(songTarget);
+		viewTabs.setTarget(ViewKind.SONGS, songTarget);
+		
+		viewTabs.setSelected(ViewKind.ALBUMS);
 	}
 	
 	// Handlers for button line
