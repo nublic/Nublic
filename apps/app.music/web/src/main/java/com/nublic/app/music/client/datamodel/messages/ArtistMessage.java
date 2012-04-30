@@ -8,6 +8,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
@@ -86,7 +87,7 @@ public class ArtistMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("Could not get artist from server");
+		ErrorPopup.showError(Constants.I18N.getArtistsError());
 	}
 
 	public static ArtistInfo parseArtistInfo(Response r) {

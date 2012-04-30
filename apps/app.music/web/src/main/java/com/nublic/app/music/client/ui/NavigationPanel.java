@@ -55,7 +55,7 @@ public class NavigationPanel extends Composite {
 	}	
 
 	public void createCurrentPlaylist() {
-		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.CURRENT_PLAYLIST_NAME, Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
+		TagWidget pw = new TagWidget(TagKind.PLAYLIST, Constants.I18N.currentPlaylist(), Constants.CURRENT_PLAYLIST_ID, new Image(Resources.INSTANCE.save()));
 		pw.addIconAction(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
@@ -66,13 +66,13 @@ public class NavigationPanel extends Composite {
 		playlists.put(Constants.CURRENT_PLAYLIST_ID, pw);
 
 		// Add it to the model
-		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.CURRENT_PLAYLIST_NAME);
+		Playlist current = new Playlist(Constants.CURRENT_PLAYLIST_ID, Constants.I18N.currentPlaylist());
 		Controller.INSTANCE.getModel().getPlaylistCache().put(current.getId(), current);
 	}
 	
 	// Adding methods
 	public void addAllMusic() {
-		allMusic = new TagWidget(null, "All music", "");
+		allMusic = new TagWidget(null, Constants.I18N.allMusicName(), "");
 		libraryPanel.add(allMusic);
 	}
 

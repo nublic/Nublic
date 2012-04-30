@@ -33,6 +33,7 @@
 		}
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.music.client.i18n.I18NMessages" field="msg"/>
 
 	<g:DockLayoutPanel width="100%" height="100%">
 		<g:north size='50'>
@@ -44,9 +45,9 @@
 								<g:upFace image="{res.leftArrow}"/>
 							</g:PushButton>
 							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
-							<g:InlineHyperlink text="artist view" addStyleNames="{style.littleleftmargin}" ui:field="artistViewLink"/>
-							<g:InlineHyperlink text="album view" addStyleNames="{style.littleleftmargin}" ui:field="albumViewLink"/>
-							<g:Label text="song view" addStyleNames="{style.littleleftmargin}" ui:field="songViewLabel"/>
+							<g:InlineHyperlink text="{msg.artistView}" addStyleNames="{style.littleleftmargin}" ui:field="artistViewLink"/>
+							<g:InlineHyperlink text="{msg.albumView}" addStyleNames="{style.littleleftmargin}" ui:field="albumViewLink"/>
+							<g:Label text="{msg.songView}" addStyleNames="{style.littleleftmargin}" ui:field="songViewLabel"/>
 						</g:HorizontalPanel>
 					</div>
 				</g:HTMLPanel>

@@ -54,7 +54,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		
 		// Set title
 		if (collectionId == null) {
-			titleLabel.setText(Constants.ALL_MUSIC_NAME);
+			titleLabel.setText(Constants.I18N.allMusicName());
 		} else {
 			titleLabel.setText(Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName());
 		}

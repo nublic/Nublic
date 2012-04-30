@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Utils;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.controller.ViewKind;
@@ -63,7 +64,7 @@ public class SongPanel extends Composite {
 
 		// Get album info (null means all songs)
 		if (albumId == null && artistId == null) {
-			titleLabel.setText("All songs");
+			titleLabel.setText(Constants.I18N.allSongs());
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
 			setViewLinks(true, true);

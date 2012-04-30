@@ -126,7 +126,7 @@ public class SongMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("Could not get songs");
+		ErrorPopup.showError(Constants.I18N.getSongsError());
 	}
 
 }

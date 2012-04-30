@@ -353,7 +353,7 @@ public class Controller extends URLController {
 			model.askForPlaylistSongs(Constants.CURRENT_PLAYLIST_ID, new MyPlaylistHandler(Constants.CURRENT_PLAYLIST_ID), true);
 		} else {
 			EnumSet<PopupButton> set = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
-			final MessagePopup confirmDeletion = new MessagePopup(Constants.I18NCONSTANTS.confirmDeletionTitle(), Constants.I18NCONSTANTS.confirmDeletionInfo(), set);
+			final MessagePopup confirmDeletion = new MessagePopup(Constants.I18N.confirmDeletionTitle(), Constants.I18N.confirmDeletionInfo(), set);
 			confirmDeletion.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
 				@Override
 				public void onClicked(PopupButton button, ClickEvent event) {

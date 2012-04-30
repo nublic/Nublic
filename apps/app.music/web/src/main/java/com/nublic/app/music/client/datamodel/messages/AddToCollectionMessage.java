@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.NublicLists;
@@ -52,7 +53,7 @@ public class AddToCollectionMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("Could not add song to collection");
+		ErrorPopup.showError(Constants.I18N.addToCollectionError());
 	}
 
 }

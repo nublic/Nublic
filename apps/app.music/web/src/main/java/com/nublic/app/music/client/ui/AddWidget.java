@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.PutTagHandler;
 import com.nublic.util.widgets.AnchorPanel;
 
@@ -30,7 +31,7 @@ public class AddWidget extends Composite {
 	List<PutTagHandler> tagHandlerList = new ArrayList<PutTagHandler>();
 
 	public AddWidget() {
-		this("New Collection", "add collection");
+		this(Constants.I18N.newCollection(), Constants.I18N.addCollection());
 	}
 
 	public AddWidget(String defaultText, String tooltip) {

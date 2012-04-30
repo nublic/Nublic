@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.Playlist;
 import com.nublic.app.music.client.datamodel.SongInfo;
@@ -59,7 +60,7 @@ public class SavePlaylistMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("Could not add playlist");
+		ErrorPopup.showError(Constants.I18N.addPlaylistError());
 	}
 
 }
