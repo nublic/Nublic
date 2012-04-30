@@ -78,7 +78,7 @@ public class DataModel {
 				if (r.getStatusCode() == Response.SC_OK) {
 					return AlbumMessage.parseAlbumInfo(r);
 				} else {
-					ErrorPopup.showError("Could not access server to refresh album cache");
+					ErrorPopup.showError(Constants.I18N.getAlbumsError());
 					return null;
 				}
 			}
@@ -97,7 +97,7 @@ public class DataModel {
 				if (r.getStatusCode() == Response.SC_OK) {
 					return ArtistMessage.parseArtistInfo(r);
 				} else {
-					ErrorPopup.showError("Could not access server to refresh artist cache");
+					ErrorPopup.showError(Constants.I18N.getArtistsError());
 					return null;
 				}
 			}

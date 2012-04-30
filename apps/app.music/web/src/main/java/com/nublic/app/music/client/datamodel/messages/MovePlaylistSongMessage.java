@@ -3,6 +3,7 @@ package com.nublic.app.music.client.datamodel.messages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.util.error.ErrorPopup;
@@ -44,7 +45,7 @@ public class MovePlaylistSongMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("Could not move song in playlist");
+		ErrorPopup.showError(Constants.I18N.moveSongError());
 	}
 
 }

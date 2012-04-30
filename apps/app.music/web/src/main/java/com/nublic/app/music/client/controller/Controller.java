@@ -74,18 +74,19 @@ public class Controller extends URLController {
 			ui.getPlayer().addPlayStateHandler(new PlayStateHandler() {
 				@Override
 				public void onPlayStateChanged(PlayStateEvent event) {
+					SongInfo playingSong = ui.getPlayer().getPlayingSong();
 					switch (event.getPlayState()) {
 					case Paused:
 						ui.setPaused(getPlayingPlaylistId());
 	            		break;
 	            	case Started:
 						ui.setPlaying(getPlayingPlaylistId());
+						ui.setWindowTitle(playingSong == null ? "" : playingSong.getTitle());
 	            		break;
 	            	case Stopped:
-						ui.setPlaying(null);
-	            		break;
 	            	case Finished:
 						ui.setPlaying(null);
+						ui.setWindowTitle("");
 	            		break;
 					}
 				}

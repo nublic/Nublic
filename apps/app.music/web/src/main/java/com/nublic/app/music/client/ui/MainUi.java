@@ -5,6 +5,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -181,7 +182,7 @@ public class MainUi extends Composite {
 
 	public NublicPlayer getPlayer() {
 		if (player == null) {
-			error("No player plugin available");
+			ErrorPopup.showError(Constants.I18N.noPluginAvialableError());
 		}
 		return player;		
 	}
@@ -215,8 +216,11 @@ public class MainUi extends Composite {
 		}
 	}
 	
-	public void error(String message) {
-		ErrorPopup.showError(message);
+	public void setWindowTitle(String title) {
+		if (title == null || title.equals("")) {			
+			Window.setTitle(Constants.I18N.windowPretitle());
+		} else {
+			Window.setTitle(Constants.I18N.windowPretitle() + " - " + title);
+		}
 	}
-
 }

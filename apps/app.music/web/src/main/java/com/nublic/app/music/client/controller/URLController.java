@@ -41,30 +41,6 @@ public class URLController {
 		if (playlist != null) {
 			model.askForPlaylistSongs(playlist, new MyPlaylistHandler(playlist), true);
 		} else {
-//			switch (viewKind) {
-//			case ARTISTS:
-//				if (album != null) {
-//					// User has selected a concrete album, put Songs view for this action, even when default action is artists
-//					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-//				} else if (artist != null) {
-//					// User has selected a concrete artist, put Albums view for this action, even when default action is artists
-//					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-//				} else {
-//					model.askForArtists(collection, new MyArtistHandler(collection), true);
-//				}
-//				break;
-//			case ALBUMS:
-//				if (album != null) {
-//					// User has selected a concrete album, put Songs view for this action, even when default action is albums
-//					model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-//				} else {
-//					model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-//				}
-//				break;
-//			case SONGS:
-//				model.askForSongs(album, artist, collection, new MySongHandler(album, collection), true);
-//				break;
-//			}
 			if (viewKind == ViewKind.SONGS || album != null) {
 				model.askForSongs(album, artist, collection, new MySongHandler(album, artist, collection), true);
 			} else if (viewKind == ViewKind.ALBUMS || artist != null) {

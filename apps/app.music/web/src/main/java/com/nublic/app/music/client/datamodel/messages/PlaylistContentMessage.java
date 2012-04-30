@@ -8,6 +8,7 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
@@ -82,7 +83,7 @@ public class PlaylistContentMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("Could not get songs in playlist");
+		ErrorPopup.showError(Constants.I18N.getPlaylistSongsError());
 	}
 
 }

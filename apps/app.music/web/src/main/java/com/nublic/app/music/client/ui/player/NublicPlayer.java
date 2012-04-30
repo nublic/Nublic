@@ -60,6 +60,10 @@ public class NublicPlayer extends CustomAudioPlayer {
 	}
 
 	public State getState() { return state; }
+	public SongInfo getPlayingSong() {
+		int index = getPlaylistIndex();
+		return index >= 0 ? playlist.get(index) : null;
+	}
 	
 	
 	private void addPlayerHandler() {
