@@ -198,7 +198,7 @@ class BrowserServer extends ScalatraServlet with JsonSupport with FileUploadSupp
             Solr.getMimeType(file.getPath()) match {
               case None => {
                 if (file.isDirectory()) {
-                  ImageDatabase.getImageBytes(ImageDatabase.DIRECTORY_MIME)
+                  ImageDatabase.getImageBytes(ImageDatabase.DIRECTORY_MIME1)
                 } else {
                   ImageDatabase.getImageBytes("unknown")
                 }
