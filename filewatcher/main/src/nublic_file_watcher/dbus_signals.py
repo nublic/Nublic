@@ -35,14 +35,17 @@ class DbusSignaler(dbus.service.Object):
                 self.file_changed(ty, pathname, src_pathname, isdir, context)
     
     def add_context(self, path):
-        self.contexts.append(u'/var/nublic/data/' + path)
+        self.contexts.append(u'/var/nublic/data/' + to_utf8(path))
     
     def remove_context(self, path):
-        self.contexts.remove(u'/var/nublic/data/' + path)
+        self.contexts.remove(u'/var/nublic/data/' + to_utf8(path))
     
     def replace_context(self, from_path, to_path):
-        self.remove_context(from_path)
-        self.add_context(to_path)
+        try:
+            self.remove_context(from_path)
+            self.add_context(to_path)
+        except:
+            pass
 
     @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir, context):
