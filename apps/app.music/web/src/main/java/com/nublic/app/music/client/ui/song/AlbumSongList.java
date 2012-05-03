@@ -1,14 +1,13 @@
 package com.nublic.app.music.client.ui.song;
 
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 
-public class AlbumSongList extends SongList {
+public abstract class AlbumSongList extends SongList {
 	String albumId;
 	String artistId;
 	String collectionId;
@@ -23,21 +22,6 @@ public class AlbumSongList extends SongList {
 	@Override
 	public void askForsongs(int from, int to) {
 		Controller.INSTANCE.getModel().askForSongs(from, to, albumId, artistId, collectionId, songHandler);
-	}
-
-	@Override
-	protected void prepareGrid() {
-		grid.resize(numberOfSongs, 3);
-		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
-		grid.getColumnFormatter().setWidth(1, Constants.TRACK_NUMBER_WIDTH);
-	}
-	
-	@Override
-	public void setSong(int row, SongInfo s) {
-		setGrabber(row, 0, s);														   // Column 0
-		setTrackNumber(row, 1, s.getTrack());									   // Column 1
-		setTitleLenght(row, 2, s,												   // Column 2
-			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 3)
 	}
 	
 	// +++ Handlers for buttons +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

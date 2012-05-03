@@ -213,8 +213,8 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		trackNumLabel.getElement().addClassName(style.alignright());
 		HorizontalPanel capsule = new HorizontalPanel();
 		capsule.setWidth("100%");
-		capsule.setHeight("25px");
-		capsule.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+//		capsule.setHeight(Constants.TABLE_CELL_HEIGHT);
+//		capsule.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		capsule.add(trackNumLabel);
 		grid.setWidget(row, column, capsule);
 	}

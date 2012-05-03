@@ -121,8 +121,14 @@ public class SongPanel extends Composite {
 
 	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
 		if (total != 0) {
-			SongList sl = new AlbumSongList(albumId, artistId, collectionId, total, mainPanel);
-			sl.addSongs(total, from, to, answerList);
+			SongList sl;
+			if (albumId == null) {
+				sl = new IsolatedSongList(albumId, artistId, collectionId, total, mainPanel);
+				sl.addSongs(total, from, to, answerList);
+			} else {
+				sl = new ContextualSongList(albumId, artistId, collectionId, total, mainPanel);
+				sl.addSongs(total, from, to, answerList);
+			}
 			mainPanel.add(sl);
 		} else {
 			mainPanel.add(new EmptyWidget());

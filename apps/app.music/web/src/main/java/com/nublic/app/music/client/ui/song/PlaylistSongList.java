@@ -56,6 +56,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 
 	@Override
 	public void setSong(int row, SongInfo s) {
+		grid.getCellFormatter().setHeight(row, 0, Constants.TABLE_CELL_HEIGHT);
 		setGrabber(row, 0, s);														// Column 0
 		setButtons(row, 1, s, new MyPlayHandler(row), new MyDeleteHandler(row));	// Column 1
 		setTrackNumber(row, 2, s.getTrack());										// Column 2

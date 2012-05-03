@@ -23,7 +23,7 @@ import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.app.music.client.ui.song.AlbumSongList;
+import com.nublic.app.music.client.ui.song.ContextualSongList;
 import com.nublic.util.widgets.ImageHelper;
 
 public class AlbumWidget extends Composite {
@@ -60,7 +60,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new AlbumSongList(album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
+		songsPanel.add(new ContextualSongList(album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
 		
 		// Make image draggable
 		albumImagePanel.setProperties(album.getId(), artistId, collectionId, album.getNumberOfSongs());
