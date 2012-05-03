@@ -48,6 +48,7 @@ public interface I18NMessages extends Messages {
 	String deletePlaylistError();
 	String deleteCollectionError();
 	String deletePlaylistSongError();
+	String deleteCollectionSongError();
 	String moveSongError();
 	String noPluginAvailableError();
 }

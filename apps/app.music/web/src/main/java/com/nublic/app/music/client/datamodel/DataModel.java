@@ -28,6 +28,7 @@ import com.nublic.app.music.client.datamodel.messages.ArtistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistMessage;
 import com.nublic.app.music.client.datamodel.messages.DeletePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.DeleteTagMessage;
+import com.nublic.app.music.client.datamodel.messages.DeleteTagSongMessage;
 import com.nublic.app.music.client.datamodel.messages.MovePlaylistSongMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistContentMessage;
 import com.nublic.app.music.client.datamodel.messages.PlaylistsMessage;
@@ -310,6 +311,11 @@ public class DataModel {
 	
 	public synchronized void setDeleting(boolean b) {
 		areWeDeleting = b;
+	}
+	
+	public synchronized void removeFromCollection(String collectionId, String songId, DeleteButtonHandler dbh) {
+		DeleteTagSongMessage dtsm = new DeleteTagSongMessage(collectionId, songId, dbh);
+		SequenceHelper.sendJustOne(dtsm, RequestBuilder.DELETE);
 	}
 
 }

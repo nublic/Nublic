@@ -1,11 +1,11 @@
 package com.nublic.app.music.client.ui.song;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.Panel;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.SongInfo;
 
 public class ContextualSongList extends AlbumSongList {
-	public ContextualSongList(String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
+	public ContextualSongList(String albumId, String artistId, String collectionId, int numberOfSongs, Panel scrollPanel) {
 		super(albumId, artistId, collectionId, numberOfSongs, scrollPanel);
 	}
 	
@@ -22,7 +22,8 @@ public class ContextualSongList extends AlbumSongList {
 		setGrabber(row, 0, s);													   // Column 0
 		setTrackNumber(row, 1, s.getTrack());									   // Column 1
 		setTitleLenght(row, 2, s,												   // Column 2
-			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 3)
+			new MyAddAtEndHandler(s), new MyPlayHandler(s),	new MyEditHandler(),
+			collectionId == null ? null : new MyDeleteHandler(s, row));
 	}
 
 }

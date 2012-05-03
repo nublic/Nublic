@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.Utils;
@@ -39,7 +40,7 @@ public class AlbumWidget extends Composite {
 	String artistId;
 	String collectionId;
 	
-	public AlbumWidget(AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
+	public AlbumWidget(AlbumInfo a, String artistId, String collectionId, Panel inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.album = a;
 		this.artistId = artistId;
