@@ -3,6 +3,7 @@ package com.nublic.app.music.client.ui.song;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
@@ -10,20 +11,29 @@ import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.dnd.DraggableSong;
 
 public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
 	int playingIndex = -1;
+	FlowPanel inPanel;
 	
-	public PlaylistSongList(String playlistId, int numberOfSongs, Widget scrollPanel) {
+	public PlaylistSongList(String playlistId, int numberOfSongs, FlowPanel scrollPanel) {
 		super(numberOfSongs, scrollPanel);
 		this.playlistId = playlistId;
+		this.inPanel = scrollPanel;
 		
 		Controller.INSTANCE.getPlayer().addPlayStateHandler(this);
 		this.onPlayStateChanged(Controller.INSTANCE.getPlayer().getState(), Controller.INSTANCE.getPlayer().getPlaylistIndex());
 		
 		createDropController();
+	}
+	
+	private void updateEmptyness() {
+		if (grid.getRowCount() <= 0) {
+			inPanel.add(new EmptyWidget());
+		}
 	}
 	
 	// To handle drag and drop
@@ -42,7 +52,6 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
 		grid.getColumnFormatter().setWidth(1, Constants.BUTTONS_WIDTH);
 		grid.getColumnFormatter().setWidth(2, Constants.TRACK_NUMBER_WIDTH);
-		updateEmptyness();
 	}
 
 	@Override

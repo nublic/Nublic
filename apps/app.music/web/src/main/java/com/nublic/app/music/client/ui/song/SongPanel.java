@@ -26,6 +26,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.ViewTabs;
 import com.nublic.util.cache.Cache;
@@ -119,10 +120,13 @@ public class SongPanel extends Composite {
 	}
 
 	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
-		SongList sl = new AlbumSongList(albumId, artistId, collectionId, total, mainPanel);
-		sl.addSongs(total, from, to, answerList);
-
-		mainPanel.add(sl);
+		if (total != 0) {
+			SongList sl = new AlbumSongList(albumId, artistId, collectionId, total, mainPanel);
+			sl.addSongs(total, from, to, answerList);
+			mainPanel.add(sl);
+		} else {
+			mainPanel.add(new EmptyWidget());
+		}
 	}
 
 	private void setViewLinks(boolean showArtist, boolean showAlbum) {

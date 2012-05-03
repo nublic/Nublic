@@ -23,6 +23,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.ViewTabs;
 import com.nublic.util.cache.Cache;
@@ -89,9 +90,13 @@ public class AlbumPanel extends Composite {
 	public void setAlbumList(List<AlbumInfo> albumList) {
 		this.albumList = albumList;
 
-		for (AlbumInfo a : albumList) {
-			AlbumWidget aw = new AlbumWidget(a, artistId, collectionId, mainPanel);
-			mainPanel.add(aw);
+		if (albumList.isEmpty()) {
+			mainPanel.add(new EmptyWidget());
+		} else {
+			for (AlbumInfo a : albumList) {
+				AlbumWidget aw = new AlbumWidget(a, artistId, collectionId, mainPanel);
+				mainPanel.add(aw);
+			}
 		}
 	}
 

@@ -3,8 +3,8 @@ package com.nublic.app.music.client.i18n;
 import com.google.gwt.i18n.client.Messages;
 
 public interface I18NMessages extends Messages {
-	String windowTitle();
 	String windowTitleSong(String songTitle);
+	String windowTitle();
 	
 	String confirmDeletionTitle();
 	String confirmDeletionInfo();
@@ -14,11 +14,13 @@ public interface I18NMessages extends Messages {
 	String collections();
 	String playlists();
 
+	String empty();
+	String backToCollection();
+	String by();
+
 	String allMusic();
 //	String allAlbums();
 //	String allSongs();
-	
-	String empty();
 
 	String currentPlaylist();
 

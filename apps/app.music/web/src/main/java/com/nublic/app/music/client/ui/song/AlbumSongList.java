@@ -30,7 +30,6 @@ public class AlbumSongList extends SongList {
 		grid.resize(numberOfSongs, 3);
 		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
 		grid.getColumnFormatter().setWidth(1, Constants.TRACK_NUMBER_WIDTH);
-		updateEmptyness();
 	}
 	
 	@Override
