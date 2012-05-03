@@ -1,6 +1,7 @@
 package com.nublic.app.browser.server.filewatcher
 
 import com.nublic.filewatcher.scala._
+import java.io.File
 import scala.collection.JavaConversions._
 import java.util.Date
 import java.util.ArrayList
@@ -50,17 +51,22 @@ class DeletionProcessor(watcher: FileWatcherActor) extends Processor("deletion",
   def process_deleted(filename: String, now: Long) = process_in(deleted_files_list, new_files_list, filename, now)
 
   def process_in(lst: ArrayList[Tuple2[String, Long]], other: ArrayList[Tuple2[String, Long]], filename: String, now: Long) = {
-    val t = Tuple2(filename, now)
-    // Delete previous events of the same path
-    val to_remove = lst.filter(f => f._1 == filename).toList
-    lst.removeAll(to_remove)
-    // Add the current event
-    lst.add(t)
-    // Remove from the other list (if it was created and later removed, we only tell about removing)
-    val to_remove_from_other = other.filter(f => f._1 == filename).toList
-    other.remove(t)
-    // Remove very old notifications
-    delete_old(lst, now)
+    val as_file = new File(filename)
+    val small_name = as_file.getName()
+    // Do not process hidden files
+    if (!small_name.startsWith(".") && !small_name.endsWith("~")) {
+      val t = Tuple2(filename, now)
+      // Delete previous events of the same path
+      val to_remove = lst.filter(f => f._1 == filename).toList
+      lst.removeAll(to_remove)
+      // Add the current event
+      lst.add(t)
+      // Remove from the other list (if it was created and later removed, we only tell about removing)
+      val to_remove_from_other = other.filter(f => f._1 == filename).toList
+      other.remove(t)
+      // Remove very old notifications
+      delete_old(lst, now)
+    }
   }
   
   def delete_old(lst: ArrayList[Tuple2[String, Long]], now: Long) = {

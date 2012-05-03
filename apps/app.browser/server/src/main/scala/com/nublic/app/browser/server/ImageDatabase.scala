@@ -10,7 +10,8 @@ import java.util.Calendar
 
 object ImageDatabase {
   
-  val DIRECTORY_MIME = "application/x-directory"
+  val DIRECTORY_MIME1 = "application/x-directory"
+  val DIRECTORY_MIME2 = "inode/directory"
   
   def LAST_MODIFIED_DATE = new GregorianCalendar(2012, Calendar.FEBRUARY, 23).getTime()
   
@@ -22,7 +23,7 @@ object ImageDatabase {
   }
   
   def getImagePath(mime: String): String = {
-    if (mime == DIRECTORY_MIME) {
+    if (mime == DIRECTORY_MIME1 || mime == DIRECTORY_MIME2) {
       "/images/folder.png"
     } else if (PdfWorker.supportedMimeTypes.contains(mime) ||
         OfficeWorker.wordProcessorMimeTypes.contains(mime)) {

@@ -20,7 +20,15 @@ public class Constants {
 	public final static String VIDEO_TYPE = "flv";
 	public final static String TEXT_VIEW = "text";
 	public final static String TEXT_TYPE = "txt";
-	public final static String FOLDER_MIME = "application/x-directory";
+
+	// public final static String FOLDER_MIME = "application/x-directory";
+	public final static String FOLDER_MIME1 = "application/x-directory";
+	public final static String FOLDER_MIME2 = "inode/directory";
+
+	public static boolean isFolderMime(String s) {
+		return FOLDER_MIME1.equals(s) || FOLDER_MIME2.equals(s);
+	}
+
 	public final static String FOLDER_TYPE = "folder";
 	public final static String COMPRESSED_TYPE = "zip";
 	public final static String WINDOW_PRETITLE = "Files - ";
@@ -28,18 +36,18 @@ public class Constants {
 	public final static String HOME_NAME = "Home";
 	public final static String CSS_SELECTED = "selected";
 	public final static String DEFAULT_NEWFOLDER_TEXT = "new folder";
-	
+
 	public final static String KIND_MIRROR = "mirror";
 	public final static String KIND_SYNCED = "synced";
-	public final static String KIND_MEDIA  = "media";
+	public final static String KIND_MEDIA = "media";
 	public final static String NUBLIC_ONLY = "nublic-only";
 	public final static String NUBLIC_ONLY_NAME = "Nublic files";
 	public final static String KIND_MIRROR_FOLDER = "mirrors";
 	public final static String KIND_SYNCED_FOLDER = "work-folders";
-	public final static String KIND_MEDIA_FOLDER  = "media";
-	
+	public final static String KIND_MEDIA_FOLDER = "media";
+
 	public final static String KIND_SYNCED_URL = "ssh://{username}@{host}/var/nublic/work-folders/";
-	
+
 	public final static String getView(String type) {
 		String retStr = null;
 		if (type.equals(Constants.IMAGE_TYPE)) {

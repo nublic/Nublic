@@ -119,7 +119,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		String viewType = node.getView();
-		if (node.getMime().equals(Constants.FOLDER_MIME)) {
+		if (Constants.isFolderMime(node.getMime())) {
 			viewType = Constants.FOLDER_TYPE;
 		}
 		// Check whether the file has a view or not (to files with views and to folders we'll show links)
@@ -229,7 +229,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	public boolean isFolder() {
-		return node.getMime().equals(Constants.FOLDER_MIME);
+		return Constants.isFolderMime(node.getMime());
 	}
 	
 	public boolean isWritable() {

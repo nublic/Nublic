@@ -67,7 +67,11 @@ class DownloadsServer extends ScalatraServlet with JsonSupport {
       // Parse body
       val tuples = splitThatRespectsReasonableSemantics("&")(body).map(t => {
         val e = splitThatRespectsReasonableSemantics("=")(t)
-        (URLDecoder.decode(e(0), charset), URLDecoder.decode(e(1), charset))
+        if (e.size == 1) { // Empty parameter
+          (URLDecoder.decode(e(0), charset), "")
+        } else {
+          (URLDecoder.decode(e(0), charset), URLDecoder.decode(e(1), charset))
+        }
       } )
       
       _extraParams = Some(Map() ++ tuples)

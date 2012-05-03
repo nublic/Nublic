@@ -94,9 +94,9 @@ public class FileNode {
 		public int compare(FileNode o1, FileNode o2) {
 			if (o1.getMime().equals(o2.getMime())) {
 				return 0;
-			} else if (o1.getMime().equals(Constants.FOLDER_MIME)) {
+			} else if (Constants.isFolderMime(o1.getMime())) {
 				return -1;
-			} else if (o2.getMime().equals(Constants.FOLDER_MIME)){
+			} else if (Constants.isFolderMime(o2.getMime())){
 				return 1;
 			} else {
 				return 0;
