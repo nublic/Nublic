@@ -617,12 +617,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private List<FileNode> fakeRootList() {
 		List<FileNode> rootList = new ArrayList<FileNode>();
 //		FileNode deviceNode = new FileNode(Constants.NUBLIC_ONLY, Constants.FOLDER_MIME, null, 0, 0, true);
-		FileNode deviceNode = new FileNode(Constants.NUBLIC_ONLY_NAME, Constants.FOLDER_MIME, null, 0, 0, true, false);
+		FileNode deviceNode = new FileNode(Constants.NUBLIC_ONLY_NAME, Constants.FOLDER_MIME1, null, 0, 0, true, false);
 		deviceNode.setImportantThumbnail(Resources.INSTANCE.nublicOnly());
 		deviceNode.setImportantLink(Constants.NUBLIC_ONLY);
 		rootList.add(deviceNode);
 		for (Device d : getDevicesManager().getDevicesList()) {
-			deviceNode = new FileNode(d.getName(), Constants.FOLDER_MIME, null, 0, 0, false, false);
+			deviceNode = new FileNode(d.getName(), Constants.FOLDER_MIME1, null, 0, 0, false, false);
 			// Sets a different behaviour for click action (As we don't want it to open "/my-synced-folder" for example) 
 			deviceNode.setImportantLink(d.getKind().getPathName() + "/" + d.getId());
 			deviceNode.setImportantThumbnail(d.getKind() == DeviceKind.SYNCED ? Resources.INSTANCE.synced() : Resources.INSTANCE.mirror());

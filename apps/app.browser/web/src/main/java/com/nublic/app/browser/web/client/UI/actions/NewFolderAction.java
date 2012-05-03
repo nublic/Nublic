@@ -29,7 +29,7 @@ public class NewFolderAction extends ActionWidget {
 			@Override
 			public void onSuccess(Response response) {
 				if (response.getStatusCode() == Response.SC_OK) {
-					feedbackTarget.getModel().addFile(newFolderName, Constants.FOLDER_MIME, null, 0, new Date().getTime(), true, false);
+					feedbackTarget.getModel().addFile(newFolderName, Constants.FOLDER_MIME1, null, 0, new Date().getTime(), true, false);
 					feedbackTarget.getModel().fireFilesUpdateHandlers(false, false);
 				} else {
 					ErrorPopup.showError("Could not create folder");

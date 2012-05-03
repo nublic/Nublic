@@ -70,7 +70,7 @@ public class ChangesMessage extends Message {
 			// Special handling for folders
 			boolean foldersChanged = false;
 			for (FileNode n : addedFiles) {
-				if (n.getMime().equals(Constants.FOLDER_MIME) && 
+				if (Constants.isFolderMime(n.getMime()) && 
 						showingNode.getChild(n.getName()) == null) {
 					FolderNode childN = new FolderNode(showingNode, n.getName(), n.isWritable());
 					showingNode.addChild(childN);

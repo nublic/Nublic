@@ -57,7 +57,7 @@ public class SelectionDetails extends Composite {
 				} else {
 					setHyperLink(fw.getImageUrl(), onClickURL);
 				}
-				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
+				if (Constants.isFolderMime(fw.getMime())) {
 					info1Label.setText("");
 					info2Label.setText("");
 				} else {
@@ -78,7 +78,7 @@ public class SelectionDetails extends Composite {
 			// Go through all selected items to show their info
 			for (Widget w : newSelection) {
 				FileWidget fw = ((FileWidget)w);
-				if (fw.getMime().equals(Constants.FOLDER_MIME)) {
+				if (Constants.isFolderMime(fw.getMime())) {
 					foldersNumber++;
 				} else {
 					filesNumber++;
@@ -101,7 +101,7 @@ public class SelectionDetails extends Composite {
 			setImage(Resources.INSTANCE.home());
 		} else {
 			nameToShow = folderName;
-			setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
+			setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME1);
 		}
 		selectionNameLabel.setText(nameToShow);
 		selectionNameLabel.setTitle(nameToShow);
@@ -110,7 +110,7 @@ public class SelectionDetails extends Composite {
 		int foldersNumber = 0;
 		int filesNumber = 0;
 		for (FileNode fn : inFolder) {
-			if (fn.getMime().equals(Constants.FOLDER_MIME)) {
+			if (Constants.isFolderMime(fn.getMime())) {
 				foldersNumber++;
 			} else {
 				filesNumber++;
