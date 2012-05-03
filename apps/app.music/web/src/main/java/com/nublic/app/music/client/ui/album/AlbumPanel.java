@@ -19,9 +19,11 @@ import com.nublic.app.music.client.controller.ViewKind;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.ViewTabs;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
@@ -48,7 +50,11 @@ public class AlbumPanel extends Composite {
 	
 		// Get artist info (null means all artists)
 		if (artistId == null) {
-			titleLabel.setText(Constants.I18N.allAlbums());
+			if (collectionId != null) {
+				titleLabel.setText(Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName());
+			} else {
+				titleLabel.setText(Constants.I18N.allMusic());
+			}
 			setViewLinks(true);
 			backButton.setVisible(false);
 		} else {
@@ -64,15 +70,17 @@ public class AlbumPanel extends Composite {
 			Utils.setBackButton(backButton, collectionId);
 		}
 		
-		if (collectionId != null) {
-			String collectionName = Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName();
-			titleLabel.setText(titleLabel.getText() + " - " + collectionName);
-		}
-		
 		// Create button line
-		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
-														ButtonLineParam.PLAY);
+		createButtonLine();
+	}
+	
+	private void createButtonLine() {
+		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END, ButtonLineParam.PLAY);
+		if (collectionId != null && artistId == null) { // We're in an album view of a collection
+			buttonSet.add(ButtonLineParam.DELETE);
+		}
 		ButtonLine b = new ButtonLine(buttonSet);
+		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.insert(b, 2);
@@ -101,6 +109,15 @@ public class AlbumPanel extends Composite {
 	}
 	
 	// Handlers for button line
+	private void setDeleteButtonHandler(ButtonLine b) {
+		b.setDeleteButtonHandler(new DeleteButtonHandler() {
+			@Override
+			public void onDelete() {
+				Controller.INSTANCE.deleteTag(collectionId, TagKind.COLLECTION);
+			}
+		});
+	}
+	
 	private void setAddAtEndButtonHandler(ButtonLine b) {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override

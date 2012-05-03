@@ -182,7 +182,7 @@ public class MainUi extends Composite {
 
 	public NublicPlayer getPlayer() {
 		if (player == null) {
-			ErrorPopup.showError(Constants.I18N.noPluginAvialableError());
+			ErrorPopup.showError(Constants.I18N.noPluginAvailableError());
 		}
 		return player;		
 	}
@@ -217,10 +217,10 @@ public class MainUi extends Composite {
 	}
 	
 	public void setWindowTitle(String title) {
-		if (title == null || title.equals("")) {			
-			Window.setTitle(Constants.I18N.windowPretitle());
+		if (title == null || title.equals("")) {
+			Window.setTitle(Constants.I18N.windowTitle());
 		} else {
-			Window.setTitle(Constants.I18N.windowPretitle() + " - " + title);
+			Window.setTitle(Constants.I18N.windowTitleSong(title));
 		}
 	}
 }
