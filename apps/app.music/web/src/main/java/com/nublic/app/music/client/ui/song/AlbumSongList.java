@@ -75,7 +75,7 @@ public abstract class AlbumSongList extends SongList {
 				public void onDelete() {
 					// Remove from interface
 					grid.removeRow(row);
-					// TODO: remove row from asked ranges
+					updateRangesFromDelete(row);
 					rearrangeRows(row, grid.getRowCount() -1);
 					updateEmptyness();
 				}

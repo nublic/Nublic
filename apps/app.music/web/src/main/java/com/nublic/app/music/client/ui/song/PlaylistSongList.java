@@ -137,7 +137,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 					if (Controller.INSTANCE.isBeingPlayed(playlistId)) {
 						Controller.INSTANCE.getPlayer().nublicRemoveFromPlaylist(row);
 					}
-					// TODO: remove row from asked ranges
+					updateRangesFromDelete(row);
 					rearrangeRows(row, grid.getRowCount() -1);
 					updateEmptyness();
 				}

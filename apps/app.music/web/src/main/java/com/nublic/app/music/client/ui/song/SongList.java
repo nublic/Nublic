@@ -106,7 +106,8 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		@Override
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
 			if (total != SongList.this.numberOfSongs) {
-				// TODO: rescale songlist
+				// If this happens it means playlist have been changed from other place while we're looking at it
+				// TODO: cry
 			} else {
 				int currentSong = from;
 				for (SongInfo s : answerList) {
@@ -177,6 +178,11 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		for (Range r : askedRanges) {
 			Range.remove(rangeToAsk, r);
 		}
+	}
+	
+	public void updateRangesFromDelete(int deletedRow) {
+		Range.removeIntAndShift(askedRanges, deletedRow);
+		numberOfSongs--;
 	}
 
 	// TODO: make a function to invalid askedRange if request fails
