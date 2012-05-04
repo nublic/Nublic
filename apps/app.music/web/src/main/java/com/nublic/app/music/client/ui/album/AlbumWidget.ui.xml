@@ -25,8 +25,8 @@
 		}
 	</ui:style>
 	
-		<!-- Album display -->
 	<g:FlowPanel>
+		<!-- Album display -->
 		<g:HorizontalPanel verticalAlignment="top" width="100%">
 			<g:cell width="96px">
 				<my:AlbumImagePanel ui:field="albumImagePanel">

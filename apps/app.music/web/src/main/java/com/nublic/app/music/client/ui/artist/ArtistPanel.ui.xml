@@ -28,7 +28,7 @@
 		  </g:HTMLPanel>
 		</g:north>
 		<g:center>
-			<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll}"/>
+			<g:FlowPanel ui:field="mainPanel" addStyleNames="{style.scroll} shadowed"/>
 		</g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

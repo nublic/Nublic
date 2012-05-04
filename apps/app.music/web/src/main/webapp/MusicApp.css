@@ -138,3 +138,7 @@ body, html {
 .stripped > tbody > tr:nth-child(odd) > td {
 	background-color: #f9f9f9;
 }
+
+.shadowed > div:nth-child(odd) {
+	background-color: #f9f9f9;
+}
