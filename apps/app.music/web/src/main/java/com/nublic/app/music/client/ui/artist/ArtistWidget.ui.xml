@@ -7,7 +7,7 @@
 			display: inline-block;
 		}
 		.minheight {
-			min-height: 100px;
+			min-height: 135px;
 		}
 		.myh3andahalf {
 			font-size: 16px;
@@ -23,6 +23,9 @@
 		.artistmargin {
 			margin-top: 10px;
 		}
+		.rightmargin {
+			margin-right: 15px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
@@ -36,8 +39,8 @@
 				</g:HorizontalPanel>	
 			</g:cell>
 			<g:VerticalPanel width="100%">
-				<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="32px" verticalAlignment="middle">
-					<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.myh3andahalf}"/>
+				<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="35px" verticalAlignment="middle">
+					<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.myh3andahalf} {style.rightmargin}"/>
 				</g:HorizontalPanel>
 				<!-- Albums display -->
 				<g:FlowPanel ui:field="albumsPanel" width="100%"/>
