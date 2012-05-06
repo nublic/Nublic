@@ -5,6 +5,7 @@ export DEBFULLNAME='Nublic Packaging Team'
 export DEBEMAIL='packaging@nublic.com'
 export DEBKEY=4EEA5986
 export DEBREVISION=`date +%F-%H-%M`
+export INITIAL_TIME=`date +%s`
 
 # Used directories
 export INITIAL_DIR=`pwd`
@@ -130,19 +131,13 @@ create_repo() {
     # Sign packages and add packages to repo
     for pkg in *.deb
     do
-        dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
-        reprepro --ignore=wrongdistribution -Vb repo includedeb oneiric $pkg
+        DEB_DATE=`date -r ${pkg} +%s`
+        if [ ${DEB_DATE} -gt ${INITIAL_TIME} ]
+        then
+            dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
+            reprepro --ignore=wrongdistribution -Vb repo includedeb precise $pkg
+        fi
     done
-    cd "${INITIAL_DIR}"
-}
-
-download_serviio() {
-    cd 3rd-party-libs
-    rm -rf serviio
-    wget http://download.serviio.org/releases/serviio-$1-linux.tar.gz
-    tar -xzvf serviio-$1-linux.tar.gz
-    mv serviio-$1 serviio
-    rm serviio-$1-linux.tar.gz
     cd "${INITIAL_DIR}"
 }
 

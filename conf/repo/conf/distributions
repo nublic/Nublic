@@ -1,7 +1,7 @@
 Origin: Nublic
 Label: Nublic
-Codename: oneiric
-Suite: oneiric
+Codename: precise
+Suite: precise
 Version: 3.1
 Architectures: i386 amd64 source
 Components: nublic
