@@ -22,7 +22,8 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
     c match {
       case Created(filename, context, false)  => process_updated_file(filename, context)
       case Modified(filename, context, false) => process_updated_file(filename, context)
-      case Moved(from, to, context, _)        => process_moved_file(from, to, context)
+      case Moved(from, to, context, false)    => process_moved_file(from, to, context)
+      case Moved(from, to, context, true)     => process_moved_folder(from, to, context)
       case Deleted(filename, _, false)        => process_deleted_file(filename)
       case _                                  => { /* Nothing */ }
     }
@@ -84,6 +85,28 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
       case Some(photo) => {
         photo.file = to
         Database.photos.update(photo)
+      }
+    }
+  }
+
+  def process_moved_folder(from: String, to: String, context: String): Unit = inTransaction {
+    // Let's move all the contents
+    val folder = new File(to)
+    for (file <- folder.listFiles()) {
+      // Get new filename
+      val path = file.getPath()
+      val old_path = path.replaceFirst(to, from)
+      if (file.isDirectory()) {
+        process_moved_folder(old_path, path, context)
+      } else {
+        // Try to update song
+        Database.photoByFilename(old_path) match {
+          case None       => { /* Do nothing */ }
+          case Some(photo) => {
+            photo.file = path
+            Database.photos.update(photo)
+          }
+        }
       }
     }
   }

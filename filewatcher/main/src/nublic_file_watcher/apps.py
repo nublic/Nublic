@@ -8,7 +8,6 @@ Created on 05/12/2011
 import os
 import os.path
 import json
-from dbus_signals import *
 
 NUBLIC_APP_DATA_ROOT = "/var/lib/nublic/apps"
 FILE_WATCHER_DIRS = "/var/nublic/cache/filewatcher.dirs"
@@ -29,26 +28,6 @@ def write_app_config(config):
     o = json.dump(config, fp)
     fp.close()
     return o
-
-def create_initial_signalers(config, apps):
-    signalers = []
-    for app in apps:
-        if app in config[u'apps']:
-            signalers.append(DbusSignaler(app.title(), config[u'apps'][app]))
-        else:
-            the_app = apps[app]
-            if the_app.supports_filewatcher():
-                fw_folders = the_app.filewatcher.paths
-                if u'__all__' in fw_folders:
-                    # Add watcher upon everything
-                    config[u'apps'][app] = [ u'' ]
-                    signalers.append(DbusSignaler(app.title(), [ u'' ]))
-                else:
-                    # Add a watcher with no contexts
-                    config[u'apps'][app] = []
-                    signalers.append(DbusSignaler(app.title(), []))
-    write_app_config(config)
-    return signalers
 
 def load_all_apps():
     r = dict()

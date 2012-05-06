@@ -20,10 +20,10 @@ def start_watching(folder):
     wm = WatchManager2()
     handler = EventHandler(wm, config, apps_info, folder)
     notifier = pyinotify.Notifier(wm, handler, timeout=10)
-    gobject.timeout_add(500, quick_check, notifier)
+    gobject.timeout_add(100, quick_check, notifier)
     # Exclude files beginning with . or ending in ~
     e_filter = pyinotify.ExcludeFilter(['((/[^/]+)*/\\..*)|((/[^/]+)*/.+~)'])
-    _ = wm.add_watch(folder, handler.mask(), rec=True, auto_add=True, exclude_filter=e_filter)
+    wm.add_watch(folder, handler.mask(), rec=True, auto_add=True, exclude_filter=e_filter)
     print "Starting to watch..."
 
 def quick_check(notifier):
