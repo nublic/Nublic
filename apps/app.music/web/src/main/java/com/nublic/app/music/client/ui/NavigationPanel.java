@@ -72,7 +72,7 @@ public class NavigationPanel extends Composite {
 	
 	// Adding methods
 	public void addAllMusic() {
-		allMusic = new TagWidget(null, Constants.I18N.allMusicName(), "");
+		allMusic = new TagWidget(null, Constants.I18N.allMusic(), "");
 		libraryPanel.add(allMusic);
 	}
 

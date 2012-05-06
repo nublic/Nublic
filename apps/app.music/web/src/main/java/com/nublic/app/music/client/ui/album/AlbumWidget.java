@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.Utils;
@@ -23,7 +24,7 @@ import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
-import com.nublic.app.music.client.ui.song.AlbumSongList;
+import com.nublic.app.music.client.ui.song.ContextualSongList;
 import com.nublic.util.widgets.ImageHelper;
 
 public class AlbumWidget extends Composite {
@@ -39,7 +40,7 @@ public class AlbumWidget extends Composite {
 	String artistId;
 	String collectionId;
 	
-	public AlbumWidget(AlbumInfo a, String artistId, String collectionId, Widget inPanel) {
+	public AlbumWidget(AlbumInfo a, String artistId, String collectionId, Panel inPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.album = a;
 		this.artistId = artistId;
@@ -60,7 +61,7 @@ public class AlbumWidget extends Composite {
 		labelAndButtonsPanel.add(b);
 		
 		// Add song list
-		songsPanel.add(new AlbumSongList(album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
+		songsPanel.add(new ContextualSongList(album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));
 		
 		// Make image draggable
 		albumImagePanel.setProperties(album.getId(), artistId, collectionId, album.getNumberOfSongs());

@@ -30,5 +30,6 @@ public class Constants {
 	public static final String GRABBER_WIDTH = "36px";
 	public static final String BUTTONS_WIDTH = "48px";
 	public static final String TRACK_NUMBER_WIDTH = "30px";
+	public static final String TABLE_CELL_HEIGHT = "27px";
 	
 }

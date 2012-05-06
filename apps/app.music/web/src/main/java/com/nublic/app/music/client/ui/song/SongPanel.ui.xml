@@ -42,7 +42,7 @@
 				<g:HTMLPanel>
 					<div class="page-header" style="width: 100%;">
 						<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
-							<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background} {style.glow}" title="back to collection">
+							<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background} {style.glow}" title="{msg.backToCollection}">
 								<g:upFace image="{res.leftArrow}"/>
 							</g:PushButton>
 							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
@@ -51,7 +51,7 @@
 					</div>
 				</g:HTMLPanel>
 				<g:HorizontalPanel>
-					<g:Label ui:field="byLabel" text="by:" addStyleNames="{style.space}"/>
+					<g:Label ui:field="byLabel" text="{msg.by}" addStyleNames="{style.space}"/>
 					<g:HorizontalPanel ui:field="subtitlePanel"/>
 				</g:HorizontalPanel>
 			</g:VerticalPanel>

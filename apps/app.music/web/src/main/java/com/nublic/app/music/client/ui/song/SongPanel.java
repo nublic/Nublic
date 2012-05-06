@@ -22,9 +22,12 @@ import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.EmptyWidget;
+import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.ViewTabs;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
@@ -62,7 +65,11 @@ public class SongPanel extends Composite {
 
 		// Get album info (null means all songs)
 		if (albumId == null && artistId == null) {
-			titleLabel.setText(Constants.I18N.allSongs());
+			if (inCollection != null) {
+				titleLabel.setText(Controller.INSTANCE.getModel().getTagCache().get(inCollection).getName());
+			} else {
+				titleLabel.setText(Constants.I18N.allMusic());
+			}
 			byLabel.setVisible(false);
 			subtitlePanel.setVisible(false);
 			setViewLinks(true, true);
@@ -94,27 +101,38 @@ public class SongPanel extends Composite {
 			setViewLinks(false, false);
 			Utils.setBackButton(backButton, collectionId);
 		}
-		
-		if (inCollection != null) {
-			String collectionName = Controller.INSTANCE.getModel().getTagCache().get(inCollection).getName();
-			titleLabel.setText(titleLabel.getText() + " - " + collectionName);
-		}
 
 		// Create button line
-		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END,
-														ButtonLineParam.PLAY);
+		createButtonLine();		
+	}
+	
+	private void createButtonLine() {
+		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END, ButtonLineParam.PLAY);
+		if (inCollection != null && artistId == null && albumId == null) { // We're in an album view of a collection
+			buttonSet.add(ButtonLineParam.DELETE);
+		}
 		ButtonLine b = new ButtonLine(buttonSet);
+		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.insert(b, 2);
 		
 	}
-	
-	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
-		SongList sl = new AlbumSongList(albumId, artistId, collectionId, total, mainPanel);
-		sl.addSongs(total, from, to, answerList);
 
-		mainPanel.add(sl);
+	public void setSongList(int total, int from, int to, List<SongInfo> answerList, String albumId, String artistId, String collectionId) {
+		if (total != 0) {
+			SongList sl;
+			if (albumId == null) {
+				sl = new IsolatedSongList(albumId, artistId, collectionId, total, mainPanel);
+				sl.addSongs(total, from, to, answerList);
+			} else {
+				sl = new ContextualSongList(albumId, artistId, collectionId, total, mainPanel);
+				sl.addSongs(total, from, to, answerList);
+			}
+			mainPanel.add(sl);
+		} else {
+			mainPanel.add(new EmptyWidget());
+		}
 	}
 
 	private void setViewLinks(boolean showArtist, boolean showAlbum) {
@@ -156,6 +174,15 @@ public class SongPanel extends Composite {
 	}
 	
 	// Handlers for button line
+	private void setDeleteButtonHandler(ButtonLine b) {
+		b.setDeleteButtonHandler(new DeleteButtonHandler() {
+			@Override
+			public void onDelete() {
+				Controller.INSTANCE.deleteTag(inCollection, TagKind.COLLECTION);
+			}
+		});
+	}
+
 	private void setAddAtEndButtonHandler(ButtonLine b) {
 		b.setAddAtEndButtonHandler(new AddAtEndButtonHandler() {
 			@Override

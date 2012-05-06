@@ -73,16 +73,18 @@ public class SongMessage extends Message {
 		// Album filter
 		if (albumId != null) {
 			url.append(albumId);
+			url.append("/");
+			url.append(Constants.ORDER_ALBUM);
 		} else {
 			url.append("all");
+			url.append("/");
+			url.append(Constants.ORDER_ALPHA);
 		}
 
-		// Range of request
-		url.append("/");
-		url.append(Constants.ORDER_ALBUM);
 		url.append("/asc/");
 		url.append(from);
 		url.append("/");
+		// Range of request
 		url.append(to - from + 1);
 		url.append("/");
 		// Add possible collection filter

@@ -30,6 +30,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.ViewTabs;
 
@@ -53,7 +54,7 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 		
 		// Set title
 		if (collectionId == null) {
-			titleLabel.setText(Constants.I18N.allMusicName());
+			titleLabel.setText(Constants.I18N.allMusic());
 		} else {
 			titleLabel.setText(Controller.INSTANCE.getModel().getTagCache().get(collectionId).getName());
 		}
@@ -113,20 +114,24 @@ public class ArtistPanel extends Composite implements ScrollHandler {
 	public void setArtistList(List<ArtistInfo> artistList) {
 		this.artistList = artistList;
 		
-		for (ArtistInfo a : artistList) {
-			ArtistWidget aw = new ArtistWidget(a, collectionId);
-			unloadedWidgets.add(aw); // for handling lazy scroll loading
-			mainPanel.add(aw);
-		}
-		// Couldn't find a way to do it on some widget event in Artist Widget (attachedHandler and LoadHandler don't work)
-		Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-			@Override
-			public void execute() {
-				// This is executed when current events stack empties
-				// Call onScroll when the widgets are loaded, so content of shown ones can be lazy loaded
-				onScroll(null);
+		if (artistList.isEmpty()) {
+			mainPanel.add(new EmptyWidget());
+		} else {
+			for (ArtistInfo a : artistList) {
+				ArtistWidget aw = new ArtistWidget(a, collectionId);
+				unloadedWidgets.add(aw); // for handling lazy scroll loading
+				mainPanel.add(aw);
 			}
-		});
+			// Couldn't find a way to do it on some widget event in Artist Widget (attachedHandler and LoadHandler don't work)
+			Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+				@Override
+				public void execute() {
+					// This is executed when current events stack empties
+					// Call onScroll when the widgets are loaded, so content of shown ones can be lazy loaded
+					onScroll(null);
+				}
+			});
+		}
 	}
 	
 	// Handlers for button line

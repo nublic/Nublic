@@ -102,4 +102,23 @@ public class Range {
 		}
 		return contains;
 	}
+	
+	public static void removeIntAndShift(List<Range> rangeList, int element) {
+		List<Range> rangesToRemove = new ArrayList<Range>();
+		for (Range r : rangeList) {
+			if (element == r.to && element == r.from) {
+				rangesToRemove.add(r);
+			}
+
+			if (element >= r.from && element <= r.to) {
+				r.to--;
+			} else if (element < r.from) {
+				r.from--;
+				r.to--;
+			}
+		}
+		for (Range removeMe : rangesToRemove) {
+			rangeList.remove(removeMe);
+		}
+	}
 }

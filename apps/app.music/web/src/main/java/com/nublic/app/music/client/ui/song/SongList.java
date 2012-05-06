@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
@@ -33,14 +34,15 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.dnd.DraggableSong;
+import com.nublic.app.music.client.ui.song.AlbumSongList.MyDeleteHandler;
 import com.nublic.util.cache.Cache;
 import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.messages.DefaultComparator;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceIgnorer;
 import com.nublic.util.range.Range;
-import com.google.gwt.user.client.ui.SimplePanel;
 
 public abstract class SongList extends Composite implements ScrollHandler {
 	private static SongListUiBinder uiBinder = GWT.create(SongListUiBinder.class);
@@ -57,8 +59,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 
 	@UiField SongStyle style;
 	@UiField Grid grid;
-	@UiField SimplePanel emptyPanel;
-	Widget scrollPanel;
+	Panel scrollPanel;
 	int numberOfSongs;	
 	
 	SequenceIgnorer<Message> sendHelper = new SequenceIgnorer<Message>(DefaultComparator.INSTANCE);
@@ -69,7 +70,7 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	
 	// With numberOfSongs == -1 we'll get it from first request
 	// Scroll panel which we in are in to handle lazy loading
-	public SongList(int numberOfSongs, Widget scrollPanel) {
+	public SongList(int numberOfSongs, Panel scrollPanel) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.numberOfSongs = numberOfSongs;
@@ -105,7 +106,8 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		@Override
 		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
 			if (total != SongList.this.numberOfSongs) {
-				// TODO: rescale songlist
+				// If this happens it means playlist have been changed from other place while we're looking at it
+				// TODO: cry
 			} else {
 				int currentSong = from;
 				for (SongInfo s : answerList) {
@@ -177,6 +179,11 @@ public abstract class SongList extends Composite implements ScrollHandler {
 			Range.remove(rangeToAsk, r);
 		}
 	}
+	
+	public void updateRangesFromDelete(int deletedRow) {
+		Range.removeIntAndShift(askedRanges, deletedRow);
+		numberOfSongs--;
+	}
 
 	// TODO: make a function to invalid askedRange if request fails
 	
@@ -188,10 +195,6 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	
 	public abstract void setSong(int row, SongInfo s);
 	protected abstract void prepareGrid();
-	
-	public void updateEmptyness() {
-		emptyPanel.setVisible(grid.getRowCount() <= 0);
-	}
 
 	// +++ Methods to fill the grid +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	protected void setLenght(int row, int column, String formattedLength) {
@@ -219,18 +222,24 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		trackNumLabel.getElement().addClassName(style.alignright());
 		HorizontalPanel capsule = new HorizontalPanel();
 		capsule.setWidth("100%");
-		capsule.setHeight("25px");
-		capsule.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		capsule.add(trackNumLabel);
 		grid.setWidget(row, column, capsule);
 	}
-	
-	protected void setTitleLenght(int row, int column, SongInfo s, AddAtEndButtonHandler aaebh, PlayButtonHandler pbh, EditButtonHandler ebh) {
+
+
+	protected void setTitleLenght(int row, int column, SongInfo s, AddAtEndButtonHandler aaebh, PlayButtonHandler pbh, EditButtonHandler ebh, MyDeleteHandler mdh) {
 		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
-		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT));
+		EnumSet<ButtonLineParam> set = EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT);
+		if (mdh != null) {
+			set.add(ButtonLineParam.DELETE);
+		}
+		ButtonLine buttonLine = new ButtonLine(set);
 		buttonLine.setAddAtEndButtonHandler(aaebh);
 		buttonLine.setPlayButtonHandler(pbh);
 		buttonLine.setEditButtonHandler(ebh);
+		if (mdh != null) {
+			buttonLine.setDeleteButtonHandler(mdh);
+		}
 		HorizontalPanel h = new HorizontalPanel();
 		h.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
 		h.add(titleLabel);
@@ -272,6 +281,12 @@ public abstract class SongList extends Composite implements ScrollHandler {
 		DraggableSong grabber = new DraggableSong(row, s);
 		grid.setWidget(row, column, grabber);
 		Controller.INSTANCE.makeDraggable(grabber);
+	}
+	
+	protected void updateEmptyness() {
+		if (grid.getRowCount() <= 0) {
+			scrollPanel.add(new EmptyWidget());
+		}
 	}
 
 }

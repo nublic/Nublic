@@ -6,17 +6,8 @@
 		.inlineblock {
 			display: inline-block;
 		}
-		.padding {
-			padding: 0px 0px 0px 52px;
-		}
-		.rightmargin {
-			margin-right: 15px;
-		}
-		.leftmargin {
-			margin-left: 15px;
-		}
 		.minheight {
-			min-height: 147px;
+			min-height: 135px;
 		}
 		.myh3andahalf {
 			font-size: 16px;
@@ -29,20 +20,31 @@
 			cursor: pointer;
 			cursor: hand;
 		}
+		.artistmargin {
+			margin-top: 10px;
+		}
+		.rightmargin {
+			margin-right: 15px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 	
-	<g:FlowPanel addStyleNames="{style.minheight}">
-		<!-- Artist display -->
-		<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="48px" verticalAlignment="middle" addStyleNames="translucidPanel">
-			<g:HorizontalPanel width="48px" height="48px" horizontalAlignment="center" verticalAlignment="middle">
-				<my:ArtistImage ui:field="artistImage" addStyleNames="{style.artlimits} {style.handover}"/>
-			</g:HorizontalPanel>
-			<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.leftmargin} {style.rightmargin} {style.myh3andahalf}"/>
+	<g:FlowPanel addStyleNames="{style.minheight} translucidPanel">
+		<g:HorizontalPanel verticalAlignment="top" width="100%">
+			<!-- Artist display -->
+			<g:cell width="68px" height="68px" horizontalAlignment="center"> <!-- 10 + 48 + 10 -->
+				<g:HorizontalPanel width="48px" height="48px" horizontalAlignment="center" verticalAlignment="middle" addStyleNames="{style.artistmargin}">
+					<my:ArtistImage ui:field="artistImage" addStyleNames="{style.artlimits} {style.handover}"/>
+				</g:HorizontalPanel>	
+			</g:cell>
+			<g:VerticalPanel width="100%">
+				<g:HorizontalPanel ui:field="labelAndButtonsPanel" height="35px" verticalAlignment="middle">
+					<g:Hyperlink ui:field="artistNameLabel" text="Artist name" addStyleNames="{style.myh3andahalf} {style.rightmargin}"/>
+				</g:HorizontalPanel>
+				<!-- Albums display -->
+				<g:FlowPanel ui:field="albumsPanel" width="100%"/>
+			</g:VerticalPanel>
 		</g:HorizontalPanel>
-		<!-- Albums display -->
-		<g:FlowPanel ui:field="albumsPanel" width="100%" addStyleNames="{style.padding}">
-		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder> 

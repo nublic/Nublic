@@ -3,6 +3,7 @@ package com.nublic.app.music.client.ui.song;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
@@ -16,7 +17,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 	String playlistId;
 	int playingIndex = -1;
 	
-	public PlaylistSongList(String playlistId, int numberOfSongs, Widget scrollPanel) {
+	public PlaylistSongList(String playlistId, int numberOfSongs, Panel scrollPanel) {
 		super(numberOfSongs, scrollPanel);
 		this.playlistId = playlistId;
 		
@@ -42,11 +43,11 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
 		grid.getColumnFormatter().setWidth(1, Constants.BUTTONS_WIDTH);
 		grid.getColumnFormatter().setWidth(2, Constants.TRACK_NUMBER_WIDTH);
-		updateEmptyness();
 	}
 
 	@Override
 	public void setSong(int row, SongInfo s) {
+		grid.getCellFormatter().setHeight(row, 0, Constants.TABLE_CELL_HEIGHT);
 		setGrabber(row, 0, s);														// Column 0
 		setButtons(row, 1, s, new MyPlayHandler(row), new MyDeleteHandler(row));	// Column 1
 		setTrackNumber(row, 2, s.getTrack());										// Column 2
@@ -136,6 +137,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 					if (Controller.INSTANCE.isBeingPlayed(playlistId)) {
 						Controller.INSTANCE.getPlayer().nublicRemoveFromPlaylist(row);
 					}
+					updateRangesFromDelete(row);
 					rearrangeRows(row, grid.getRowCount() -1);
 					updateEmptyness();
 				}

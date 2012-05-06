@@ -1,19 +1,23 @@
 package com.nublic.app.music.client.ui.song;
 
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
+import com.nublic.app.music.client.ui.ButtonLine;
+import com.nublic.app.music.client.ui.dnd.DraggableSong;
 
-public class AlbumSongList extends SongList {
+public abstract class AlbumSongList extends SongList {
 	String albumId;
 	String artistId;
 	String collectionId;
 	
-	public AlbumSongList(String albumId, String artistId, String collectionId, int numberOfSongs, Widget scrollPanel) {
+	public AlbumSongList(String albumId, String artistId, String collectionId, int numberOfSongs, Panel scrollPanel) {
 		super(numberOfSongs, scrollPanel);
 		this.albumId = albumId;
 		this.artistId = artistId;
@@ -23,22 +27,6 @@ public class AlbumSongList extends SongList {
 	@Override
 	public void askForsongs(int from, int to) {
 		Controller.INSTANCE.getModel().askForSongs(from, to, albumId, artistId, collectionId, songHandler);
-	}
-
-	@Override
-	protected void prepareGrid() {
-		grid.resize(numberOfSongs, 3);
-		grid.getColumnFormatter().setWidth(0, Constants.GRABBER_WIDTH);
-		grid.getColumnFormatter().setWidth(1, Constants.TRACK_NUMBER_WIDTH);
-		updateEmptyness();
-	}
-	
-	@Override
-	public void setSong(int row, SongInfo s) {
-		setGrabber(row, 0, s);														   // Column 0
-		setTrackNumber(row, 1, s.getTrack());									   // Column 1
-		setTitleLenght(row, 2, s,												   // Column 2
-			new MyAddAtEndHandler(s), new MyPlayHandler(s), new MyEditHandler());  // (Column 3)
 	}
 	
 	// +++ Handlers for buttons +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -69,6 +57,43 @@ public class AlbumSongList extends SongList {
 		public void onEdit() {
 			// TODO: Edit
 			
+		}
+	}
+	
+	protected class MyDeleteHandler implements DeleteButtonHandler {
+		SongInfo song;
+		int row;
+		public MyDeleteHandler(SongInfo s, int row) {
+			this.song = s;
+			this.row = row;
+		}
+		@Override
+		public void onDelete() {
+			// Remove from server
+			Controller.INSTANCE.getModel().removeFromCollection(collectionId, song.getId(), new DeleteButtonHandler() {
+				@Override
+				public void onDelete() {
+					// Remove from interface
+					grid.removeRow(row);
+					updateRangesFromDelete(row);
+					rearrangeRows(row, grid.getRowCount() -1);
+					updateEmptyness();
+				}
+			});
+		}
+	}
+
+	public void rearrangeRows(int from, int to) {
+		for (int i = from; i <= to ; i++) {
+			Widget w = grid.getWidget(i, 0);
+			if (w instanceof SongLocalizer) {
+				((SongLocalizer)w).setPosition(i);
+			} else {
+				((DraggableSong)w).setRow(i);
+				SongInfo s = ((DraggableSong)w).getSong();
+				ButtonLine bl = (ButtonLine)((HorizontalPanel)grid.getWidget(i, 1)).getWidget(1);
+				bl.setDeleteButtonHandler(new MyDeleteHandler(s, i));
+			}
 		}
 	}
 }

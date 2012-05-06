@@ -38,10 +38,10 @@ public class ArtistWidget extends Composite {
 	// CSS Styles defined in the .xml file
 	interface ArtistStyle extends CssResource {
 		String inlineblock();
-		String padding();
-		String rightmargin();
-		String leftmargin();
 		String minheight();
+		String myh3andahalf();
+		String artlimits();
+		String handover();
 	}
 
 	@UiField ArtistStyle style;
