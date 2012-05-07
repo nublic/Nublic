@@ -1,14 +1,16 @@
 <VirtualHost *:80>
     ServerAdmin webmaster@nublic.me
     RewriteEngine On
-	Include /var/lib/nublic/apache2/apps/*.conf
+
+    Include /var/lib/nublic/apache2/apps/app.manager
+    Include /var/lib/nublic/apache2/apps/*.conf
 
     ErrorLog /var/log/apache2/error.log
 
-	ProxyRequests Off
-	ProxyErrorOverride Off
-	ProxyPreserveHost On
-	# Add custom error webpages
+    ProxyRequests Off
+    ProxyErrorOverride Off
+    ProxyPreserveHost On
+    # Add custom error webpages
 
     # In tomcat .conf files
     <Location  /app-tomcat>

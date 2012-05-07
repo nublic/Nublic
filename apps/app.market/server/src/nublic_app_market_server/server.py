@@ -19,6 +19,11 @@ packages_list = None
 last_packages_update = None
 
 
+@app.route('/about', methods=['GET'])
+def about():
+    return u'Nublic Market Server 0.0.1'
+
+
 @app.route('/packages', methods=['GET'])
 def list_packages():
     # Refer to global variables
