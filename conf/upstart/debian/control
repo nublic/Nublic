@@ -8,6 +8,7 @@ Homepage: http://nublic.com
 
 Package: nublic-upstart
 Architecture: all
-Depends: ${misc:Depends}, xvfb, libreoffice
+Depends: ${misc:Depends}, xvfb, libreoffice, postgresql, tomcat7
+Replaces: postgresql-common
 Description: Nublic Upstart workaround files
  Nublic Upstart workaround files

@@ -57,7 +57,7 @@ class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document",
       if (file.isDirectory()) {
         process_moved_folder(old_path, path)
       }
-      process_moved_file(from, to)
+      process_moved_file(old_path, path)
     }
   }
   

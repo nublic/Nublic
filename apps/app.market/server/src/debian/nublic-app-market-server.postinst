@@ -1,0 +1,4 @@
+#!/bin/bash
+# Here we should be sure Apache mod_wsgi and this app are available
+
+#DEBHELPER#

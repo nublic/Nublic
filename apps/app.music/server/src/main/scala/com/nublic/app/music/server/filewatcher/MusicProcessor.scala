@@ -66,7 +66,8 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     c match {
       case Created(filename, context, false)  => process_updated_file(filename, context)
       case Modified(filename, context, false) => process_updated_file(filename, context)
-      case Moved(from, to, context, _)        => process_moved_file(from, to, context)
+      case Moved(from, to, context, false)    => process_moved_file(from, to, context)
+      case Moved(from, to, context, true)     => process_moved_folder(from, to, context)
       case Deleted(filename, _, false)        => process_deleted_file(filename)
       case _                                  => { /* Nothing */ }
     }
@@ -75,7 +76,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   def process_updated_file(filename: String, context: String): Unit = {
     val extension = FilenameUtils.getExtension(filename)
     
-    GLOBAL_LOGGER.severe("Filewatcher: Getting info from " + filename)
+    // GLOBAL_LOGGER.severe("Filewatcher: Getting info from " + filename)
     val song_info = 
       if (taggedExtensions.contains(extension) || taggedMimeTypes.contains(Solr.getMimeType(filename))) {
         Some(SongInfo.from(filename, context))
@@ -85,16 +86,16 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
         None
       }
     
-    GLOBAL_LOGGER.severe("Filewatcher: Adding to database " + filename)
+    // GLOBAL_LOGGER.severe("Filewatcher: Adding to database " + filename)
     if (song_info.isDefined) {
       inTransaction {
         Database.songByFilename(filename) match {
           case Some(song) => {
-            GLOBAL_LOGGER.severe("Filewatcher: Replacing in database " + filename)
+            // GLOBAL_LOGGER.severe("Filewatcher: Replacing in database " + filename)
             replace_in_database(filename, song.id, song_info.get) 
           }
           case None =>  {
-            GLOBAL_LOGGER.severe("Filewatcher: Really adding to database " + filename)
+            // GLOBAL_LOGGER.severe("Filewatcher: Really adding to database " + filename)
             add_to_database(filename, song_info.get)
           }
         }
@@ -110,6 +111,28 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       case Some(song) => {
         song.file = to
         Database.songs.update(song)
+      }
+    }
+  }
+
+  def process_moved_folder(from: String, to: String, context: String): Unit = inTransaction {
+    // Let's move all the contents
+    val folder = new File(to)
+    for (file <- folder.listFiles()) {
+      // Get new filename
+      val path = file.getPath()
+      val old_path = path.replaceFirst(to, from)
+      if (file.isDirectory()) {
+        process_moved_folder(old_path, path, context)
+      } else {
+        // Try to update song
+        Database.songByFilename(old_path) match {
+          case None       => { /* Do nothing */ }
+          case Some(song) => {
+            song.file = path
+            Database.songs.update(song)
+          }
+        }
       }
     }
   }
