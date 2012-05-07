@@ -23,6 +23,17 @@
 			background: transparent;
 			padding: 3px;
 			margin: 3px 15px 3px 3px;
+			opacity: 0.4;
+			border-style: none;
+			box-shadow: none;
+		}
+		.background:hover {
+			opacity: 1;
+		}
+		/*.background {
+			background: transparent;
+			padding: 3px;
+			margin: 3px 15px 3px 3px;
 		}
 		.glow:hover {
 			border-color: rgba(82, 168, 236, 0.8);
@@ -31,7 +42,7 @@
 			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
 			outline: 0;
 			outline: thin dotted 9;
-		}
+		}*/
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
 	<ui:with type="com.nublic.app.music.client.i18n.I18NMessages" field="msg"/>
@@ -42,7 +53,7 @@
 				<g:HTMLPanel>
 					<div class="page-header" style="width: 100%;">
 						<g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
-							<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background} {style.glow}" title="{msg.backToCollection}">
+							<g:PushButton ui:field="backButton" height="16px" width="16px" addStyleNames="{style.background}" title="{msg.backToCollection}">
 								<g:upFace image="{res.leftArrow}"/>
 							</g:PushButton>
 							<g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
