@@ -1,2 +1,3 @@
 nublic_app_market_server/app.market.wsgi /var/lib/nublic/webapps/
 app.market.conf /var/lib/nublic/apache2/apps/
+packages.json /var/lib/nublic/
