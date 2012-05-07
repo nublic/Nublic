@@ -246,9 +246,8 @@ public class DataModel {
 	}
 	
 	public void addToCollection(String collectionId, List<SongInfo> songList) {
-		for (SongInfo s : songList) {
-			addToCollection(collectionId, s);
-		}
+		AddToCollectionMessage atc = new AddToCollectionMessage(collectionId, songList);
+		SequenceHelper.sendJustOne(atc, RequestBuilder.PUT);
 	}
 	
 	// current playlist manage methods
