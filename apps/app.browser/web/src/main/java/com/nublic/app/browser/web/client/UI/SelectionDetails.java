@@ -97,7 +97,7 @@ public class SelectionDetails extends Composite {
 		// No items selected, shows info of the whole folder
 		String nameToShow;
 		if (folderName == null || folderName.equals("")) {
-			nameToShow = Constants.HOME_NAME;
+			nameToShow = Constants.I18N.home();
 			setImage(Resources.INSTANCE.home());
 		} else {
 			nameToShow = folderName;

@@ -852,7 +852,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 
 	public void setWindowTitle(String title) {
-		Window.setTitle(Constants.WINDOW_PRETITLE + title);
+		Window.setTitle(Constants.I18N.windowTitle(title));
 	}
 
 	// Auxiliary private functions

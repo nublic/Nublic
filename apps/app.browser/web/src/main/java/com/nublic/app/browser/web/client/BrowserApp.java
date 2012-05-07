@@ -85,7 +85,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 		String path = hmap.get(Constants.PATH_PARAMETER) == null ? "" : hmap.get(Constants.PATH_PARAMETER);
 
 		if (path.equals("")) {
-			theUi.setWindowTitle(Constants.WINDOW_HOME_TITLE);
+			theUi.setWindowTitle(Constants.I18N.home());
 		} else {
 			theUi.setWindowTitle(path);
 		}
