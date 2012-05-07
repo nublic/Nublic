@@ -1,16 +1,12 @@
 package com.nublic.app.music.client.ui.song;
 
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.SongInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
-import com.nublic.app.music.client.ui.ButtonLine;
-import com.nublic.app.music.client.ui.dnd.DraggableSong;
 
 public abstract class AlbumSongList extends SongList {
 	String albumId;
@@ -82,18 +78,20 @@ public abstract class AlbumSongList extends SongList {
 			});
 		}
 	}
+	
+	public abstract void rearrangeRows(int from, int to);
 
-	public void rearrangeRows(int from, int to) {
-		for (int i = from; i <= to ; i++) {
-			Widget w = grid.getWidget(i, 0);
-			if (w instanceof SongLocalizer) {
-				((SongLocalizer)w).setPosition(i);
-			} else {
-				((DraggableSong)w).setRow(i);
-				SongInfo s = ((DraggableSong)w).getSong();
-				ButtonLine bl = (ButtonLine)((HorizontalPanel)grid.getWidget(i, 1)).getWidget(1);
-				bl.setDeleteButtonHandler(new MyDeleteHandler(s, i));
-			}
-		}
-	}
+//	public void rearrangeRows(int from, int to) {
+//		for (int i = from; i <= to ; i++) {
+//			Widget w = grid.getWidget(i, 0);
+//			if (w instanceof SongLocalizer) {
+//				((SongLocalizer)w).setPosition(i);
+//			} else {
+//				((DraggableSong)w).setRow(i);
+//				SongInfo s = ((DraggableSong)w).getSong();
+//				ButtonLine bl = (ButtonLine)((HorizontalPanel)grid.getWidget(i, 1)).getWidget(1);
+//				bl.setDeleteButtonHandler(new MyDeleteHandler(s, i));
+//			}
+//		}
+//	}
 }
