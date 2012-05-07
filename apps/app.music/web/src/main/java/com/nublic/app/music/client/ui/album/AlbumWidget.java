@@ -24,6 +24,7 @@ import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.ButtonType;
 import com.nublic.app.music.client.ui.song.ContextualSongList;
 import com.nublic.util.widgets.ImageHelper;
 
@@ -54,7 +55,9 @@ public class AlbumWidget extends Composite {
 		// Add button line
 		ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
 												 ButtonLineParam.ADD_AT_END,
-												 ButtonLineParam.PLAY));
+												 ButtonLineParam.PLAY),
+									  EnumSet.of(ButtonType.EDIT_ALBUM,
+											  	 ButtonType.PLAY_ALBUM));
 		setEditButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);

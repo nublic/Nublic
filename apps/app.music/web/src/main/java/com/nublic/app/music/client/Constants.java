@@ -2,6 +2,7 @@ package com.nublic.app.music.client;
 
 import com.google.gwt.core.client.GWT;
 import com.nublic.app.music.client.i18n.I18NMessages;
+import com.nublic.app.music.client.ui.ButtonType;
 
 public class Constants {
 	public static I18NMessages I18N = GWT.create(I18NMessages.class);
@@ -31,5 +32,36 @@ public class Constants {
 	public static final String BUTTONS_WIDTH = "48px";
 	public static final String TRACK_NUMBER_WIDTH = "30px";
 	public static final String TABLE_CELL_HEIGHT = "27px";
+
+	public static String tooltip(ButtonType blpt) {
+		switch (blpt) {
+		case DELETE_COLLECTION:
+			return I18N.deleteCollectionTooltip();
+		case DELETE_PLAYLIST:
+			return I18N.deletePlaylistTooltip();
+		case DELETE_PLAYLIST_SONG:
+			return I18N.deletePlaylistSongTootip();
+		case DELETE_COLLECTION_SONG:
+			return I18N.deleteCollectionSongTootip();
+		case EDIT_ALBUM:
+			return I18N.editAlbumTooltip();
+		case EDIT_ARTIST:
+			return I18N.editArtistTooltip();
+		case EDIT_SONG:
+			return I18N.editSongTooltip();
+		case PLAY_ALBUM:
+			return I18N.playAlbumTooltip();
+		case PLAY_ARTIST:
+			return I18N.playArtistTooltip();
+		case PLAY_SONG:
+			return I18N.playSongTooltip();
+		case PLAY_PLAYLIST:
+			return I18N.playPlaylistTooltip();
+		case PLAY_COLLECTION:
+			return I18N.playCollectionTooltip();
+		default:
+			return "";
+		}
+	}
 	
 }

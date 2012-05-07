@@ -34,6 +34,7 @@ import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.ButtonType;
 import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.dnd.DraggableSong;
 import com.nublic.app.music.client.ui.song.AlbumSongList.MyDeleteHandler;
@@ -210,7 +211,8 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	}
 
 	protected void setButtons(int row, int column, SongInfo s, PlayButtonHandler pbh, DeleteButtonHandler dbh) {
-		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE));
+		ButtonLine buttonLine = new ButtonLine(EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE),
+											   EnumSet.of(ButtonType.PLAY_SONG, ButtonType.DELETE_PLAYLIST_SONG));
 		buttonLine.setPlayButtonHandler(pbh);
 		buttonLine.setDeleteButtonHandler(dbh);
 		grid.setWidget(row, column, buttonLine);
@@ -230,10 +232,12 @@ public abstract class SongList extends Composite implements ScrollHandler {
 	protected void setTitleLenght(int row, int column, SongInfo s, AddAtEndButtonHandler aaebh, PlayButtonHandler pbh, EditButtonHandler ebh, MyDeleteHandler mdh) {
 		Label titleLabel = new Label(s.getTitle() + " (" +  s.getFormattedLength() + ")");
 		EnumSet<ButtonLineParam> set = EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.ADD_AT_END, ButtonLineParam.EDIT);
+		EnumSet<ButtonType> typeSet = EnumSet.of(ButtonType.PLAY_SONG, ButtonType.EDIT_SONG);
 		if (mdh != null) {
 			set.add(ButtonLineParam.DELETE);
+			typeSet.add(ButtonType.DELETE_COLLECTION_SONG);
 		}
-		ButtonLine buttonLine = new ButtonLine(set);
+		ButtonLine buttonLine = new ButtonLine(set, typeSet);
 		buttonLine.setAddAtEndButtonHandler(aaebh);
 		buttonLine.setPlayButtonHandler(pbh);
 		buttonLine.setEditButtonHandler(ebh);

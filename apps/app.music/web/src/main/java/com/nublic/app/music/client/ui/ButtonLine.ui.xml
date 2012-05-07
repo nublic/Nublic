@@ -12,19 +12,20 @@
 			margin-left: 8px;
 		}
 	</ui:style>
-	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
+	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.music.client.i18n.I18NMessages" field="msg"/>
 	
 	<g:HorizontalPanel>
-		<g:PushButton ui:field="deleteButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}">
+		<g:PushButton ui:field="deleteButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}" title="{msg.deleteTooltip}">
 			<g:upFace image="{res.delete}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="editButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}">
+		<g:PushButton ui:field="editButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}" title="{msg.editTooltip}">
 			<g:upFace image="{res.edit}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="addAtEndButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}">
+		<g:PushButton ui:field="addAtEndButton" addStyleNames="translucidButton {style.nobackground} {style.leftmargin}" title="{msg.addAtEndTooltip}">
 			<g:upFace image="{res.addAtEnd}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="playButton" addStyleNames="translucidButton playButton {style.nobackground} {style.leftmargin}">
+		<g:PushButton ui:field="playButton" addStyleNames="translucidButton playButton {style.nobackground} {style.leftmargin}" title="{msg.playTooltip}">
 			<g:upFace image="{res.playMini}"/>
 		</g:PushButton>
 	</g:HorizontalPanel>

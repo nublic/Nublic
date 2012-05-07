@@ -17,6 +17,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.ButtonType;
 import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.song.PlaylistSongList;
@@ -40,7 +41,8 @@ public class PlaylistPanel extends Composite {
 
 		// Create button line
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.PLAY, ButtonLineParam.DELETE);
-		ButtonLine b = new ButtonLine(buttonSet);
+		EnumSet<ButtonType> buttonTypeSet = EnumSet.of(ButtonType.PLAY_PLAYLIST, ButtonType.DELETE_PLAYLIST);
+		ButtonLine b = new ButtonLine(buttonSet, buttonTypeSet);
 		setDeleteButtonHandler(b);
 		setPlayButtonHandler(b);
 		titlePanel.add(b);

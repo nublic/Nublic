@@ -9,6 +9,23 @@ public interface I18NMessages extends Messages {
 	String confirmDeletionTitle();
 	String confirmDeletionInfo();
 	
+	String deleteTooltip();
+	String editTooltip();
+	String addAtEndTooltip();
+	String playTooltip();
+	String deleteCollectionTooltip();
+	String deletePlaylistTooltip();
+	String deletePlaylistSongTootip();
+	String deleteCollectionSongTootip();
+	String playArtistTooltip();
+	String playAlbumTooltip();
+	String playSongTooltip();
+	String playPlaylistTooltip();
+	String playCollectionTooltip();
+	String editArtistTooltip();
+	String editAlbumTooltip();
+	String editSongTooltip();
+
 	// Navigation panel titles
 	String library();
 	String collections();

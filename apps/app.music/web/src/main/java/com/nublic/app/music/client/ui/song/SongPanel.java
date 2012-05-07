@@ -26,6 +26,7 @@ import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
+import com.nublic.app.music.client.ui.ButtonType;
 import com.nublic.app.music.client.ui.EmptyWidget;
 import com.nublic.app.music.client.ui.TagKind;
 import com.nublic.app.music.client.ui.ViewTabs;
@@ -108,10 +109,20 @@ public class SongPanel extends Composite {
 	
 	private void createButtonLine() {
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END, ButtonLineParam.PLAY);
+		EnumSet<ButtonType> buttonTypeSet = EnumSet.noneOf(ButtonType.class);
+		if (artistId != null) {
+			buttonTypeSet.add(ButtonType.PLAY_ARTIST);
+		} else if (albumId != null) {
+			buttonTypeSet.add(ButtonType.PLAY_ALBUM);
+		} else {
+			buttonTypeSet.add(ButtonType.PLAY_COLLECTION);
+		}
+		
 		if (inCollection != null && artistId == null && albumId == null) { // We're in an album view of a collection
 			buttonSet.add(ButtonLineParam.DELETE);
+			buttonTypeSet.add(ButtonType.DELETE_COLLECTION);
 		}
-		ButtonLine b = new ButtonLine(buttonSet);
+		ButtonLine b = new ButtonLine(buttonSet, buttonTypeSet);
 		setDeleteButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);

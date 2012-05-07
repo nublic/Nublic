@@ -8,6 +8,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
@@ -35,7 +36,7 @@ public class ButtonLine extends Composite {
 	PlayButtonHandler playHandler;
 	
 	
-	public ButtonLine(EnumSet<ButtonLineParam> params) {
+	public ButtonLine(EnumSet<ButtonLineParam> params, EnumSet<ButtonType> paramTypes) {
 		if (!params.isEmpty()) {
 			initWidget(uiBinder.createAndBindUi(this));
 			
@@ -43,6 +44,20 @@ public class ButtonLine extends Composite {
 			editButton.setVisible(params.contains(ButtonLineParam.EDIT));
 			addAtEndButton.setVisible(params.contains(ButtonLineParam.ADD_AT_END));
 			playButton.setVisible(params.contains(ButtonLineParam.PLAY));
+			
+			for (ButtonType blpt : paramTypes) {
+				switch (blpt.getParam()) {
+				case DELETE:
+					deleteButton.setTitle(Constants.tooltip(blpt));
+					break;
+				case PLAY:
+					playButton.setTitle(Constants.tooltip(blpt));
+					break;
+				case EDIT:
+					editButton.setTitle(Constants.tooltip(blpt));
+					break;
+				}
+			}
 		}
 	}
 	
