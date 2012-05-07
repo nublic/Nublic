@@ -6,7 +6,8 @@
 		.nobackground {
 			background: transparent;
 			padding: 0px;
-			border: none;
+			border-style: none;
+			box-shadow: none;
 		}
 		.leftmargin {
 			margin-left: 8px;
