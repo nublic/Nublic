@@ -5,12 +5,14 @@ Created on 06/09/2011
 @copyright: 2011 Nublic
 '''
 
+from datetime import datetime
+from dbus_signals import (DbusSignaler)
 import os
 import os.path
 import pyinotify
 import solr
-from dbus_signals import (DbusSignaler)
-#import sys
+import sys
+import traceback
 
 class FakeCreationEvent:
     def __init__(self, pathname, isdir):
@@ -70,67 +72,93 @@ class EventHandler(pyinotify.ProcessEvent):
             self.raise_signal(event_name, event)
 
     def process_IN_ATTRIB(self, event):
-        self.create_or_send_modifications("attrib", event)
+        try:
+            self.create_or_send_modifications("attrib", event)
+        except:
+            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.write('\n\n')
 
     def process_IN_CREATE(self, event):
-        self.create_or_send_modifications("modify", event)
+        try:
+            self.create_or_send_modifications("modify", event)
+        except:
+            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.write('\n\n')
     
     def process_IN_CLOSE_WRITE(self, event):
-        self.create_or_send_modifications("modify", event)
+        try:
+            self.create_or_send_modifications("modify", event)
+        except:
+            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.write('\n\n')
     
     def process_IN_DELETE(self, event):
-        # Delete in Solr
-        file_info = solr.retrieve_doc(event.pathname)
-        if file_info != None:
-            file_info.delete()
-        # Delete from watched folders if there
-        if event.dir:
-            for signaler in self.signalers:
-                signaler.remove_context(event.pathname)
-        # Notify via D-Bus
-        self.handle_process("delete", event)
+        try:
+            # Delete in Solr
+            file_info = solr.retrieve_doc(event.pathname)
+            if file_info != None:
+                file_info.delete()
+            # Delete from watched folders if there
+            if event.dir:
+                for signaler in self.signalers:
+                    signaler.remove_context(event.pathname)
+            # Notify via D-Bus
+            self.handle_process("delete", event)
+        except:
+            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.write('\n\n')
 
     def process_IN_MOVED_TO(self, event):
-        if not hasattr(event, 'src_pathname'):
-            # We come from a directory outside
-            # so this is equivalent to a creation
-            self.process_IN_CREATE(event)
-        else:
-            # The movement is in between watched folders
-            # Change pathname in Solr
-            if solr.has_doc(event.src_pathname):
-                file_info = solr.retrieve_doc(event.src_pathname)
-                file_info.set_new_pathname(event.pathname)
-                file_info.save()
-                self.raise_signal("move", event)
+        try:
+            if not hasattr(event, 'src_pathname'):
+                # We come from a directory outside
+                # so this is equivalent to a creation
+                self.process_IN_CREATE(event)
             else:
-                # This is equivalent to creation
-                self.create_or_send_modifications("move", event)
-            # We are in a dir, change inner elements
-            if event.dir:
-                # We are in a folder
-                dir_name = event.src_pathname
-                new_dir_name = event.pathname
-                # Change the path for inotify events
-                self.change_watched_path(event.src_pathname, event.pathname)
-                # Change in saved watched folders
-                for signaler in self.signalers:
-                    signaler.replace_context(dir_name, new_dir_name, True)
-                # Update files in Solr and send events for them
-                for file_info in solr.retrieve_docs_in_dir(dir_name):
-                    file_path = file_info.get_pathname()
-                    new_file_path = file_path.replace(dir_name, new_dir_name, 1)
-                    file_info.set_new_pathname(new_file_path)
+                # The movement is in between watched folders
+                # Change pathname in Solr
+                if solr.has_doc(event.src_pathname):
+                    file_info = solr.retrieve_doc(event.src_pathname)
+                    file_info.set_new_pathname(event.pathname)
                     file_info.save()
-                    if file_info.is_directory():
-                        # It may be watched, so try to replace it
-                        for signaler in self.signalers:
-                            signaler.replace_context(file_path, new_file_path, True)
+                    self.raise_signal("move", event)
+                else:
+                    # This is equivalent to creation
+                    self.create_or_send_modifications("move", event)
+                # We are in a dir, change inner elements
+                if event.dir:
+                    # We are in a folder
+                    dir_name = event.src_pathname
+                    new_dir_name = event.pathname
+                    # Change the path for inotify events
+                    self.change_watched_path(event.src_pathname, event.pathname)
+                    # Change in saved watched folders
+                    for signaler in self.signalers:
+                        signaler.replace_context(dir_name, new_dir_name, True)
+                    # Update files in Solr and send events for them
+                    for file_info in solr.retrieve_docs_in_dir(dir_name):
+                        file_path = file_info.get_pathname()
+                        new_file_path = file_path.replace(dir_name, new_dir_name, 1)
+                        file_info.set_new_pathname(new_file_path)
+                        file_info.save()
+                        if file_info.is_directory():
+                            # It may be watched, so try to replace it
+                            for signaler in self.signalers:
+                                signaler.replace_context(file_path, new_file_path, True)
+        except:
+            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            traceback.print_exc(file=sys.stderr)
+            sys.stderr.write('\n\n')
                             
     def change_watched_path(self, source, target):
         mgr = self.manager
         watch_ = mgr.get_watch(mgr.get_wd(source))
-        watch_.path = target
+        if watch_ != None:
+            watch_.path = target
         # Recursively change path
         for inner_file in os.listdir(target):
             file_name = os.path.join(target, inner_file)

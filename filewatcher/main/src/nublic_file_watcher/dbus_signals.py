@@ -11,7 +11,7 @@ import dbus.service
 import os
 import os.path
 import re
-import sys
+#import sys
 
 def to_utf8(string):
     return unicode(string, 'utf-8')
@@ -70,10 +70,10 @@ class DbusSignaler(dbus.service.Object):
         if not self.supports_watching:
             return
 
-        try:
-            sys.stderr.write('Trying to add ' + pathname + '\n')
-        except:
-            pass
+        #try:
+        #    sys.stderr.write('Trying to add ' + pathname + '\n')
+        #except:
+        #    pass
 
         _, account_path = self.unicode_path(pathname)
         for expr in self.app_info.filewatcher.paths:
@@ -91,10 +91,10 @@ class DbusSignaler(dbus.service.Object):
                 if to_add:
                     self.app_config.append(account_path)
                     apps.write_app_config(self.config)
-                    sys.stderr.write('Added ' + pathname + '\n')
+                    #sys.stderr.write('Added ' + pathname + '\n')
                     # If we want to touch after adding, do so
                     if do_touch:
-                        sys.stderr.write('And touched\n')
+                        #sys.stderr.write('And touched\n')
                         self.touch(pathname, pathname)
 
     def touch(self, pathname, ctx):
@@ -102,16 +102,16 @@ class DbusSignaler(dbus.service.Object):
             file_name = os.path.join(pathname, inner_file)
             self.file_changed("create", file_name, '', os.path.isdir(file_name), ctx)
             if os.path.isdir(file_name):
-                self.touch(pathname, ctx)
+                self.touch(file_name, ctx)
                                 
     def remove_context(self, pathname):
         if not self.supports_watching:
             return
 
-        try:
-            sys.stderr.write('Trying to remove ' + pathname + '\n')
-        except:
-            pass
+        #try:
+        #    sys.stderr.write('Trying to remove ' + pathname + '\n')
+        #except:
+        #    pass
 
         _, account_path = self.unicode_path(pathname)
         if account_path in self.app_config:
@@ -122,10 +122,10 @@ class DbusSignaler(dbus.service.Object):
         if not self.supports_watching:
             return
 
-        try:
-            sys.stderr.write('Trying to replace ' + prev_pathname + ' with ' + new_pathname + '\n')
-        except:
-            pass
+        #try:
+        #    sys.stderr.write('Trying to replace ' + prev_pathname + ' with ' + new_pathname + '\n')
+        #except:
+        #    pass
         
         _, prev_account_path = self.unicode_path(prev_pathname)
         _, new_account_path = self.unicode_path(new_pathname)
