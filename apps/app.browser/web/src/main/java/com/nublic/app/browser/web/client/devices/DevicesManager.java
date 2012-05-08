@@ -45,7 +45,7 @@ public class DevicesManager {
 		if (realPath.equals("")) {
 			return "";
 		} else if (splitPath[0].equals(Constants.NUBLIC_ONLY) || splitPath.length < 2) {
-			StringBuilder mockPath = new StringBuilder(Constants.NUBLIC_ONLY_NAME);
+			StringBuilder mockPath = new StringBuilder(Constants.I18N.nublicFiles());
 			mockPath.append("/");
 			if (splitPath.length == 2) {
 				mockPath.append(splitPath[1]);
@@ -84,7 +84,7 @@ public class DevicesManager {
 
 	public void createRootTree(BrowserModel model) {		
 //		createNodeOnRoot(Constants.NUBLIC_ONLY, Constants.NUBLIC_ONLY, true, model);
-		createNodeOnRoot(Constants.NUBLIC_ONLY_NAME, Constants.NUBLIC_ONLY, true, model);
+		createNodeOnRoot(Constants.I18N.nublicFiles(), Constants.NUBLIC_ONLY, true, model);
 
 		for (Device d : devicesList) {
 			createNodeOnRoot(d.getName(), d.getKind().getPathName() + "/" + d.getId(), false, model);

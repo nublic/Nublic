@@ -170,10 +170,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		
 		// Init the current order mode
 		downButton.setEnabled(false);
-		orderList.addItem("by name");
-		orderList.addItem("by type");
-		orderList.addItem("by upload date");
-		orderList.addItem("by size");
+		orderList.addItem(Constants.I18N.orderName());
+		orderList.addItem(Constants.I18N.orderType());
+		orderList.addItem(Constants.I18N.orderDate());
+		orderList.addItem(Constants.I18N.orderSize());
 		orderList.addChangeHandler(new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
@@ -617,7 +617,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	private List<FileNode> fakeRootList() {
 		List<FileNode> rootList = new ArrayList<FileNode>();
 //		FileNode deviceNode = new FileNode(Constants.NUBLIC_ONLY, Constants.FOLDER_MIME, null, 0, 0, true);
-		FileNode deviceNode = new FileNode(Constants.NUBLIC_ONLY_NAME, Constants.FOLDER_MIME1, null, 0, 0, true, false);
+		FileNode deviceNode = new FileNode(Constants.I18N.nublicFiles(), Constants.FOLDER_MIME1, null, 0, 0, true, false);
 		deviceNode.setImportantThumbnail(Resources.INSTANCE.nublicOnly());
 		deviceNode.setImportantLink(Constants.NUBLIC_ONLY);
 		rootList.add(deviceNode);

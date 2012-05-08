@@ -37,9 +37,6 @@ public class Constants {
 	public final static String FOLDER_TYPE = "folder";
 	public final static String COMPRESSED_TYPE = "zip";
 
-//	public final static String WINDOW_PRETITLE = "Files - ";
-//	public final static String WINDOW_HOME_TITLE = "Home";
-//	public final static String HOME_NAME = "Home";
 	public final static String CSS_SELECTED = "selected";
 	public final static String DEFAULT_NEWFOLDER_TEXT = "new folder";
 
@@ -47,7 +44,6 @@ public class Constants {
 	public final static String KIND_SYNCED = "synced";
 	public final static String KIND_MEDIA = "media";
 	public final static String NUBLIC_ONLY = "nublic-only";
-	public final static String NUBLIC_ONLY_NAME = "Nublic files";
 	public final static String KIND_MIRROR_FOLDER = "mirrors";
 	public final static String KIND_SYNCED_FOLDER = "work-folders";
 	public final static String KIND_MEDIA_FOLDER = "media";
