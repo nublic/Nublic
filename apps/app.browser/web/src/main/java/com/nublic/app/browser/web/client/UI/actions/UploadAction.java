@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.model.FolderNode;
@@ -59,7 +60,7 @@ public class UploadAction extends ActionWidget implements Handler {
 	boolean uploadReady = false;
 
 	public UploadAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.addfile(), "Upload file", stateProvider);
+		super(Resources.INSTANCE.addfile(), Constants.I18N.uploadFile(), stateProvider);
 		
 		upload = null;
 		if (stateProvider.hasFlashPlayer()) {

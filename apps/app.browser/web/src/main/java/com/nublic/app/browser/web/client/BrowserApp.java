@@ -120,7 +120,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				theUi.showImage(path);
 			}
 		} else {
-			ErrorPopup.showError("Image file not found");
+			ErrorPopup.showError(Constants.I18N.imageFileNotFound());
 		}
 	}
 	
@@ -136,7 +136,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				theUi.showPDF(path);
 			}
 		} else {
-			ErrorPopup.showError("No path to the resource found");
+			ErrorPopup.showError(Constants.I18N.noPathToResource());
 		}
 	}
 	
@@ -152,7 +152,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				theUi.showText(path);
 			}
 		} else {
-			ErrorPopup.showError("No path to the resource found");
+			ErrorPopup.showError(Constants.I18N.noPathToResource());
 		}
 	}
 	
@@ -170,7 +170,7 @@ public class BrowserApp implements EntryPoint, ValueChangeHandler<String> {
 				UIUtils.showPlayer(theUi, path, false, type);
 			}
 		} else {
-			ErrorPopup.showError("No path to the resource found");
+			ErrorPopup.showError(Constants.I18N.noPathToResource());
 		}
 	}
 }

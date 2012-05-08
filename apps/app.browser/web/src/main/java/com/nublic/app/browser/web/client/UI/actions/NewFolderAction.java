@@ -17,7 +17,7 @@ import com.nublic.util.messages.SequenceHelper;
 public class NewFolderAction extends ActionWidget {
 	
 	public NewFolderAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.newfolder(), "Create new folder", stateProvider);
+		super(Resources.INSTANCE.newfolder(), Constants.I18N.createNewFolder(), stateProvider);
 	}
 	
 	public static void doCreateFolder(final String newFolderName, String pathTo, final BrowserUi feedbackTarget) {
@@ -32,12 +32,12 @@ public class NewFolderAction extends ActionWidget {
 					feedbackTarget.getModel().addFile(newFolderName, Constants.FOLDER_MIME1, null, 0, new Date().getTime(), true, false);
 					feedbackTarget.getModel().fireFilesUpdateHandlers(false, false);
 				} else {
-					ErrorPopup.showError("Could not create folder");
+					ErrorPopup.showError(Constants.I18N.couldNotCreateFolder());
 				}
 			}
 			@Override
 			public void onError() {
-				ErrorPopup.showError("Could not create folder");
+				ErrorPopup.showError(Constants.I18N.couldNotCreateFolder());
 			}
 		};
 		m.addParam("name", newFolderName);

@@ -13,7 +13,7 @@ public class PreviewImageAction extends ActionWidget {
 	FileWidget imageToShow = null;
 
 	public PreviewImageAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.imageView(), "Preview image", stateProvider);
+		super(Resources.INSTANCE.imageView(), Constants.I18N.previewImage(), stateProvider);
 	}
 
 	@Override

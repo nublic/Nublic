@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI.actions;
 import java.util.Set;
 
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
@@ -10,7 +11,7 @@ import com.nublic.app.browser.web.client.UI.FileWidget;
 public class CutAction extends ActionWidget {
 
 	public CutAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.editCut(), "Cut", stateProvider);
+		super(Resources.INSTANCE.editCut(), Constants.I18N.cut(), stateProvider);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package com.nublic.app.browser.web.client.UI.actions;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
@@ -19,7 +20,7 @@ public class SingleDownloadAction extends ActionWidget {
 	}
 
 	public SingleDownloadAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.download(), "Download this file", stateProvider);
+		super(Resources.INSTANCE.download(), Constants.I18N.downloadFile(), stateProvider);
 	}
 
 	@Override

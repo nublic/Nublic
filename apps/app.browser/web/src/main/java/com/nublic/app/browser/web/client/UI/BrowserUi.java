@@ -241,12 +241,12 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				if (selectedFiles.isEmpty()) {
 //					selectionCount.setText("No files selected");
 					allSelectedBox.setValue(false, false);
-					allSelectedBox.setTitle("Select all");
+					allSelectedBox.setTitle(Constants.I18N.selectAll());
 					infoWidget.changeInfo(getShowingFolder().getName(), getShowingFiles());
 				} else {
 //					selectionCount.setText("" + selectedFiles.size() + " files selected");
 					allSelectedBox.setValue(true, false);
-					allSelectedBox.setTitle("Unselect all");
+					allSelectedBox.setTitle(Constants.I18N.unselectAll());
 					infoWidget.changeInfo(selectedFiles);
 				}
 				// Working folders
@@ -254,10 +254,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 				// Upper buttons
 				if (pasteAction.getAvailability() == Availability.AVAILABLE) {
 					pasteTopButton.setEnabled(true);
-					pasteTopButton.setTitle("Paste (" + clipboard.size() + ")");
+					pasteTopButton.setTitle(Constants.I18N.pasteN(clipboard.size()));
 				} else {
 					pasteTopButton.setEnabled(false);
-					pasteTopButton.setTitle("Paste");
+					pasteTopButton.setTitle(Constants.I18N.paste());
 				}
 				if (upAction.getAvailability() == Availability.AVAILABLE) {
 					addFileTopButton.setEnabled(true);
@@ -729,10 +729,10 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	@UiHandler("allSelectedBox")
 	void onAllSelectedBoxValueChange(ValueChangeEvent<Boolean> event) {
 		if (allSelectedBox.getValue()) {
-			allSelectedBox.setTitle("Unselect all");
+			allSelectedBox.setTitle(Constants.I18N.unselectAll());
 			selectAllFiles();
 		} else {
-			allSelectedBox.setTitle("Select all");
+			allSelectedBox.setTitle(Constants.I18N.selectAll());
 			unselectAllFiles();
 		}
 	}
@@ -776,7 +776,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			@Override
 			public void onError(ErrorEvent event) {
 				popUpBox.hide();
-				ErrorPopup.showError("Image file not found");
+				ErrorPopup.showError(Constants.I18N.imageFileNotFound());
 			}
 		});
 
@@ -805,7 +805,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 					}
 					@Override
 					public void onError() {
-						ErrorPopup.showError("Error reading text file");
+						ErrorPopup.showError(Constants.I18N.errorReadingTextFile());
 					}
 					@Override
 					public String getURL() {
@@ -836,7 +836,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 			
 			@Override
 			public void onFailure(Throwable reason) {
-				Window.alert("Error loading text viewer");
+				ErrorPopup.showError(Constants.I18N.errorLoadingTextViewer());
 			}
 		});
 	}
@@ -920,7 +920,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showNewFolderPopup() {
-		final TextPopup popup = new TextPopup("New folder name");
+		final TextPopup popup = new TextPopup(Constants.I18N.newFolderName());
 		final String showingPath = this.getShowingPath();
 		
 		popup.addButtonHandler(PopupButton.OK, new PopupButtonHandler() {
@@ -936,7 +936,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 	}
 	
 	public void showUploadPopup() {
-		final UploadPopup popup = new UploadPopup("Upload file");
+		final UploadPopup popup = new UploadPopup(Constants.I18N.uploadFile());
 		popup.addButtonHandler(PopupButton.UPLOAD, new PopupButtonHandler() {
 			
 			@Override

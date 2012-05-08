@@ -10,6 +10,7 @@ import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
@@ -23,7 +24,7 @@ import com.nublic.util.messages.SequenceHelper;
 public class PasteAction extends ActionWidget {
 	
 	public PasteAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.editPaste(), "Paste", stateProvider);
+		super(Resources.INSTANCE.editPaste(), Constants.I18N.paste(), stateProvider);
 	}
 
 	public static void doPasteAction(final String mode, final Set<Widget> setToCopy, final String pathTo, final BrowserModel feedbackTarget,
@@ -45,9 +46,9 @@ public class PasteAction extends ActionWidget {
 		// Create widget for moving or copying
 		String feedbackMessage;
 		if (mode.equals("move")) {
-			feedbackMessage = "Moving " + String.valueOf(setToCopy.size()) + " elements...";
+			feedbackMessage = Constants.I18N.movingNElements(setToCopy.size());
 		} else {
-			feedbackMessage = "Copying " + String.valueOf(setToCopy.size()) + " elements...";
+			feedbackMessage = Constants.I18N.copyingNElements(setToCopy.size());
 		}
 		final Label feedbackLabel = new Label(feedbackMessage);
 
@@ -77,12 +78,12 @@ public class PasteAction extends ActionWidget {
 					// Remove feedback
 					stateProvider.removeFromTaskList(feedbackLabel);
 				} else {
-					ErrorPopup.showError("Could not " + mode + " files");
+					error(mode);
 				}
 			}
 			@Override
 			public void onError() {
-				ErrorPopup.showError("Could not " + mode + " files");
+				error(mode);
 			}
 			@Override
 			public String getURL() {
@@ -95,6 +96,14 @@ public class PasteAction extends ActionWidget {
 		
 		// Show message in task list
 		stateProvider.addToTaskList(feedbackLabel);
+	}
+
+	protected static void error(String mode) {
+		if (mode.equals("move")) {
+			ErrorPopup.showError(Constants.I18N.couldNotMoveFiles());
+		} else {
+			ErrorPopup.showError(Constants.I18N.couldNotCopyFiles());
+		}
 	}
 
 	@Override

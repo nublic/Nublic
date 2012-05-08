@@ -13,7 +13,7 @@ public class PreviewTextAction extends ActionWidget {
 	FileWidget textToShow = null;
 
 	public PreviewTextAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.textView(), "Preview plain text", stateProvider);
+		super(Resources.INSTANCE.textView(), Constants.I18N.previewText(), stateProvider);
 	}
 
 	@Override
