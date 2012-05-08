@@ -190,6 +190,8 @@ build_deb_package apps/app.music
 build_deb_package apps/app.photos/server
 build_deb_package apps/app.photos/web
 build_deb_package apps/app.photos
+# Market App
+build_deb_package apps/app.market/server/src
 # Extra configuration packages
 build_deb_package conf/apache
 build_deb_package conf/samba

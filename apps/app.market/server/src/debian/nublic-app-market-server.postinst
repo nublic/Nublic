@@ -1,4 +1,6 @@
 #!/bin/bash
 # Here we should be sure Apache mod_wsgi and this app are available
-
+a2enmod wsgi
+a2enmod python
+service apache2 reload
 #DEBHELPER#
