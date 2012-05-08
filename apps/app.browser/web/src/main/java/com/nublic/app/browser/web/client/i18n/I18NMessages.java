@@ -50,6 +50,13 @@ public interface I18NMessages extends Messages {
 	String newName();
 	String downloadAsZip();
 	String downloadFile();
+	String uploadingFile(String name);
+	
+	// Selection info
+	String nItems(@PluralCount int n);
+	String mFolders(@PluralCount int m);
+	String nFilesSize(@PluralCount int n, String size);
+	String modifiedDate(String date);
 	
 	// Errors
 	String imageFileNotFound();
@@ -61,4 +68,5 @@ public interface I18NMessages extends Messages {
 	String couldNotMoveFiles();
 	String couldNotCopyFiles();
 	String couldNotRename();
+	String errorUploading();
 }

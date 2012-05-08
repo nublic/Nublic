@@ -173,7 +173,7 @@ public class UploadAction extends ActionWidget implements Handler {
 
 						@Override
 						public void onError() {
-							ErrorPopup.showError("An error ocurred uploading the selected file");
+							ErrorPopup.showError(Constants.I18N.errorUploading());
 						}
 						
 					}, RequestBuilder.GET);
@@ -184,7 +184,7 @@ public class UploadAction extends ActionWidget implements Handler {
 			@Override
 			public void onUploadStart(UploadStartEvent e) {
 				ui.addToTaskList(p);
-				feedbackLabel.setText("Uploading " + e.getFile().getName() + "...");
+				feedbackLabel.setText(Constants.I18N.uploadingFile(e.getFile().getName()));
 			}
 		});
 		builder.setUploadProgressHandler(new UploadProgressHandler() {
@@ -260,7 +260,7 @@ public class UploadAction extends ActionWidget implements Handler {
 		sendFileHelper.addParam("name", fileName);
 		sendFileHelper.addParam("Filedata", uploadWidget);
 		
-		final Label feedbackLabel = new Label("Uploading " + fileName + "...");
+		final Label feedbackLabel = new Label(Constants.I18N.uploadingFile(fileName));
 		stateProvider.addToTaskList(feedbackLabel);
 		
 		sendFileHelper.send(new SubmitCompleteHandler() {
