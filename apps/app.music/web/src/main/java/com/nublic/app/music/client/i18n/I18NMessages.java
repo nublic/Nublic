@@ -32,21 +32,19 @@ public interface I18NMessages extends Messages {
 	String library();
 	String collections();
 	String playlists();
+	String currentPlaylist();
+	String allMusic();
 
+	// Other navigational stuff
 	String empty();
 	String backToCollection();
 	String by();
-
-	String allMusic();
-//	String allAlbums();
-//	String allSongs();
-
-	String currentPlaylist();
-
 	String newCollection();
 	String addCollection();
 	String newPlaylist();
 	String addPlaylist();
+	String newPlaylistName();
+	String save();
 
 	// Tabs
 	String artistView();
