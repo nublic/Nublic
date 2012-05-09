@@ -53,6 +53,8 @@ public interface I18NMessages extends Messages {
 	String downloadAsZip();
 	String downloadFile();
 	String uploadingFile(String name);
+	String previous();
+	String next();
 	
 	// Selection info
 	String nItems(@PluralCount int n);
