@@ -1,7 +1,9 @@
 package com.nublic.app.music.client.i18n;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.i18n.client.LocalizableResource.DefaultLocale;
 
+@DefaultLocale("en")
 public interface I18NMessages extends Messages {
 	String windowTitleSong(String songTitle);
 	String windowTitle();
