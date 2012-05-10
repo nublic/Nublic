@@ -6,38 +6,54 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.i18n.Constants;
+import com.nublic.util.widgets.AnchorPanel;
 
 public class AddWidget extends Composite {
 	private static AddWidgetUiBinder uiBinder = GWT.create(AddWidgetUiBinder.class);
 	interface AddWidgetUiBinder extends UiBinder<Widget, AddWidget> { }
 
-	@UiField Anchor addAnchor;
+	@UiField AnchorPanel addAnchor;
 	@UiField TextBox addTextBox;
+	@UiField Label tooltipLabel;
 	String defaultText;
 	List<PutTagHandler> tagHandlerList = new ArrayList<PutTagHandler>();
-	
+
 	public AddWidget() {
-		this("New Collection");
+		this(Constants.I18N.newAlbum(), Constants.I18N.addAlbum());
 	}
-	
-	public AddWidget(String defaultText) {
+
+	public AddWidget(String defaultText, String tooltip) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.defaultText = defaultText;
+		tooltipLabel.setText(tooltip);
 		addTextBox.setVisible(false);
+
+		addAnchor.addDomHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				showTextBox();
+			}
+		}, ClickEvent.getType());
 	}
 	
 	public void setDefaultText(String defaultText) {
 		this.defaultText = defaultText;
+	}
+	
+	public void setTooltip(String tooltip) {
+		tooltipLabel.setText(tooltip);
 	}
 	
 	public void showAnchor() {
@@ -51,11 +67,6 @@ public class AddWidget extends Composite {
 		addTextBox.setFocus(true);
 		addTextBox.setText(defaultText);
 		addTextBox.selectAll();
-	}
-	
-	@UiHandler("addAnchor")
-	void onAddAnchorClick(ClickEvent event) {
-		showTextBox();
 	}
 	
 	@UiHandler("addTextBox")
