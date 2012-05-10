@@ -1,7 +1,5 @@
 package com.nublic.app.photos.web.client.view.album;
 
-import java.util.EnumSet;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -35,8 +33,6 @@ import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.widgets.AnchorPanel;
 import com.nublic.util.widgets.EditableLabel;
-import com.nublic.util.widgets.MessagePopup;
-import com.nublic.util.widgets.PopupButton;
 
 public class ShowAsPresentationWidget extends Composite implements ResizeHandler, ValueChangeHandler<String> {
 
@@ -181,7 +177,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 					centralImage.setUrl(imageUrl);
 					photoTitleLabel.setText(current.getTitle());
 					DateTimeFormat formatter = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
-					photoDateLabel.setText("Taken on " + formatter.format(current.getDate()));
+					photoDateLabel.setText(Constants.I18N.takenOn(formatter.format(current.getDate())));
 					// Set prev and next buttons
 					String nextTarget = "album=" + info.getId() + "&view=presentation&photo=" +
 							(position < rowCount - 1 ? position + 1 : rowCount - 1);
@@ -227,7 +223,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 					centralImage.setUrl(imageUrl);
 					photoTitleLabel.setText(photo.getTitle());
 					DateTimeFormat formatter = DateTimeFormat.getFormat(PredefinedFormat.DATE_TIME_FULL);
-					photoDateLabel.setText("Taken on " + formatter.format(photo.getDate()));
+					photoDateLabel.setText(Constants.I18N.takenOn(formatter.format(photo.getDate())));
 					// Set prev and next buttons
 					String nextTarget = "album=" + info.getId() + "&view=presentation&photo=" +
 							(position < rowCount - 1 ? position + 1 : rowCount - 1);

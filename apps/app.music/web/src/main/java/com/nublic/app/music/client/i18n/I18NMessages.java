@@ -27,6 +27,7 @@ public interface I18NMessages extends Messages {
 	String editArtistTooltip();
 	String editAlbumTooltip();
 	String editSongTooltip();
+	String nSongs(@PluralCount int n);
 
 	// Navigation panel titles
 	String library();

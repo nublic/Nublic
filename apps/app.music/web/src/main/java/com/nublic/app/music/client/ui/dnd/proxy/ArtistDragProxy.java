@@ -8,6 +8,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
@@ -31,7 +32,7 @@ public class ArtistDragProxy extends Composite implements DragProxy {
 		Controller.INSTANCE.getModel().getArtistCache().addHandler(draggingArtistId, new CacheHandler<String, ArtistInfo>() {
 			@Override
 			public void onCacheUpdated(String k, ArtistInfo v) {
-				numberOfSongs.setText(songs + " songs");
+				numberOfSongs.setText(Constants.I18N.nSongs(songs));
 				title.setText(v.getName());
 			}
 		});
