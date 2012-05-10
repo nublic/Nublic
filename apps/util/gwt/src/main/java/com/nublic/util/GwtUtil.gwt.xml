@@ -18,6 +18,7 @@
   <set-configuration-property name="locale.useragent" value="Y"/>
 
   <!-- Specify the paths for translatable code                    -->
+  <source path='i18n'/>
   <source path='gwt'/>
   <source path='graph'/>
   <source path='lattice'/>
