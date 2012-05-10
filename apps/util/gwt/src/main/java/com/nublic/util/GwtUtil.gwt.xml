@@ -8,6 +8,15 @@
   <inherits name="com.google.gwt.junit.JUnit"/>
   <inherits name="com.google.common.collect.Collect"/>
 
+  <!-- Internationalization										  -->
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <extend-property name="locale" values="en,es"/>
+  <!-- default locale... -->
+  <set-property-fallback name="locale" value="en"/>
+  <set-property name="locale" value="en,es"/>
+  <!-- get locale in runtime -->
+  <set-configuration-property name="locale.useragent" value="Y"/>
+
   <!-- Specify the paths for translatable code                    -->
   <source path='gwt'/>
   <source path='graph'/>
