@@ -30,7 +30,7 @@
 	
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"></ui:with>
 	
-	<g:FlowPanel addStyleNames="{style.minheight} translucidPanel">
+	<g:FlowPanel addStyleNames="{style.minheight} translucidPanel artistPanel">
 		<g:HorizontalPanel verticalAlignment="top" width="100%">
 			<!-- Artist display -->
 			<g:cell width="68px" height="68px" horizontalAlignment="center"> <!-- 10 + 48 + 10 -->
