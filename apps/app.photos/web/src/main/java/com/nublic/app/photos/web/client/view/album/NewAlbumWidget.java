@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.util.widgets.PopupButton;
 import com.nublic.util.widgets.PopupButtonHandler;
@@ -60,7 +61,7 @@ public class NewAlbumWidget extends Composite implements HasMouseDownHandlers, C
 	}
 	
 	public void addAlbum() {
-		final TextPopup popup = new TextPopup("Add new album", 
+		final TextPopup popup = new TextPopup(Constants.I18N.addNewAlbum(), 
 				EnumSet.of(PopupButton.CANCEL, PopupButton.ADD), 
 				PopupButton.ADD);
 		popup.addButtonHandler(PopupButton.ADD, new PopupButtonHandler() {

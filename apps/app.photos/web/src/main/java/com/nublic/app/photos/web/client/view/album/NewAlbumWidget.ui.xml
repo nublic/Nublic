@@ -51,7 +51,8 @@
 	        text-decoration: none;
 	    }
 	</ui:style>
-	<ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
+	<ui:with type="com.nublic.app.photos.web.client.Images" field="images"/>
+	<ui:with type="com.nublic.app.photos.web.client.i18n.I18NMessages" field="msg"/>
 
 	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}" verticalAlignment="MIDDLE">
 		<g:AbsolutePanel width="96px" height="96px" addStyleNames="{style.centerImage}">
@@ -62,7 +63,7 @@
 			</g:at>
 		</g:AbsolutePanel>
 		<g:VerticalPanel verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
-            <g:Anchor ui:field="fileName" addStyleNames="{style.addAlbum}">Add new album</g:Anchor>
+            <g:Anchor ui:field="fileName" addStyleNames="{style.addAlbum}"><ui:text from="{msg.addNewAlbum}"/></g:Anchor>
 		</g:VerticalPanel>
 	</g:VerticalPanel>
 	

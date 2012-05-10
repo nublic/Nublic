@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.photos.web.client.i18n.Constants;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.util.widgets.AnchorPanel;
 
 public class AddWidget extends Composite {

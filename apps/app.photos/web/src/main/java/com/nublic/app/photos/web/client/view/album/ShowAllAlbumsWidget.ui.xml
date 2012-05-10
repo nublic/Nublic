@@ -17,14 +17,15 @@
 	        cursor: hand;
 	    }
     </ui:style>
-    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
+    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"/>
+    <ui:with type="com.nublic.app.photos.web.client.i18n.I18NMessages" field="msg"/>
 
     <g:DockLayoutPanel width="100%" height="100%">
         <g:north size='35'>
           <g:HTMLPanel>
             <div class="page-header" style="width: 100%;">
               <g:HorizontalPanel ui:field="titlePanel" verticalAlignment="middle" addStyleNames="translucidPanel">
-                <g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/>All albums</h3></g:HTMLPanel>
+                <g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/><ui:text from="{msg.allAlbums}"/></h3></g:HTMLPanel>
               </g:HorizontalPanel>
             </div>
           </g:HTMLPanel>

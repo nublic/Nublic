@@ -2,6 +2,7 @@ package com.nublic.app.photos.web.client.controller;
 
 import java.util.HashMap;
 
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 
 
@@ -54,10 +55,10 @@ public class ParamsHashMap extends HashMap<String, String> {
 			try {
 				return Long.parseLong(this.get("album"));
 			} catch (Throwable e) {
-				return -2; // All albums
+				return Constants.ALL_ALBUMS;
 			}
 		} else {
-			return -2; // All albums
+			return Constants.ALL_ALBUMS;
 		}
 	}
 	

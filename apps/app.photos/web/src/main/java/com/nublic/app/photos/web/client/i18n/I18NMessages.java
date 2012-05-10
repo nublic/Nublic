@@ -9,4 +9,15 @@ public interface I18NMessages extends Messages {
 	String albums();
 	String newAlbum();
 	String addAlbum();
+	String addNewAlbum();
+	String deleteAlbum();
+	String deleteAlbumText();
+	String deleteThisAlbum();
+	String removeSelectedPhotos();
+	String allPhotos();
+	String allAlbums();
+	String unknownAlbum();
+	
+	// Errors
+	String errorLoadingPhoto();
 }

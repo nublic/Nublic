@@ -15,6 +15,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.controller.AlbumDropController;
 import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
 import com.nublic.app.photos.web.client.model.PhotosModel;
@@ -65,16 +66,16 @@ public class NavigationPanel extends Composite {
 	
 	// Adding methods
 	public void addAllAlbums() {
-		allAlbums = new TagWidget("All albums", -2);
+		allAlbums = new TagWidget(Constants.I18N.allAlbums(), ALL_ALBUMS);
 		allAlbums.setTargetToken("view=albums");
 		libraryPanel.add(allAlbums);
-		albums.put(-2L, allAlbums);
+		albums.put((long)ALL_ALBUMS, allAlbums);
 	}
 	
 	public void addAllPhotos() {
-		allPhotos = new TagWidget("All photos", -1);
+		allPhotos = new TagWidget(Constants.I18N.allPhotos(), ALL_PHOTOS);
 		libraryPanel.add(allPhotos);
-		albums.put(-1L, allPhotos);
+		albums.put((long)ALL_PHOTOS, allPhotos);
 	}
 
 	public synchronized void addAlbum(String name, long id) {
