@@ -48,6 +48,7 @@ public interface I18NMessages extends Messages {
 	String previewMusic();
 	String previewText();
 	String previewVideo();
+	String previewWindow();
 	String rename();
 	String newName();
 	String downloadAsZip();
