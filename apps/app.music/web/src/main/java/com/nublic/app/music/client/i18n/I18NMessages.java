@@ -45,6 +45,7 @@ public interface I18NMessages extends Messages {
 	String addPlaylist();
 	String newPlaylistName();
 	String save();
+	String abandonText();
 
 	// Tabs
 	String artistView();

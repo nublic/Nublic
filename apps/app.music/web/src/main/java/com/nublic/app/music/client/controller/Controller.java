@@ -313,7 +313,7 @@ public class Controller extends URLController {
 				tp.hide();
 			}
 		});
-		tp.setText("New playlist");
+		tp.setText(Constants.I18N.newPlaylist());
 		tp.center();
 		tp.selectAndFocus();
 	}
