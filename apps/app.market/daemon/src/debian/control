@@ -1,4 +1,4 @@
-Source: nublic-app-market-server
+Source: nublic-app-market-daemon
 Section: nublic
 Priority: extra
 Maintainer: Nublic Packaging Team <packaging@nublic.com>
@@ -7,8 +7,8 @@ Standards-Version: 3.8.1
 XS-Python-Version: >= 2.6
 Homepage: http://nublic.com
 
-Package: nublic-app-market-server
+Package: nublic-app-market-daemon
 Architecture: all
-Depends: ${misc:Depends}, python (>= 2.6), python-central, python-support (>= 0.90), libapache2-mod-wsgi, python-apt, python-httplib2, python-simplejson, python-aptdaemon
-Description: The Nublic Market App Server.
- The Market apps allows to install and upgrade Nublic apps.
+Depends: ${misc:Depends}, python (>= 2.6), python-central, python-support (>= 0.90), python-apt, python-httplib2, python-simplejson
+Description: The Nublic Market App Daemon.
+ The Market app allows to install and upgrade Nublic apps.
