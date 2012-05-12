@@ -141,6 +141,13 @@ create_repo() {
     cd "${INITIAL_DIR}"
 }
 
+build_deb_package apps/app.market/server/src
+#build_deb_package apps/app.manager
+#build_deb_package apps/app.manager/web
+#build_deb_package conf/apache
+create_repo
+exit 0
+
 git submodule update --init --merge
 initialize
 # Libraries

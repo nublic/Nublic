@@ -1,7 +1,7 @@
 package com.nublic.app.manager.web.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
+import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 
 public class FavouriteMessage extends Message {
@@ -14,7 +14,7 @@ public class FavouriteMessage extends Message {
 	
 	@Override
 	public String getURL() {
-		return GWT.getHostPageBaseURL() + "manager/server/favourite/" + appId;
+		return LocationUtil.getHostBaseUrl() + "manager/server/favourite/" + appId;
 	}
 
 	@Override

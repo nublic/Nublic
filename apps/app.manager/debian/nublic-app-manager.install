@@ -1,1 +1,1 @@
-app.manager /var/lib/nublic/apache2/apps/
+app.manager.conf /var/lib/nublic/apache2/apps/

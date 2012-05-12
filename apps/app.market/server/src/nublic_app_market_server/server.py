@@ -1,13 +1,20 @@
 import apt
+import apt.progress
+import aptdaemon.client
+import aptdaemon.enums
+from bottle import Bottle, request, response, run
 import copy
 import httplib2
 import simplejson as json
 from StringIO import StringIO
+import sys
 import time
+import traceback
 
-# Flash definition
-from flask import Flask, abort, request
-app = Flask(__name__)
+import os
+os.environ['DISPLAY']=':0'
+
+app = Bottle()
 
 # URL where packages list is found
 packages_url = 'http://nublic.com/packages.json'
@@ -23,7 +30,7 @@ use_local = True
 local_packages_path = '/var/lib/nublic/packages.json'
 
 
-@app.route('/about', methods=['GET'])
+@app.get('/about')
 def about():
     return u'Nublic Market Server 0.0.1'
 
@@ -37,7 +44,15 @@ def ensure_updated_packages():
     now = time.time()
     if packages_list == None or last_packages_update == None or \
             (last_packages_update - now) > max_update_diff:
+        # Execute apt-get update
+        print >> sys.stderr, 'Updating apt-get cache'
+        client = aptdaemon.client.AptClient()
+        transaction = client.update_cache()
+        transaction.connect("finished", lambda x: sys.stderr.write('Exit code ' + x + '\n'))
+        transaction.connect("progress-changed", lambda p: sys.stderr.write('Progress ' + p + '\n'))
+        transaction.run()
         # Try to get new package list
+        print >> sys.stderr, 'Updating package list'
         new_packages_list = grab_packages()
         if new_packages_list != None:
             last_packages_update = now
@@ -65,7 +80,7 @@ def grab_packages():
             return None
 
 
-@app.route('/packages', methods=['GET'])
+@app.get('/packages')
 def list_packages():
     # Refer to global variables
     global packages_url
@@ -73,11 +88,14 @@ def list_packages():
     global packages_list
     global last_packages_update
     # Try to update the packages list
-    ensure_updated_packages()
+    try:
+        ensure_updated_packages()
+    except:
+        return (traceback.format_exc(), 500)
     # If we have a package list, use it
     if packages_list == None:
         # If we don't have a package list, return error
-        abort(500)
+        return ('"no package list"', 500, { 'Content-Type': 'application/json' })
     else:
         # Initialize cache
         cache = apt.Cache()
@@ -92,7 +110,8 @@ def list_packages():
         # Get the JSON string
         io = StringIO()
         json.dump(info, io)
-        return (io.getvalue(), 200, { 'Content-Type': 'application/json' })
+        response.set_header('Content-Type', 'application/json')
+        return io.getValue()
 
 
 def is_package_installed(cache, pkg_name):
@@ -109,71 +128,165 @@ def get_package_info(pkg_name):
             return pkg
     return None
 
+
+class ErrorInstallProgress(apt.progress.InstallProgress):
+    def __init__(self):
+        apt.progress.InstallProgress.__init__()
+        self._any_error = False
+        self._errors = []
     
-@app.route('/packages', methods=['PUT'])
+    def error(self, pkg, errormsg):
+        apt.progress.InstallProgress.error(self, pkg, errormsg)
+        self._any_error = True
+        self._errors.append(errormsg)
+
+    def any_error(self):
+        return self._any_error
+
+    def get_error_messages(self):
+        return self._errors
+        
+    
+@app.put('/packages')
 def install_package():
     # Refer to global variables
     global packages_list
     # Ensure it is updated
     ensure_updated_packages()
+    # Initialize response
+    status = None
+    response_code = None
     # Now try to install
     if packages_list == None:
-        abort(500)
+        status = { 'status': 'no-package-list' }
+        response_code = 500
     else:
         try:
-            pkg_name = request.form['package']
+            pkg_name = request.forms.get('package')
             pkg = get_package_info(pkg_name)
             # Check package exists
             if pkg == None:
-                abort(404) # Non existant
-                return
-            # Find the deb in the cache
-            cache = apt.Cache()
-            deb_name = pkg[u'deb']
-            if not is_package_installed(cache, deb_name):
-                # Install the package
-                deb = cache[deb_name]
-                deb.mark_install()
-                cache.commit()
-            return ('"ok"', 200, { 'Content-Type': 'application/json' })
+                status = { 'status': 'does-not-exist' }
+                response_code = 404
+            else:
+                # Find the deb in the cache
+                cache = apt.Cache()
+                deb_name = pkg[u'deb']
+                if not is_package_installed(cache, deb_name):
+                    # Install the package
+                    client = aptdaemon.client.AptClient()
+                    exit_code = client.install_packages([ deb_name ], wait=True)
+                    # Commit changes
+                    if exit_code != aptdaemon.enums.EXIT_SUCCESS:
+                        status = { 'status': 'error' }
+                        response_code = 500
+                    else:
+                        status = { 'status': 'ok' }
+                        response_code = 200
+                else:
+                    status = { 'status': 'already-installed' }
+                    response_code = 200
         except:
-            abort(500)
+            status = { 'status': 'error', 'errors': [ traceback.format_exc() ] }
+            response_code = 500
+    # Get the JSON string
+    io = StringIO()
+    json.dump(status, io)
+    response.set_header('Content-Type', 'application/json')
+    response.status = response_code
+    return io.getvalue()
 
 
-@app.route('/packages', methods=['DELETE'])
+def autoremove():
+    any_package_autoremoved = False
+    # Find packages to autoremove
+    cache = apt.Cache()
+    for pkg in cache:
+        if pkg.is_auto_removable:
+            any_package_autoremoved = True
+            pkg.mark_delete()
+    # If any package was found, commit and repeat
+    if any_package_autoremoved:
+        cache.commit()
+
+
+@app.delete('/packages')
 def remove_package():
-     # Refer to global variables
+    # Refer to global variables
     global packages_list
     # Ensure it is updated
     ensure_updated_packages()
-    # Now try to install
+    # Initialize response
+    status = None
+    response_code = None
+    # Now try to remove
     if packages_list == None:
-        abort(500)
+        status = { 'status': 'no-package-list' }
+        response_code = 500
     else:
         try:
-            pkg_name = request.form['package']
+            pkg_name = request.forms.get('package')
             pkg = get_package_info(pkg_name)
             # Check package exists
             if pkg == None:
-                abort(404) # Non existant
-                return
-            # Find the deb in the cache
-            cache = apt.Cache()
-            deb_name = pkg[u'deb']
-            if is_package_installed(cache, deb_name):
-                # Install the package
-                deb = cache[deb_name]
-                deb.mark_delete()
-                cache.commit()
-            return ('"ok"', 200, { 'Content-Type': 'application/json' })
+                status = { 'status': 'does-not-exist' }
+                response_code = 404
+            else:
+                # Find the deb in the cache
+                cache = apt.Cache()
+                deb_name = pkg[u'deb']
+                if is_package_installed(cache, deb_name):
+                    # Delete the package
+                    client = aptdaemon.client.AptClient()
+                    exit_code = client.remove_packages([ deb_name ], wait=True)
+                    if exit_code != aptdaemon.enums.EXIT_SUCCESS:
+                        status = { 'status': 'error' }
+                        response_code = 500
+                    else:
+                        autoremove()
+                        status = { 'status': 'ok' }
+                        response_code = 200
+                else:
+                    status = { 'status': 'not-installed' }
+                    response_code = 200
         except:
-            abort(500)
-            
+            status = { 'status': 'error', 'errors': [ traceback.format_exc() ] }
+            response_code = 500
+    # Get the JSON string
+    io = StringIO()
+    json.dump(status, io)
+    response.set_header('Content-Type', 'application/json')
+    response.status = response_code
+    return io.getvalue()
 
-@app.route('/upgrade', methods=['POST'])
+
+@app.post('/upgrade')
 def upgrade_system():
-    return 'Upgraded'
+    # Initialize response
+    status = None
+    response_code = None
+    try:
+        # Ensure package list is updated
+        ensure_updated_packages()
+        # Now upgrade the system (dist-upgrade)
+        client = aptdaemon.client.AptClient()
+        exit_code = client.upgrade_system(safe_mode=False, wait=True)
+        if exit_code != aptdaemon.enums.EXIT_SUCCESS:
+            status = { 'status': 'error' }
+            response_code = 500
+        else:
+            status = { 'status': 'ok' }
+            response_code = 200
+    except:
+        status = { 'status': 'error', 'errors': [ traceback.format_exc() ] }
+        response_code = 500
+    # Get the JSON string
+    io = StringIO()
+    json.dump(status, io)
+    response.set_header('Content-Type', 'application/json')
+    response.status = response_code
+    return io.getvalue()
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    run(app, host='0.0.0.0', port=5000)
