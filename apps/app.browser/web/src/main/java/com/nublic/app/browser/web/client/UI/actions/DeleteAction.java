@@ -11,6 +11,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
@@ -25,14 +26,14 @@ import com.nublic.util.widgets.PopupButtonHandler;
 public class DeleteAction extends ActionWidget {
 
 	public DeleteAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.editDelete(), "Delete", stateProvider);
+		super(Resources.INSTANCE.editDelete(), Constants.I18N.delete(), stateProvider);
 	}
 
 	@Override
 	public void executeAction() {
 		
-		final MessagePopup popup = new MessagePopup("Confirm deletion",
-				"Do you really want to delete the selected files?",
+		final MessagePopup popup = new MessagePopup(Constants.I18N.confirmDeletion(),
+				Constants.I18N.confirmDeletionText(),
 				EnumSet.of(PopupButton.CANCEL, PopupButton.DELETE));
 		
 		popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
@@ -62,12 +63,12 @@ public class DeleteAction extends ActionWidget {
 								stateProvider.getModel().fireFilesUpdateHandlers(false, false);
 							}
 						} else {
-							ErrorPopup.showError("Could not delete files");
+							ErrorPopup.showError(Constants.I18N.couldNotDeleteFiles());
 						}
 					}
 					@Override
 					public void onError() {
-						ErrorPopup.showError("Could not delete files");
+						ErrorPopup.showError(Constants.I18N.couldNotDeleteFiles());
 					}
 					@Override
 					public String getURL() {

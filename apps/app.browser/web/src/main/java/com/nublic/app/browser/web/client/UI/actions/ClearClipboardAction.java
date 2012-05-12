@@ -1,12 +1,13 @@
 package com.nublic.app.browser.web.client.UI.actions;
 
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 
 public class ClearClipboardAction extends ActionWidget {
 
 	public ClearClipboardAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.editClear(), "Clear clipboard", stateProvider);
+		super(Resources.INSTANCE.editClear(), Constants.I18N.clearClipboard(), stateProvider);
 	}
 
 	@Override

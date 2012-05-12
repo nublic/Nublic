@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.PhotosApp;
 import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.controller.SelectedPhotosChangeHandler;
@@ -65,7 +66,7 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 		// Set title label
 		this.id = id;
 		if (id == -1) {
-			titleLabel.setText("All photos");
+			titleLabel.setText(Constants.I18N.allPhotos());
 		} else {
 			PhotosModel.get().album(id, new CallbackOneAlbum() {
 				@Override
@@ -74,7 +75,7 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 				}
 				@Override
 				public void error() {
-					titleLabel.setText("Unknown album");
+					titleLabel.setText(Constants.I18N.unknownAlbum());
 				}
 			});
 		}

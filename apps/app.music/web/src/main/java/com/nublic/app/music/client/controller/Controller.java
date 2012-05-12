@@ -304,7 +304,7 @@ public class Controller extends URLController {
 	public void saveCurrentPlaylist() {
 		// TODO: check that current playlist is not empty
 		EnumSet<PopupButton> set = EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL);
-		final TextPopup tp = new TextPopup("Enter new playlist name", set, "Save", PopupButton.CUSTOM);
+		final TextPopup tp = new TextPopup(Constants.I18N.newPlaylistName(), set, Constants.I18N.save(), PopupButton.CUSTOM);
 		tp.setCustomButtonColor(PopupColor.PRIMARY);
 		tp.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
 			@Override
@@ -313,7 +313,7 @@ public class Controller extends URLController {
 				tp.hide();
 			}
 		});
-		tp.setText("New playlist");
+		tp.setText(Constants.I18N.newPlaylist());
 		tp.center();
 		tp.selectAndFocus();
 	}

@@ -6,6 +6,7 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.UI.FileWidget;
@@ -19,7 +20,7 @@ import com.nublic.util.widgets.TextPopup;
 public class RenameAction extends ActionWidget {
 	
 	public RenameAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.editRename(), "Rename", stateProvider);
+		super(Resources.INSTANCE.editRename(), Constants.I18N.rename(), stateProvider);
 	}
 	
 	private FileWidget getOnlySelected() {
@@ -31,7 +32,7 @@ public class RenameAction extends ActionWidget {
 
 	@Override
 	public void executeAction() {
-		final TextPopup popup = new TextPopup("New name");
+		final TextPopup popup = new TextPopup(Constants.I18N.newName());
 		final String showingPath = stateProvider.getShowingPath();
 		final FileWidget selected = getOnlySelected();
 		final String oldName = selected.getName();
@@ -50,12 +51,12 @@ public class RenameAction extends ActionWidget {
 						if (response.getStatusCode() == Response.SC_OK) {
 							// Do nothing
 						} else {
-							ErrorPopup.showError("Could not rename");
+							ErrorPopup.showError(Constants.I18N.couldNotRename());
 						}
 					}
 					@Override
 					public void onError() {
-						ErrorPopup.showError("Could not rename");
+						ErrorPopup.showError(Constants.I18N.couldNotRename());
 					}
 				};
 				m.addParam("from", showingPath + "/" + oldName);

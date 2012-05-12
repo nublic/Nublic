@@ -13,7 +13,7 @@ public class PreviewVideoAction extends ActionWidget {
 	FileWidget videoToShow = null;
 
 	public PreviewVideoAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.videoView(), "Preview video", stateProvider);
+		super(Resources.INSTANCE.videoView(), Constants.I18N.previewVideo(), stateProvider);
 	}
 
 	@Override

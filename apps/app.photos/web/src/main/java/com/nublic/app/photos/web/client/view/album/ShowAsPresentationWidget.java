@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
@@ -30,6 +31,7 @@ import com.nublic.app.photos.web.client.model.CallbackRowCount;
 import com.nublic.app.photos.web.client.model.CallbackThreePhotos;
 import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.app.photos.web.client.model.PhotosModel;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.widgets.AnchorPanel;
 import com.nublic.util.widgets.EditableLabel;
@@ -97,7 +99,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 		// Set title label
 		this.id = id;
 		if (id == -1) {
-			titleLabel.setText("All photos");
+			titleLabel.setText(Constants.I18N.allPhotos());
 		} else {
 			PhotosModel.get().album(id, new CallbackOneAlbum() {
 				@Override
@@ -106,7 +108,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				}
 				@Override
 				public void error() {
-					titleLabel.setText("Unknown album");
+					titleLabel.setText(Constants.I18N.unknownAlbum());
 				}
 			});
 		}
@@ -211,10 +213,7 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 				
 				@Override
 				public void error() {
-					MessagePopup popup = new MessagePopup("Error loading photo", 
-							"Something strange happened while loading the photo", 
-							EnumSet.of(PopupButton.OK));
-					popup.center();
+					ErrorPopup.showError(Constants.I18N.errorLoadingPhoto());
 				}
 			});
 			

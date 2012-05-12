@@ -28,6 +28,7 @@ import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
 import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 import com.nublic.app.browser.web.client.model.FolderNode;
@@ -59,7 +60,7 @@ public class UploadAction extends ActionWidget implements Handler {
 	boolean uploadReady = false;
 
 	public UploadAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.addfile(), "Upload file", stateProvider);
+		super(Resources.INSTANCE.addfile(), Constants.I18N.uploadFile(), stateProvider);
 		
 		upload = null;
 		if (stateProvider.hasFlashPlayer()) {
@@ -172,7 +173,7 @@ public class UploadAction extends ActionWidget implements Handler {
 
 						@Override
 						public void onError() {
-							ErrorPopup.showError("An error ocurred uploading the selected file");
+							ErrorPopup.showError(Constants.I18N.errorUploading());
 						}
 						
 					}, RequestBuilder.GET);
@@ -183,7 +184,7 @@ public class UploadAction extends ActionWidget implements Handler {
 			@Override
 			public void onUploadStart(UploadStartEvent e) {
 				ui.addToTaskList(p);
-				feedbackLabel.setText("Uploading " + e.getFile().getName() + "...");
+				feedbackLabel.setText(Constants.I18N.uploadingFile(e.getFile().getName()));
 			}
 		});
 		builder.setUploadProgressHandler(new UploadProgressHandler() {
@@ -259,7 +260,7 @@ public class UploadAction extends ActionWidget implements Handler {
 		sendFileHelper.addParam("name", fileName);
 		sendFileHelper.addParam("Filedata", uploadWidget);
 		
-		final Label feedbackLabel = new Label("Uploading " + fileName + "...");
+		final Label feedbackLabel = new Label(Constants.I18N.uploadingFile(fileName));
 		stateProvider.addToTaskList(feedbackLabel);
 		
 		sendFileHelper.send(new SubmitCompleteHandler() {

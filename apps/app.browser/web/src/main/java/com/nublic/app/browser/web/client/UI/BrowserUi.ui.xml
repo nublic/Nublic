@@ -5,6 +5,27 @@
 	xmlns:my="urn:import:com.nublic.app.browser.web.client.UI">
 <!-- 	xmlns:acts="urn:import:com.nublic.app.browser.web.client.UI.actions"> -->
 	<ui:style>
+		.buttonpanel {
+	        border-radius: 3px 3px 3px 3px !important;
+	    }
+		.topelements {
+			width: 150px;
+		}
+		.nobackground {
+			background: transparent;
+			padding: 0px;
+			border-style: none;
+			box-shadow: none;
+		}
+		.appended {
+	        border-radius: 0 3px 3px 0 !important;
+	    }
+	    .middle {
+	        border-radius: 0 0 0 0 !important;
+		}
+		.showinline {
+	        display: inline;
+		}
 		.aligntop {
 			vertical-align: top;
 		}
@@ -34,29 +55,6 @@
             overflow-x: auto;
             overflow-y: auto;
         }
-		.topelements {
-			width: 150px;
-		}
-		.nobackground {
-			background: transparent;
-			padding: 0px;
-			border: none;
-		}
-		.appended {
-	        border-radius: 0 3px 3px 0 !important;
-	        float: right !important;
-	        right: 5px;
-	        position: relative;
-	    }
-	    .buttonpanel {
-	        border-radius: 3px 3px 3px 3px !important;
-	    }
-	    .middle {
-	        border-radius: 0 0 0 0 !important;
-		}
-	    .showinline {
-	        display: inline;
-	    }
         @if user.agent safari {
 	        .filterwidth {
 	            height: 100%;
@@ -70,7 +68,8 @@
 	    }
 	</ui:style>
 	
-	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.browser.web.client.i18n.I18NMessages" field="msg"/>
 
 	<g:DockLayoutPanel>
 		<!-- Panel for the navigator tree -->
@@ -88,16 +87,14 @@
 				<my:SelectionDetails ui:field="infoWidget" addStyleNames="{style.marginbottom}"/>
 				<g:HTMLPanel ui:field="workFolderPanel">
 				  <div class="page-header" style="margin-bottom: 6px;">
-                     <h3 style="line-height: 28px;">Work folder</h3>
+                     <h3 style="line-height: 28px;"><ui:text from="{msg.sparkleFolder}"/></h3>
                   </div>
-                  <p>To synchronize this folder, install
-                  <a href="http://sparkleshare.org/" target="_blank">SparkleShare</a>
-                  and click the invite:</p>
-                  <g:Button ui:field="workFolderURL">Sync with SparkleShare</g:Button>
+				  <ui:safehtml from='{msg.sparkleText}'/>
+                  <g:Button ui:field="workFolderURL" text="{msg.sparkleButton}"/>
 				</g:HTMLPanel>
 	   			<g:HTMLPanel>
 	   			  <div class="page-header" style="margin-bottom: 6px;">
-	   			     <h3 style="line-height: 28px;">Actions</h3>
+	   			     <h3 style="line-height: 28px;"><ui:text from="{msg.actions}"/></h3>
 	   			  </div>
 	   			</g:HTMLPanel>
 <!-- 	   			<acts:FolderDownloadAction/> -->
@@ -130,65 +127,71 @@
 		   						<div class="input">
 		   					    	<div class="input-prepend">
 		   					    		<span class="add-on"><g:Image resource="{res.filter}"/></span>
-		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="filter" addStyleNames="{style.filterwidth}" />
+		   					    		<g:TextBox ui:field="filterBox" styleName="{style.topelements}" title="{msg.filter}" addStyleNames="{style.filterwidth}" />
 		   					   		</div>
 		   					    </div>
 		   					</g:HTMLPanel>
 		   				</g:east>
-		   				<g:west size="370">
-							<g:AbsolutePanel width="360px" height="50px" addStyleNames="{style.margintop} {style.marginleft}">
+		   				<g:west size="410">
+							<g:HorizontalPanel height="40px" addStyleNames="{style.marginleft} {style.margintop}">
 								<!-- Check box to toggle selection to all or none -->
-								<g:at left='0' top='0'>
-									<g:HTMLPanel width="21px">
-									  <div class="input">
-	                                    <div class="input-prepend">
-	                                      <span class="add-on {style.buttonpanel}">
-		   								  	<g:CheckBox ui:field="allSelectedBox" width="10px" title="Select all"/>
-		   								  </span>
-		   								</div>
-		   							  </div>
-		   							</g:HTMLPanel>
-		   						</g:at>
-		   						<!-- Ordering "panel" -->
-		   						<g:at left='34' top='0'>
-									<g:HTMLPanel width="251px">
-	                                  <div class="input">
-	                                    <div class="input-prepend">
-	                                      <span class="add-on">Order:</span>
-	                                      <g:ListBox ui:field="orderList" addStyleNames="{style.topelements} {style.middle}" visibleItemCount='1' />
-	                                      <span class="add-on {style.appended}">
-	                                        <g:PushButton ui:field="upButton" addStyleNames="{style.nobackground} {style.showinline}">
-	                                          <g:upFace image="{res.up}"/>
-	                                        </g:PushButton>
-	                                        <g:PushButton ui:field="downButton" addStyleNames="{style.nobackground} {style.showinline}">
-	                                          <g:upFace image="{res.down}"/>
-	                                        </g:PushButton>
-	                                      </span>
-	                                    </div>
-	                                  </div>
-	                                </g:HTMLPanel>
-                                </g:at>
-                                <!-- New file, new folder, paste -->
-                                <g:at left='286' top='0'>
-                                	<g:HTMLPanel width="85px">
-                                	  <div class="input">
-                                	    <div class="input-prepend">
-                                		  <span class="add-on {style.buttonpanel}">
-	                                        <g:PushButton ui:field="newFolderTopButton" title="Create new folder" addStyleNames="{style.nobackground} {style.showinline}">
-	                                          <g:upFace image="{res.newfolder}"/>
-	                                        </g:PushButton>
-	                                        <g:PushButton ui:field="addFileTopButton" title="Add file" addStyleNames="{style.nobackground} {style.showinline}">
-	                                          <g:upFace image="{res.addfile}"/>
-	                                        </g:PushButton>
-	                                        <g:PushButton ui:field="pasteTopButton" title="Paste" addStyleNames="{style.nobackground} {style.showinline}">
-	                                          <g:upFace image="{res.paste}"/>
-	                                        </g:PushButton>
-	                                	  </span>
-	                                    </div>
-	                                  </div>
-                                	</g:HTMLPanel>
-                                </g:at>
-                        	</g:AbsolutePanel>
+								<g:HTMLPanel>
+									<div class="input">
+							        	<div class="input-prepend">
+							            	<span class="add-on {style.buttonpanel}">
+												<g:CheckBox ui:field="allSelectedBox" width="10px" title="{msg.selectAll}"/>
+											</span>
+										</div>
+									</div>
+								</g:HTMLPanel>
+								
+								<!-- Ordering "panel" -->
+								<g:HTMLPanel addStyleNames="{style.marginleft}">
+									<div class="input">
+										<div class="input-prepend">
+											<span class="add-on" style="min-width: 78px">
+												<ui:text from="{msg.orderBy}" />
+											</span>
+										</div>
+									</div>
+								</g:HTMLPanel>
+								
+								<g:ListBox ui:field="orderList" addStyleNames="{style.topelements} {style.middle}" visibleItemCount='1'/>
+						
+								<g:HTMLPanel width="48px">
+									<div class="input">
+										<div class="input-prepend">
+											<span class="add-on {style.appended}">
+												<g:PushButton ui:field="upButton" addStyleNames="{style.nobackground} {style.showinline}">
+													<g:upFace image="{res.up}" />
+												</g:PushButton>
+												<g:PushButton ui:field="downButton" addStyleNames="{style.nobackground} {style.showinline}">
+													<g:upFace image="{res.down}" />
+												</g:PushButton>
+											</span>
+										</div>
+									</div>
+								</g:HTMLPanel>
+								
+								<!-- New file, new folder, paste -->
+						       	<g:HTMLPanel width="85px" addStyleNames="{style.marginleft}">
+									<div class="input">
+										<div class="input-prepend">
+											<span class="add-on {style.buttonpanel}">
+												<g:PushButton ui:field="newFolderTopButton" title="{msg.createNewFolder}" addStyleNames="{style.nobackground} {style.showinline}">
+													<g:upFace image="{res.newfolder}" />
+												</g:PushButton>
+												<g:PushButton ui:field="addFileTopButton" title="{msg.addFile}" addStyleNames="{style.nobackground} {style.showinline}">
+													<g:upFace image="{res.addfile}" />
+												</g:PushButton>
+												<g:PushButton ui:field="pasteTopButton" title="{msg.paste}" addStyleNames="{style.nobackground} {style.showinline}">
+													<g:upFace image="{res.paste}" />
+												</g:PushButton>
+											</span>
+										</div>
+									</div>
+								</g:HTMLPanel>
+							</g:HorizontalPanel>
 		   				</g:west>
 	   				</g:DockLayoutPanel>
 	   			</g:north>

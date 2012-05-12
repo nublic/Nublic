@@ -13,7 +13,7 @@ public class PreviewMusicAction extends ActionWidget {
 	FileWidget musicToShow = null;
 
 	public PreviewMusicAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.musicView(), "Listen audio track", stateProvider);
+		super(Resources.INSTANCE.musicView(), Constants.I18N.previewMusic(), stateProvider);
 	}
 
 	@Override

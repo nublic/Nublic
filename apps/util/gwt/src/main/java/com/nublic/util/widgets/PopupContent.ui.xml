@@ -21,7 +21,7 @@
             margin: 10px;
         }
     </ui:style>
-
+    <ui:with type="com.nublic.util.i18n.I18NMessages" field="msg"/>
 
     <g:DockLayoutPanel ui:field="dockPanel" width="400px" height="180px">
         <g:north size="36">
@@ -43,14 +43,14 @@
         <g:south size="45">
             <g:HorizontalPanel width="100%" height="45px" verticalAlignment="middle" horizontalAlignment="right" addStyleNames="modal-footer">
               <g:HorizontalPanel height="45px" verticalAlignment="middle">
-                <g:Button ui:field="cancelButton" text="Cancel" addStyleNames="{style.buttonmargin}" />
-                <g:Button ui:field="noButton" text="No" addStyleNames="btn-danger {style.buttonmargin}" />
-                <g:Button ui:field="customButton" text="Custom" addStyleNames="{style.buttonmargin}" />
-                <g:Button ui:field="addButton" text="Add" addStyleNames="btn-primary {style.buttonmargin}" />
-                <g:Button ui:field="deleteButton" text="Delete" addStyleNames="btn-danger {style.buttonmargin}" />
-                <g:Button ui:field="uploadButton" text="Upload" addStyleNames="btn-primary {style.buttonmargin}" />
-                <g:Button ui:field="yesButton" text="Yes" addStyleNames="btn-success {style.buttonmargin}" />
-                <g:Button ui:field="okButton" text="OK" addStyleNames="btn-primary {style.buttonmargin}" />
+                <g:Button ui:field="cancelButton" text="{msg.cancel}" addStyleNames="{style.buttonmargin}" />
+                <g:Button ui:field="noButton" text="{msg.no}" addStyleNames="btn-danger {style.buttonmargin}" />
+                <g:Button ui:field="customButton" text="{msg.custom}" addStyleNames="{style.buttonmargin}" />
+                <g:Button ui:field="addButton" text="{msg.add}" addStyleNames="btn-primary {style.buttonmargin}" />
+                <g:Button ui:field="deleteButton" text="{msg.delete}" addStyleNames="btn-danger {style.buttonmargin}" />
+                <g:Button ui:field="uploadButton" text="{msg.upload}" addStyleNames="btn-primary {style.buttonmargin}" />
+                <g:Button ui:field="yesButton" text="{msg.yes}" addStyleNames="btn-success {style.buttonmargin}" />
+                <g:Button ui:field="okButton" text="{msg.ok}" addStyleNames="btn-primary {style.buttonmargin}" />
               </g:HorizontalPanel>
             </g:HorizontalPanel>
         </g:south>

@@ -1,12 +1,13 @@
 package com.nublic.app.browser.web.client.UI.actions;
 
+import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.Resources;
 import com.nublic.app.browser.web.client.UI.BrowserUi;
 
 public class UnselectAllAction extends ActionWidget {
 
 	public UnselectAllAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.unselectAll(), "Unselect all", stateProvider);
+		super(Resources.INSTANCE.unselectAll(), Constants.I18N.unselectAll(), stateProvider);
 	}
 
 	@Override

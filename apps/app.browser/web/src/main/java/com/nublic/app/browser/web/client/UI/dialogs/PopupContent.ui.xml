@@ -12,7 +12,8 @@
 	    }
 	</ui:style>
 	
-	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"></ui:with>
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.browser.web.client.i18n.I18NMessages" field="msg"/>
 
 	<g:DockLayoutPanel>
 	    <g:north size="36">
@@ -35,13 +36,13 @@
 			<g:DockLayoutPanel addStyleNames="modal-footer">
 				<g:west size="100">
 					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
-						<g:Hyperlink ui:field="previousLink" text="previous">
+						<g:Hyperlink ui:field="previousLink" text="{msg.previous}">
 						</g:Hyperlink>
 					</g:VerticalPanel>
 				</g:west>
 				<g:east size="100">
 					<g:VerticalPanel width="100%" height="100%" verticalAlignment="middle" horizontalAlignment="center">
-						<g:Hyperlink ui:field="nextLink" text="next">
+						<g:Hyperlink ui:field="nextLink" text="{msg.next}">
 						</g:Hyperlink>
 					</g:VerticalPanel>
 				</g:east>

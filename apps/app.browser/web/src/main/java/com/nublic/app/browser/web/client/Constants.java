@@ -1,6 +1,11 @@
 package com.nublic.app.browser.web.client;
 
+import com.google.gwt.core.client.GWT;
+import com.nublic.app.browser.web.client.i18n.I18NMessages;
+
 public class Constants {
+	public static I18NMessages I18N = GWT.create(I18NMessages.class);
+	
 	public final static int POPUP_MARGIN = 50;
 	public final static int POPUP_BOTTOM = 72; // also defined in PopupContent.ui.xml
 	public final static int DEFAULT_DEPTH = 2; // Number of levels of the tree requested each time
@@ -31,9 +36,7 @@ public class Constants {
 
 	public final static String FOLDER_TYPE = "folder";
 	public final static String COMPRESSED_TYPE = "zip";
-	public final static String WINDOW_PRETITLE = "Files - ";
-	public final static String WINDOW_HOME_TITLE = "Home";
-	public final static String HOME_NAME = "Home";
+
 	public final static String CSS_SELECTED = "selected";
 	public final static String DEFAULT_NEWFOLDER_TEXT = "new folder";
 
@@ -41,12 +44,9 @@ public class Constants {
 	public final static String KIND_SYNCED = "synced";
 	public final static String KIND_MEDIA = "media";
 	public final static String NUBLIC_ONLY = "nublic-only";
-	public final static String NUBLIC_ONLY_NAME = "Nublic files";
 	public final static String KIND_MIRROR_FOLDER = "mirrors";
 	public final static String KIND_SYNCED_FOLDER = "work-folders";
 	public final static String KIND_MEDIA_FOLDER = "media";
-
-	public final static String KIND_SYNCED_URL = "ssh://{username}@{host}/var/nublic/work-folders/";
 
 	public final static String getView(String type) {
 		String retStr = null;

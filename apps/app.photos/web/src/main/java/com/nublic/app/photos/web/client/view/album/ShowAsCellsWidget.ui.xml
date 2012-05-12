@@ -33,7 +33,8 @@
             text-decoration: none !important;
 	    }
     </ui:style>
-    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
+    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"/>
+    <ui:with type="com.nublic.app.photos.web.client.i18n.I18NMessages" field="msg"/>
 
     <g:DockLayoutPanel width="100%" height="100%">
         <g:north size='35'>
@@ -43,11 +44,11 @@
                 <g:HTMLPanel><h3><g:Label ui:field="titleLabel" addStyleNames="{style.rightmargin}"/></h3></g:HTMLPanel>
                 <g:HorizontalPanel verticalAlignment="MIDDLE" addStyleNames="{style.handpointer} {style.action}">
                     <g:Image ui:field="deleteImage" resource="{images.deleteAlbumBlack}" />
-                    <g:Anchor ui:field="deleteLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}">Delete this album</g:Anchor>
+                    <g:Anchor ui:field="deleteLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}"><ui:text from="{msg.deleteThisAlbum}"/></g:Anchor>
                 </g:HorizontalPanel>
                 <g:HorizontalPanel verticalAlignment="MIDDLE" addStyleNames="{style.handpointer} {style.action}">
                     <g:Image ui:field="removeSelectedImage" resource="{images.removeFiles}" />
-                    <g:Anchor ui:field="removeSelectedLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}">Remove selected photos from this album</g:Anchor>
+                    <g:Anchor ui:field="removeSelectedLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}"><ui:text from="{msg.removeSelectedPhotos}"/></g:Anchor>
                 </g:HorizontalPanel>
               </g:HorizontalPanel>
             </div>

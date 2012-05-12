@@ -11,7 +11,7 @@ import com.nublic.util.messages.PostRedirectHelper;
 public class SetDownloadAction extends ActionWidget {
 
 	public SetDownloadAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.download(), "Download as zip", stateProvider);
+		super(Resources.INSTANCE.download(), Constants.I18N.downloadAsZip(), stateProvider);
 	}
 
 	@Override

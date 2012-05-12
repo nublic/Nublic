@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.PhotosModel;
@@ -173,8 +174,8 @@ public class PhotosController implements PutTagHandler {
 	}
 	
 	public void deleteAlbum(final long id) {
-		final MessagePopup popup = new MessagePopup("Delete album",
-				"Do you want to deleted the selected album?\nPhotos will still be available in all photos view.",
+		final MessagePopup popup = new MessagePopup(Constants.I18N.deleteAlbum(),
+				Constants.I18N.deleteAlbumText(),
 				EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL));
 		popup.addButtonHandler(PopupButton.DELETE, new PopupButtonHandler() {
 			@Override

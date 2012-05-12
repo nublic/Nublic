@@ -67,8 +67,8 @@ public class SelectionDetails extends Composite {
 				dateLabel.setText(getFormatedDate(fw.getLastUpdate()));
 			}
 		} else {
-			selectionNameLabel.setText(newSelection.size() + " items");
-			selectionNameLabel.setTitle(newSelection.size() + " items");
+			selectionNameLabel.setText(Constants.I18N.nItems(newSelection.size()));
+			selectionNameLabel.setTitle(Constants.I18N.nItems(newSelection.size()));
 			setImage(Resources.INSTANCE.multipleSelection());
 			//setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
 			double size = 0;
@@ -97,7 +97,7 @@ public class SelectionDetails extends Composite {
 		// No items selected, shows info of the whole folder
 		String nameToShow;
 		if (folderName == null || folderName.equals("")) {
-			nameToShow = Constants.HOME_NAME;
+			nameToShow = Constants.I18N.home();
 			setImage(Resources.INSTANCE.home());
 		} else {
 			nameToShow = folderName;
@@ -128,21 +128,13 @@ public class SelectionDetails extends Composite {
 		// m folders
 		// n files (k Kb)
 		if (foldersNumber > 0) {
-			StringBuilder foldersString = new StringBuilder();
-			foldersString.append(foldersNumber);
-			foldersString.append(" folders");
-			info1Label.setText(foldersString.toString());
+			info1Label.setText(Constants.I18N.mFolders(foldersNumber));
 		} else {
 			info1Label.setText("");
 		}
 		
 		if (filesNumber > 0) {
-			StringBuilder filesString = new StringBuilder();
-			filesString.append(filesNumber);
-			filesString.append(" files (");
-			filesString.append(getFormatedSize(size));
-			filesString.append(")");
-			info2Label.setText(filesString.toString());
+			info2Label.setText(Constants.I18N.nFilesSize(filesNumber, getFormatedSize(size)));
 		} else {
 			info2Label.setText("");
 		}
@@ -216,7 +208,7 @@ public class SelectionDetails extends Composite {
 	public static String getFormatedDate(double ddate) {
 		Date date = new Date((long) ddate);
 		return ((long) ddate) == 0 ? "" :
-			"Last modified: " + DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date);
+			Constants.I18N.modifiedDate(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date));
 	}
 
 }

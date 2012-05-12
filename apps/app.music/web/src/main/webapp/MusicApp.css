@@ -139,13 +139,13 @@ body, html {
 	background-color: #f9f9f9;
 }
 
-.shadowed > div:nth-child(odd) {
+.shadowed > .artistPanel:nth-child(odd) {
 	background-color: #f9f9f9;
 }
-.shadowed > div {
+.shadowed > .artistPanel {
 	border-top: 2px solid #F4F4F4;
 }
-.shadowed > div:last-child {
+.shadowed > .artistPanel:last-child {
 	border-bottom: 2px solid #F4F4F4;
 }
 

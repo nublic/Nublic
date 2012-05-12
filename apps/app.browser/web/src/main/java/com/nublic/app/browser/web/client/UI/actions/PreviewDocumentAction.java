@@ -13,7 +13,7 @@ public class PreviewDocumentAction extends ActionWidget {
 	FileWidget docToShow = null;
 
 	public PreviewDocumentAction(BrowserUi stateProvider) {
-		super(Resources.INSTANCE.documentView(), "Preview document", stateProvider);
+		super(Resources.INSTANCE.documentView(), Constants.I18N.previewDocument(), stateProvider);
 	}
 
 	@Override
