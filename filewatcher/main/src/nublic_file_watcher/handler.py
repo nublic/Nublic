@@ -54,7 +54,7 @@ class EventHandler(pyinotify.ProcessEvent):
             if parent != '/var/nublic/data':  # Not in top path
                 if not solr.has_doc(parent):
                     fake_event = FakeCreationEvent(parent, True)
-                    self.process_IN_MODIFY(fake_event)
+                    self.process_IN_CLOSE_WRITE(fake_event)
         # Check if it is itself in Solr
         file_info = solr.retrieve_doc(event.pathname)
         if file_info == None:

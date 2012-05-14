@@ -1,0 +1,6 @@
+[Allow using apt to Apache]
+Identity=unix-group:www-data
+Action=org.debian.apt.*
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes

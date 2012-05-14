@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.manager.web.frame.AppFrame;
 import com.nublic.app.manager.web.frame.AppUrlChangeEvent;
 import com.nublic.app.manager.web.frame.AppUrlChangeHandler;
+import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.SequenceHelper;
 
 public class ManagerUi extends Composite implements AppUrlChangeHandler {
@@ -56,13 +57,13 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	
 	public void addAppTab(AppData data) {
 		navBar.addToPrimaryTab(data.getId(),
-				GWT.getHostPageBaseURL() + "manager/server/app-image/light/" + data.getId() + "/16",
+				LocationUtil.getHostBaseUrl() + "manager/server/app-image/light/" + data.getId() + "/16",
 				data.getDefaultName(), 
 				"#" + data.getId());
 	}
 	
 	public void go(String token) {
-		String newHref = GWT.getHostPageBaseURL() + token;
+		String newHref = LocationUtil.getHostBaseUrl() + token;
 		if (apps != null && apps.containsKey(token) && apps.get(token).getPath() != null) {
 			newHref += "/" + apps.get(token).getPath();
 		}
@@ -92,7 +93,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 
 	@Override
 	public void appUrlChanged(AppUrlChangeEvent event) {		
-		String path = event.getUrl().replace(GWT.getHostPageBaseURL(), "");
+		String path = event.getUrl().replace(LocationUtil.getHostBaseUrl(), "");
 		int slashPos = path.indexOf('/');
 		String appId = null;
 		if (slashPos == -1) {
@@ -102,7 +103,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		}
 		
 		if (!History.getToken().equals(appId) && !History.getToken().startsWith(appId + "/")) {
-			Location.replace(GWT.getHostPageBaseURL() + "#" + appId);
+			Location.replace(LocationUtil.getHostBaseUrl() + "manager/#" + appId);
 		}
 		
 		tabChange(path);
