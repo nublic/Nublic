@@ -106,11 +106,11 @@ public class ThumbnailWidget extends Composite implements HasMouseDownHandlers {
 							if (event.getValue()) {
 								selectedBox.removeStyleName(style.childForHoverNotSelected());
 								selectedBox.addStyleName(style.childForHoverSelected());
-								controller.select(photo.getId());
+								controller.select(photo);
 							} else {
 								selectedBox.removeStyleName(style.childForHoverSelected());
 								selectedBox.addStyleName(style.childForHoverNotSelected());
-								controller.unselect(photo.getId());
+								controller.unselect(photo);
 							}
 						}
 					});

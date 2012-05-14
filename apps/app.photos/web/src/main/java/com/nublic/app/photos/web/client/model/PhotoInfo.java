@@ -2,6 +2,9 @@ package com.nublic.app.photos.web.client.model;
 
 import java.util.Date;
 
+import com.google.gwt.core.client.GWT;
+import com.nublic.util.gwt.LocationUtil;
+
 public class PhotoInfo {
 
 	private long id;
@@ -32,5 +35,18 @@ public class PhotoInfo {
 	
 	public Date getDate() {
 		return date;
+	}
+	
+	@Override
+	public String toString() {
+		return String.valueOf(id);
+	}
+	
+	public static String getUrl(long id) {
+		return LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + id + ".png");
+	}
+	
+	public String getUrl() {
+		return PhotoInfo.getUrl(id);
 	}
 }

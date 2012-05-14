@@ -32,6 +32,7 @@ import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
 import com.nublic.app.photos.web.client.model.CallbackPhotosRemoval;
 import com.nublic.app.photos.web.client.model.CallbackRowCount;
+import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.DisposableWidget;
 
@@ -160,7 +161,7 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 	}
 
 	@Override
-	public void selectedPhotosChanged(Set<Long> selectedIds) {
+	public void selectedPhotosChanged(Set<PhotoInfo> selectedIds) {
 		if (this.id != -1) {
 			removeSelectedImage.setVisible(!selectedIds.isEmpty());
 			removeSelectedLink.setVisible(!selectedIds.isEmpty());
@@ -223,7 +224,7 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 		
 		@Override
 		public void onClick(ClickEvent e) {
-			PhotosModel.get().deletePhotos(PhotosApp.getController().getSelectedPhotos(),
+			PhotosModel.get().deletePhotos(PhotosApp.getController().getSelectedPhotoIds(),
 					new CallbackPhotosRemoval() {
 						
 						@Override
