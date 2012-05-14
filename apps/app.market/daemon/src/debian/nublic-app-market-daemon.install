@@ -1,0 +1,3 @@
+nublic_app_market_daemon/nublic_app_market_daemon /usr/sbin
+com.nublic.apt.conf /etc/dbus-1/system.d
+nublic-market.conf /etc/init

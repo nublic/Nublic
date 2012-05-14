@@ -1,3 +1,0 @@
-#!/bin/bash
-service nublic-app-market stop
-#DEBHELPER#
