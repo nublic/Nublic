@@ -36,5 +36,9 @@ public interface Images extends ClientBundle {
 	
 	@Source("images/new_album.png")
 	ImageResource newAlbum();
+	
+	@Source("images/multiple_photos.png")
+	ImageResource multiplePhotos();
+
 
 }

@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.Constants;
-import com.nublic.app.photos.web.client.controller.AlbumDropController;
+import com.nublic.app.photos.web.client.dnd.AlbumDropController;
 import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.MainUi;
@@ -118,10 +118,19 @@ public class NavigationPanel extends Composite {
 		selectCollection(ALL_PHOTOS);
 	}
 
-	public synchronized void selectCollection(long id) {
+	public long getSelectedId() {
+		TagWidget activeTag = albums.get(activeId);
+		return activeTag == null ? -3 : activeTag.id;
+	}
+	
+	public void unselectCollection() {
 		if (albums.get(activeId) != null) {
 			albums.get(activeId).select(false);
 		}
+	}
+	
+	public synchronized void selectCollection(long id) {
+		unselectCollection();
 		activeId = id;
 		if (albums.get(activeId) != null) {
 			albums.get(activeId).select(true);

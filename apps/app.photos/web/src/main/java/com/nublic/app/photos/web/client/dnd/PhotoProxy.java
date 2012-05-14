@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.Images;
 import com.nublic.app.photos.web.client.model.PhotoInfo;
+import com.nublic.util.widgets.ImageHelper;
 
 public class PhotoProxy extends Composite implements DragProxy {
 	private static PhotoProxyUiBinder uiBinder = GWT.create(PhotoProxyUiBinder.class);
@@ -25,13 +26,15 @@ public class PhotoProxy extends Composite implements DragProxy {
 		
 		art.setUrl(info.getUrl());
 		text.setText(info.getTitle());
+		setState(ProxyState.NONE);
 	}
 	
 	public PhotoProxy(int numberOfPhotos) {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		art.setResource(Images.INSTANCE.newAlbum());
+		ImageHelper.setImage(art, Images.INSTANCE.multiplePhotos());
 		text.setText(Constants.I18N.nPhotos(numberOfPhotos));
+		setState(ProxyState.NONE);
 	}
 
 	@Override
