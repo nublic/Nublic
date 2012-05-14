@@ -13,11 +13,15 @@ public class ImageHelper {
 		imgTarget.addErrorHandler(new ErrorHandler() {
 			@Override
 			public void onError(ErrorEvent event) {
-				String style = imgTarget.getStyleName();
-				imgTarget.setResource(alternative);
-				imgTarget.addStyleName(style);
+				ImageHelper.setImage(imgTarget, alternative);
 			}
 		});
 		imgTarget.setUrl(imgURL);
+	}
+	
+	public static void setImage(Image target, ImageResource source) {
+		String style = target.getStyleName();
+		target.setResource(source);
+		target.addStyleName(style);
 	}
 }
