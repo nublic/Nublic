@@ -1,0 +1,18 @@
+#!/usr/bin/python
+
+from nublic_app_market_daemon.apt_daemon import *
+from dbus.mainloop.glib import DBusGMainLoop
+
+import dbus
+import gobject
+import time
+
+if __name__ == '__main__':
+    # Initialize D-Bus loop
+    dbus_loop = DBusGMainLoop(set_as_default=True)
+    # Initialize D-Bus objects
+    apt = Apt(dbus_loop)
+    # Start GObject loop
+    loop = gobject.MainLoop()
+    gobject.threads_init()
+    loop.run()
