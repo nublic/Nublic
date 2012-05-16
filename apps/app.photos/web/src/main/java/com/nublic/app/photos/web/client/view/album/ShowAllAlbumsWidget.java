@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
@@ -50,6 +51,9 @@ public class ShowAllAlbumsWidget extends Composite implements ScrollHandler, Res
 		// Add "new album" button
 		NewAlbumWidget newWidget = new NewAlbumWidget(c);
 		mainPanel.add(newWidget);
+		
+		// Set window title
+		controller.changeTitle(Constants.I18N.allAlbums());
 		
 		PhotosModel.get().albums(new CallbackListOfAlbums() {
 			

@@ -40,6 +40,7 @@ public class PhotosApp implements EntryPoint, ValueChangeHandler<String> {
 	    rp.add(theUi);
 	    
 	    controller = new PhotosController(theUi);
+	    controller.changeTitle("");
 	    
 	    String startingToken = History.getToken();
 	    History.newItem(startingToken);

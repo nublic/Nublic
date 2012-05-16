@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.Constants;
+import com.nublic.app.photos.web.client.PhotosApp;
 import com.nublic.app.photos.web.client.model.AlbumInfo;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
@@ -96,15 +97,18 @@ public class ShowAsPresentationWidget extends Composite implements ResizeHandler
 		this.id = id;
 		if (id == -1) {
 			titleLabel.setText(Constants.I18N.allPhotos());
+			PhotosApp.getController().changeTitle(Constants.I18N.allPhotos());
 		} else {
 			PhotosModel.get().album(id, new CallbackOneAlbum() {
 				@Override
 				public void list(long id, String name) {
 					titleLabel.setText(name);
+					PhotosApp.getController().changeTitle(name);
 				}
 				@Override
 				public void error() {
 					titleLabel.setText(Constants.I18N.unknownAlbum());
+					PhotosApp.getController().changeTitle(Constants.I18N.unknownAlbum());
 				}
 			});
 		}

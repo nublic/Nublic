@@ -68,15 +68,18 @@ public class ShowAsCellsWidget extends Composite implements ScrollHandler, Resiz
 		this.id = id;
 		if (id == -1) {
 			titleLabel.setText(Constants.I18N.allPhotos());
+			controller.changeTitle(Constants.I18N.allPhotos());
 		} else {
 			PhotosModel.get().album(id, new CallbackOneAlbum() {
 				@Override
 				public void list(long id, String name) {
 					titleLabel.setText(name);
+					controller.changeTitle(name);
 				}
 				@Override
 				public void error() {
 					titleLabel.setText(Constants.I18N.unknownAlbum());
+					controller.changeTitle(Constants.I18N.unknownAlbum());
 				}
 			});
 		}
