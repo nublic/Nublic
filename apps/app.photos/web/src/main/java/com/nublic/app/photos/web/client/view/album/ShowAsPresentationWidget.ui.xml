@@ -56,7 +56,8 @@
             text-decoration: none !important;
         }
     </ui:style>
-    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"></ui:with>
+    <ui:with type="com.nublic.app.photos.web.client.Images" field="images"/>
+    <ui:with type="com.nublic.app.photos.web.client.i18n.I18NMessages" field="msg"/>
     
 	<g:DockLayoutPanel width="100%" height="100%">
         <g:north size='35'>
@@ -68,7 +69,7 @@
                     <n:AnchorPanel ui:field="gridImage">
                         <g:Image resource="{images.showAsGrid}" />
                     </n:AnchorPanel>
-                    <g:Hyperlink ui:field="gridLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}">Switch to grid view</g:Hyperlink>
+                    <g:Hyperlink ui:field="gridLink" addStyleNames="{style.smallleftmargin} {style.rightmargin}"><ui:text from="{msg.swichToGrid}"/></g:Hyperlink>
                 </g:HorizontalPanel>
               </g:HorizontalPanel>
             </div>

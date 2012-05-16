@@ -5,10 +5,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.photos.web.client.controller.ThumbnailDragHandler;
+import com.nublic.app.photos.web.client.dnd.PhotoDragController;
+import com.nublic.app.photos.web.client.dnd.ThumbnailDragHandler;
 import com.nublic.app.photos.web.client.view.navigation.NavigationPanel;
 import com.nublic.util.error.ErrorPopup;
 
@@ -20,9 +20,8 @@ public class MainUi extends Composite {
 	@UiField(provided=true) NavigationPanel navigationPanel;
 	
 	boolean currentPlaylistBeingShown = false;
-	
-	static final int DRAG_START_SENSITIVITY = 5;
-	PickupDragController dragController;
+
+	PhotoDragController dragController;
 
 	public MainUi() {
 		navigationPanel = new NavigationPanel(this);
@@ -30,12 +29,10 @@ public class MainUi extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		// Initialize drag and drop
-		this.dragController = new PickupDragController(RootPanel.get(), false);
-		dragController.setBehaviorDragProxy(true);
-		dragController.setBehaviorDragStartSensitivity(DRAG_START_SENSITIVITY);
+		dragController = new PhotoDragController();
 		dragController.addDragHandler(new ThumbnailDragHandler());
 	}
-	
+
 	public void setInnerWidget(Widget w) {
 		try {
 			if (mainPanel.getWidget() != null && mainPanel.getWidget() instanceof DisposableWidget) {

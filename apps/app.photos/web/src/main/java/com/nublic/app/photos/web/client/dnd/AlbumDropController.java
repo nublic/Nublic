@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client.controller;
+package com.nublic.app.photos.web.client.dnd;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.VetoDragException;
@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.nublic.app.photos.web.client.PhotosApp;
+import com.nublic.app.photos.web.client.view.navigation.NavigationPanel;
 import com.nublic.app.photos.web.client.view.navigation.TagWidget;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.gwt.NublicLists;
@@ -18,10 +19,14 @@ public class AlbumDropController extends SimpleDropController {
 	public final static String DROP_OVER_CSS_CLASS = "dropOver";
 
 	private TagWidget widget;
+	private DragProxy proxy;
+	private NavigationPanel parentPanel;
+	private long previouslySelected;
 
 	public AlbumDropController(TagWidget w) {
 		super(w);
 		this.widget = w;
+		parentPanel = PhotosApp.getUi().getNavigationPanel();
 	}
 
 	@Override
@@ -53,13 +58,22 @@ public class AlbumDropController extends SimpleDropController {
 
 	@Override
 	public void onEnter(DragContext context) {
+		// Unselect previously selected
+		previouslySelected = parentPanel.getSelectedId();
+		parentPanel.unselectCollection();
+		// Select mouse over one
+		widget.select(true);
+		// Get proxy and set "+" on it
+		proxy = ((HasProxy) context.dragController).getProxy();
+		proxy.setState(ProxyState.PLUS);
 		super.onEnter(context);
-		widget.addStyleName(DROP_OVER_CSS_CLASS);
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
-		widget.removeStyleName(DROP_OVER_CSS_CLASS);
+		widget.select(false);
+		parentPanel.selectCollection(previouslySelected);
+		proxy.setState(ProxyState.NONE);
 		super.onLeave(context);
 	}
 

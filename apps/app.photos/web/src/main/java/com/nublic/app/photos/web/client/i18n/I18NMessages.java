@@ -17,6 +17,9 @@ public interface I18NMessages extends Messages {
 	String allPhotos();
 	String allAlbums();
 	String unknownAlbum();
+	String swichToGrid();
+	String takenOn(String date);
+	String nPhotos(@PluralCount int numberOfPhotos);
 	
 	// Errors
 	String errorLoadingPhoto();

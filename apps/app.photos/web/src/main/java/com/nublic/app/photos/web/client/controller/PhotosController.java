@@ -6,12 +6,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Sets;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
+import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.MainUi;
 import com.nublic.app.photos.web.client.view.album.ShowAllAlbumsWidget;
@@ -32,7 +36,7 @@ public class PhotosController implements PutTagHandler {
 	View view;
 	AlbumOrder order;
 	
-	Set<Long> selectedPhotos;
+	Set<PhotoInfo> selectedPhotos;
 	List<SelectedPhotosChangeHandler> selectionH = new ArrayList<SelectedPhotosChangeHandler>();
 	
 	public PhotosController(MainUi ui) {	
@@ -42,7 +46,7 @@ public class PhotosController implements PutTagHandler {
 		this.view = View.AS_ALBUMS;
 		this.order = AlbumOrder.DATE_DESC;
 		// Initialize drag and drop
-		this.selectedPhotos = new HashSet<Long>();
+		this.selectedPhotos = new HashSet<PhotoInfo>();
 		
 		this.theUi.getNavigationPanel().addPutTagHandler(this);
 		
@@ -140,8 +144,17 @@ public class PhotosController implements PutTagHandler {
 		});
 	}
 	
-	public Set<Long> getSelectedPhotos() {
+	public Set<PhotoInfo> getSelectedPhotos() {
 		return selectedPhotos;
+	}
+	
+	public Set<Long> getSelectedPhotoIds() {
+		return Sets.newHashSet(Collections2.transform(selectedPhotos, new Function<PhotoInfo, Long>() {
+			@Override
+			public Long apply(PhotoInfo p) {
+				return p.getId();
+			}
+		}));
 	}
 	
 	public void addSelectionChangeHandler(SelectedPhotosChangeHandler h) {
@@ -163,13 +176,13 @@ public class PhotosController implements PutTagHandler {
 		notifySelectionChanged();
 	}
 	
-	public void select(long id) {
-		selectedPhotos.add(id);
+	public void select(PhotoInfo photo) {
+		selectedPhotos.add(photo);
 		notifySelectionChanged();
 	}
 	
-	public void unselect(long id) {
-		selectedPhotos.remove(id);
+	public void unselect(PhotoInfo photo) {
+		selectedPhotos.remove(photo);
 		notifySelectionChanged();
 	}
 	
