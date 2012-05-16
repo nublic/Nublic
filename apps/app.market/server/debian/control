@@ -1,0 +1,13 @@
+Source: nublic-app-market-server
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), junit4, scala, libdbus-java
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-market-server
+Architecture: all
+Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, nublic-app-market-daemon
+Description: Nublic MArket app - server
+ Market app for the Nublic platform - server part

@@ -191,7 +191,9 @@ build_deb_package apps/app.photos/server
 build_deb_package apps/app.photos/web
 build_deb_package apps/app.photos
 # Market App
-build_deb_package apps/app.market/server/src
+build_deb_package apps/app.market/daemon/src
+build_deb_package apps/app.market/server
+build_deb_package apps/app.market
 # Extra configuration packages
 build_deb_package conf/apache
 build_deb_package conf/samba
