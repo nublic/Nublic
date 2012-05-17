@@ -55,7 +55,10 @@
 		}
 		.border:hover {
 			border-color: #EEEEEE;
-			opacity: 0.8;
+			opacity: 0.7;
+			-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+			-moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+			box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 		}
 	</ui:style>
 
