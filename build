@@ -29,6 +29,7 @@ initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
     # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4
     # sudo update-java-alternatives -s java-1.7.0-\*
+    rm -rf "${REPO_DIR}"
     # Create build folders, if non existant
     mkdir -p "${TARGET_DIR}"
     mkdir -p "${REPO_DIR}"
@@ -123,7 +124,6 @@ create_repo() {
     echo
     echo "CREATING REPOSITORY"
     # Create repo structure
-    rm -rf "${REPO_DIR}"
     mkdir -p "${REPO_DIR}/conf"
     mkdir -p "${REPO_DIR}/incoming"
     cp conf/repo/conf/distributions "${REPO_DIR}/conf"
