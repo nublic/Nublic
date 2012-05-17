@@ -1,6 +1,7 @@
 package com.nublic.app.manager.web.client;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.JsArrayString;
 
 public class WebData extends JavaScriptObject {
 	
@@ -16,6 +17,16 @@ public class WebData extends JavaScriptObject {
 	
 	public final native String getLocalizedName(String language) /*-{
 	 	return this.name.localized[language];
+	}-*/;
+	
+	public final native JsArrayString getLocalizedLanguages() /*-{
+		var r = new Array();
+		for (var lang in this.name.localized) {
+    		if(this.name.localized.hasOwnProperty(lang)) {
+    			r.push(lang);
+			}
+		}
+		return r;
 	}-*/;
 	
 	public final native String getDeveloper() /*-{

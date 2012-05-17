@@ -18,7 +18,14 @@
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
   <inherits name='com.nublic.theme.NublicTheme'/>
 
-  <!-- Other module inherits                                      -->
+  <!-- Internationalization                                       -->
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <extend-property name="locale" values="en,es"/>
+  <!-- default locale... -->
+  <set-property-fallback name="locale" value="en"/>
+  <set-property name="locale" value="en,es"/>
+  <!-- get locale in runtime -->
+  <set-configuration-property name="locale.useragent" value="Y"/>
 
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.nublic.app.manager.welcome.client.WelcomeApp'/>

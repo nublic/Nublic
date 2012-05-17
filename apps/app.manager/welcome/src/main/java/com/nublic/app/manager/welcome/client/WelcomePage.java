@@ -41,7 +41,7 @@ public class WelcomePage extends Composite {
 			}
 			@Override
 			public void onSuccess(Response response) {
-				welcomeLabel.setText("Welcome, " + response.getText() + "!");
+				welcomeLabel.setText(Constants.I18N.greeting(response.getText()));
 			}
 			@Override
 			public void onError() {
@@ -62,14 +62,14 @@ public class WelcomePage extends Composite {
 				public int compare(String a, String b) {
 					AppData aD = apps.get(a);
 					AppData bD = apps.get(b);
-					return aD.getDefaultName().compareTo(bD.getDefaultName());
+					return aD.getLocalizedName().compareTo(bD.getLocalizedName());
 				}
 			});
 			for(String appId : appOrder) {
 				AppData app = apps.get(appId);
 				AppCell cell = new AppCell(appId, 
 						LocationUtil.getHostBaseUrl() + "manager/server/app-image/dark/" + appId + "/32",
-						app.getDefaultName(), LocationUtil.getHostBaseUrl() + appId + "/" + app.getPath(), app.isFavourite());
+						app.getLocalizedName(), LocationUtil.getHostBaseUrl() + appId + "/" + app.getPath(), app.isFavourite());
 				appGrid.add(cell);
 			}
 		}

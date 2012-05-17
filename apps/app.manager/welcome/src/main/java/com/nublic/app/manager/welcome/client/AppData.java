@@ -3,6 +3,9 @@ package com.nublic.app.manager.welcome.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.core.client.JsArrayString;
+import com.google.gwt.i18n.client.LocaleInfo;
+
 public class AppData {
 
 	String id;
@@ -29,6 +32,11 @@ public class AppData {
 		this.developer = data.getDeveloper();
 		this.defaultName = data.getDefaultName();
 		this.localizedNames = new HashMap<String, String>();
+		JsArrayString langs = data.getLocalizedLanguages();
+		for (int i = 0; i < langs.length(); i++) {
+			String lang = langs.get(i);
+			this.localizedNames.put(lang, data.getLocalizedName(lang));
+		}
 		this.path = data.getPath();
 		this.favourite = data.isFavourite();
 	}
@@ -55,6 +63,21 @@ public class AppData {
 
 	public Map<String, String> getLocalizedNames() {
 		return localizedNames;
+	}
+	
+	public String getLocalizedName() {
+		String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
+		// First, try to get the entire locale
+		if (localizedNames.containsKey(currentLocale)) {
+			return localizedNames.get(currentLocale);
+		}
+		// Now try to get only the language name
+		String currentLanguage = currentLocale.split("_")[0];
+		if (localizedNames.containsKey(currentLanguage)) {
+			return localizedNames.get(currentLanguage);
+		}
+		// Else get the default
+		return defaultName;
 	}
 
 	public String getPath() {

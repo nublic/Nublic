@@ -36,13 +36,13 @@ public class AppDataMessage extends Message {
 			theUi.loadApps(apps);
 			
 		} else {
-			ErrorPopup.showError("App list could not be loaded");
+			ErrorPopup.showError(Constants.I18N.errorLoadingAppList());
 		}
 	}
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError("App list could not be loaded");
+		ErrorPopup.showError(Constants.I18N.errorLoadingAppList());
 	}
 
 }
