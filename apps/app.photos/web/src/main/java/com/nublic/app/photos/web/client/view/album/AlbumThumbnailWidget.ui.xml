@@ -5,7 +5,7 @@
 	<ui:style type='com.nublic.app.photos.web.client.view.album.AlbumThumbnailWidget.Style'>
 		.inLine {
 			display: inline-table;
-			margin: 15px;
+			margin: 5px;
 		}
 		.maxheight {
 			max-height: 96px;
@@ -42,19 +42,38 @@
 	        text-align: center;
 	        line-height: 96px;
 	    }
+	    .border {
+			border-style: double;
+			border-color: #AAAAAA;
+			border-width: 4px;
+			-webkit-border-radius: 2px;
+			-moz-border-radius: 2px;
+			border-radius: 2px;
+			-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.25);
+			-moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.25);
+			box-shadow: 0 5px 5px rgba(0, 0, 0, 0.25);
+			opacity: 0.82;
+		}
+		.panelWithImage {
+		}
+		.panelWithImage:hover .border {
+			border-color: #888888;
+			opacity: 1;
+			-webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+			-moz-box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+			box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+		}
 	</ui:style>
 
-	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}" verticalAlignment="MIDDLE">
-		<g:AbsolutePanel width="96px" height="96px" addStyleNames="{style.centerImage}">
-			<g:at left='0' top='0'>
-			    <n:AnchorPanel ui:field="imagePanel" width="96px" height="96px" addStyleNames="{style.centerImage}">
-			        <g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" width="96px" height="96px">
-			            <g:Image ui:field="image" addStyleNames="{style.maxImageDimensions}" />
+	<g:VerticalPanel width="116px" height="131px" addStyleNames="{style.inLine} {style.panelWithImage}" verticalAlignment="MIDDLE">
+			<g:HTMLPanel width="116px" height="116px" addStyleNames="{style.centerImage}">
+			    <n:AnchorPanel ui:field="imagePanel" width="116px" height="116px" addStyleNames="{style.centerImage}">
+			        <g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" width="116px" height="116px">
+						<g:Image ui:field="image" addStyleNames="{style.maxImageDimensions} {style.border}"/>
 			        </g:VerticalPanel>
 			    </n:AnchorPanel>
-			</g:at>
-		</g:AbsolutePanel>
-		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
+			</g:HTMLPanel>
+		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="116px" height="15px">
             <g:Hyperlink ui:field="fileName" styleName="{style.ellipcenter}"/>
 		</g:VerticalPanel>
 	</g:VerticalPanel>

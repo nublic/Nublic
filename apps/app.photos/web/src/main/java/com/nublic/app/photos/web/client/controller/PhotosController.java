@@ -11,6 +11,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
@@ -211,5 +212,13 @@ public class PhotosController implements PutTagHandler {
 		});
 		popup.setInnerHeight(140);
 		popup.center();
+	}
+	
+	public void changeTitle(String s) {
+		if (s == null || s.equals("")) {
+			Window.setTitle(Constants.I18N.windowTitle());
+		} else {
+			Window.setTitle(Constants.I18N.windowTitlePhoto(s));
+		}
 	}
 }
