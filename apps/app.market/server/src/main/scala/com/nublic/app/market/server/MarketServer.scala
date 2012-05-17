@@ -21,7 +21,7 @@ class MarketServer extends ScalatraServlet with JsonSupport {
   implicit val formats = Serialization.formats(NoTypeHints)
 
   val PACKAGES_URL: String = "http://nublic.com/packages.json"
-  val MAX_UPDATE_DIFF: Long = 2 * 3600 * 1000 // 2 hours
+  val MAX_UPDATE_DIFF: Long = 1 // 2 * 3600 * 1000 // 2 hours
   val USE_LOCAL = true
   val LOCAL_PACKAGES_PATH = "/var/lib/nublic/packages.json"
 
@@ -122,10 +122,12 @@ class MarketServer extends ScalatraServlet with JsonSupport {
 
   def ensure_updated_packages() = {
     val now = System.currentTimeMillis()
-    if (!packages_list.isDefined || !last_packages_update.isDefined || (last_packages_update.get - now) > MAX_UPDATE_DIFF) {
+    if (!packages_list.isDefined || !last_packages_update.isDefined || (now - last_packages_update.get) > MAX_UPDATE_DIFF) {
       // Execute apt-get update
       Singleton.getApt().update_cache()
       val new_packages_list = grab_packages()
+      Console.err.println("Grabbed package")
+      Console.err.println(new_packages_list.toString())
       if (new_packages_list.isDefined) {
         last_packages_update = Some(now)
         packages_list = new_packages_list
@@ -139,9 +141,13 @@ class MarketServer extends ScalatraServlet with JsonSupport {
       if (f.exists()) {
         try {
           val reader = new FileReader(f)
-          read[List[Package]](reader)
+          val lst = read[List[Package]](reader)
+          Some(lst)
         } catch {
-          case e => None
+          case e: Exception => {
+            Console.err.println(e.getMessage())
+            None
+          }
         }
       } else {
         None
@@ -152,12 +158,14 @@ class MarketServer extends ScalatraServlet with JsonSupport {
         val method = new GetMethod(PACKAGES_URL)
         val result = client.executeMethod(method)
         val reader = new InputStreamReader(method.getResponseBodyAsStream())
-        read[List[Package]](reader)
+        Some(read[List[Package]](reader))
       } catch {
-        case e => None
+        case e: Exception => {
+          Console.err.println(e.getMessage())
+          None
+        }
       }
     }
-    None
   }
 
   def withPackageList(action: List[Package] => Any) = {
