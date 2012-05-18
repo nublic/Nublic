@@ -264,8 +264,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		/*if (!mouseOver) {
 			selectedBox.setVisible(checked);
 		}*/
-		selectedBox.setValue(checked);
-		
+		selectedBox.setValue(checked, true);
 	}
 	
 	// To proper handling of FileWidgets lists
