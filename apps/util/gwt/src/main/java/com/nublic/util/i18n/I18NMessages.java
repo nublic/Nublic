@@ -14,6 +14,7 @@ public interface I18NMessages extends Messages {
 	String upload();
 	String yes();
 	String ok();
+	String changeName();
 	
 	String error();
 }
