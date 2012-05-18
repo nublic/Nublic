@@ -1,21 +1,12 @@
 package com.nublic.app.browser.web.client.UI;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.JsArray;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Node;
 import com.google.gwt.event.dom.client.HasMouseDownHandlers;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -23,12 +14,11 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -36,6 +26,7 @@ import com.nublic.app.browser.web.client.Constants;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.model.FileNode;
 import com.nublic.util.gwt.LocationUtil;
+import com.nublic.util.widgets.AnchorPanel;
 
 public class FileWidget extends Composite implements HasMouseDownHandlers {
 
@@ -47,11 +38,13 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	// CSS Styles defined in the .xml file
 	interface FileStyle extends CssResource {
 		String inLine();
-	    String maxheight();
+	    String maxmeasures();
 	    String ellipcenter();
 	    String shadowed();
 	    String childForHoverNotSelected();
 	    String childForHoverSelected();
+	    String imageDecoration();
+	    String noLinkStyle();
 	}
 
 	FileNode node;
@@ -60,17 +53,13 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	String url = null;
 	String imageUrl = null;
 	boolean hasPreview = false;
-	Element divImage;
-	// Image fileImage;
-	Hyperlink fileThumbnail;
-	// Image altThumbnail;
-	Hyperlink fileName;
-	Label altName;
-	@UiField VerticalPanel imagePanel;
-	@UiField VerticalPanel textPanel;
+	@UiField AnchorPanel anchorPanel;
+	@UiField Image fileThumbnail;
+	@UiField Hyperlink fileName;
 	@UiField FileStyle style;
 	@UiField CheckBox selectedBox;
 	@UiField PushButton downloadButton;
+	@UiField VerticalPanel namePanel;
 
 	List<CheckedChangeHandler> chekedChangeHandlers = new ArrayList<CheckedChangeHandler>();
 	
@@ -82,21 +71,21 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return chekedChangeHandlers;
 	}
 	
-	public static native JsArray<Node> _getAttributes(Element elem) /*-{
-	   return elem.attributes;
-	}-*/;
-	
-	public Map<String, String> getAttributtes(Element element) {
-		HashMap<String, String> m = new HashMap<String, String>();
-		final JsArray<Node> attributes = _getAttributes(element);
-		for (int i = 0; i < attributes.length(); i ++) {
-		    final Node node = attributes.get(i);
-		    String attributeName = node.getNodeName();
-		    String attributeValue = node.getNodeValue();
-		    m.put(attributeName, attributeValue);
-		}
-		return m;
-	}
+//	public static native JsArray<Node> _getAttributes(Element elem) /*-{
+//	   return elem.attributes;
+//	}-*/;
+//	
+//	public Map<String, String> getAttributtes(Element element) {
+//		HashMap<String, String> m = new HashMap<String, String>();
+//		final JsArray<Node> attributes = _getAttributes(element);
+//		for (int i = 0; i < attributes.length(); i ++) {
+//		    final Node node = attributes.get(i);
+//		    String attributeName = node.getNodeName();
+//		    String attributeValue = node.getNodeValue();
+//		    m.put(attributeName, attributeValue);
+//		}
+//		return m;
+//	}
 	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
@@ -128,71 +117,26 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		}
 		
 		// Set the thumbnail
-		divImage = DOM.createDiv();
-		imageUrl = node.getImportantThumbnail() == null ? imageUrl : new Image(node.getImportantThumbnail()).getUrl();
-		divImage.setAttribute("style", "height: 96px; width: 96px; background-image: url('" + imageUrl + "');" +
-				" background-position: center center; background-repeat: no-repeat;");
-		// fileImage = node.getImportantThumbnail() == null ? new Image(url) : new Image(node.getImportantThumbnail());
+		if (node.getImportantThumbnail() == null) {
+			fileThumbnail.setUrl(imageUrl);
+		} else {
+			fileThumbnail.setResource(node.getImportantThumbnail());
+		}
+		// Set up name
+		fileName.setText(n.getName());
+		fileName.setTitle(n.getName());
+		fileThumbnail.setTitle(n.getName());
+		
 
 		// To fileWidgets with previews we'll create hyperlinks
-		if (hasPreview) {
-			// Create the widgets
-			fileThumbnail = new Hyperlink();
-			fileName = new Hyperlink();
-			
-			// Associate CSS styles
-			fileThumbnail.getElement().addClassName(style.maxheight());
-			fileName.getElement().addClassName(style.ellipcenter());
-			
-			// Add the image thumbnail to the hypertext widget
-//			fileImage = new Image(url);
-			// fileThumbnail.getElement().getChild(0).appendChild(fileImage.getElement()); 
-			fileThumbnail.getElement().getChild(0).appendChild(divImage);
-			
-			// Set up name
-			fileName.setText(n.getName());
-			fileName.setTitle(n.getName());
-			
+		if (hasPreview) {			
 			// Set the destination URL
 			setURL(viewType); // modifies both fileThumbnail and fileName
-			
-			// Add the widgets to the panels
-			imagePanel.add(fileThumbnail);
-			textPanel.add(fileName);
-			
-			// Add handlers
-			// fileThumbnail.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
-			// fileName.addDomHandler(new MyMouseEventHandler(), MouseDownEvent.getType());
 		} else {
-			// Create the alternative widgets (which are not links)
-//			altThumbnail = new Image(url);
-			// altThumbnail = fileImage;			
-			altName = new Label(n.getName());
-			altName.setTitle(n.getName());
-			
-			// Associate CSS styles
-			// altThumbnail.getElement().addClassName(style.maxheight());
-			divImage.addClassName(style.maxheight());
-			altName.getElement().addClassName(style.ellipcenter());
-			
-			// Add the widgets to the panels
-			// imagePanel.add(altThumbnail);
-			imagePanel.getElement().appendChild(divImage);
-			textPanel.add(altName);
-			
-			// Add handlers
-			// altThumbnail.addMouseDownHandler(new MyMouseEventHandler());
-			// altName.addMouseDownHandler(new MyMouseEventHandler());
+			// set useless URL
+			deactivateLinks();
 		}
-		// This doesn't work.. no reason
-		// (making widgets draggables makes their children to not receive onMouseUp events, nor onClick)
-//		addMouseUpHandler(new MouseUpHandler() {
-//			@Override
-//			public void onMouseUp(MouseUpEvent event) {
-//				System.out.println("mouse up");
-//				mouseOverActions();
-//			}
-//		});
+
 		// selectedBox.setVisible(false);
 		selectedBox.setValue(false, false);
 		// downloadButton.setVisible(false);
@@ -259,15 +203,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	public double getSize() {
 		return node.getSize();
 	}
-	
-	/*public Image getImage() {
-//		if (hasPreview) {
-			return fileImage;
-//		} else {
-//			return altThumbnail;
-//		}
-	}*/
-	
+
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -276,10 +212,17 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		String link = node.getImportantLink() == null ? path : node.getImportantLink();
 		url = Constants.getView(viewType) + "?" + Constants.PATH_PARAMETER + "=" + link;
 
-		if (fileThumbnail != null && fileName != null) {
-			fileThumbnail.setTargetHistoryToken(url);
-			fileName.setTargetHistoryToken(url);
-		}
+		fileName.setTargetHistoryToken(url);
+		anchorPanel.setHref("#" + url);
+	}
+	
+
+	private void deactivateLinks() {
+		fileName.setTargetHistoryToken(History.getToken());
+		anchorPanel.setHref("#" + History.getToken());
+		
+		namePanel.addStyleName(style.noLinkStyle());
+		fileThumbnail.addStyleName(style.noLinkStyle());
 	}
 	
 	public String getURL() {
@@ -287,10 +230,10 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	// Regression. this is not called anymore, using onmousedown (reported to library developer)
-	/*@UiHandler("downloadButton")
-	void onDownloadButtonClick(ClickEvent event) {
-		SingleDownloadAction.download(path, isFolder());
-	}*/
+//	@UiHandler("downloadButton")
+//	void onDownloadButtonClick(ClickEvent event) {
+//		SingleDownloadAction.download(path, isFolder());
+//	}
 	
 	@UiHandler("downloadButton")
 	void onDownloadButtonMouseDown(MouseDownEvent event) {
@@ -298,29 +241,20 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	}
 	
 	public void setCut() {
-		if (hasPreview) {
-			fileThumbnail.addStyleName(style.shadowed());
-		} else {
-			divImage.addClassName(style.shadowed());
-		}
+		fileThumbnail.addStyleName(style.shadowed());
 	}
 	
 	public void setUncut() {
-		if (hasPreview) {
-			fileThumbnail.removeStyleName(style.shadowed());
-		} else {
-			divImage.addClassName(style.shadowed());
-		}
+		fileThumbnail.removeStyleName(style.shadowed());
 	}
 
-	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-		return addDomHandler(handler, MouseOverEvent.getType());
-	}
-
-	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-		return addDomHandler(handler, MouseOutEvent.getType());
-//		return addDomHandler(handler, LoseCaptureEvent.getType());
-	}
+//	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+//		return addDomHandler(handler, MouseOverEvent.getType());
+//	}
+//
+//	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+//		return addDomHandler(handler, MouseOutEvent.getType());
+//	}
 	
 	public boolean isChecked() {
 		return selectedBox.getValue();
@@ -351,18 +285,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 
 	@Override
 	public HandlerRegistration addMouseDownHandler(MouseDownHandler handler) {
-//		if (hasPreview) {
-//			return fileThumbnail.addDomHandler(handler, MouseDownEvent.getType());
-//		} else {
-//			return altThumbnail.addMouseDownHandler(handler);
-////			return altThumbnail.addDomHandler(handler, MouseDownEvent.getType());
-//		}
 		return addDomHandler(handler, MouseDownEvent.getType());
 	}
-
-	
-//	public HandlerRegistration addMouseUpHandler(MouseUpHandler handler) {
-//		return addDomHandler(handler, MouseUpEvent.getType());
-//	}
 
 }
