@@ -57,9 +57,12 @@ public class TopBar extends Composite {
 		// Create title
 		Element titleAnchor = DOM.createAnchor();
 		titleAnchor.addClassName("brand");
+		titleAnchor.setAttribute("style", "height: 16px; margin-top: -5px;");
 		titleAnchor.setAttribute("href", "#welcome");
-		titleAnchor.setAttribute("style", "height: 16px;");
-		titleAnchor.setInnerText("Nublic");
+		Element logoImage = DOM.createImg();
+		logoImage.setAttribute("src", "images/logo.png");
+		titleAnchor.appendChild(logoImage);
+		// titleAnchor.setInnerText("Nublic");
 		containerInner.appendChild(titleAnchor);
 		// Primary navigation
 		primaryNav = DOM.createElement("ul");
