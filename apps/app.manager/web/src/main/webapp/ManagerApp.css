@@ -40,3 +40,40 @@ h1 {
   text-align: center;
 }
 
+/* Changes from bootstrap */
+.navbar-inner {
+  background-color: #035577 !important;
+  background-image: -moz-linear-gradient(top, #0A4A65, #122B35) !important;
+  background-image: -ms-linear-gradient(top, #0A4A65, #122B35) !important;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0A4A65), to(#122B35)) !important;
+  background-image: -webkit-linear-gradient(top, #0A4A65, #122B35) !important;
+  background-image: -o-linear-gradient(top, #0A4A65, #122B35) !important;
+  background-image: linear-gradient(top, #0A4A65, #122B35) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0A4A65', endColorstr='#122B35', GradientType=0) !important;
+}
+
+.navbar .nav .active > a, .navbar .nav .active > a:hover {
+  -webkit-box-shadow: inset 0 5px 10px rgba(0, 0, 0, .5) !important;
+  -moz-box-shadow: inset 0 5px 10px rgba(0, 0, 0, .5) !important;
+  box-shadow: inset 0 5px 10px rgba(0, 0, 0, .5) !important;
+  background-image: -moz-linear-gradient(top, #09455e, #122B35) !important;
+  background-image: -ms-linear-gradient(top, #09455e, #122B35) !important;
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#09455e), to(#122B35)) !important;
+  background-image: -webkit-linear-gradient(top, #09455e, #122B35) !important;
+  background-image: -o-linear-gradient(top, #09455e, #122B35) !important;
+  background-image: linear-gradient(top, #09455e, #122B35) !important;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#09455e', endColorstr='#122B35', GradientType=0) !important;
+}
+
+.navbar .nav > li > a {
+  color: #A9C2CC !important;
+  font-weight: bold !important;
+}
+.navbar .nav > li > a:hover {
+  color: #FFFFFF !important;
+  font-weight: bold !important;
+}
+
+.navbar .nav .active > a, .navbar .nav .active > a:hover {
+  color: #FFFFFF !important;
+}

@@ -18,14 +18,15 @@
 			margin-left: 15px;
 		}
 	</ui:style>
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
+	
 	<g:HTMLPanel>
-		<n:EditableLabel ui:field="name" addStyleNames="{style.name}">Shown
-			name</n:EditableLabel>
+		<n:EditableLabel ui:field="name" addStyleNames="{style.name}"><ui:text from="{msg.shownName}" /></n:EditableLabel>
 		<g:HorizontalPanel>
 			<g:cell verticalAlignment="ALIGN_MIDDLE">
-				<g:Label ui:field="username" addStyleNames="{style.username}">username</g:Label>
+				<g:Label ui:field="username" addStyleNames="{style.username}"><ui:text from="{msg.username}" /></g:Label>
 			</g:cell>
-			<g:Button addStyleNames="info {style.changeButton}">Change password</g:Button>
+			<g:Button addStyleNames="info {style.changeButton}"><ui:text from="{msg.changePassword}" /></g:Button>
 		</g:HorizontalPanel>
 	</g:HTMLPanel>
 </ui:UiBinder> 

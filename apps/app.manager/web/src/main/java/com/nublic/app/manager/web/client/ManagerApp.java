@@ -38,7 +38,7 @@ public class ManagerApp implements EntryPoint, ValueChangeHandler<String> {
         // Handle token
         String token = event.getValue();
         if (token.isEmpty()) {
-            theUi.go("welcome");
+            theUi.go(Constants.welcomeAppName);
         } else {
             theUi.go(token);
         }

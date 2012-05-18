@@ -9,6 +9,8 @@
 	       margin-bottom: 15px;
 	   }
 	</ui:style>
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
+	<ui:with type="com.nublic.util.i18n.I18NMessages" field="utilMsg"/>
 	<g:HTMLPanel>
 		<g:HorizontalPanel width="100%">
 			<g:Cell width="80%">
@@ -16,10 +18,18 @@
 			</g:Cell>
 			<g:Cell width="20%">
 				<g:VerticalPanel width="100%">
-				<g:Button width="100%" addStyleNames="{style.padded} {style.extraPadding} btn-info" ui:field="browseButton">Browse</g:Button>
-				<g:Button width="100%" addStyleNames="{style.padded} btn-success" ui:field="addButton">Add</g:Button>
-				<g:Button width="100%" addStyleNames="{style.padded}" ui:field="changeNameButton">Change name</g:Button>
-				<g:Button width="100%" addStyleNames="{style.padded} btn-danger" ui:field="removeButton">Remove</g:Button>
+				<g:Button width="100%" addStyleNames="{style.padded} {style.extraPadding} btn-info" ui:field="browseButton">
+				    <ui:text from="{msg.browse}" />
+				</g:Button>
+				<g:Button width="100%" addStyleNames="{style.padded} btn-success" ui:field="addButton">
+				    <ui:text from="{utilMsg.add}" />
+				</g:Button>
+				<g:Button width="100%" addStyleNames="{style.padded}" ui:field="changeNameButton">
+				    <ui:text from="{utilMsg.changeName}" />
+				</g:Button>
+				<g:Button width="100%" addStyleNames="{style.padded} btn-danger" ui:field="removeButton">
+				    <ui:text from="{utilMsg.delete}" />
+				</g:Button>
 			</g:VerticalPanel>
 			</g:Cell>
 		</g:HorizontalPanel>

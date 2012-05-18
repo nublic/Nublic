@@ -45,7 +45,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		AppDataMessage msg = new AppDataMessage(this);
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		// Add tab for welcome
-		navBar.addToSecondaryTab("settings", "images/settings.png", "Settings", "#settings");
+		navBar.addToSecondaryTab(Constants.settingsAppName,
+				"images/settings.png", 
+				Constants.I18N.settings(), 
+				"#" + Constants.settingsAppName);
 	}
 	
 	void loadApps(final HashMap<String, AppData> apps) {
@@ -58,7 +61,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	public void addAppTab(AppData data) {
 		navBar.addToPrimaryTab(data.getId(),
 				LocationUtil.getHostBaseUrl() + "manager/server/app-image/light/" + data.getId() + "/16",
-				data.getDefaultName(), 
+				data.getLocalizedName(), 
 				"#" + data.getId());
 	}
 	
@@ -79,7 +82,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 			appId = token.substring(0, slashPos);
 		}
 		
-		if (appId.equals("welcome")) {
+		if (appId.equals(Constants.welcomeAppName)) {
 			// Deselect every element
 			navBar.deselectAll();
 		} else {
@@ -111,8 +114,7 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 
 	@Override
 	public void appTitleChanged(AppUrlChangeEvent event) {
-		String trimmed = event.getTitle().trim();
-		String title = trimmed.isEmpty() ? "Nublic" : "Nublic - " + trimmed;
+		String title = Constants.getTitle(event.getTitle());
 		Document.get().setTitle(title);
 	}
 }

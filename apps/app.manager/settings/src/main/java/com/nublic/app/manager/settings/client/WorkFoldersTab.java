@@ -19,10 +19,10 @@ import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.nublic.app.manager.settings.client.comm.NublicSyncedFolder;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
-import com.nublic.util.widgets.MessagePopup;
 import com.nublic.util.widgets.PopupButton;
 import com.nublic.util.widgets.PopupButtonHandler;
 import com.nublic.util.widgets.TextPopup;
@@ -82,7 +82,7 @@ public class WorkFoldersTab extends Composite {
 
 	@UiHandler("addButton")
 	void onAddButtonClick(ClickEvent event) {
-		final TextPopup popup = new TextPopup("New work folder name",
+		final TextPopup popup = new TextPopup(Constants.I18N.newWorkFolderName(),
 				EnumSet.of(PopupButton.ADD, PopupButton.CANCEL), PopupButton.ADD);
 		
 		popup.addButtonHandler(PopupButton.ADD, new PopupButtonHandler() {
@@ -108,8 +108,7 @@ public class WorkFoldersTab extends Composite {
 					}
 					@Override
 					public void onError() {
-						MessagePopup msg = new MessagePopup("Error creating work folder", 
-								"Something bad happened while creating the new work folder");
+						ErrorPopup msg = new ErrorPopup(Constants.I18N.errorNewWorkFolder());
 						msg.center();
 					}
 				};
@@ -129,8 +128,8 @@ public class WorkFoldersTab extends Composite {
 			final String name = list.getItemText(list.getSelectedIndex());
 			final String value = list.getValue(list.getSelectedIndex());
 			
-			final TextPopup popup = new TextPopup("Do you really want to remove \"" 
-					+ name + "\" from your Nublic?",
+			final TextPopup popup = new TextPopup(
+					Constants.I18N.confirmRemoval(name),
 					EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL),
 					PopupButton.DELETE);
 			
@@ -157,8 +156,7 @@ public class WorkFoldersTab extends Composite {
 						}
 						@Override
 						public void onError() {
-							MessagePopup msg = new MessagePopup("Error removing work folder", 
-									"Something bad happened while removing the work folder");
+							ErrorPopup msg = new ErrorPopup(Constants.I18N.errorRemovalWorkFolder());
 							msg.center();
 						}
 					};
@@ -179,9 +177,9 @@ public class WorkFoldersTab extends Composite {
 			final String name = list.getItemText(list.getSelectedIndex());
 			final String value = list.getValue(list.getSelectedIndex());
 			
-			final TextPopup popup = new TextPopup("Change work folder name",
+			final TextPopup popup = new TextPopup(Constants.I18N.changeWorkFolderName(),
 					EnumSet.of(PopupButton.CUSTOM, PopupButton.CANCEL),
-					"Change name", PopupButton.CUSTOM);
+					Constants.UTIL_I18N.changeName(), PopupButton.CUSTOM);
 			popup.setText(name);
 			
 			popup.addButtonHandler(PopupButton.CUSTOM, new PopupButtonHandler() {
@@ -207,8 +205,7 @@ public class WorkFoldersTab extends Composite {
 						}
 						@Override
 						public void onError() {
-							MessagePopup msg = new MessagePopup("Error changing work folder name", 
-									"Something bad happened while changing the work folder name");
+							ErrorPopup msg = new ErrorPopup(Constants.I18N.errorChangeNameWorkFolder());
 							msg.center();
 						}
 					};
