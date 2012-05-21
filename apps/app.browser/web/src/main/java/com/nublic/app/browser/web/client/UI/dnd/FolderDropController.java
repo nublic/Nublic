@@ -1,8 +1,10 @@
-package com.nublic.app.browser.web.client.UI;
+package com.nublic.app.browser.web.client.UI.dnd;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.drop.AbstractDropController;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.BrowserUi;
+import com.nublic.app.browser.web.client.UI.FileWidget;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 
 public class FolderDropController extends AbstractDropController {

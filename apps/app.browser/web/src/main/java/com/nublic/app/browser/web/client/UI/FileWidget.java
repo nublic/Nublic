@@ -71,22 +71,6 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 		return chekedChangeHandlers;
 	}
 	
-//	public static native JsArray<Node> _getAttributes(Element elem) /*-{
-//	   return elem.attributes;
-//	}-*/;
-//	
-//	public Map<String, String> getAttributtes(Element element) {
-//		HashMap<String, String> m = new HashMap<String, String>();
-//		final JsArray<Node> attributes = _getAttributes(element);
-//		for (int i = 0; i < attributes.length(); i ++) {
-//		    final Node node = attributes.get(i);
-//		    String attributeName = node.getNodeName();
-//		    String attributeValue = node.getNodeValue();
-//		    m.put(attributeName, attributeValue);
-//		}
-//		return m;
-//	}
-	
 	// path is the path of the folder where the file is placed
 	public FileWidget(FileNode n, String path) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -247,23 +231,12 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 	public void setUncut() {
 		fileThumbnail.removeStyleName(style.shadowed());
 	}
-
-//	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
-//		return addDomHandler(handler, MouseOverEvent.getType());
-//	}
-//
-//	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
-//		return addDomHandler(handler, MouseOutEvent.getType());
-//	}
 	
 	public boolean isChecked() {
 		return selectedBox.getValue();
 	}
 	
 	public void setChecked(boolean checked) {
-		/*if (!mouseOver) {
-			selectedBox.setVisible(checked);
-		}*/
 		selectedBox.setValue(checked, true);
 	}
 	

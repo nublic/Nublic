@@ -44,39 +44,47 @@ public class SelectionDetails extends Composite {
 	}
 	
 	public void changeInfo(Set<Widget> newSelection) {
-		if (newSelection.size() == 1) {
+		SelectionInfo info = getSelectionInfo(newSelection);
+		selectionNameLabel.setText(info.title);
+		selectionNameLabel.setTitle(info.title);
+		if (info.imageURL == null) {
+			setImage(info.imageResource);
+		} else if (info.onClickURL == null) {
+			setImage(info.imageURL);
+		} else {
+			setHyperLink(info.imageURL, info.onClickURL);
+		}
+		info1Label.setText(info.firstLine);
+		info2Label.setText(info.secondLine);
+		dateLabel.setText(info.date);
+	}
+	
+	public static SelectionInfo getSelectionInfo(Set<Widget> selectedFiles) {
+		String title = null;
+		String firstLine = null;
+		String secondLine = null;
+		String dateStr = null;
+		String imageURL = null;
+		String onClickURL = null;
+		ImageResource imgRes = null;
+		if (selectedFiles.size() == 1) {
 			// If there is only one item selected
-			for (Widget w : newSelection) {
+			for (Widget w : selectedFiles) {
 				FileWidget fw = ((FileWidget)w);
-				selectionNameLabel.setText(fw.getName());
-				selectionNameLabel.setTitle(fw.getName());
-//				setImage(fw.getImage()); // This doesn't create a new Image and so the original gets moved
-				String onClickURL = fw.getURL();
-				if (onClickURL == null) {
-					setImage(fw.getImageUrl());
-				} else {
-					setHyperLink(fw.getImageUrl(), onClickURL);
-				}
-				if (Constants.isFolderMime(fw.getMime())) {
-					info1Label.setText("");
-					info2Label.setText("");
-				} else {
-					info1Label.setText(getFormatedSize(fw.getSize()));
-					info2Label.setText("");
-				}
-				dateLabel.setText(getFormatedDate(fw.getLastUpdate()));
+				title = fw.getName();
+				onClickURL = fw.getURL();
+				imageURL = fw.getImageUrl();
+				firstLine = Constants.isFolderMime(fw.getMime()) ? "" : getFormatedSize(fw.getSize());
+				secondLine = "";
+				dateStr = getFormatedDate(fw.getLastUpdate());
 			}
 		} else {
-			selectionNameLabel.setText(Constants.I18N.nItems(newSelection.size()));
-			selectionNameLabel.setTitle(Constants.I18N.nItems(newSelection.size()));
-			setImage(Resources.INSTANCE.multipleSelection());
-			//setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME);
 			double size = 0;
 			double date = 0;
 			int foldersNumber = 0;
 			int filesNumber = 0;
 			// Go through all selected items to show their info
-			for (Widget w : newSelection) {
+			for (Widget w : selectedFiles) {
 				FileWidget fw = ((FileWidget)w);
 				if (Constants.isFolderMime(fw.getMime())) {
 					foldersNumber++;
@@ -88,9 +96,14 @@ public class SelectionDetails extends Composite {
 					date = fw.getLastUpdate();
 				}
 			}
-			setFoldersAndFilesLabels(foldersNumber, filesNumber, size);
-			dateLabel.setText(getFormatedDate(date));
+			
+			title = Constants.I18N.nItems(selectedFiles.size());
+			firstLine = foldersNumber > 0 ? Constants.I18N.mFolders(foldersNumber) : "";
+			secondLine = filesNumber > 0 ? Constants.I18N.nFilesSize(filesNumber, getFormatedSize(size)) : "";
+			dateStr = getFormatedDate(date);
+			imgRes = Resources.INSTANCE.multipleSelection();
 		}
+		return new SelectionInfo(title, firstLine, secondLine, dateStr, onClickURL, imageURL, imgRes);
 	}
 
 	public void changeInfo(String folderName, List<FileNode> inFolder) {
@@ -138,7 +151,6 @@ public class SelectionDetails extends Composite {
 		} else {
 			info2Label.setText("");
 		}
-		
 	}
 
 	private void setImage(String url) {
