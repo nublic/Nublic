@@ -11,10 +11,6 @@ import com.nublic.app.photos.web.client.model.PhotoInfo;
 
 public class PhotoDragController extends PickupDragController implements HasProxy {
 
-	String draggingAlbumId;
-	String draggingArtistId;
-	String draggingCollectionId;
-	int numberOfSongs;
 	PhotoProxy proxy = null;
 
 	public PhotoDragController() {
