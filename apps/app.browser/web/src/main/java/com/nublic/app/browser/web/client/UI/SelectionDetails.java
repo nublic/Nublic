@@ -10,6 +10,7 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -47,9 +48,7 @@ public class SelectionDetails extends Composite {
 		SelectionInfo info = getSelectionInfo(newSelection);
 		selectionNameLabel.setText(info.title);
 		selectionNameLabel.setTitle(info.title);
-		if (info.imageURL == null) {
-			setImage(info.imageResource);
-		} else if (info.onClickURL == null) {
+		if (info.onClickURL == null) {
 			setImage(info.imageURL);
 		} else {
 			setHyperLink(info.imageURL, info.onClickURL);
@@ -66,7 +65,6 @@ public class SelectionDetails extends Composite {
 		String dateStr = null;
 		String imageURL = null;
 		String onClickURL = null;
-		ImageResource imgRes = null;
 		if (selectedFiles.size() == 1) {
 			// If there is only one item selected
 			for (Widget w : selectedFiles) {
@@ -101,9 +99,9 @@ public class SelectionDetails extends Composite {
 			firstLine = foldersNumber > 0 ? Constants.I18N.mFolders(foldersNumber) : "";
 			secondLine = filesNumber > 0 ? Constants.I18N.nFilesSize(filesNumber, getFormatedSize(size)) : "";
 			dateStr = getFormatedDate(date);
-			imgRes = Resources.INSTANCE.multipleSelection();
+			imageURL = Resources.INSTANCE.multipleSelection().getSafeUri().asString();
 		}
-		return new SelectionInfo(title, firstLine, secondLine, dateStr, onClickURL, imageURL, imgRes);
+		return new SelectionInfo(title, firstLine, secondLine, dateStr, imageURL, onClickURL);
 	}
 
 	public void changeInfo(String folderName, List<FileNode> inFolder) {

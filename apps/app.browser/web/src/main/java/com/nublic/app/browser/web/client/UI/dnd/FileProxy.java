@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.browser.web.client.UI.SelectionDetails;
 import com.nublic.app.browser.web.client.UI.SelectionInfo;
-import com.nublic.util.widgets.ImageHelper;
 
 public class FileProxy extends Composite implements DragProxy {
 	private static FileProxyUiBinder uiBinder = GWT.create(FileProxyUiBinder.class);
@@ -28,11 +27,7 @@ public class FileProxy extends Composite implements DragProxy {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		SelectionInfo info = SelectionDetails.getSelectionInfo(selectedFiles);
-		if (info.imageURL == null) {
-			ImageHelper.setImage(art, info.imageResource);
-		} else {
-			art.setUrl(info.imageURL);
-		}
+		art.setUrl(info.imageURL);
 		title.setText(info.title);
 		firstLine.setText(info.firstLine);
 		secondLine.setText(info.secondLine);

@@ -2,6 +2,7 @@ package com.nublic.app.browser.web.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
@@ -23,7 +24,7 @@ public interface Resources extends ClientBundle {
 	ImageResource view();
 	
 	@Source("images/multiple-selection.png")
-	ImageResource multipleSelection();
+	DataResource multipleSelection();
 	
 	@Source("images/paste.png")
 	ImageResource paste();

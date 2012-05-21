@@ -44,7 +44,7 @@
 		}
 		.maxwidth {
 			white-space: nowrap;
-			max-width: 200px;								/* IE6 needs any width */  
+			max-width: 200px;							/* IE6 needs any width */  
 			overflow: hidden;							/* "overflow" value must be different from "visible" */   
 			-o-text-overflow: ellipsis;					/* Opera 9-10 */  
 			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
