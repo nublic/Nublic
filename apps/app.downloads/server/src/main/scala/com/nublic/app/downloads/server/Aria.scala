@@ -10,6 +10,25 @@ import com.nublic.ws.json.WebSocketJsonRpc
 import net.liftweb.json._
 
 class Aria extends WebSocketJsonRpc {
+
+  var connected = false
+
+  def onConnect(): Unit = {
+    connected = true
+  }
+
+  def onDisconnect(): Unit = {
+    connected = false
+  }
+
+  def onStop(): Unit = {
+    connected = false
+  }
+
+  def onError(e: Throwable): Unit = {
+    Console.err.println(e.getMessage())
+  }
+
   val addUri = new Method1[Array[String], String]("aria2.addUri", this)
   val addUriOptions = new Method2[Array[String], JValue, String]("aria2.addUri", this)
   val addTorrent = new Method1[String, String]("aria2.addTorrent", this)
@@ -56,6 +75,16 @@ class Aria extends WebSocketJsonRpc {
 
   val shutdown = new Method0[String]("aria2.shutdown", this)
   val forceShutdown = new Method0[String]("aria2.forcerShutdown", this)
+
+  def notificationTypes = Map("onDowloadStart" -> Array(manifest[Long]))
+
+  def unknownNotification(method: String, params: Array[JValue]): Unit = {
+    Console.err.println("Received unknown notification " + method)
+  }
+
+  def onDownloadStart(gid: Long) = {
+    // Do nothing by now
+  }
 }
 object Aria {
   val POSITION_SET     = "POS_SET"

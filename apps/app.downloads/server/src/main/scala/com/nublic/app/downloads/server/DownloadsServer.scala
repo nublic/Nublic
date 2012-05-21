@@ -3,6 +3,7 @@ package com.nublic.app.downloads.server
 import com.nublic.filesAndUsers.java.User
 import java.io.File
 import java.lang.Long
+import java.net.URI
 import java.net.URLDecoder
 import java.util.Hashtable
 import javax.servlet.http.HttpServlet
@@ -108,6 +109,13 @@ class DownloadsServer extends ScalatraServlet with JsonSupport {
   
   def deleteUser(routeMatchers: org.scalatra.RouteMatcher)(action: User => Any) = delete2(routeMatchers) {
     withUser(action)
+  }
+
+  val aria = new Aria()
+  aria.connect(new URI("ws://localhost:6800/jsonrpc"))
+
+  get("/stats") {
+    write(aria.getGlobalStat())
   }
   
   notFound {  // Executed when no other route succeeds

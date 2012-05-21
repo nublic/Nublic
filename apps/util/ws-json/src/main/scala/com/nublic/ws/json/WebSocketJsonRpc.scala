@@ -63,7 +63,7 @@ abstract class WebSocketJsonRpc {
   private var _callbacks: scala.collection.mutable.Map[Long, WebSocketJsonRpcCallback] =
     new scala.collection.mutable.HashMap()
 
-  private def _toJson(x: AnyRef): JValue = {
+  private def _toJson(x: Any): JValue = {
     if (x.isInstanceOf[JValue]) {
       x.asInstanceOf[JValue]
     } else {
@@ -134,15 +134,15 @@ abstract class WebSocketJsonRpc {
     }
   }
 
-  def send(method: String, params: List[AnyRef]): Response[JValue] = _send(method, params.map(_toJson))
+  def send(method: String, params: List[Any]): Response[JValue] = _send(method, params.map(_toJson))
 
-  def sendAndParse[A](method: String, params: List[AnyRef])(implicit mf: Manifest[A]): Response[A] =
+  def sendAndParse[A](method: String, params: List[Any])(implicit mf: Manifest[A]): Response[A] =
     send(method, params).map(_.extract[A])
 
-  def asyncSend(method: String, params: List[AnyRef], cb: WebSocketJsonRpcCallback): Unit = 
+  def asyncSend(method: String, params: List[Any], cb: WebSocketJsonRpcCallback): Unit = 
     _asyncSend(method, params.map(_toJson), cb)
 
-  def shoot(method: String, params: List[AnyRef]): Unit = _notify(method, params.map(_toJson))
+  def shoot(method: String, params: List[Any]): Unit = _notify(method, params.map(_toJson))
 
   // Notifications
   // =============
@@ -292,7 +292,7 @@ abstract class WebSocketJsonRpc {
 
     def onMessage(client: WebSocketClient, message: Array[Byte]) {
       // Do nothing
-      throw new IllegalStateException("We should not receive nothing in Vinary frame")
+      throw new IllegalStateException("We should not receive nothing in Binary frame")
     }
 
     def onError(client: WebSocketClient, e: Throwable) {
