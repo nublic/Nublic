@@ -25,7 +25,7 @@ public class NavigationBar extends Composite {
 	
 	// CSS Styles defined in the .xml file
 	interface NavStyle extends CssResource {
-		String padding();
+//		String padding();
 		String labelspadding();
 		String verticalalignmiddle();
 		String homesize();

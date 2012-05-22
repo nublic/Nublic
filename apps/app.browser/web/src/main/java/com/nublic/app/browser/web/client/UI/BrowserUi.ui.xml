@@ -66,6 +66,15 @@
 	            width: 153px;
             }
 	    }
+	    .leftPanelPadding {
+			padding: 10px 10px 30px 10px;
+		}
+		.treeMargin {
+			margin: 8px;
+		}
+		.navigationBarMargin {
+			margin-top: 10px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"/>
@@ -73,13 +82,19 @@
 
 	<g:DockLayoutPanel>
 		<!-- Panel for the navigator tree -->
-	   	<g:west size="190">
-<!-- 		<g:Tree ui:field="treeView" addStyleNames="{style.horizontalmargin}"/> -->
-	   		<g:SimplePanel addStyleNames="{style.horizontalpadding} {style.allscroll}">
-	   			<g:Tree ui:field="treeView"/>
-	   		</g:SimplePanel>
+<!-- 	   	<g:west size="190"> -->
+<!-- 	   		<g:SimplePanel addStyleNames="{style.horizontalpadding} {style.allscroll}"> -->
+<!-- 	   			<g:Tree ui:field="treeView"/> -->
+<!-- 	   		</g:SimplePanel> -->
+<!-- 	   	</g:west> -->
+ 	   	<g:west size="220">
+	   		<g:HTMLPanel>
+	   			<div class="well" style="margin: 0px; position: absolute; left: 10px; right: 10px; top: 10px; bottom: 10px; padding: 0px; overflow-x: auto; overflow-y: auto;">
+	   				<g:Tree ui:field="treeView" addStyleNames="{style.treeMargin}"/>
+	   			</div>
+	   		</g:HTMLPanel>
 	   	</g:west>
-	   	
+
 	   	<!-- Actions panel -->
 	   	<g:east size="176">
 	   	  <g:VerticalPanel>
@@ -118,11 +133,11 @@
 	   			<!-- Panel to show order and filter controls -->
 	   			<g:north size="80">
 	   				<g:DockLayoutPanel>
-	   					<g:north size="40">
-							<my:NavigationBar ui:field="navigationBar">
+	   					<g:north size="45">
+							<my:NavigationBar ui:field="navigationBar" addStyleNames="{style.navigationBarMargin}">
 							</my:NavigationBar>
 	   					</g:north>
-	   					<g:east size="196">
+	   					<g:east size="191">
 	   					    <g:HTMLPanel addStyleNames="{style.margintop}" height="28px">
 		   						<div class="input">
 		   					    	<div class="input-prepend">
@@ -133,7 +148,7 @@
 		   					</g:HTMLPanel>
 		   				</g:east>
 		   				<g:west size="410">
-							<g:HorizontalPanel height="40px" addStyleNames="{style.marginleft} {style.margintop}">
+							<g:HorizontalPanel height="40px" addStyleNames="{style.margintop}">
 								<!-- Check box to toggle selection to all or none -->
 								<g:HTMLPanel>
 									<div class="input">
