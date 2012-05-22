@@ -5,7 +5,7 @@
 	<ui:style type='com.nublic.app.browser.web.client.UI.FileWidget.FileStyle'>
 		.inLine {
 			display: inline-table;
-			margin: 5px;
+			margin: 2px;
 		}
 		.maxmeasures {
 			max-height: 96px;

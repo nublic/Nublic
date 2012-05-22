@@ -96,20 +96,20 @@
 	   	</g:west>
 
 	   	<!-- Actions panel -->
-	   	<g:east size="176">
+	   	<g:east size="190">
 	   	  <g:VerticalPanel>
 			<g:FlowPanel ui:field="actionsPanel" addStyleNames="{style.horizontalpadding}">
 				<my:SelectionDetails ui:field="infoWidget" addStyleNames="{style.marginbottom}"/>
 				<g:HTMLPanel ui:field="workFolderPanel">
 				  <div class="page-header" style="margin-bottom: 6px;">
-                     <h3 style="line-height: 28px;"><ui:text from="{msg.sparkleFolder}"/></h3>
+                     <h3 style="line-height: 32px;"><ui:text from="{msg.sparkleFolder}"/></h3>
                   </div>
 				  <ui:safehtml from='{msg.sparkleText}'/>
                   <g:Button ui:field="workFolderURL" text="{msg.sparkleButton}"/>
 				</g:HTMLPanel>
 	   			<g:HTMLPanel>
 	   			  <div class="page-header" style="margin-bottom: 6px;">
-	   			     <h3 style="line-height: 28px;"><ui:text from="{msg.actions}"/></h3>
+	   			     <h3 style="line-height: 32px;"><ui:text from="{msg.actions}"/></h3>
 	   			  </div>
 	   			</g:HTMLPanel>
 <!-- 	   			<acts:FolderDownloadAction/> -->
