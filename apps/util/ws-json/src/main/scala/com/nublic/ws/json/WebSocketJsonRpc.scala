@@ -1,12 +1,17 @@
 package com.nublic.ws.json
 
-import com.nublic.ws.WebSocketEventHandler
+import com.ning.http.client.AsyncHttpClient
+import com.ning.http.client.AsyncHttpClientConfig
+import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider
+import com.ning.http.client.websocket.WebSocket
+import com.ning.http.client.websocket.WebSocketTextListener
+import com.ning.http.client.websocket.WebSocketUpgradeHandler
 import java.net.URI
 import net.liftweb.json._
 import net.liftweb.json.Extraction.decompose
 import net.liftweb.json.Serialization.{ read, write }
 import net.liftweb.util.ClassHelpers
-import com.nublic.ws.WebSocketClient
+
 
 abstract class WebSocketJsonRpcCallback {
   def execute(result: Response[JValue]): Unit
@@ -30,23 +35,37 @@ case class Error[R](val code: Long, val message: String, val error: Option[JValu
 abstract class WebSocketJsonRpc {
 
   implicit val formats = Serialization.formats(NoTypeHints)
-  private val client = new WebSocketClient(new EventHandler(this))
+
+  private var _client: WebSocket = null
+  private var _connected: Boolean = false
+  // private val client = new WebSocketClient(new EventHandler(this))
 
   // Connecting
   // ==========
 
-  def connect(uri: URI): Unit = {
-    client.connect(uri)
+  def connect(url: String): Unit = {
+    val config = new AsyncHttpClientConfig.Builder().build();
+    val c = new AsyncHttpClient(new GrizzlyAsyncHttpProvider(config), config);
+    val listener = new Listener(this)
+    val handler = (new WebSocketUpgradeHandler.Builder()).addWebSocketListener(listener).build()
+    _client = c.prepareGet(url).execute(handler).get()
   }
 
   /* Callback when connecting */
   def onConnect(): Unit
 
+  private def _onConnect(): Unit = {
+    _connected = true
+    onConnect()
+  }
+
   /* Callback when disconnecting */
   def onDisconnect(): Unit
 
-  /* Callback when stopping */
-  def onStop(): Unit
+  private def _onDisconnect(): Unit = {
+    _connected = false
+    onDisconnect()
+  }
 
   /* Callback when error arises */
   def onError(e: Throwable): Unit
@@ -102,10 +121,12 @@ abstract class WebSocketJsonRpc {
       }
 
       // Send the JSON-RPC message
-      client.send(_createMessage(id, method, params))
+      _client.sendTextMessage(_createMessage(id, method, params))
   
       // Now wait to its conclusion
-      waiter.wait()
+      waiter.synchronized {
+        waiter.wait()
+      }
 
       // Once we've been notified, we should have
       // the result in the _results map
@@ -124,13 +145,13 @@ abstract class WebSocketJsonRpc {
       }
 
       // Send the JSON-RPC message
-      client.send(_createMessage(id, method, params))
+      _client.sendTextMessage(_createMessage(id, method, params))
     }
   }
 
   private def _notify(method: String, params: List[JValue]): Unit = {
     _withNextId { id =>
-      client.send(_createMessage(id, method, params))
+      _client.sendTextMessage(_createMessage(id, method, params))
     }
   }
 
@@ -256,7 +277,10 @@ abstract class WebSocketJsonRpc {
 	  // So, put result on result map...
 	  _results += id -> response
 	  // ...and notify the waiting element
-	  _locks.get(id).get.notify()
+          val lock = _locks.get(id).get
+          lock.synchronized {
+	    lock.notify()
+          }
 	} else if (_callbacks.contains(id)) {
 	  // We have an async request
 	  // So, call the callback...
@@ -272,16 +296,27 @@ abstract class WebSocketJsonRpc {
     }
   }
 
-  // Event handlers
-  // ==============
+  // Listener
+  // ========
 
-  class EventHandler(val rpc: WebSocketJsonRpc) extends WebSocketEventHandler {
-    def onOpen(client: WebSocketClient) {
+  class Listener(val rpc: WebSocketJsonRpc) extends WebSocketTextListener {
+
+    def onOpen(websocket: WebSocket): Unit = {
       // Call handler
-      rpc.onConnect()
+      rpc._onConnect()
     }
 
-    def onMessage(client: WebSocketClient, message: String) {
+    def onClose(websocket: WebSocket): Unit = {
+      // Call handler
+      rpc._onDisconnect()
+    }
+
+    def onError(e: Throwable) = {
+      // Call handler
+      rpc.onError(e)
+    }
+    
+    def onMessage(message: String) = {
       // The difficult things happen here...
       try {
 	rpc.handleMessageReceived(parse(message))
@@ -290,24 +325,8 @@ abstract class WebSocketJsonRpc {
       }
     }
 
-    def onMessage(client: WebSocketClient, message: Array[Byte]) {
+    def onFragment(fragment: String, last: Boolean) = {
       // Do nothing
-      throw new IllegalStateException("We should not receive nothing in Binary frame")
-    }
-
-    def onError(client: WebSocketClient, e: Throwable) {
-      // Call handler
-      rpc.onError(e)
-    }
-
-    def onClose(client: WebSocketClient) {
-      // Call handler
-      rpc.onDisconnect()
-    }
-
-    def onStop(client: WebSocketClient) {
-      // Call handler
-      rpc.onStop()
     }
   }
 }
