@@ -12,6 +12,11 @@
 		.verticalalignmiddle {
 			vertical-align: middle;
 		}
+		.homesize {
+			width: 16px;
+			height: 16px;
+			vertical-align: top;
+		}
 	</ui:style>
 	<g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.padding}">
 	</g:HTMLPanel>

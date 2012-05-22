@@ -9,7 +9,6 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -108,7 +107,7 @@ public class SelectionDetails extends Composite {
 		String nameToShow;
 		if (folderName == null || folderName.equals("")) {
 			nameToShow = Constants.I18N.home();
-			setImage(Resources.INSTANCE.home());
+			setImage(Resources.INSTANCE.home().getSafeUri().asString());
 		} else {
 			nameToShow = folderName;
 			setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME1);
@@ -154,9 +153,9 @@ public class SelectionDetails extends Composite {
 		setImage(new Image(url));
 	}
 	
-	private void setImage(ImageResource res) {
-		setImage(new Image(res));
-	}
+//	private void setImage(ImageResource res) {
+//		setImage(new Image(res));
+//	}
 	
 	private void setImage(Image imageToShow) {
 		imageToShow.getElement().addClassName(style.center());
