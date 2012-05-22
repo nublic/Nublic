@@ -18,6 +18,7 @@ public class FileProxy extends Composite implements DragProxy {
 	interface FileProxyUiBinder extends UiBinder<Widget, FileProxy> { }
 
 	@UiField SimplePanel plusPanel;
+	@UiField SimplePanel copyPanel;
 	@UiField Label title;
 	@UiField Label firstLine;
 	@UiField Label secondLine;
@@ -37,7 +38,8 @@ public class FileProxy extends Composite implements DragProxy {
 
 	@Override
 	public void setState(ProxyState state) {
-		plusPanel.setVisible(state == ProxyState.COPY);
+		plusPanel.setVisible(false);
+		copyPanel.setVisible(state == ProxyState.COPY);
 	}
 
 }

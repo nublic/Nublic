@@ -92,4 +92,6 @@ public interface Resources extends ClientBundle {
 	@Source("images/video_view.png")
 	ImageResource videoView();
 	
+	@Source("images/copy_addon.png")
+	ImageResource copyAddon();
 }

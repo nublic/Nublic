@@ -24,6 +24,7 @@ public class TreeDropController extends AbstractDropController {
 	TreeItem originalySelected;
 	Timer timer = null;
 	BrowserUi stateProvider;
+	DragProxy proxy;
 	
 	public TreeDropController(Tree dropTarget, TreeAdapter adapter, BrowserUi stateProvider) {
 		super(dropTarget);
@@ -83,12 +84,15 @@ public class TreeDropController extends AbstractDropController {
 
 	@Override
 	public void onEnter(DragContext context) {
+		proxy = ((FileDragController)context.dragController).getProxy();
+		proxy.setState(ProxyState.COPY);
 		originalySelected = dropTarget.getSelectedItem();
 		setNewOverItem(getMouseOverItem(context));
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
+		proxy.setState(ProxyState.NONE);
 		dropTarget.setSelectedItem(originalySelected, false);
 		if (timer != null) {
 			timer.cancel();
