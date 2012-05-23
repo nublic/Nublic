@@ -69,7 +69,7 @@ public class ArtistMessage extends Message {
 				JsArray<JSArtist> artistList = jsResponse.getArtists();
 				for (int i = 0; i < artistList.length(); i++) {
 					JSArtist artist = artistList.get(i);
-					ArtistInfo info = new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
+					ArtistInfo info = new ArtistInfo(artist);
 					answerList.add(info);
 					// We take the opportunity to add the artist to the model cache
 					Controller.INSTANCE.getModel().getArtistCache().put(info.getId(), info);
@@ -93,8 +93,7 @@ public class ArtistMessage extends Message {
 	public static ArtistInfo parseArtistInfo(Response r) {
 		String text = r.getText();
 		JSArtist artist = JsonUtils.safeEval(text);
-		
-		return new ArtistInfo(artist.getId(), artist.getName(), artist.getAlbums(), artist.getSongs());
+		return new ArtistInfo(artist);
 	}
 
 }

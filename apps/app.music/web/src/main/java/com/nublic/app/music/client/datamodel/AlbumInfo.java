@@ -3,6 +3,8 @@ package com.nublic.app.music.client.datamodel;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.datamodel.js.JSAlbum;
 
 //album  ::= { "id" : $album-id,
 //        "name": $name,
@@ -20,6 +22,13 @@ public class AlbumInfo {
 		this.name = name;
 		this.numberOfSongs = numberOfSongs;
 		this.artistList = artistList;
+	}
+	
+	public AlbumInfo(JSAlbum album) {
+		this.id = album.getId();
+		this.name = album.getName().isEmpty() ? Constants.I18N.unknownAlbum() : album.getName();
+		this.numberOfSongs = album.getSongs();
+		this.artistList = album.getArtists();
 	}
 
 	// Getters and setters

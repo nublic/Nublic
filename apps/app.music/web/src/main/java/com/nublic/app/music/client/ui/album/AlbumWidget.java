@@ -70,7 +70,7 @@ public class AlbumWidget extends Composite {
 		setPlayButtonHandler(b);
 		labelAndButtonsPanel.add(b);
 		
-		// Album artists
+		// Artist list
 		if (artistId == null) { // This is a view of various artists, should show artists in each album
 			for (String id : album.getArtistList()) {
 				Controller.INSTANCE.getModel().getArtistCache().addHandler(id, new CacheHandler<String, ArtistInfo>() {

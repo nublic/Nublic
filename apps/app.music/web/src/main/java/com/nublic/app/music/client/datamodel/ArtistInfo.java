@@ -1,7 +1,9 @@
 package com.nublic.app.music.client.datamodel;
 
 import com.google.gwt.core.client.GWT;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Utils;
+import com.nublic.app.music.client.datamodel.js.JSArtist;
 
 //artist ::= { "id" : $artist-id,
 //        "name": $name,
@@ -20,6 +22,13 @@ public class ArtistInfo {
 		this.name = name;
 		this.numberOfAlbums = numberOfAlbums;
 		this.numberOfSongs = numberOfSongs;
+	}
+	
+	public ArtistInfo(JSArtist artist) {
+		this.id = artist.getId();
+		this.name = artist.getName().isEmpty() ? Constants.I18N.unknownArtist() : artist.getName();
+		this.numberOfAlbums = artist.getAlbums();
+		this.numberOfSongs = artist.getSongs();
 	}
 
 	// Getters and setters

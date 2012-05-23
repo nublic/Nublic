@@ -63,12 +63,7 @@ public class PlaylistContentMessage extends Message {
 				JsArray<JSSong> songList = jsResponse.getSongs();
 				for (int i = 0; i < songList.length(); i++) {
 					JSSong song = songList.get(i);
-					SongInfo info = new SongInfo(song.getId(),
-										 song.getTitle(),
-										 song.getArtistId(),
-										 song.getAlbumId(),
-										 song.getTrack(),
-										 song.getLength());
+					SongInfo info = new SongInfo(song);
 					answerList.add(info);
 				}
 				// Only if the message arrives on time to fill the screen it was meant for
