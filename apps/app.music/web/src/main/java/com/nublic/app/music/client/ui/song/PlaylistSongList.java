@@ -152,6 +152,7 @@ public class PlaylistSongList extends SongList implements PlayStateHandler {
 		// Insert new row
 		grid.insertRow(to);
 		grid.getRowFormatter().getElement(to).setClassName(oldClassName);
+		grid.getCellFormatter().setHeight(to, 0, Constants.TABLE_CELL_HEIGHT);
 		
 		int newFrom = to < from ? from + 1 : from;
 		
