@@ -104,33 +104,35 @@ public class SelectionDetails extends Composite {
 
 	public void changeInfo(String folderName, List<FileNode> inFolder) {
 		// No items selected, shows info of the whole folder
-		String nameToShow;
 		if (folderName == null || folderName.equals("")) {
-			nameToShow = Constants.I18N.home();
 			setImage(Resources.INSTANCE.home().getSafeUri().asString());
+			selectionNameLabel.setText(Constants.I18N.home());
+			selectionNameLabel.setTitle(Constants.I18N.home());
+			info1Label.setText("");
+			info2Label.setText("");
+			dateLabel.setText("");
 		} else {
-			nameToShow = folderName;
 			setImage(GWT.getHostPageBaseURL() + "server/generic-thumbnail/" + Constants.FOLDER_MIME1);
-		}
-		selectionNameLabel.setText(nameToShow);
-		selectionNameLabel.setTitle(nameToShow);
-		double size = 0;
-		double date = 0;
-		int foldersNumber = 0;
-		int filesNumber = 0;
-		for (FileNode fn : inFolder) {
-			if (Constants.isFolderMime(fn.getMime())) {
-				foldersNumber++;
-			} else {
-				filesNumber++;
-				size += fn.getSize();
+			selectionNameLabel.setText(folderName);
+			selectionNameLabel.setTitle(folderName);
+			double size = 0;
+			double date = 0;
+			int foldersNumber = 0;
+			int filesNumber = 0;
+			for (FileNode fn : inFolder) {
+				if (Constants.isFolderMime(fn.getMime())) {
+					foldersNumber++;
+				} else {
+					filesNumber++;
+					size += fn.getSize();
+				}
+				if (fn.getLastUpdate() > date) {
+					date = fn.getLastUpdate();
+				}
 			}
-			if (fn.getLastUpdate() > date) {
-				date = fn.getLastUpdate();
-			}
+			setFoldersAndFilesLabels(foldersNumber, filesNumber, size);
+			dateLabel.setText(getFormatedDate(date));
 		}
-		setFoldersAndFilesLabels(foldersNumber, filesNumber, size);
-		dateLabel.setText(getFormatedDate(date));
 	}
 	
 	private void setFoldersAndFilesLabels(int foldersNumber, int filesNumber, double size) {
@@ -152,10 +154,6 @@ public class SelectionDetails extends Composite {
 	private void setImage(String url) {
 		setImage(new Image(url));
 	}
-	
-//	private void setImage(ImageResource res) {
-//		setImage(new Image(res));
-//	}
 	
 	private void setImage(Image imageToShow) {
 		imageToShow.getElement().addClassName(style.center());
