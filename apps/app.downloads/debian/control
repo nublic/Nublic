@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-downloads
 Architecture: all
-Depends: ${misc:Depends}, nublic-app-downloads-server, nublic-app-downloads-web
+Depends: ${misc:Depends}, nublic-app-downloads-server
 Description: Nublic Downloads app
  Downloads app for the Nublic platform - metapackage

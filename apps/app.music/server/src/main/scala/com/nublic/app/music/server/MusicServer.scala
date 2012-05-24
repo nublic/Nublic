@@ -321,7 +321,7 @@ class MusicServer extends ScalatraServlet with JsonSupport {
     val db_count = transaction {
       Database.getPlaylistCount(id)
     }
-    if (!is_of_user || from < 0 || to < 0 || from >= db_count || to >= db_count) {
+    if (!is_of_user || from < 0 || to < 0 || from >= db_count || to > db_count) {
       halt(500)
     } else {
       transaction {

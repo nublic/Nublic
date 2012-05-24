@@ -1,5 +1,7 @@
 package com.nublic.app.music.server.filewatcher
 
+import org.jaudiotagger.audio._
+import org.jaudiotagger.tag._
 import java.io.File
 
 // Algorithm taken from Banshee
@@ -63,8 +65,15 @@ object FilenameExtractor {
         }
       }
     }
+    // Get length
+    val length = try {
+      val audio = AudioFileIO.read(new File(filename))
+      Some(audio.getAudioHeader().getTrackLength())
+    } catch {
+      case e => None
+    }
     // Trim elements
     SongInfo(title.map(_.trim()), artist.map(_.trim()), album.map(_.trim()),
-        None, None, track, None)
+        length, None, track, None)
   }
 }

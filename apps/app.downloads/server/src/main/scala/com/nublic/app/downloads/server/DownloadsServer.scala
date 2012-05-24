@@ -112,10 +112,14 @@ class DownloadsServer extends ScalatraServlet with JsonSupport {
   }
 
   val aria = new Aria()
-  aria.connect(new URI("ws://localhost:6800/jsonrpc"))
+  aria.connect("ws://localhost:6800/jsonrpc")
 
   get("/stats") {
-    write(aria.getGlobalStat())
+    if (aria.connected) {
+      write(aria.getGlobalStat())
+    } else {
+      write("not-connected")
+    }
   }
   
   notFound {  // Executed when no other route succeeds
