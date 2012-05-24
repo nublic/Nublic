@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
+import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
@@ -58,7 +59,15 @@ public class ButtonLine extends Composite {
 					break;
 				}
 			}
+
+			if (params.contains(ButtonLineParam.ADD_AT_END)) {
+				setAddAtEndPlaylistName(Controller.INSTANCE.getPlayingPlaylistName());
+			}
 		}
+	}
+	
+	public void setAddAtEndPlaylistName(String playlistName) {
+		addAtEndButton.setTitle(Constants.I18N.addAtEndTooltipOf(playlistName));
 	}
 	
 	// Handlers for buttons' clicks

@@ -97,6 +97,7 @@ public class Controller extends URLController {
 	// Getters and setters of singletones
 	public NublicPlayer getPlayer() { return ui.getPlayer(); }
 	public String getPlayingPlaylistId() { return playingPlaylistId; }
+	public String getPlayingPlaylistName() { return model.getPlaylistCache().get(playingPlaylistId).getName(); }
 	public void setPlayingPlaylistId(String playingPlaylistId) { this.playingPlaylistId = playingPlaylistId; }
 	public DataModel getModel() { return model; }
 	public void setModel(DataModel model) { this.model = model; }
@@ -218,7 +219,7 @@ public class Controller extends URLController {
 					int playlistSize = ui.getPlayer().getPlaylistSize();
 					if (playlistSize > 0) {
 						if (ui.getPlayer().isShuffleEnabled()) {
-							play(Random.nextInt() % playlistSize, playlistId);				
+							play(Random.nextInt() % playlistSize, playlistId);
 						} else {
 							play(0, playlistId);
 						}
@@ -378,7 +379,6 @@ public class Controller extends URLController {
 	public boolean isBeingPlayed(String playlistId) {
 		return playlistId.equals(Controller.INSTANCE.getPlayingPlaylistId());
 	}
-
 	
 	public void moveSongInPlaylist(String playlistId, int draggingRow, int targetRow) {
 		// IGNORE OTHERS! They are moving the song before itself or after itself, which leaves it at the same position
