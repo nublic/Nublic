@@ -1,7 +1,9 @@
-package com.nublic.app.browser.web.client.UI;
+package com.nublic.app.browser.web.client.UI.dnd;
 
 import com.allen_sauer.gwt.dnd.client.DragHandlerAdapter;
 import com.allen_sauer.gwt.dnd.client.DragStartEvent;
+import com.nublic.app.browser.web.client.UI.BrowserUi;
+import com.nublic.app.browser.web.client.UI.FileWidget;
 
 public class FileDragHandler extends DragHandlerAdapter {
 	BrowserUi stateProvider;

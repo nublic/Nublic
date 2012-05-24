@@ -1,0 +1,84 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.panel {
+			-webkit-border-radius: 4px;
+			-moz-border-radius: 4px;
+			border-radius: 4px;
+			background-color: #0088CC;
+    		color: #FFFFFF;
+    		border-color: rgba(82, 168, 236, 0.8);
+			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+			outline: 0;
+			outline: thin dotted 9;
+			padding: 1px 20px 1px 20px;
+		}
+		.pluspanel {
+			border: 1px solid #A5A5A5 !important;
+			color: #FFFFFF;
+			text-shadow: 1px #AAAAAA;
+			font-weight: bold;
+			font-size: 20px;
+			height: 18px;
+			width: 18px;
+			-webkit-border-radius: 9px;
+			-moz-border-radius: 9px;
+			border-radius: 9px;
+			vertical-align: middle;
+		}
+		.plus {
+			/* margin-top: -3px;  TODO: fix plus top margin on chrome */
+			margin-left: 3px;
+			line-height: 16px;
+		}
+		.art {
+			margin: 5px;
+			max-height: 48px;
+			max-width: 48px;
+		}
+		.rightmargin {
+			margin-right: 10px;
+		}
+		.maxwidth {
+			white-space: nowrap;
+			max-width: 200px;							/* IE6 needs any width */  
+			overflow: hidden;							/* "overflow" value must be different from "visible" */   
+			-o-text-overflow: ellipsis;					/* Opera 9-10 */  
+			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
+			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */
+		}
+		.bold {
+			font-weight: bold;
+		}
+		.translucid {
+			opacity: 0.7;
+		}
+	</ui:style>
+	<ui:with type="com.nublic.app.browser.web.client.Resources" field="res"/>
+
+	<g:AbsolutePanel width="280px" height="80px">
+		<g:at left='8' top='8'>
+			<g:HorizontalPanel addStyleNames="{style.panel}" height="58px" verticalAlignment="middle">
+				<g:Image ui:field="art" addStyleNames="{style.art}"/>
+				<g:VerticalPanel addStyleNames="{style.rightmargin}">
+					<g:Label ui:field="title" addStyleNames="{style.bold} {style.maxwidth}"/>
+					<g:Label ui:field="firstLine" addStyleNames="{style.translucid} {style.maxwidth}"/>
+					<g:Label ui:field="secondLine" addStyleNames="{style.translucid} {style.maxwidth}"/>
+				</g:VerticalPanel>
+			</g:HorizontalPanel>
+		</g:at>
+		<g:at left='1' top='1'>
+			<g:SimplePanel ui:field="plusPanel" addStyleNames="{style.pluspanel} plusbackground">
+				<g:Label addStyleNames="{style.plus}" text="+"/>
+			</g:SimplePanel>
+		</g:at>
+		<g:at left='1' top='1'>
+			<g:SimplePanel ui:field="copyPanel" addStyleNames="{style.pluspanel} plusbackground">
+				<g:Image resource='{res.copyAddon}'/>
+			</g:SimplePanel>
+		</g:at>
+	</g:AbsolutePanel>
+</ui:UiBinder> 

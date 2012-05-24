@@ -2,9 +2,9 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style  type='com.nublic.app.browser.web.client.UI.NavigationBar.NavStyle'>
-		.padding {
+		/*.padding {
 			padding: 5px;
-		}
+		}*/
 		.labelspadding {
 			padding-left: 5px;
 			padding-right: 5px;
@@ -12,7 +12,12 @@
 		.verticalalignmiddle {
 			vertical-align: middle;
 		}
+		.homesize {
+			width: 16px;
+			height: 16px;
+			vertical-align: top;
+		}
 	</ui:style>
-	<g:HTMLPanel ui:field="rootPanel" addStyleNames="{style.padding}">
+	<g:HTMLPanel ui:field="rootPanel">
 	</g:HTMLPanel>
 </ui:UiBinder> 

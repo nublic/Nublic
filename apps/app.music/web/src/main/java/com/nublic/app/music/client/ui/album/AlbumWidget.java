@@ -13,12 +13,15 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.Resources;
 import com.nublic.app.music.client.Utils;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
+import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
@@ -26,6 +29,7 @@ import com.nublic.app.music.client.ui.ButtonLine;
 import com.nublic.app.music.client.ui.ButtonLineParam;
 import com.nublic.app.music.client.ui.ButtonType;
 import com.nublic.app.music.client.ui.song.ContextualSongList;
+import com.nublic.util.cache.CacheHandler;
 import com.nublic.util.widgets.ImageHelper;
 
 public class AlbumWidget extends Composite {
@@ -37,6 +41,8 @@ public class AlbumWidget extends Composite {
 	@UiField AlbumImagePanel albumImagePanel; // For making it draggable
 	@UiField Image albumImage;
 	@UiField FlowPanel songsPanel;
+	@UiField HorizontalPanel artistsOfAlbumPanel;
+	@UiField Label artistsOfAlbumLabel;
 	AlbumInfo album;
 	String artistId;
 	String collectionId;
@@ -49,6 +55,7 @@ public class AlbumWidget extends Composite {
 
 		setImage();
 
+		// Album title
 		albumNameLabel.setText(album.getName());
 		setClickTarget(collectionId);
 
@@ -62,6 +69,25 @@ public class AlbumWidget extends Composite {
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
 		labelAndButtonsPanel.add(b);
+		
+		// Album artists
+		if (artistId == null) { // This is a view of various artists, should show artists in each album
+			for (String id : album.getArtistList()) {
+				Controller.INSTANCE.getModel().getArtistCache().addHandler(id, new CacheHandler<String, ArtistInfo>() {
+					@Override
+					public void onCacheUpdated(String k, ArtistInfo v) {
+						if (artistsOfAlbumLabel.getText().isEmpty()) {
+							artistsOfAlbumLabel.setText(Constants.I18N.by() + " " + v.getName());
+						} else {
+							artistsOfAlbumLabel.setText(artistsOfAlbumLabel.getText() + ", " + v.getName());
+						}
+					}
+				});
+				Controller.INSTANCE.getModel().getArtistCache().obtain(id);
+			}
+		} else {
+			artistsOfAlbumPanel.setVisible(false);
+		}
 		
 		// Add song list
 		songsPanel.add(new ContextualSongList(album.getId(), artistId, collectionId, album.getNumberOfSongs(), inPanel));

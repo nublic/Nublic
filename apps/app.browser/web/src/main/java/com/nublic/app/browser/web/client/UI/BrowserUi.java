@@ -56,7 +56,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
@@ -75,6 +74,10 @@ import com.nublic.app.browser.web.client.UI.actions.SetDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.SingleDownloadAction;
 import com.nublic.app.browser.web.client.UI.actions.UploadAction;
 import com.nublic.app.browser.web.client.UI.dialogs.FixedPopup;
+import com.nublic.app.browser.web.client.UI.dnd.FileDragController;
+import com.nublic.app.browser.web.client.UI.dnd.FileDragHandler;
+import com.nublic.app.browser.web.client.UI.dnd.FolderDropController;
+import com.nublic.app.browser.web.client.UI.dnd.TreeDropController;
 import com.nublic.app.browser.web.client.devices.Device;
 import com.nublic.app.browser.web.client.devices.DeviceKind;
 import com.nublic.app.browser.web.client.devices.DevicesManager;
@@ -199,9 +202,7 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		});
 		
 		// Drag and drop support
-		dragController = new PickupDragController(RootPanel.get(), false);
-		dragController.setBehaviorDragProxy(true);
-		dragController.setBehaviorDragStartSensitivity(Constants.DRAG_START_SENSITIVIY);
+		dragController = new FileDragController(this);
 		TreeDropController treeDropController = new TreeDropController(treeView, treeAdapter, this);
 		dragController.registerDropController(treeDropController);
 		dragController.addDragHandler(new FileDragHandler(this));

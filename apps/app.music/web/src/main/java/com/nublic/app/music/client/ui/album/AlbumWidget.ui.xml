@@ -10,7 +10,7 @@
 			margin-left: 15px;
 		}
 		.topmargin {
-			margin-top: 10px;
+			margin-top: 5px;
 		}
 		.myh3andahalf {
 			font-size: 16px;
@@ -22,6 +22,10 @@
 		.handover:hover {
 			cursor: pointer;
 			cursor: hand;
+		}
+		.artistStyle {
+			opacity: 0.6;
+			font-size: 95%;
 		}
 	</ui:style>
 	
@@ -38,6 +42,9 @@
 			<g:VerticalPanel addStyleNames="{style.leftmargin}" width="100%">
 				<g:HorizontalPanel ui:field="labelAndButtonsPanel" addStyleNames="translucidPanel {style.topmargin}">
 					<g:Hyperlink ui:field="albumNameLabel" text="Album name" addStyleNames="{style.rightmargin} {style.myh3andahalf}"/>
+				</g:HorizontalPanel>
+				<g:HorizontalPanel ui:field="artistsOfAlbumPanel">
+					<g:Label ui:field="artistsOfAlbumLabel" addStyleNames="{style.artistStyle}"/>
 				</g:HorizontalPanel>
 				<!-- Songs display -->
 				<g:FlowPanel ui:field="songsPanel" addStyleNames="{style.topmargin}" width="100%"/>

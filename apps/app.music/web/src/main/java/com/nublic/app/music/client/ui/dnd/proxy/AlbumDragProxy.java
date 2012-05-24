@@ -33,8 +33,7 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 		
 		setImage(AlbumInfo.getAlbumImageUrl(draggingAlbumId));
 		final boolean hasToUseAlbumArtists = setArtist(draggingArtistId);
-		
-		
+
 		Controller.INSTANCE.getModel().getAlbumCache().addHandler(draggingAlbumId, new CacheHandler<String, AlbumInfo>() {
 			@Override
 			public void onCacheUpdated(String k, AlbumInfo v) {
@@ -53,7 +52,7 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 	private void setImage(String albumUrl) {
 		ImageHelper.setImage(albumArt, albumUrl, Resources.INSTANCE.album());
 	}
-	
+
 	private boolean setArtist(String draggingArtistId) {
 		if (draggingArtistId == null) {
 			return true;
@@ -89,7 +88,7 @@ public class AlbumDragProxy extends Composite implements DragProxy {
 			artists.setText(artists.getText() + ", " + artistName);
 		}
 	}
-	
+
 	public void setText(String text) {
 		this.title.setText(text);
 	}

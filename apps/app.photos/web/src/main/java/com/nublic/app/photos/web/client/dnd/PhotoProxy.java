@@ -39,7 +39,7 @@ public class PhotoProxy extends Composite implements DragProxy {
 
 	@Override
 	public void setState(ProxyState state) {
-		plusPanel.setVisible(state == ProxyState.PLUS);		
+		plusPanel.setVisible(state == ProxyState.PLUS);
 	}
 
 }

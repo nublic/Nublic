@@ -1,4 +1,4 @@
-package com.nublic.app.browser.web.client.UI;
+package com.nublic.app.browser.web.client.UI.dnd;
 
 import java.util.ArrayList;
 
@@ -13,6 +13,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Tree;
 import com.google.gwt.user.client.ui.TreeItem;
 import com.nublic.app.browser.web.client.Constants;
+import com.nublic.app.browser.web.client.UI.BrowserUi;
+import com.nublic.app.browser.web.client.UI.TreeAdapter;
 import com.nublic.app.browser.web.client.UI.actions.PasteAction;
 import com.nublic.app.browser.web.client.model.FolderNode;
 
@@ -22,6 +24,7 @@ public class TreeDropController extends AbstractDropController {
 	TreeItem originalySelected;
 	Timer timer = null;
 	BrowserUi stateProvider;
+	DragProxy proxy;
 	
 	public TreeDropController(Tree dropTarget, TreeAdapter adapter, BrowserUi stateProvider) {
 		super(dropTarget);
@@ -81,12 +84,15 @@ public class TreeDropController extends AbstractDropController {
 
 	@Override
 	public void onEnter(DragContext context) {
+		proxy = ((FileDragController)context.dragController).getProxy();
+		proxy.setState(ProxyState.COPY);
 		originalySelected = dropTarget.getSelectedItem();
 		setNewOverItem(getMouseOverItem(context));
 	}
 
 	@Override
 	public void onLeave(DragContext context) {
+		proxy.setState(ProxyState.NONE);
 		dropTarget.setSelectedItem(originalySelected, false);
 		if (timer != null) {
 			timer.cancel();

@@ -2,6 +2,7 @@ package com.nublic.app.browser.web.client;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.DataResource;
 import com.google.gwt.resources.client.ImageResource;
 
 /**
@@ -23,7 +24,7 @@ public interface Resources extends ClientBundle {
 	ImageResource view();
 	
 	@Source("images/multiple-selection.png")
-	ImageResource multipleSelection();
+	DataResource multipleSelection();
 	
 	@Source("images/paste.png")
 	ImageResource paste();
@@ -43,8 +44,11 @@ public interface Resources extends ClientBundle {
 	@Source("images/nublic-only.png")
 	ImageResource nublicOnly();
 	
+//	@Source("images/home.png")
+//	ImageResource home();
+	
 	@Source("images/home.png")
-	ImageResource home();
+	DataResource home();
 	
 	@Source("images/document_view.png")
 	ImageResource documentView();
@@ -91,4 +95,6 @@ public interface Resources extends ClientBundle {
 	@Source("images/video_view.png")
 	ImageResource videoView();
 	
+	@Source("images/copy_addon.png")
+	ImageResource copyAddon();
 }
