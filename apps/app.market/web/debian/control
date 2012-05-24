@@ -1,0 +1,13 @@
+Source: nublic-app-market-web
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), junit4
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-market-web
+Architecture: all
+Depends: ${misc:Depends}, tomcat7
+Description: Nublic Market app - client
+ Nublic Market app - client app

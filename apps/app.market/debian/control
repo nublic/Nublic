@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-market
 Architecture: all
-Depends: ${misc:Depends}, nublic-app-market-server, nublic-app-market-daemon
+Depends: ${misc:Depends}, nublic-app-market-server, nublic-app-market-daemon, nublic-app-market-web
 Description: Nublic Market app
  Market app for the Nublic platform - metapackage
