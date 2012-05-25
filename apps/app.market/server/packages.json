@@ -10,8 +10,13 @@
                        }
 , "screenshots" : [ ]
 , "categories" : [ ]
-, "links" : [ "http://nublic.com" ]
-, "developer" : "Nublic, Inc."
+, "links" : [ { "url"  : "http://nublic.com"
+              , "text" : { "default" : "Homepage", "translated" : { "es": "Página principal" } }
+              }
+            ]
+, "developer" : { "url"  : "http://nublic.com"
+                , "text" : { "default" : "Nublic" }
+                }
 , "deb" : "nublic-app-example"
 }
 ]
