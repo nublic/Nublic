@@ -7,6 +7,8 @@ import com.ning.http.client.websocket.WebSocket
 import com.ning.http.client.websocket.WebSocketTextListener
 import com.ning.http.client.websocket.WebSocketUpgradeHandler
 import java.net.URI
+import java.util.concurrent.SynchronousQueue
+import java.util.concurrent.locks.ReentrantReadWriteLock
 import net.liftweb.json._
 import net.liftweb.json.Extraction.decompose
 import net.liftweb.json.Serialization.{ read, write }
@@ -30,7 +32,7 @@ sealed abstract class Response[R] {
   }
 }
 case class Result[R](val result: R) extends Response[R]
-case class Error[R](val code: Long, val message: String, val error: Option[JValue]) extends Response[R]
+case class Error[R](val code: BigInt, val message: String, val error: Option[JValue]) extends Response[R]
 
 abstract class WebSocketJsonRpc {
 
@@ -73,13 +75,12 @@ abstract class WebSocketJsonRpc {
   // Sending
   // =======
 
-  private val _globalLock: Object = new Object()
-  private var _nextId: Long = 1
-  private var _locks: scala.collection.mutable.Map[Long, Object] = 
+  private val _nextIdLock: ReentrantReadWriteLock = new ReentrantReadWriteLock()
+  private var _nextId: BigInt = BigInt(1)
+  private val _callbacksLock: ReentrantReadWriteLock = new ReentrantReadWriteLock()
+  private var _results: scala.collection.mutable.Map[BigInt, SynchronousQueue[Response[JValue]]] = 
     new scala.collection.mutable.HashMap()
-  private var _results: scala.collection.mutable.Map[Long, Response[JValue]] = 
-    new scala.collection.mutable.HashMap()
-  private var _callbacks: scala.collection.mutable.Map[Long, WebSocketJsonRpcCallback] =
+  private var _callbacks: scala.collection.mutable.Map[BigInt, WebSocketJsonRpcCallback] =
     new scala.collection.mutable.HashMap()
 
   private def _toJson(x: Any): JValue = {
@@ -90,16 +91,17 @@ abstract class WebSocketJsonRpc {
     }
   }
 
-  private def _withNextId[R](f: Long => R): R = {
+  private def _withNextId[R](f: BigInt => R): R = {
     // Obtain method id
-    val id = _globalLock.synchronized {
-      _nextId += 1
-      _nextId
-    }
+    _nextIdLock.writeLock().lock()
+    _nextId += 1
+    val id = _nextId
+    _nextIdLock.writeLock().unlock()
+
     f(id)
   }
 
-  private def _createMessage(id: Long, method: String, params: List[JValue]): String = {
+  private def _createMessage(id: BigInt, method: String, params: List[JValue]): String = {
     // Create the JSON-RPC message...
     val message = JObject(List(
       JField("jsonrpc", JString("2.0")),
@@ -114,24 +116,24 @@ abstract class WebSocketJsonRpc {
   private def _send(method: String, params: List[JValue]): Response[JValue] = {
     _withNextId { id =>
       // Create object to wait on...
-      val waiter = new Object()
+      val waiter = new SynchronousQueue[Response[JValue]]()
+
       // ...and add it to wait list
-      _globalLock.synchronized {
-	_locks += id -> waiter
-      }
+      _callbacksLock.writeLock().lock()
+      _results += id -> waiter
+      _callbacksLock.writeLock().unlock()
 
       // Send the JSON-RPC message
+      // Console.err.println("Sending message with id " + id)
       _client.sendTextMessage(_createMessage(id, method, params))
   
       // Now wait to its conclusion
-      waiter.synchronized {
-        waiter.wait()
-      }
-
-      // Once we've been notified, we should have
-      // the result in the _results map
-      val result = _results.remove(id).get // Returns the removed value
-      _locks.remove(id)
+      // Console.err.println("Waiting for message with id " + id)
+      val result = waiter.take()
+      // and then remove it from the map
+      _callbacksLock.writeLock().lock()
+      _results.remove(id)
+      _callbacksLock.writeLock().unlock()
 
       return result
     }
@@ -140,11 +142,12 @@ abstract class WebSocketJsonRpc {
   private def _asyncSend[R](method: String, params: List[JValue], cb: WebSocketJsonRpcCallback): Unit = {
     _withNextId { id =>
       // Add callabck to the list
-      _globalLock.synchronized {
-        _callbacks += id -> cb
-      }
+      _callbacksLock.writeLock().lock()
+      _callbacks += id -> cb
+      _callbacksLock.writeLock().unlock()
 
       // Send the JSON-RPC message
+      // Console.err.println("Sending async message with id " + id)
       _client.sendTextMessage(_createMessage(id, method, params))
     }
   }
@@ -198,6 +201,7 @@ abstract class WebSocketJsonRpc {
 
   private def handleMessageReceived(json: JValue) = json match {
     case JObject(fields) => {
+      // Console.err.println("Received message")
       if (_isNotificationMessage(fields)) {
 	handleNotificationMessage(fields)
       } else if (_isResultMessage(fields)) {
@@ -248,6 +252,7 @@ abstract class WebSocketJsonRpc {
       case _                           => None
     }
     // Check we have all the fields
+    // Console.err.println("Handling message " + fields)
     val correctResponse = (result.isDefined && !error.isDefined) || (!result.isDefined && error.isDefined) 
     if (msgId.isDefined && correctResponse) {
       // Create response
@@ -255,9 +260,9 @@ abstract class WebSocketJsonRpc {
         Result(result.get)
       } else {
         val error_fields = error.get
-        val e_code: Long = error_fields.find(f => f.name == "code") match {
-          case Some(JField(_, JInt(c))) => c.asInstanceOf[Long]
-          case _                        => -1
+        val e_code = error_fields.find(f => f.name == "code") match {
+          case Some(JField(_, JInt(c))) => c
+          case _                        => BigInt(-1)
         }
         val e_message = error_fields.find(f => f.name == "message") match {
           case Some(JField(_, JString(s))) => s
@@ -270,27 +275,26 @@ abstract class WebSocketJsonRpc {
         Error(e_code, e_message, e_data)
       }
       // Tell the corresponding manager
-      val id = msgId.get.asInstanceOf[Long]
-      _globalLock.synchronized {
-	if (_locks.contains(id)) {
-	  // We have a sync request waiting
-	  // So, put result on result map...
-	  _results += id -> response
-	  // ...and notify the waiting element
-          val lock = _locks.get(id).get
-          lock.synchronized {
-	    lock.notify()
-          }
-	} else if (_callbacks.contains(id)) {
-	  // We have an async request
-	  // So, call the callback...
-	  _callbacks.get(id).get.execute(response)
-	  // ...and delete the callback
-	  _callbacks.remove(id)
-	} else {
-	  // We had a no-response request
-	}
+      val id = msgId.get
+
+      _callbacksLock.readLock().lock()
+      if (_results.contains(id)) {
+        // Sync response: put in queue
+        _results.get(id).get.put(response)
+        _callbacksLock.readLock().unlock()
+      } else if (_results.contains(id)) {
+        // Async response: execute...
+        _callbacks.get(id).get.execute(response)
+        _callbacksLock.readLock().unlock()
+        // ... and remove from list
+        _callbacksLock.writeLock().lock()
+        _callbacks.remove(id)
+        _callbacksLock.writeLock().unlock()
+      } else {
+        // Unexpected response: ignore
+        _callbacksLock.readLock().unlock()
       }
+
     } else {
       onError(new JsonParseException("Received result with bad format"))
     }

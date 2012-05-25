@@ -70,6 +70,8 @@ class Aria extends WebSocketJsonRpc {
   val changeGlobalOption = new Method1[JValue, String]("aria2.changeGlobalOption", this)
   val getGlobalStat = new Method0[AriaGlobalStat]("aria2.getGlobalStat", this)
 
+  val getVersion = new Method0[JValue]("aria2.getVersion", this)
+
   val purgeDownloadResult = new Method0[String]("aria2.purgeDownloadResult", this)
   val removeDownloadResult = new Method1[String, String]("aria2.removeDownloadResult", this)
 

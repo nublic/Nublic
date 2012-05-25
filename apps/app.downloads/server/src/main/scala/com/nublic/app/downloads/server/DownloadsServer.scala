@@ -6,6 +6,8 @@ import java.lang.Long
 import java.net.URI
 import java.net.URLDecoder
 import java.util.Hashtable
+import java.util.Timer
+import java.util.TimerTask
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpUtils
 import net.liftweb.json._
@@ -113,6 +115,24 @@ class DownloadsServer extends ScalatraServlet with JsonSupport {
 
   val aria = new Aria()
   aria.connect("ws://localhost:6800/jsonrpc")
+
+  val timer = new Timer()
+  class ShootTask(a: Aria) extends TimerTask {
+    def run(): Unit = {
+      if (a.connected) {
+        a.getVersion.shoot()
+      }
+    }
+  }
+  timer.schedule(new ShootTask(aria), 2000, 2000)
+
+  get("/aria-version") {
+    if (aria.connected) {
+      write(aria.getVersion())
+    } else {
+      write("not-connected")
+    }
+  }
 
   get("/stats") {
     if (aria.connected) {
