@@ -22,6 +22,9 @@ public class TranslatedTextJS extends JavaScriptObject {
 
 	private final native JsArrayString getTranslatedLanguages() /*-{
 		var r = new Array();
+		if (this.translated === undefined) {
+			return r;
+		}
 		for (var lang in this.translated) {
 			if (this.translated.hasOwnProperty(lang)) {
 				r.push(lang);

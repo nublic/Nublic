@@ -6,6 +6,9 @@ import com.google.gwt.core.client.JavaScriptObject;
 //, "url": "http://..."
 //}
 public class URLInfoJS extends JavaScriptObject {
+	
+	protected URLInfoJS () { }
+	
 	public final native TranslatedTextJS getText() /*-{
 		return this.text;
 	}-*/;

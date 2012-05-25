@@ -22,6 +22,10 @@ import com.google.gwt.core.client.JsArrayString;
 public class AppInfoJS extends JavaScriptObject {
 
 	protected AppInfoJS () { }
+	
+	public final native String getId() /*-{
+		return this.id;
+	}-*/;
 
 	public final native String getIconURL() /*-{
 		return this.icon;

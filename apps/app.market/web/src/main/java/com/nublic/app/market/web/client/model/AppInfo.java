@@ -5,6 +5,7 @@ import java.util.List;
 import com.nublic.app.market.web.client.model.js.AppInfoJS;
 
 public class AppInfo {
+	String id;
 	String iconURL;
 	TranslatedText name;
 	TranslatedText short_description;
@@ -16,8 +17,10 @@ public class AppInfo {
 	String deb;
 	AppStatus status;
 
-	public AppInfo(String iconURL, TranslatedText name,	TranslatedText short_description, TranslatedText long_description,
-			List<String> screenshotList, List<URLInfo> linkList, URLInfo developer, String deb, AppStatus status) {
+	public AppInfo(String id, String iconURL, TranslatedText name, TranslatedText short_description,
+			TranslatedText long_description, List<String> screenshotList, List<URLInfo> linkList,
+			URLInfo developer, String deb, AppStatus status) {
+		this.id = id;
 		this.iconURL = iconURL;
 		this.name = name;
 		this.short_description = short_description;
@@ -30,7 +33,8 @@ public class AppInfo {
 	}
 
 	public AppInfo(AppInfoJS appJS) {
-		this(appJS.getIconURL(),
+		this(appJS.getId(),
+				appJS.getIconURL(),
 				new TranslatedText(appJS.getName()),
 				new TranslatedText(appJS.getShortDescription()),
 				new TranslatedText(appJS.getLongDescription()),
