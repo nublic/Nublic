@@ -36,7 +36,6 @@ public class MusicApp implements EntryPoint, ValueChangeHandler<String>, Closing
 	    History.newItem(startingToken);
 	    History.addValueChangeHandler(this);
 	    History.fireCurrentHistoryState();
-	    
 	}
 
 	@Override
@@ -45,7 +44,6 @@ public class MusicApp implements EntryPoint, ValueChangeHandler<String>, Closing
 		ParamsHashMap hmap = new ParamsHashMap(args);
 		
 		Controller.INSTANCE.changeState(hmap);
-//		model.changeState(hmap);
 	}
 
 	@Override
