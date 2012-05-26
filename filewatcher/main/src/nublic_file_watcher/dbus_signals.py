@@ -85,7 +85,7 @@ class DbusSignaler(dbus.service.Object):
                 for already_path in self.app_config:
                     if already_path.startswith(account_path):
                         self.app_config.remove(already_path)
-                    elif pathname.startswith(already_path):
+                    elif account_path.startswith(already_path):
                         to_add = False
                 # If finally we add, do so and write config
                 if to_add:

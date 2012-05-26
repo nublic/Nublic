@@ -106,7 +106,7 @@ class EventHandler(pyinotify.ProcessEvent):
                 for signaler in self.signalers:
                     signaler.remove_context(event.pathname)
             # Notify via D-Bus
-            self.handle_process("delete", event)
+            self.raise_signal("delete", event)
         except:
             sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)

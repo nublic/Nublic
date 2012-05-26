@@ -13,7 +13,7 @@ import com.drew.imaging.ImageMetadataReader
 import com.drew.metadata.exif.ExifDirectory
 import java.util.Date
 
-class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, true) {
+class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watcher, false) {
   
   val GLOBAL_LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
   
@@ -37,11 +37,15 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
         val img_file = new File(filename)
         val metadata = ImageMetadataReader.readMetadata(img_file)
         val exif_dir = metadata.getDirectory(classOf[ExifDirectory])
-        val original_date = 
-          if (exif_dir.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL)) {
-            exif_dir.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL).getTime()
-          } else {
-            img_file.lastModified()
+        val original_date =
+          try {
+            if (exif_dir.containsTag(ExifDirectory.TAG_DATETIME_ORIGINAL)) {
+              exif_dir.getDate(ExifDirectory.TAG_DATETIME_ORIGINAL).getTime()
+            } else {
+              img_file.lastModified()
+            }
+          } catch {
+            case e => img_file.lastModified()
           }
         Database.photoByFilename(filename) match {
           case Some(photo) => {
@@ -59,7 +63,7 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
             Database.photos.insert(photo)
             // Create initial album
             // Get album name
-            val ctx = new File(context)
+            val ctx = new File("/var/nublic/data/" + context)
             val parent = img_file.getParentFile()
             val album_name = 
               if (parent.equals(ctx)) {

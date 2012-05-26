@@ -10,7 +10,7 @@ import java.io.FileWriter
 import java.io.PrintWriter
 import java.util.logging.Logger
 
-class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher, true) {
+class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watcher, false) {
   
   val GLOBAL_LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME)
   
