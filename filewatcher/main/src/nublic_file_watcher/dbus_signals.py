@@ -11,7 +11,7 @@ import dbus.service
 import os
 import os.path
 import re
-#import sys
+import sys
 
 def to_utf8(string):
     return unicode(string, 'utf-8')
@@ -55,10 +55,25 @@ class DbusSignaler(dbus.service.Object):
     def raise_event(self, ty, pathname, src_pathname, isdir):
         if not self.supports_watching:
             return
-        
+
+        # Try to find both elements
+        has_pathname = False
+        has_src_pathname = False
         for context in self.app_config:
             complete_context = u'/var/nublic/data/' + context
             if to_utf8(pathname).startswith(complete_context):
+                has_pathname = True
+            if to_utf8(src_pathname).startswith(complete_context):
+                has_src_pathname = True
+        if ty == "move":
+            if has_pathname and has_src_pathname:
+                self.file_changed(ty, pathname, src_pathname, isdir, context)
+            elif has_pathname and not has_src_pathname: # to, but no from -> create
+                self.file_changed("create", pathname, '', isdir, context)
+            elif not has_pathname and has_src_pathname: # from, but no to -> delete
+                self.file_changed("delete", src_pathname, '', isdir, context)
+        else:
+            if has_pathname:
                 self.file_changed(ty, pathname, src_pathname, isdir, context)
 
     def unicode_path(self, pathname):
@@ -141,5 +156,7 @@ class DbusSignaler(dbus.service.Object):
              
     @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir, context):
-        pass
-        # print "%s %s (context %s)" % (ty, pathname, context)
+        try:
+            sys.stderr.write("%s %s (context %s)\n" % (ty, pathname, context))
+        except:
+            pass

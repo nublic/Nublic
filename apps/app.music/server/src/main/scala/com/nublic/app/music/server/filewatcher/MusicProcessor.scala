@@ -72,8 +72,13 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
       case _                                  => { /* Nothing */ }
     }
   }
+
+  def is_hidden(f: String) = {
+    val filename = FilenameUtils.getName(f)
+    filename.startsWith(".") || filename.endsWith("~")
+  }
   
-  def process_updated_file(filename: String, context: String): Unit = {
+  def process_updated_file(filename: String, context: String): Unit = if (!is_hidden(filename)) {
     val extension = FilenameUtils.getExtension(filename)
     
     // GLOBAL_LOGGER.severe("Filewatcher: Getting info from " + filename)
@@ -107,7 +112,7 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {
     Database.songByFilename(from) match {
-      case None       => process_updated_file(to, context)
+      case None       => if (!is_hidden(to)) { process_updated_file(to, context) }
       case Some(song) => {
         song.file = to
         Database.songs.update(song)
@@ -121,16 +126,18 @@ class MusicProcessor(watcher: FileWatcherActor) extends Processor("music", watch
     for (file <- folder.listFiles()) {
       // Get new filename
       val path = file.getPath()
-      val old_path = path.replaceFirst(to, from)
-      if (file.isDirectory()) {
-        process_moved_folder(old_path, path, context)
-      } else {
-        // Try to update song
-        Database.songByFilename(old_path) match {
-          case None       => { /* Do nothing */ }
-          case Some(song) => {
-            song.file = path
-            Database.songs.update(song)
+      if (!is_hidden(path)) {
+        val old_path = path.replaceFirst(to, from)
+        if (file.isDirectory()) {
+          process_moved_folder(old_path, path, context)
+        } else {
+          // Try to update song
+          Database.songByFilename(old_path) match {
+            case None       => { /* Do nothing */ }
+            case Some(song) => {
+              song.file = path
+              Database.songs.update(song)
+            }
           }
         }
       }

@@ -30,8 +30,13 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
   }
   
   def now() = new Date().getTime()
+
+  def is_hidden(f: String) = {
+    val filename = FilenameUtils.getName(f)
+    filename.startsWith(".") || filename.endsWith("~")
+  }
   
-  def process_updated_file(filename: String, context: String): Unit = {    
+  def process_updated_file(filename: String, context: String): Unit = if (!is_hidden(filename)) {    
     if (Solr.getMimeType(filename).startsWith("image/")) {
       inTransaction {
         val img_file = new File(filename)
@@ -85,7 +90,7 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
   
   def process_moved_file(from: String, to: String, context: String): Unit = inTransaction {
     Database.photoByFilename(from) match {
-      case None       => process_updated_file(to, context)
+      case None       => if (!is_hidden(to)) { process_updated_file(to, context) }
       case Some(photo) => {
         photo.file = to
         Database.photos.update(photo)
@@ -99,16 +104,18 @@ class PhotoProcessor(watcher: FileWatcherActor) extends Processor("photos", watc
     for (file <- folder.listFiles()) {
       // Get new filename
       val path = file.getPath()
-      val old_path = path.replaceFirst(to, from)
-      if (file.isDirectory()) {
-        process_moved_folder(old_path, path, context)
-      } else {
-        // Try to update song
-        Database.photoByFilename(old_path) match {
-          case None       => { /* Do nothing */ }
-          case Some(photo) => {
-            photo.file = path
-            Database.photos.update(photo)
+      if (!is_hidden(path)) {
+        val old_path = path.replaceFirst(to, from)
+        if (file.isDirectory()) {
+          process_moved_folder(old_path, path, context)
+        } else {
+          // Try to update song
+          Database.photoByFilename(old_path) match {
+            case None       => { /* Do nothing */ }
+            case Some(photo) => {
+              photo.file = path
+              Database.photos.update(photo)
+            }
           }
         }
       }
