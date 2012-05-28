@@ -15,7 +15,7 @@
               }
             ]
 , "developer" : { "url"  : "http://nublic.com"
-                , "text" : { "default" : "Nublic" }
+                , "text" : { "default" : "Nublic", "translated" : { } }
                 }
 , "deb" : "nublic-app-example"
 }
