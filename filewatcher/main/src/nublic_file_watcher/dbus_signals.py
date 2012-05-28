@@ -42,7 +42,7 @@ class DbusSignaler(dbus.service.Object):
                     self.config[u'apps'][app.app_id] = [ u'' ]
                 else:
                     # Add a watcher with no contexts
-                    self.config[u'apps'][app] = []
+                    self.config[u'apps'][app.app_id] = []
                 apps.write_app_config(self.config)
             else:
                 self.supports_watching = False
