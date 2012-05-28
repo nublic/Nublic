@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-photos-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, libnublic-file-watcher-scala
+Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, libnublic-file-watcher-scala, nublic-resource
 Description: Nublic Photos app - server
  Photos app for the Nublic platform - server part
