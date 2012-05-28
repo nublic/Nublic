@@ -177,11 +177,11 @@ body {
   background-color: #ffffff;
 }
 a {
-  color: #0088cc;
+  color: #04648c;
   text-decoration: none;
 }
 a:hover {
-  color: #005580;
+  color: #034966;
   text-decoration: underline;
 }
 .row {
@@ -743,10 +743,10 @@ textarea:focus,
 .gwt-TextBox:focus,
 .gwt-Checkbox:focus,
 .gwt-RadioButton:focus {
-  border-color: rgba(82, 168, 236, 0.8);
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
+  border-color: rgba(4, 100, 140, 0.8);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(4, 100, 140, 0.6);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(4, 100, 140, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(4, 100, 140, 0.6);
   outline: 0;
   outline: thin dotted \9;
   /* IE6-8 */
@@ -1733,7 +1733,7 @@ table .span12 {
 .dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover {
   color: #ffffff;
   text-decoration: none;
-  background-color: #0088cc;
+  background-color: #04648c;
 }
 .dropdown.open {
   *z-index: 1000;
@@ -1940,16 +1940,16 @@ table .span12 {
   color: rgba(255, 255, 255, 0.75);
 }
 .btn-primary {
-  background-color: #006dcc;
-  background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -ms-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-  background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-  background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-  background-image: linear-gradient(top, #0088cc, #0044cc);
+  background-color: #04528c;
+  background-image: -moz-linear-gradient(top, #04648c, #04378c);
+  background-image: -ms-linear-gradient(top, #04648c, #04378c);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#04648c), to(#04378c));
+  background-image: -webkit-linear-gradient(top, #04648c, #04378c);
+  background-image: -o-linear-gradient(top, #04648c, #04378c);
+  background-image: linear-gradient(top, #04648c, #04378c);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0088cc', endColorstr='#0044cc', GradientType=0);
-  border-color: #0044cc #0044cc #002a80;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#04648c', endColorstr='#04378c', GradientType=0);
+  border-color: #04378c #04378c #021a42;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
@@ -1958,10 +1958,10 @@ table .span12 {
 .btn-primary.active,
 .btn-primary.disabled,
 .btn-primary[disabled] {
-  background-color: #0044cc;
+  background-color: #04378c;
 }
 .btn-primary:active, .btn-primary.active {
-  background-color: #003399 \9;
+  background-color: #03235a \9;
 }
 .btn-warning {
   background-color: #faa732;
@@ -2321,7 +2321,7 @@ input[type="submit"].btn.small,
 .nav-list .active > a, .nav-list .active > a:hover {
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
-  background-color: #0088cc;
+  background-color: #04648c;
 }
 .nav-list [class^="icon-"] {
   margin-right: 2px;
@@ -2404,7 +2404,7 @@ input[type="submit"].btn.small,
 }
 .nav-pills .active > a, .nav-pills .active > a:hover {
   color: #ffffff;
-  background-color: #0088cc;
+  background-color: #04648c;
 }
 .nav-stacked > li {
   float: none;
@@ -2457,14 +2457,14 @@ input[type="submit"].btn.small,
 .nav-pills .dropdown-toggle .caret,
 .gwt-TabBar .dropdown-toggle .caret,
 .gwt-DecoratedTabBar .dropdown-toggle .caret {
-  border-top-color: #0088cc;
+  border-top-color: #04648c;
   margin-top: 6px;
 }
 .nav-tabs .dropdown-toggle:hover .caret,
 .nav-pills .dropdown-toggle:hover .caret,
 .gwt-TabBar .dropdown-toggle:hover .caret,
 .gwt-DecoratedTabBar .dropdown-toggle:hover .caret {
-  border-top-color: #005580;
+  border-top-color: #034966;
 }
 .nav-tabs .active .dropdown-toggle .caret,
 .nav-pills .active .dropdown-toggle .caret,
@@ -3279,7 +3279,7 @@ input[type="submit"].btn.small,
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075);
 }
 a.thumbnail:hover {
-  border-color: #0088cc;
+  border-color: #04648c;
   -webkit-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   -moz-box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
   box-shadow: 0 1px 4px rgba(0, 105, 214, 0.25);
@@ -4261,7 +4261,7 @@ a.thumbnail:hover {
   /* background: #ebeff9; */
 
   font-weight: bold;
-  color: #0064cd;
+  color: #04648c;
 }
 .gwt-TreeItem .gwt-RadioButton input, .gwt-TreeItem .gwt-CheckBox input {
   margin-left: 0px;
