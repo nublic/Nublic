@@ -42,8 +42,7 @@ initialize() {
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
-    #install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/guava/guava-11.0.2.jar" com.google.guava guava-gwt 11.0.2
-    # install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/bst-player/bst-player-api-1.4-SNAPSHOT.jar" com.bramosystems.oss.player bst-player-api 1.4-SNAPSHOT
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/grizzly-http-client/grizzly-http-client-1.0-2.jar" org.glassfish.grizzly grizzly-http-client 1.0-2
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
@@ -146,7 +145,7 @@ initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
-build_submodule_lib sunburnt
+# build_submodule_lib sunburnt
 cp 3rd-party-libs/python-pyinotify/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
 cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
@@ -170,7 +169,7 @@ install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nu
 build_deb_package apps/util/gwt
 install_in_maven_repo apps/util/gwt/target/*.jar com.nublic util.gwt 0.0.1-SNAPSHOT
 build_deb_package apps/util/ws-json
-install_in_maven_repo apps/util/gwt/target/*.jar com.nublic websockets-json 0.0.1-SNAPSHOT
+install_in_maven_repo apps/util/ws-json/target/*jar-with-dependencies.jar com.nublic websockets-json 0.0.1-SNAPSHOT
 # Manager App
 build_deb_package apps/app.manager/server
 build_deb_package apps/app.manager/web
@@ -190,6 +189,8 @@ build_deb_package apps/app.music
 build_deb_package apps/app.photos/server
 build_deb_package apps/app.photos/web
 build_deb_package apps/app.photos
+# Downloads App
+build_deb_package apps/app.downloads/server
 # Market App
 build_deb_package apps/app.market/daemon/src
 build_deb_package apps/app.market/server

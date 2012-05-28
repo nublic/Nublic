@@ -1,6 +1,6 @@
 package com.nublic.app.downloads.server
 
-import com.nublic.filesAndUsers.java.User
+/*import com.nublic.filesAndUsers.java.User
 import java.io.File
 import java.lang.Long
 import java.net.URI
@@ -18,7 +18,7 @@ import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import scala.collection.JavaConversions
 
-class DownloadsServer extends ScalatraServlet with JsonSupport {
+class DownloadsServer with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
@@ -124,7 +124,7 @@ class DownloadsServer extends ScalatraServlet with JsonSupport {
       }
     }
   }
-  timer.schedule(new ShootTask(aria), 2000, 2000)
+  timer.schedule(new ShootTask(aria), 5000, 5000)
 
   get("/aria-version") {
     if (aria.connected) {
@@ -134,15 +134,7 @@ class DownloadsServer extends ScalatraServlet with JsonSupport {
     }
   }
 
-  get("/stats") {
-    if (aria.connected) {
-      write(aria.getGlobalStat())
-    } else {
-      write("not-connected")
-    }
-  }
-  
   notFound {  // Executed when no other route succeeds
     JNull
   }
-}
+}*/

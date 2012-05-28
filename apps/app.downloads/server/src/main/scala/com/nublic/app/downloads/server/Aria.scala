@@ -7,6 +7,8 @@ import com.nublic.ws.json.Method3
 import com.nublic.ws.json.Method4
 import com.nublic.ws.json.Method5
 import com.nublic.ws.json.WebSocketJsonRpc
+import java.util.Timer
+import java.util.TimerTask
 import net.liftweb.json._
 
 class Aria extends WebSocketJsonRpc {
@@ -92,6 +94,21 @@ object Aria {
   val POSITION_SET     = "POS_SET"
   val POSITION_CURRENT = "POS_CUR"
   val POSITION_END     = "POS_END"
+
+  private val singleton: Aria = new Aria()
+  singleton.connect("ws://localhost:6800/jsonrpc")
+
+  val timer = new Timer()
+  class ShootTask(a: Aria) extends TimerTask {
+    def run(): Unit = {
+      if (a.connected) {
+        a.getVersion.shoot()
+      }
+    }
+  }
+  timer.schedule(new ShootTask(singleton), 5000, 5000)
+
+  def get = singleton
 }
 
 case class AriaDownloadStatus(val gid: Option[String],
