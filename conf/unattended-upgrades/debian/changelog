@@ -1,0 +1,5 @@
+nublic-unattended-upgrades-config (0.0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Thu, 31 May 2012 12:16:48 +0200

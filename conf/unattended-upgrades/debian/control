@@ -1,0 +1,14 @@
+Source: nublic-unattended-upgrades-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-unattended-upgrades-config
+Architecture: all
+Depends: ${misc:Depends}, unattended-upgrades, update-notifier-common
+Replaces: unattended-upgrades, update-notifier-common
+Description: Nublic configuration for unattended upgrades
+ This packages installs and configures unattended-upgrades for a Nublic system
