@@ -11,12 +11,14 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.market.web.client.controller.Controller;
 import com.nublic.app.market.web.client.model.AppInfo;
-import com.nublic.app.market.web.client.model.AppStatus;
 import com.nublic.util.widgets.AnchorPanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class AppWidget extends Composite {
 	private static AppWidgetUiBinder uiBinder = GWT.create(AppWidgetUiBinder.class);
@@ -29,8 +31,11 @@ public class AppWidget extends Composite {
 	@UiField Label description;
 	@UiField Button installButton;
 	
+	AppInfo info;
+	
 	public AppWidget(AppInfo info) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.info = info;
 		setInfo(info);
 	}
 	
@@ -43,33 +48,42 @@ public class AppWidget extends Composite {
 		developer.setTarget("_blank");
 		developer.setHref(info.getDeveloper().getUrl());
 		description.setText(info.getShortDescription());
-		setButton(info.getStatus());
+		setButton();
+	}
+
+	private void setButton() {
 		installButton.addStyleName(info.getStatus().getCss());
 		installButton.setText(info.getStatus().getI18NStr());
 		installButton.setEnabled(info.getStatus().isClickable());
-	}
-
-	private void setButton(final AppStatus status) {
-		installButton.addStyleName(status.getCss());
-		installButton.setText(status.getI18NStr());
-		installButton.setEnabled(status.isClickable());
-		if (status.isClickable()) {
+		if (info.getStatus().isClickable()) {
 			installButton.addMouseOverHandler(new MouseOverHandler() {
 				@Override
 				public void onMouseOver(MouseOverEvent event) {
-					installButton.setText(status.getHoverStr());
-					installButton.removeStyleName(status.getCss());
-					installButton.addStyleName(status.getHoverCss());
+					installButton.setText(info.getStatus().getHoverStr());
+					installButton.removeStyleName(info.getStatus().getCss());
+					installButton.addStyleName(info.getStatus().getHoverCss());
 				}
 			});
 			installButton.addMouseOutHandler(new MouseOutHandler() {
 				@Override
 				public void onMouseOut(MouseOutEvent event) {
-					installButton.setText(status.getI18NStr());
-					installButton.removeStyleName(status.getHoverCss());
-					installButton.addStyleName(status.getCss());
+					installButton.setText(info.getStatus().getI18NStr());
+					installButton.removeStyleName(info.getStatus().getHoverCss());
+					installButton.addStyleName(info.getStatus().getCss());
 				}
 			});
+		}
+	}
+
+	@UiHandler("installButton")
+	void onInstallButtonClick(ClickEvent event) {
+		switch (info.getStatus()) {
+		case INSTALLED:
+			Controller.INSTANCE.uninstallApp(info.getId());
+			break;
+		case NOT_INSTALLED:
+			Controller.INSTANCE.installApp(info.getId());
+			break;
 		}
 	}
 }

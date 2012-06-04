@@ -25,4 +25,14 @@ public class Controller extends URLController {
 	public MainUI getUi() {
 		return ui;
 	}
+
+	public void uninstallApp(String id) {
+		
+	}
+
+	public void installApp(String id) {
+				
+	}
+	
+	
 }
