@@ -18,6 +18,9 @@
 			margin-top: 3px;
 			opacity: 0.75;
 		}
+		.buttonWidth {
+			width: 240px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.market.web.client.i18n.I18NMessages" field="msg"/>
 	
@@ -38,7 +41,7 @@
 			</g:VerticalPanel>
 		</g:cell>
 		<g:cell width="250px" verticalAlignment="middle">
-			<g:Button ui:field="installButton"/>
+			<g:Button ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
 		</g:cell>
 	</g:HorizontalPanel>
 </ui:UiBinder> 
