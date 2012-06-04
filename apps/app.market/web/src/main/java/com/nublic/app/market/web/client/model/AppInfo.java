@@ -2,6 +2,7 @@ package com.nublic.app.market.web.client.model;
 
 import java.util.List;
 
+import com.nublic.app.market.web.client.Constants;
 import com.nublic.app.market.web.client.model.js.AppInfoJS;
 
 public class AppInfo {
@@ -44,12 +45,11 @@ public class AppInfo {
 				appJS.getDeb(),
 				AppStatus.parse(appJS.getStatus()));
 	}
-	
+
 	public String getAppPageTarget() {
-		return "";
+		return Constants.PARAM_APP + "=" + id;
 	}
 
-	
 	// Getters of attributes
 	public String getId() {
 		return id;
