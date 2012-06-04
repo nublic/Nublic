@@ -5,7 +5,7 @@ import com.nublic.app.market.web.client.ui.MainUI;
 
 public class Controller extends URLController {
 	public static Controller INSTANCE;
-	
+
 	MainUI ui;
 	DataModel model;
 
@@ -13,8 +13,16 @@ public class Controller extends URLController {
 		this.ui = ui;
 		this.model = model;
 	}
-	
+
 	public static void create(MainUI ui, DataModel model) {
 		INSTANCE = new Controller(ui, model);
+	}
+
+	public DataModel getModel() {
+		return model;
+	}
+
+	public MainUI getUi() {
+		return ui;
 	}
 }

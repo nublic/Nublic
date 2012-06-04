@@ -12,17 +12,23 @@ public class DataModel {
 	List<AppInfo> appList = null;
 	
 	public DataModel() {
-		askForAppList();
 	}
 	
-	public void askForAppList() {
-		AskForAppListMessage afalm = new AskForAppListMessage(new AppListHandler() {
-			@Override
-			public void onAppListReceived(List<AppInfo> appList) {
-				DataModel.this.appList = appList;
-			}
-		});
-		SequenceHelper.sendJustOne(afalm, RequestBuilder.GET);
+	public void askForAppList(final AppListHandler alh) {
+		if (appList == null) {
+			AskForAppListMessage afalm = new AskForAppListMessage(new AppListHandler() {
+				@Override
+				public void onAppListReceived(List<AppInfo> appList) {
+					DataModel.this.appList = appList;
+					alh.onAppListReceived(appList);
+				}
+			});
+			SequenceHelper.sendJustOne(afalm, RequestBuilder.GET);
+		} else {
+			alh.onAppListReceived(appList);
+		}
 	}
+	
+	
 
 }

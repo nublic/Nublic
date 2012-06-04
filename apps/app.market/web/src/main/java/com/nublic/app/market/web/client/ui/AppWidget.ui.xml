@@ -9,15 +9,15 @@
 		}
 	</ui:style>
 	
-	<g:HorizontalPanel>
+	<g:HorizontalPanel height="106px" verticalAlignment="middle">
 		<g:cell width="106" horizontalAlignment="center" verticalAlignment="middle">
 			<my:AnchorPanel ui:field="imageAnchor">
 				<g:Image ui:field="image" addStyleNames="{style.image}"/>
 			</my:AnchorPanel>
 		</g:cell>
 		<g:VerticalPanel>
-			<g:Label ui:field="name"/>
-			<g:Label ui:field="developer"/>
+			<g:Hyperlink ui:field="name"/>
+			<g:Anchor ui:field="developer"/>
 			<g:Label ui:field="description"/>
 		</g:VerticalPanel>
 		<g:Button ui:field="installButton"/>

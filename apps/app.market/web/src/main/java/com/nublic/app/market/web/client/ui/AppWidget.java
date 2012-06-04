@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.market.web.client.model.AppInfo;
 import com.nublic.util.widgets.AnchorPanel;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.Anchor;
+import com.google.gwt.user.client.ui.Hyperlink;
 
 public class AppWidget extends Composite {
 	private static AppWidgetUiBinder uiBinder = GWT.create(AppWidgetUiBinder.class);
@@ -17,13 +19,25 @@ public class AppWidget extends Composite {
 
 	@UiField AnchorPanel imageAnchor;
 	@UiField Image image;
-	@UiField Label name;
-	@UiField Label developer;
+	@UiField Hyperlink name;
+	@UiField Anchor developer;
 	@UiField Label description;
 	@UiField Button installButton;
 	
-	public AppWidget(AppInfo app) {
+	public AppWidget(AppInfo info) {
 		initWidget(uiBinder.createAndBindUi(this));
+		setInfo(info);
+	}
+	
+	public void setInfo(AppInfo info) {
+		image.setUrl(info.getIconURL());
+		imageAnchor.setHref("#" + info.getAppPageTarget());
+		name.setTargetHistoryToken(info.getAppPageTarget());
+		name.setText(info.getName());
+		developer.setText(info.getDeveloper().getText());
+		developer.setTarget("_blank");
+		developer.setHref(info.getDeveloper().getUrl());
+		description.setText(info.getShortDescription());
 	}
 
 }

@@ -31,4 +31,11 @@ public class URLInfo {
 		return urlList;
 	}
 
+	public String getText() {
+		return text.getText();
+	}
+
+	public String getUrl() {
+		return url;
+	}
 }
