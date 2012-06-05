@@ -28,7 +28,8 @@ public class DataModel {
 			alh.onAppListReceived(appList);
 		}
 	}
-	
-	
 
+	public void changeAppStatus(String id, AppStatus installing) {
+		
+	}
 }

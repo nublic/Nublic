@@ -1,6 +1,9 @@
 package com.nublic.app.market.web.client.controller;
 
+import com.nublic.app.market.web.client.model.AppStatus;
 import com.nublic.app.market.web.client.model.DataModel;
+import com.nublic.app.market.web.client.model.handlers.InstallActionHandler;
+import com.nublic.app.market.web.client.model.messages.GenericInstallMessage;
 import com.nublic.app.market.web.client.ui.MainUI;
 
 public class Controller extends URLController {
@@ -26,13 +29,22 @@ public class Controller extends URLController {
 		return ui;
 	}
 
-	public void uninstallApp(String id) {
-		
+	public void installApp(final String id) {
+		GenericInstallMessage.sendInstallMessage(id, new InstallActionHandler() {
+			@Override
+			public void actionSuccessful() {
+				model.changeAppStatus(id, AppStatus.INSTALLING);
+			}
+		});
+	}
+	
+	public void uninstallApp(final String id) {
+		GenericInstallMessage.sendUninstallMessage(id, new InstallActionHandler() {
+			@Override
+			public void actionSuccessful() {
+				model.changeAppStatus(id, AppStatus.NOT_INSTALLED);
+			}
+		});
 	}
 
-	public void installApp(String id) {
-		
-	}
-	
-	
 }
