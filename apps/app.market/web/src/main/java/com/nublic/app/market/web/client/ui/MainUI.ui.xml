@@ -1,8 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.market.web.client.ui">
 	<ui:style>
 		
 	</ui:style>
-	<g:FlowPanel ui:field="appPanel" addStyleNames="container"/>
+	<n:AppPanel ui:field="appPanel" addStyleNames="container"/>
 </ui:UiBinder> 

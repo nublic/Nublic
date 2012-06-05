@@ -29,7 +29,8 @@ public class DataModel {
 		}
 	}
 
-	public void changeAppStatus(String id, AppStatus installing) {
-		
+	public void changeAppStatus(String id, AppStatus status) {
+		AppInfo appToChange = appMap.get(id);
+		appToChange.setStatus(status);
 	}
 }

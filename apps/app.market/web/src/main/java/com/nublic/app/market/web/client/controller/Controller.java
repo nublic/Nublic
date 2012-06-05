@@ -34,6 +34,7 @@ public class Controller extends URLController {
 			@Override
 			public void actionSuccessful() {
 				model.changeAppStatus(id, AppStatus.INSTALLING);
+				ui.changeAppStatus(id, AppStatus.INSTALLING);
 			}
 		});
 	}
@@ -43,6 +44,7 @@ public class Controller extends URLController {
 			@Override
 			public void actionSuccessful() {
 				model.changeAppStatus(id, AppStatus.NOT_INSTALLED);
+				ui.changeAppStatus(id, AppStatus.NOT_INSTALLED);
 			}
 		});
 	}

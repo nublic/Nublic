@@ -44,7 +44,11 @@ public class GenericInstallMessage extends Message {
 
 	@Override
 	public void onSuccess(Response response) {
-		iah.actionSuccessful();
+		if (response.getStatusCode() == Response.SC_OK) {
+			iah.actionSuccessful();
+		} else {
+			onError();
+		}
 	}
 
 	@Override

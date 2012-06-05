@@ -91,4 +91,9 @@ public class AppInfo {
 		return status;
 	}
 	
+	// Setters
+	public void setStatus(AppStatus status) {
+		this.status = status;
+	}
+	
 }
