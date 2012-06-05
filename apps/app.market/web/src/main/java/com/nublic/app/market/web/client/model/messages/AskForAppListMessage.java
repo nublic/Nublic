@@ -33,11 +33,11 @@ public class AskForAppListMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		 JsArray<AppInfoJS> jsInfoList = null;
-		
+
 		if (response.getStatusCode() == Response.SC_OK) {
 			String text = response.getText();
 			jsInfoList = JsonUtils.safeEval(text);
-			
+
 			if (jsInfoList == null) {
 				onError();
 			} else {

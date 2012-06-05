@@ -20,7 +20,10 @@ public class MainUI extends Composite {
 
 	public MainUI(DataModel model) {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+		loadAppList(model);
+	}
+
+	private void loadAppList(DataModel model) {
 		model.askForAppList(new AppListHandler() {
 			@Override
 			public void onAppListReceived(Map<String, AppInfo> appMap) {

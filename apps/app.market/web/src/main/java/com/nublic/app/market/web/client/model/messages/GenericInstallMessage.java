@@ -12,9 +12,9 @@ import com.nublic.util.messages.SequenceHelper;
 
 
 // PUT /packages
-//  id = actual_id
+//  package = actual_id
 // DELETE /packages/id
-//  id = actual_id
+//  package = actual_id
 public class GenericInstallMessage extends Message {
 	String appId;
 	InstallActionHandler iah;
@@ -25,12 +25,12 @@ public class GenericInstallMessage extends Message {
 		this.iah = iah;
 		this.errorMessage = errorMessage;
 	}
-	
+
 	public static void sendInstallMessage(String appId, InstallActionHandler iah) {
 		GenericInstallMessage gim = new GenericInstallMessage(appId, iah, Constants.I18N.errorCouldNotInstall());
 		SequenceHelper.sendJustOne(gim, RequestBuilder.PUT);
 	}
-	
+
 	public static void sendUninstallMessage(String appId, InstallActionHandler iah) {
 		GenericInstallMessage gim = new GenericInstallMessage(appId, iah, Constants.I18N.errorCouldNotUninstall());
 		SequenceHelper.sendJustOne(gim, RequestBuilder.DELETE);
@@ -38,7 +38,7 @@ public class GenericInstallMessage extends Message {
 
 	@Override
 	public String getURL() {
-		this.addParam("id", appId);
+		this.addParam("package", appId);
 		return URL.encode(GWT.getHostPageBaseURL() + "server/packages");
 	}
 
