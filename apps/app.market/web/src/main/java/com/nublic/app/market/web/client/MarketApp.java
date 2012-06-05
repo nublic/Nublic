@@ -23,7 +23,7 @@ public class MarketApp implements EntryPoint, ValueChangeHandler<String> {
 	public void onModuleLoad() {
 		// Document.get().setTitle(Constants.I18N.title());
 		model = new DataModel();
-		ui = new MainUI();
+		ui = new MainUI(model);
 		Controller.create(ui, model);
 		
 		RootLayoutPanel rp = RootLayoutPanel.get();

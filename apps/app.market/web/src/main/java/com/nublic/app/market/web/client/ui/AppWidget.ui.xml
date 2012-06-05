@@ -7,19 +7,41 @@
 			max-width: 96px;
 			max-height: 96px;
 		}
+		.space {
+			margin-right: 4px;
+		}
+		.textMargins {
+			margin-top: 5px;
+			margin-right: 5px;
+		}
+		.description {
+			margin-top: 3px;
+			opacity: 0.75;
+		}
+		.buttonWidth {
+			width: 240px;
+		}
 	</ui:style>
+	<ui:with type="com.nublic.app.market.web.client.i18n.I18NMessages" field="msg"/>
 	
-	<g:HorizontalPanel>
-		<g:cell width="106" horizontalAlignment="center" verticalAlignment="middle">
+	<g:HorizontalPanel height="106px" width="100%">
+		<g:cell width="106px" horizontalAlignment="center" verticalAlignment="middle">
 			<my:AnchorPanel ui:field="imageAnchor">
 				<g:Image ui:field="image" addStyleNames="{style.image}"/>
 			</my:AnchorPanel>
 		</g:cell>
-		<g:VerticalPanel>
-			<g:Label ui:field="name"/>
-			<g:Label ui:field="developer"/>
-			<g:Label ui:field="description"/>
-		</g:VerticalPanel>
-		<g:Button ui:field="installButton"/>
+		<g:cell horizontalAlignment="left" verticalAlignment="top">
+			<g:VerticalPanel addStyleNames="{style.textMargins}">
+				<g:HTMLPanel><h3><g:Hyperlink ui:field="name"/></h3></g:HTMLPanel>
+				<g:HorizontalPanel>
+					<g:Label text="{msg.developer}" addStyleNames="{style.space}"/>
+					<g:Anchor ui:field="developer"/>
+				</g:HorizontalPanel>
+				<g:Label ui:field="description" addStyleNames="{style.description}"/>
+			</g:VerticalPanel>
+		</g:cell>
+		<g:cell width="250px" verticalAlignment="middle">
+			<g:Button ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
+		</g:cell>
 	</g:HorizontalPanel>
 </ui:UiBinder> 
