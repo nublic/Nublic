@@ -31,7 +31,7 @@ public class Controller extends URLController {
 	}
 
 	public void installApp(String id) {
-				
+		
 	}
 	
 	

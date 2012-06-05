@@ -8,9 +8,11 @@ import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.market.web.client.Constants;
 import com.nublic.app.market.web.client.model.AppInfo;
 import com.nublic.app.market.web.client.model.handlers.AppListHandler;
 import com.nublic.app.market.web.client.model.js.AppInfoJS;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 
@@ -52,7 +54,7 @@ public class AskForAppListMessage extends Message {
 
 	@Override
 	public void onError() {
-
+		ErrorPopup.showError(Constants.I18N.errorGetAppList());
 	}
 
 }

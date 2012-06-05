@@ -14,5 +14,10 @@ public interface I18NMessages extends Messages {
 	String notInstalledHover();
 	String error();
 
+	// Errors
+	String errorGetAppList();
+	String errorCouldNotInstall();
+	String errorCouldNotUninstall();
+
 
 }
