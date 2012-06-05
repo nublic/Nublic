@@ -1,6 +1,6 @@
 package com.nublic.app.market.web.client.ui;
 
-import java.util.List;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -23,8 +23,8 @@ public class MainUI extends Composite {
 		
 		model.askForAppList(new AppListHandler() {
 			@Override
-			public void onAppListReceived(List<AppInfo> appList) {
-				for (AppInfo app : appList) {
+			public void onAppListReceived(Map<String, AppInfo> appMap) {
+				for (AppInfo app : appMap.values()) {
 					AppWidget appW = new AppWidget(app);
 					appPanel.add(appW);
 				}

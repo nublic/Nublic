@@ -1,7 +1,7 @@
 package com.nublic.app.market.web.client.model.messages;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
@@ -41,11 +41,12 @@ public class AskForAppListMessage extends Message {
 			if (jsInfoList == null) {
 				onError();
 			} else {
-				List<AppInfo> appList = new ArrayList<AppInfo>();
+				Map<String, AppInfo> appMap = new HashMap<String, AppInfo>();
 				for (int i = 0; i < jsInfoList.length(); i++) {
-					appList.add(new AppInfo(jsInfoList.get(i)));
+					AppInfo app = new AppInfo(jsInfoList.get(i)); 
+					appMap.put(app.getId(), app);
 				}
-				alh.onAppListReceived(appList);
+				alh.onAppListReceived(appMap);
 			}
 		} else {
 			onError();
