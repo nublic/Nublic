@@ -186,9 +186,12 @@ class MarketServer extends ScalatraServlet with JsonSupport {
     }
   }
 
-  def withPackage(action: Package => Any) = {
+  def withGetPackage(action: Package => Any) = withPackage(extraParams)(action)
+  def withPostPackage(action: Package => Any) = withPackage(extraParams)(action)
+
+  def withPackage(param_array: Map[String, String])(action: Package => Any) = {
     withPackageList { lst =>
-      extraParams.get("package") match {
+      param_array.get("package") match {
         case None => halt(status = 500,
                           headers = Map("Content-Type" -> "application/json"),
                           body = write("no package name"))
@@ -203,15 +206,37 @@ class MarketServer extends ScalatraServlet with JsonSupport {
     }
   }
 
+  var packages_being_installed = scala.collection.mutable.HashSet[String]()
+  var packages_being_removed = scala.collection.mutable.HashSet[String]()
+
+  def get_package_status(p: Package): String = {
+    if (packages_being_installed.contains(p.id)) {
+      Package.STATUS_INSTALLING
+    } else if (packages_being_removed.contains(p.id)) {
+      Package.STATUS_REMOVING
+    } else if (Singleton.getApt().is_package_installed(p.deb)) {
+      Package.STATUS_INSTALLED
+    } else {
+      Package.STATUS_NOT_INSTALLED
+    }
+  }
+
   getUser("/packages") { _ =>
     withPackageList { lst =>
-      var info = lst.map((p: Package) => 
-        if (Singleton.getApt().is_package_installed(p.deb)) {
-          Package.change_status(p, Package.STATUS_INSTALLED)
-        } else {
-          Package.change_status(p, Package.STATUS_NOT_INSTALLED)
-        })
+      var info = lst.map(p => Package.change_status(p, get_package_status(p)))
       write(info)
+    }
+  }
+
+  getUser("/package/:package") { _ =>
+    withGetPackage { pkg =>
+      write(Package.change_status(pkg, get_package_status(pkg)))
+    }
+  }
+
+  getUser("/status/:package") { _ =>
+    withGetPackage { pkg =>
+      write(get_package_status(pkg))
     }
   }
 
@@ -224,21 +249,27 @@ class MarketServer extends ScalatraServlet with JsonSupport {
   }
 
   putUser("/packages") { _ =>
-    withPackage { pkg =>
+    withPostPackage { pkg =>
       if (Singleton.getApt().is_package_installed(pkg.deb)) {
         write(InstallStatus(InstallStatus.STATUS_ALREADY, None))
       } else {
-        try_and_send_result(Singleton.getApt().install_package(pkg.deb))
+        packages_being_installed += pkg.id
+        val result = Singleton.getApt().install_package(pkg.deb)
+        packages_being_installed -= pkg.id
+        try_and_send_result(result)
       }
     }
   }
 
   deleteUser("/packages") { _ =>
-    withPackage { pkg =>
+    withPostPackage { pkg =>
       if (!Singleton.getApt().is_package_installed(pkg.deb)) {
         write(InstallStatus(InstallStatus.STATUS_NOT, None))
       } else {
-        try_and_send_result(Singleton.getApt().remove_package(pkg.deb))
+        packages_being_removed += pkg.id
+        val result = Singleton.getApt().remove_package(pkg.deb)
+        packages_being_removed -= pkg.id
+        try_and_send_result(result)
       }
     }
   }

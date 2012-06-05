@@ -13,6 +13,7 @@ case class Package(val id: String, val icon: String, val name: TranslatedText,
 object Package {
   val STATUS_INSTALLED     = "installed"
   val STATUS_INSTALLING    = "installing"
+  val STATUS_REMOVING      = "removing"
   val STATUS_NOT_INSTALLED = "not-installed"
   val STATUS_ERROR         = "error"
 
