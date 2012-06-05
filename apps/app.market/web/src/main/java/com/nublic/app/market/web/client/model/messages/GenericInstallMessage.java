@@ -1,11 +1,14 @@
 package com.nublic.app.market.web.client.model.messages;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.app.market.web.client.Constants;
+import com.nublic.app.market.web.client.model.AppStatus;
 import com.nublic.app.market.web.client.model.handlers.InstallActionHandler;
+import com.nublic.app.market.web.client.model.js.StatusJS;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
@@ -45,7 +48,10 @@ public class GenericInstallMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
-			iah.actionSuccessful();
+			String text = response.getText();
+			StatusJS jsStatus = JsonUtils.safeEval(text);
+			AppStatus status = AppStatus.parse(jsStatus.getStatus());
+			iah.actionSuccessful(status);
 		} else {
 			onError();
 		}

@@ -30,23 +30,25 @@ public class Controller extends URLController {
 	}
 
 	public void installApp(final String id) {
-		GenericInstallMessage.sendInstallMessage(id, new InstallActionHandler() {
-			@Override
-			public void actionSuccessful() {
-				model.changeAppStatus(id, AppStatus.INSTALLING);
-				ui.changeAppStatus(id, AppStatus.INSTALLING);
-			}
-		});
+		GenericInstallMessage.sendInstallMessage(id, new MyInstallActionHandler(id));
+	}
+
+	public void uninstallApp(final String id) {
+		GenericInstallMessage.sendUninstallMessage(id, new MyInstallActionHandler(id));
 	}
 	
-	public void uninstallApp(final String id) {
-		GenericInstallMessage.sendUninstallMessage(id, new InstallActionHandler() {
-			@Override
-			public void actionSuccessful() {
-				model.changeAppStatus(id, AppStatus.NOT_INSTALLED);
-				ui.changeAppStatus(id, AppStatus.NOT_INSTALLED);
-			}
-		});
+	private class MyInstallActionHandler implements InstallActionHandler {
+		String id;
+		
+		public MyInstallActionHandler(String id) {
+			this.id = id;
+		}
+		
+		@Override
+		public void actionSuccessful(AppStatus newStatus) {
+			model.changeAppStatus(id, newStatus);
+			ui.changeAppStatus(id, newStatus);
+		}
 	}
 
 }
