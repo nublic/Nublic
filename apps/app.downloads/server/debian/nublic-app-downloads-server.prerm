@@ -3,7 +3,7 @@
 service aria2 stop
 if [ $1 = "remove" ]
 then
-    nublic-resource-setup uninstall nublic_app_photos db
+    nublic-resource-setup uninstall nublic_app_downloads db
 fi
 
 #DEBHELPER#

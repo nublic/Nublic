@@ -186,7 +186,7 @@ class MarketServer extends ScalatraServlet with JsonSupport {
     }
   }
 
-  def withGetPackage(action: Package => Any) = withPackage(extraParams)(action)
+  def withGetPackage(action: Package => Any) = withPackage(params)(action)
   def withPostPackage(action: Package => Any) = withPackage(extraParams)(action)
 
   def withPackage(param_array: Map[String, String])(action: Package => Any) = {

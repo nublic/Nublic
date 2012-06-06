@@ -1,0 +1,13 @@
+Source: nublic-app-downloads-web
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0), junit4
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-app-downloads-web
+Architecture: all
+Depends: ${misc:Depends}, tomcat7
+Description: Nublic Downloads app - client
+ Downloads client for Nublic
