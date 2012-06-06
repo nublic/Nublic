@@ -21,24 +21,19 @@ public class MainUI extends Composite {
 
 	public MainUI(DataModel model) {
 		initWidget(uiBinder.createAndBindUi(this));
-		loadAppList(model); // Controller is not ready yet
 	}
 
-	private void loadAppList(DataModel model) {
-		appPanel.clear();
-		model.askForAppList(new AppListHandler() {
+	public void loadAppList() {
+		Controller.INSTANCE.getModel().askForAppList(new AppListHandler() {
 			@Override
 			public void onAppListReceived(Map<String, AppInfo> appMap) {
+				appPanel.clear();
 				for (AppInfo app : appMap.values()) {
 					AppWidget appW = new AppWidget(app);
 					appPanel.addAppWidget(appW);
 				}
 			}
 		});
-	}
-	
-	public void loadAppList() {
-		loadAppList(Controller.INSTANCE.getModel());
 	}
 	
 	public void loadApp(AppInfo app) {

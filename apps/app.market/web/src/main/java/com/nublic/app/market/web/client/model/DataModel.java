@@ -16,7 +16,6 @@ import com.nublic.app.market.web.client.model.messages.StatusMessage;
 import com.nublic.util.messages.SequenceHelper;
 
 public class DataModel {
-
 	Map<String, AppInfo> appMap = null;
 	List<AppInfo> pendingAppsList = new ArrayList<AppInfo>();
 	Timer updateTimer = new StatusTimer();
