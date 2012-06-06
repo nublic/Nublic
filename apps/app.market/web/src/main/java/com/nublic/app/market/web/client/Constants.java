@@ -7,12 +7,12 @@ public class Constants {
 	public static I18NMessages I18N = GWT.create(I18NMessages.class);
 	
 	public static final String PARAM_APP = "app";
-	public static final String INSTALLED_STYLE = "btn btn-success btn-large disabled";
-	public static final String INSTALLED_HOVER_STYLE = "btn btn-danger btn-large";
-	public static final String INSTALLING_STYLE = "btn btn-warning btn-large disabled";
-	public static final String NOT_INSTALLED_STYLE = "btn btn-info btn-large disabled";
-	public static final String NOT_INSTALLED_HOVER_STYLE = "btn btn-primary btn-large";
-	public static final String ERROR_STYLE = "btn btn-danger btn-large disabled";
+	public static final String INSTALLED_STYLE = "btn-success disabled";
+	public static final String INSTALLED_HOVER_STYLE = "btn-danger";
+	public static final String INSTALLING_STYLE = "btn-warning disabled";
+	public static final String NOT_INSTALLED_STYLE = "btn-info disabled";
+	public static final String NOT_INSTALLED_HOVER_STYLE = "btn-primary";
+	public static final String ERROR_STYLE = "btn-danger disabled";
 
 	public static final int POLLING_TIME = 3500;
 

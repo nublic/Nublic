@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -25,7 +26,7 @@ public class OpenApp extends Composite {
 	@UiField Image image;
 	@UiField InstallButton installButton;
 	@UiField Label shortDescription;
-	@UiField Label longDescription;
+	@UiField HTMLPanel longDescription;
 	
 	AppInfo info;
 	
@@ -44,7 +45,7 @@ public class OpenApp extends Composite {
 		developer.setTarget("_blank");
 		developer.setHref(info.getDeveloper().getUrl());
 		shortDescription.setText(info.getShortDescription());
-		longDescription.setText(info.getLongDescription());
+		longDescription.getElement().setInnerHTML(info.getLongDescription());
 		installButton.setButtonFromStatus(info.getStatus());
 	}
 

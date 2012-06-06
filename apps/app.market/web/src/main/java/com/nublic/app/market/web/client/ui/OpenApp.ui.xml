@@ -7,7 +7,7 @@
 			background-color: #CCCCCC;
 		}
 		.lowerscroll {
-			overflow-y: scroll;
+			overflow-y: auto;
 		}
 		.image {
 			max-width: 96px;
@@ -17,6 +17,7 @@
 			margin-right: 4px;
 		}
 		.textMargins {
+			margin-left: 10px;
 			margin-top: 5px;
 			margin-right: 5px;
 		}
@@ -27,41 +28,48 @@
 		.buttonWidth {
 			width: 240px;
 		}
+		.longTextMargin {
+			margin-top: 10px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.market.web.client.i18n.I18NMessages" field="msg"/>
 	
-	<g:VerticalPanel>
-		<!-- Top panel with resumed information -->
-		<g:cell height="106px">
-			<g:HorizontalPanel addStyleNames="{style.topbackground}">
-				<g:Hyperlink ui:field="backLink" text="{msg.goBack}"/>
-				<g:HorizontalPanel height="106px" width="100%">
-					<g:cell width="106px" horizontalAlignment="center" verticalAlignment="middle">
-						<g:Image ui:field="image" addStyleNames="{style.image}"/>
-					</g:cell>
-					<g:cell horizontalAlignment="left" verticalAlignment="top">
-						<g:VerticalPanel addStyleNames="{style.textMargins}">
-							<g:HTMLPanel><h2><g:Label ui:field="name"/></h2></g:HTMLPanel>
-							<g:HorizontalPanel>
-								<g:Label text="{msg.developer}" addStyleNames="{style.space}"/>
-								<g:Anchor ui:field="developer"/>
-							</g:HorizontalPanel>
-							<g:Label ui:field="shortDescription" addStyleNames="{style.description}"/>
-						</g:VerticalPanel>
-					</g:cell>
-					<g:cell width="250px" verticalAlignment="bottom">
-						<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
-					</g:cell>
-				</g:HorizontalPanel>
-			</g:HorizontalPanel>
-		</g:cell>
+	<!-- Top panel with resumed information -->
+	<g:DockLayoutPanel height="100%" width="100%">
+		<g:north size="109">
+			<g:SimplePanel addStyleNames="{style.topbackground}"> <!-- Just to include the background -->
+				<g:VerticalPanel addStyleNames="container">
+					<g:Hyperlink ui:field="backLink" text="{msg.goBack}"/>
+					<g:HorizontalPanel height="96px" width="100%">
+						<g:cell width="106px" horizontalAlignment="center" verticalAlignment="middle">
+							<g:Image ui:field="image" addStyleNames="{style.image}"/>
+						</g:cell>
+						<g:cell horizontalAlignment="left" verticalAlignment="top">
+							<g:VerticalPanel addStyleNames="{style.textMargins}">
+								<g:HTMLPanel><h2><g:Label ui:field="name"/></h2></g:HTMLPanel>
+								<g:HorizontalPanel>
+									<g:Label text="{msg.developer}" addStyleNames="{style.space}"/>
+									<g:Anchor ui:field="developer"/>
+								</g:HorizontalPanel>
+								<g:Label ui:field="shortDescription" addStyleNames="{style.description}"/>
+							</g:VerticalPanel>
+						</g:cell>
+						<g:cell width="250px" verticalAlignment="middle">
+							<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
+						</g:cell>
+					</g:HorizontalPanel>
+				</g:VerticalPanel>
+			</g:SimplePanel>
+		</g:north>
 
 		<!-- Lower panel with screenshots and long description -->
-		<g:cell>
-			<g:VerticalPanel addStyleNames="{style.lowerscroll}">
-				<!-- image previewer -->
-				<g:Label ui:field="longDescription"/>
-			</g:VerticalPanel>
-		</g:cell>
-	</g:VerticalPanel>
+		<g:center>
+			<g:SimplePanel addStyleNames="{style.lowerscroll}">
+				<g:VerticalPanel addStyleNames="container">
+					<!-- image previewer -->
+					<g:HTMLPanel ui:field="longDescription" addStyleNames="{style.longTextMargin}"/>
+				</g:VerticalPanel>
+			</g:SimplePanel>
+		</g:center>
+	</g:DockLayoutPanel>
 </ui:UiBinder> 

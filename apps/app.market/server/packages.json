@@ -20,7 +20,7 @@
 , "deb" : "nublic-app-example"
 }
 { "id" : "photos"
-, "icon" : "server/app-image/dark/photos/48"
+, "icon" : "/manager/server/app-image/dark/photos/48"
 , "name" : { "default" : "Photos", "translated": { "es" : "Fotos" } }
 , "short_description" : { "default" : "Nublic default photo application"
                         , "translated" : { "es" : "Aplicación de fotos de Nublic" }

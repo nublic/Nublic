@@ -12,6 +12,7 @@ import com.nublic.app.market.web.client.model.handlers.AppListHandler;
 import com.nublic.app.market.web.client.model.handlers.AppReceivedHandler;
 import com.nublic.app.market.web.client.model.handlers.InstallActionHandler;
 import com.nublic.app.market.web.client.model.messages.AskForAppListMessage;
+import com.nublic.app.market.web.client.model.messages.PackageMessage;
 import com.nublic.app.market.web.client.model.messages.StatusMessage;
 import com.nublic.util.messages.SequenceHelper;
 
@@ -58,7 +59,7 @@ public class DataModel {
 				arh.onAppReceived(app);
 			}
 		} else {
-			// TODO: Create a message to ask for this single app
+			PackageMessage.sendPackageMessage(appId, arh);
 		}
 	}
 

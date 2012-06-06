@@ -43,7 +43,7 @@
 			</g:VerticalPanel>
 		</g:cell>
 		<g:cell width="250px" verticalAlignment="middle">
-			<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
+			<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
 		</g:cell>
 	</g:HorizontalPanel>
 </ui:UiBinder> 

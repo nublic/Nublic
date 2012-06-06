@@ -20,6 +20,7 @@ public interface I18NMessages extends Messages {
 	String errorGetAppList();
 	String errorCouldNotInstall();
 	String errorCouldNotUninstall();
+	String errorPackage();
 
 
 }
