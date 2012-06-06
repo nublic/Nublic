@@ -14,18 +14,18 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.market.web.client.controller.Controller;
 import com.nublic.app.market.web.client.model.AppInfo;
 import com.nublic.app.market.web.client.model.AppStatus;
-import com.nublic.util.widgets.AnchorPanel;
 
 public class OpenApp extends Composite {
 	private static OpenAppUiBinder uiBinder = GWT.create(OpenAppUiBinder.class);
 	interface OpenAppUiBinder extends UiBinder<Widget, OpenApp> { }
-	
-	@UiField AnchorPanel imageAnchor;
-	@UiField Image image;
-	@UiField Hyperlink name;
+
+	@UiField Hyperlink backLink;
+	@UiField Label name;
 	@UiField Anchor developer;
-	@UiField Label description;
+	@UiField Image image;
 	@UiField InstallButton installButton;
+	@UiField Label shortDescription;
+	@UiField Label longDescription;
 	
 	AppInfo info;
 	
@@ -33,17 +33,18 @@ public class OpenApp extends Composite {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.info = info;
 		setInfo(info);
+		
+		backLink.setTargetHistoryToken("");
 	}
 	
 	public void setInfo(AppInfo info) {
 		image.setUrl(info.getIconURL());
-		imageAnchor.setHref("#" + info.getAppPageTarget());
-		name.setTargetHistoryToken(info.getAppPageTarget());
 		name.setText(info.getName());
 		developer.setText(info.getDeveloper().getText());
 		developer.setTarget("_blank");
 		developer.setHref(info.getDeveloper().getUrl());
-		description.setText(info.getShortDescription());
+		shortDescription.setText(info.getShortDescription());
+		longDescription.setText(info.getLongDescription());
 		installButton.setButtonFromStatus(info.getStatus());
 	}
 

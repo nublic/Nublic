@@ -9,12 +9,11 @@ import com.nublic.app.market.web.client.ui.MainUI;
 public class Controller extends URLController {
 	public static Controller INSTANCE;
 
-	MainUI ui;
-	DataModel model;
+	// protected MainUI ui;
+	// protected DataModel model;
 
 	public Controller(MainUI ui, DataModel model) {
-		this.ui = ui;
-		this.model = model;
+		super(ui, model);
 	}
 
 	public static void create(MainUI ui, DataModel model) {

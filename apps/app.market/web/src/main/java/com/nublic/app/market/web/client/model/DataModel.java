@@ -9,6 +9,7 @@ import com.google.gwt.user.client.Timer;
 import com.nublic.app.market.web.client.Constants;
 import com.nublic.app.market.web.client.controller.Controller;
 import com.nublic.app.market.web.client.model.handlers.AppListHandler;
+import com.nublic.app.market.web.client.model.handlers.AppReceivedHandler;
 import com.nublic.app.market.web.client.model.handlers.InstallActionHandler;
 import com.nublic.app.market.web.client.model.messages.AskForAppListMessage;
 import com.nublic.app.market.web.client.model.messages.StatusMessage;
@@ -49,6 +50,17 @@ public class DataModel {
 		}
 		appToChange.setStatus(status);
 		setTimerAccordingToPendingList();
+	}
+	
+	public void getAppFromId(String appId, AppReceivedHandler arh) {
+		if (appMap != null) {
+			AppInfo app = appMap.get(appId);
+			if (app != null) {
+				arh.onAppReceived(app);
+			}
+		} else {
+			// TODO: Create a message to ask for this single app
+		}
 	}
 
 	private class StatusTimer extends Timer {

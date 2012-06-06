@@ -7,6 +7,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.market.web.client.controller.Controller;
 import com.nublic.app.market.web.client.model.AppInfo;
 import com.nublic.app.market.web.client.model.AppStatus;
 import com.nublic.app.market.web.client.model.DataModel;
@@ -20,10 +21,11 @@ public class MainUI extends Composite {
 
 	public MainUI(DataModel model) {
 		initWidget(uiBinder.createAndBindUi(this));
-		loadAppList(model);
+		loadAppList(model); // Controller is not ready yet
 	}
 
 	private void loadAppList(DataModel model) {
+		appPanel.clear();
 		model.askForAppList(new AppListHandler() {
 			@Override
 			public void onAppListReceived(Map<String, AppInfo> appMap) {
@@ -33,6 +35,15 @@ public class MainUI extends Composite {
 				}
 			}
 		});
+	}
+	
+	public void loadAppList() {
+		loadAppList(Controller.INSTANCE.getModel());
+	}
+	
+	public void loadApp(AppInfo app) {
+		OpenApp appW = new OpenApp(app);
+		appPanel.setOpenApp(appW);
 	}
 
 	public void changeAppStatus(String id, AppStatus newStatus) {

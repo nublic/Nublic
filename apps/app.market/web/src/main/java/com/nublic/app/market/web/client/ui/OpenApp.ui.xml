@@ -1,8 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:com.nublic.app.market.web.client.ui"
-	xmlns:my="urn:import:com.nublic.util.widgets">
+	xmlns:n="urn:import:com.nublic.app.market.web.client.ui">
 	<ui:style>
 		.topbackground {
 			background-color: #CCCCCC;
@@ -35,21 +34,19 @@
 		<!-- Top panel with resumed information -->
 		<g:cell height="106px">
 			<g:HorizontalPanel addStyleNames="{style.topbackground}">
-				<g:Hyperlink/>
+				<g:Hyperlink ui:field="backLink" text="{msg.goBack}"/>
 				<g:HorizontalPanel height="106px" width="100%">
 					<g:cell width="106px" horizontalAlignment="center" verticalAlignment="middle">
-						<my:AnchorPanel ui:field="imageAnchor">
-							<g:Image ui:field="image" addStyleNames="{style.image}"/>
-						</my:AnchorPanel>
+						<g:Image ui:field="image" addStyleNames="{style.image}"/>
 					</g:cell>
 					<g:cell horizontalAlignment="left" verticalAlignment="top">
 						<g:VerticalPanel addStyleNames="{style.textMargins}">
-							<g:HTMLPanel><h3><g:Hyperlink ui:field="name"/></h3></g:HTMLPanel>
+							<g:HTMLPanel><h2><g:Label ui:field="name"/></h2></g:HTMLPanel>
 							<g:HorizontalPanel>
 								<g:Label text="{msg.developer}" addStyleNames="{style.space}"/>
 								<g:Anchor ui:field="developer"/>
 							</g:HorizontalPanel>
-							<g:Label ui:field="description" addStyleNames="{style.description}"/>
+							<g:Label ui:field="shortDescription" addStyleNames="{style.description}"/>
 						</g:VerticalPanel>
 					</g:cell>
 					<g:cell width="250px" verticalAlignment="bottom">
@@ -63,7 +60,7 @@
 		<g:cell>
 			<g:VerticalPanel addStyleNames="{style.lowerscroll}">
 				<!-- image previewer -->
-				<g:Label/>
+				<g:Label ui:field="longDescription"/>
 			</g:VerticalPanel>
 		</g:cell>
 	</g:VerticalPanel>

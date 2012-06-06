@@ -6,7 +6,9 @@ import com.google.gwt.i18n.client.LocalizableResource.DefaultLocale;
 @DefaultLocale("en")
 public interface I18NMessages extends Messages {
 	String developer();
+	String goBack();
 
+	// Buttons
 	String installed();
 	String installedHover();
 	String installing();
