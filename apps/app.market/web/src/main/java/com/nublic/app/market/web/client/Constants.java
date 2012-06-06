@@ -14,4 +14,6 @@ public class Constants {
 	public static final String NOT_INSTALLED_HOVER_STYLE = "btn btn-primary btn-large";
 	public static final String ERROR_STYLE = "btn btn-danger btn-large disabled";
 
+	public static final int POLLING_TIME = 3500;
+
 }

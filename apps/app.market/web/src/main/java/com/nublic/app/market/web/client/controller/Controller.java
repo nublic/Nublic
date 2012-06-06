@@ -37,6 +37,11 @@ public class Controller extends URLController {
 		GenericInstallMessage.sendUninstallMessage(id, new MyInstallActionHandler(id));
 	}
 	
+	public void changeAppStatus(String id, AppStatus newStatus) {
+		model.changeAppStatus(id, newStatus);
+		ui.changeAppStatus(id, newStatus);
+	}
+	
 	private class MyInstallActionHandler implements InstallActionHandler {
 		String id;
 		
@@ -46,8 +51,7 @@ public class Controller extends URLController {
 		
 		@Override
 		public void actionSuccessful(AppStatus newStatus) {
-			model.changeAppStatus(id, newStatus);
-			ui.changeAppStatus(id, newStatus);
+			changeAppStatus(id, newStatus);
 		}
 	}
 
