@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.market.web.client.ui"
 	xmlns:my="urn:import:com.nublic.util.widgets">
 	<ui:style>
 		.image {
@@ -41,7 +42,7 @@
 			</g:VerticalPanel>
 		</g:cell>
 		<g:cell width="250px" verticalAlignment="middle">
-			<g:Button ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
+			<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
 		</g:cell>
 	</g:HorizontalPanel>
 </ui:UiBinder> 
