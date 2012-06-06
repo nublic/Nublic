@@ -1,13 +1,21 @@
 package com.nublic.app.downloads.server
-import com.nublic.filesAndUsers.java.User
 
+import com.nublic.filesAndUsers.java.User
+import net.liftweb.json._
+import net.liftweb.json.Extraction.decompose
+import net.liftweb.json.Serialization.{ read, write }
 import org.atmosphere.cpr.AtmosphereHandler
 import org.atmosphere.cpr.AtmosphereResource
 import org.atmosphere.cpr.AtmosphereResource.TRANSPORT._
 import org.atmosphere.cpr.AtmosphereResourceEvent
 import org.atmosphere.cpr.BroadcasterFactory
 
+case class JsonRequest(method: String, params: Map[String, String])
+
 class AtmosphereServer extends AtmosphereHandler {
+
+  implicit val formats = Serialization.formats(NoTypeHints)
+  val aria = new AriaDbUser()
 
   def onRequest(r: AtmosphereResource): Unit = {
     val req = r.getRequest
@@ -19,7 +27,10 @@ class AtmosphereServer extends AtmosphereHandler {
       r.setBroadcaster(b)
       r.suspend()
     } else if (req.getMethod.equalsIgnoreCase("POST")) {
-      r.getBroadcaster.broadcast(req.getReader.readLine)
+      val json_req = parse(req.getReader.readLine).extract[JsonRequest]
+      json_req.method match {
+        case "stats" => r.getBroadcaster.broadcast(write(aria.getGlobalStats))
+      }
     }
   }
 
