@@ -3,7 +3,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.app.market.web.client.ui"
 	xmlns:s="urn:import:com.nublic.app.market.web.client.ui.slider">
-	<ui:style>
+	<ui:style type="com.nublic.app.market.web.client.ui.OpenApp.OpenStyle">
 		.topbackground {
 			background-color: #CCCCCC;
 		}
@@ -32,6 +32,12 @@
 		.longTextMargin {
 			margin-top: 10px;
 		}
+		.text10 {
+			font-size: 110%;
+		}
+		.text20 {
+			font-size: 120%;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.market.web.client.i18n.I18NMessages" field="msg"/>
 	
@@ -48,7 +54,7 @@
 						<g:cell horizontalAlignment="left" verticalAlignment="top">
 							<g:VerticalPanel addStyleNames="{style.textMargins}">
 								<g:HTMLPanel><h2><g:Label ui:field="name"/></h2></g:HTMLPanel>
-								<g:HorizontalPanel>
+								<g:HorizontalPanel addStyleNames="{style.text10}">
 									<g:Label text="{msg.developer}" addStyleNames="{style.space}"/>
 									<g:Anchor ui:field="developer"/>
 								</g:HorizontalPanel>
@@ -66,7 +72,7 @@
 		<!-- Lower panel with screenshots and long description -->
 		<g:center>
 			<g:SimplePanel addStyleNames="{style.lowerscroll}">
-				<g:VerticalPanel addStyleNames="container">
+				<g:VerticalPanel ui:field="bodyPanel" addStyleNames="container {style.text20}">
 					<s:ImageSlider ui:field="imageSlider" addStyleNames="{style.longTextMargin}"/>
 					<g:HTMLPanel ui:field="longDescription" addStyleNames="{style.longTextMargin}"/>
 				</g:VerticalPanel>

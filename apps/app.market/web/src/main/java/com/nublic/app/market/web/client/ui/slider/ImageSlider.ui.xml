@@ -35,10 +35,10 @@
 			text-align: center;
 		}
 		.transform {
-			-webkit-transition: all 500ms;
-		    -moz-transition: all 500ms;
-		    -o-transition: all 500ms;
-		    -ms-transition: all 500ms;
+			-webkit-transition: all 500ms ease-in-out;
+			-moz-transition: all 500ms ease-in-out;
+			-o-transition: all 500ms ease-in-out;
+			-ms-transition: all 500ms ease-in-out;
 		}
 		.positionLeft {
 			-webkit-transform: translate(-800px, 0);
