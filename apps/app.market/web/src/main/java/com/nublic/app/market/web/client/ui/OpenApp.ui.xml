@@ -1,7 +1,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:com.nublic.app.market.web.client.ui">
+	xmlns:n="urn:import:com.nublic.app.market.web.client.ui"
+	xmlns:s="urn:import:com.nublic.app.market.web.client.ui.slider">
 	<ui:style>
 		.topbackground {
 			background-color: #CCCCCC;
@@ -66,7 +67,7 @@
 		<g:center>
 			<g:SimplePanel addStyleNames="{style.lowerscroll}">
 				<g:VerticalPanel addStyleNames="container">
-					<!-- image previewer -->
+					<s:ImageSlider ui:field="imageSlider" addStyleNames="{style.longTextMargin}"/>
 					<g:HTMLPanel ui:field="longDescription" addStyleNames="{style.longTextMargin}"/>
 				</g:VerticalPanel>
 			</g:SimplePanel>

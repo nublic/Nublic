@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.market.web.client.controller.Controller;
 import com.nublic.app.market.web.client.model.AppInfo;
 import com.nublic.app.market.web.client.model.AppStatus;
+import com.nublic.app.market.web.client.ui.slider.ImageSlider;
 
 public class OpenApp extends Composite {
 	private static OpenAppUiBinder uiBinder = GWT.create(OpenAppUiBinder.class);
@@ -27,6 +28,7 @@ public class OpenApp extends Composite {
 	@UiField InstallButton installButton;
 	@UiField Label shortDescription;
 	@UiField HTMLPanel longDescription;
+	@UiField ImageSlider imageSlider;
 	
 	AppInfo info;
 	
@@ -47,6 +49,9 @@ public class OpenApp extends Composite {
 		shortDescription.setText(info.getShortDescription());
 		longDescription.getElement().setInnerHTML(info.getLongDescription());
 		installButton.setButtonFromStatus(info.getStatus());
+		for (String url : info.getScreenshotList()) {
+			imageSlider.addImage(url);
+		}
 	}
 
 	@UiHandler("installButton")

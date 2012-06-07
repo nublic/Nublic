@@ -19,7 +19,7 @@ public class URLController {
 	public void changeState(ParamsHashMap hmap) {
 		String appId = hmap.get(Constants.PARAM_APP);
 		
-		if (appId == null) {
+		if (appId == null || appId.equals("")) {
 			ui.loadAppList();
 		} else {
 			model.getAppFromId(appId, new AppReceivedHandler() {
