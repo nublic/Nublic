@@ -15,4 +15,10 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/prev.png")
 	ImageResource prev();
+
+	@Source("images/next2.png")
+	ImageResource next2();
+
+	@Source("images/prev2.png")
+	ImageResource prev2();
 }

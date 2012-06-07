@@ -38,6 +38,7 @@ public class OpenApp extends Composite {
 		setInfo(info);
 		
 		backLink.setTargetHistoryToken("");
+		backLink.setText("< " + backLink.getText());
 	}
 	
 	public void setInfo(AppInfo info) {

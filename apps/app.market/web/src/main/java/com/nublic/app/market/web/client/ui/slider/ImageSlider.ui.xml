@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
-	<ui:style>
+	<ui:style type="com.nublic.app.market.web.client.ui.slider.ImageSlider.SliderStyle">
 		.mainPanelBackground {
 			background-color: #555555;
 			-webkit-border-radius: 10px;
@@ -19,14 +19,38 @@
 			cursor: pointer;
 			cursor: hand;
 		}
-		.imageBorder {
+		.imageLimits {
 			/* 790 / 450 */
-			max-height: 420;
-			max-width: 760;
-			margin: 15px;
+			max-height: 420px;
+			max-width: 760px;
+		}
+		.imageShadow {
 			-webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 			-moz-box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 			box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+		}
+		.imagePanel {
+			margin: 15px;
+			vertical-align: middle;
+			text-align: center;
+		}
+		.transform {
+			-webkit-transition: all 500ms;
+		    -moz-transition: all 500ms;
+		    -o-transition: all 500ms;
+		    -ms-transition: all 500ms;
+		}
+		.positionLeft {
+			-webkit-transform: translate(-800px, 0);
+			-moz-transform: translate(-800px, 0);
+			-o-transform: translate(-800px, 0);
+			-ms-transform: translate(-800px, 0);
+		}
+		.positionRight {
+			-webkit-transform: translate(800px, 0);
+			-moz-transform: translate(800px, 0);
+			-o-transform: translate(800px, 0);
+			-ms-transform: translate(800px, 0);
 		}
 	</ui:style>
 	
@@ -35,18 +59,31 @@
 	<g:DockLayoutPanel addStyleNames="{style.mainPanelBackground}" height="450px" width="100%">
 		<g:west size="75">
 			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" height="100%" width="100%">
-				<g:Image resource="{res.prev}" addStyleNames="{style.prevAndNext}" ui:field="prevButton"/>
+				<g:Image resource="{res.prev2}" addStyleNames="{style.prevAndNext}" ui:field="prevButton"/>
 			</g:VerticalPanel>
 		</g:west>
 		<g:east size="75">
 			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" height="100%" width="100%">
-				<g:Image resource="{res.next}" addStyleNames="{style.prevAndNext}" ui:field="nextButton"/>
+				<g:Image resource="{res.next2}" addStyleNames="{style.prevAndNext}" ui:field="nextButton"/>
 			</g:VerticalPanel>
 		</g:east>
 		<g:center>
-			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center">
-				<g:Image ui:field="showingImage" addStyleNames="{style.imageBorder}"/>
-			</g:VerticalPanel>
+			<g:AbsolutePanel>
+				<g:at left='0' right='0' top='0' bottom='0'>
+					<g:VerticalPanel horizontalAlignment="center" verticalAlignment="middle" width="100%" height="100%">
+						<g:HTMLPanel addStyleNames="{style.imagePanel}">
+							<g:Image ui:field="transitionImage" addStyleNames="{style.imageLimits} {style.imageShadow}"/>
+						</g:HTMLPanel>
+					</g:VerticalPanel>
+				</g:at>
+				<g:at left='0' right='0' top='0' bottom='0'>
+					<g:VerticalPanel horizontalAlignment="center" verticalAlignment="middle" width="100%" height="100%">
+						<g:HTMLPanel addStyleNames="{style.imagePanel}">
+							<g:Image ui:field="showingImage" addStyleNames="{style.imageLimits} {style.imageShadow}"/>
+						</g:HTMLPanel>
+					</g:VerticalPanel>
+				</g:at>
+			</g:AbsolutePanel>
 		</g:center>
 	</g:DockLayoutPanel>
-</ui:UiBinder> 
+</ui:UiBinder>
