@@ -12,6 +12,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.ui.MainUi;
+import com.nublic.util.messages.ParamsHashMap;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

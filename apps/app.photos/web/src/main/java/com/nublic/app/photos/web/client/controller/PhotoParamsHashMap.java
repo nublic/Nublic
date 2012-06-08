@@ -1,55 +1,17 @@
 package com.nublic.app.photos.web.client.controller;
 
-import java.util.HashMap;
-
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.model.AlbumOrder;
+import com.nublic.util.messages.ParamsHashMap;
 
 
-public class ParamsHashMap extends HashMap<String, String> {
+public class PhotoParamsHashMap extends ParamsHashMap {
 	private static final long serialVersionUID = -8597576837613560863L;
-	
-	/**
-	* Standard constructor; produces an empty KeyValueMap.
-	*/
-	public ParamsHashMap() {
-		this("");
+
+	public PhotoParamsHashMap(String args) {
+		super(args);
 	}
 
-	/**
-	* Create a KeyValueMap, and initialize it with the params
-	* string.
-	*
-	* @param params
-	* A string with URL-like parameters (see below)
-	*/
-	public ParamsHashMap(final String params) {
-		initializeWithString(params);
-	}
-
-	/**
-	* Initialize a KeyValueMap with a parameters URL-like
-	* string.
-	*
-	* @param params
-	* A string formatted like param1=value1&param2=value2&... It is assumed
-	* that the value has been appropriately escaped.
-	*/
-	void initializeWithString(String params) {
-		clear();
-		if ((params != null) && !params.isEmpty()) {
-			String[] args = params.split("&");
-			for (String element : args) {
-				int equalIndex = element.indexOf("=");
-				if (equalIndex == -1) {
-					put(element, "");
-				} else {
-					put(element.substring(0, equalIndex), element.substring(equalIndex + 1));
-				}
-			}
-		}
-	}
-	
 	public long getAlbum() {
 		if (this.containsKey("album")) {
 			try {
@@ -61,7 +23,7 @@ public class ParamsHashMap extends HashMap<String, String> {
 			return Constants.ALL_ALBUMS;
 		}
 	}
-	
+
 	public long getPhotoPosition() {
 		if (this.containsKey("photo")) {
 			try {
@@ -83,7 +45,7 @@ public class ParamsHashMap extends HashMap<String, String> {
 		}
 		return null;
 	}
-	
+
 	public View getView() {
 		if (this.containsKey("view")) {
 			View v = View.fromParameter(this.get("view"));

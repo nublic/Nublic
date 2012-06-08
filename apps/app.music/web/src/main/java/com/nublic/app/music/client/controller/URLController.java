@@ -3,7 +3,6 @@ package com.nublic.app.music.client.controller;
 import java.util.List;
 
 import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.ParamsHashMap;
 
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
@@ -13,6 +12,7 @@ import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
 import com.nublic.app.music.client.datamodel.handlers.ArtistHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
 import com.nublic.app.music.client.ui.MainUi;
+import com.nublic.util.messages.ParamsHashMap;
 
 public class URLController {
 	DataModel model;
