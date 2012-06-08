@@ -66,6 +66,11 @@
 			<artifactId>guava-gwt</artifactId>
 			<version>11.0.2</version>
 		</dependency>
+		<dependency>
+			<groupId>org.atmosphere</groupId>
+			<artifactId>atmosphere-gwt-client</artifactId>
+			<version>0.9.4</version>
+		</dependency>
 	</dependencies>
 
 	<build>

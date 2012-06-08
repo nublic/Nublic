@@ -7,6 +7,7 @@
   <!-- To prevent "required inherited module" error               -->
   <inherits name="com.google.gwt.junit.JUnit"/>
   <inherits name='com.nublic.util.GwtUtil'/>
+  <inherits name="org.atmosphere.gwt.Client"/>
   <!-- <inherits name="com.bramosystems.oss.player.youtube.YouTube"/>  --> <!-- To use if YouTubePlayer is used -->
 
   <!-- Inherit the default GWT style sheet.  You can change       -->
