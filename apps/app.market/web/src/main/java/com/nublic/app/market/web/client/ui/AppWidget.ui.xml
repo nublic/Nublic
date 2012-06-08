@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.market.web.client.ui"
 	xmlns:my="urn:import:com.nublic.util.widgets">
 	<ui:style>
 		.image {
@@ -11,6 +12,7 @@
 			margin-right: 4px;
 		}
 		.textMargins {
+			margin-left: 10px;
 			margin-top: 5px;
 			margin-right: 5px;
 		}
@@ -41,7 +43,7 @@
 			</g:VerticalPanel>
 		</g:cell>
 		<g:cell width="250px" verticalAlignment="middle">
-			<g:Button ui:field="installButton" addStyleNames="{style.buttonWidth}"/>
+			<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
 		</g:cell>
 	</g:HorizontalPanel>
 </ui:UiBinder> 

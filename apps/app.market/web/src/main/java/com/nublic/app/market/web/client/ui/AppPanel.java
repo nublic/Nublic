@@ -8,7 +8,7 @@ import com.nublic.app.market.web.client.model.AppStatus;
 
 public class AppPanel extends FlowPanel {
 	Map<String, AppWidget> appMap = new HashMap<String, AppWidget>();
-	
+
 	public void addAppWidget(AppWidget w) {
 		appMap.put(w.getId(), w);
 		add(w);
@@ -19,5 +19,11 @@ public class AppPanel extends FlowPanel {
 		if (w != null) {
 			w.changeStatus(newStatus);
 		}
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		appMap.clear();
 	}
 }
