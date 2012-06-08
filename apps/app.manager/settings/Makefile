@@ -2,7 +2,7 @@ all:
 	${MAVEN} package
 
 install:
-	mkdir -p ${DESTDIR}/var/lib/tomcat7/conf/Catalina/localhost
-	cp settings.xml ${DESTDIR}/var/lib/tomcat7/conf/Catalina/localhost
-	mkdir -p ${DESTDIR}/var/lib/nublic/webapps
-	cp target/*.war ${DESTDIR}/var/lib/nublic/webapps/app.manager.settings.war
+	mkdir -p ${DESTDIR}/var/lib/nublic/apache2/apps/settings
+	unzip target/*.war -d ${DESTDIR}/var/lib/nublic/apache2/apps/settings
+	rm -rf ${DESTDIR}/var/lib/nublic/apache2/apps/settings/META-INF
+	rm -rf ${DESTDIR}/var/lib/nublic/apache2/apps/settings/WEB-INF
