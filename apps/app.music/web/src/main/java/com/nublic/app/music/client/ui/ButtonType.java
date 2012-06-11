@@ -5,6 +5,7 @@ public enum ButtonType {
 	DELETE_PLAYLIST(ButtonLineParam.DELETE),
 	DELETE_PLAYLIST_SONG(ButtonLineParam.DELETE),
 	DELETE_COLLECTION_SONG(ButtonLineParam.DELETE),
+	DELETE_COLLECTION_ALBUM(ButtonLineParam.DELETE),
 	PLAY_ARTIST(ButtonLineParam.PLAY),
 	PLAY_ALBUM(ButtonLineParam.PLAY),
 	PLAY_SONG(ButtonLineParam.PLAY),

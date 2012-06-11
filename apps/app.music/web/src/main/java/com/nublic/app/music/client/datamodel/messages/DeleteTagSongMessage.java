@@ -1,6 +1,6 @@
 package com.nublic.app.music.client.datamodel.messages;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
@@ -17,14 +17,14 @@ import com.nublic.util.messages.Message;
 //* :songs -> comma-separated list of ids of songs to remove
 public class DeleteTagSongMessage extends Message {
 	String id;
-	List<String> songIDs;
+	Collection<String> songIDs;
 	DeleteButtonHandler dbh;
 
 	public DeleteTagSongMessage(String id, String songId, DeleteButtonHandler dbh) {
 		this(id, Lists.newArrayList(songId), dbh);
 	}
 
-	public DeleteTagSongMessage(String id, List<String> songIDs, DeleteButtonHandler dbh) {
+	public DeleteTagSongMessage(String id, Collection<String> songIDs, DeleteButtonHandler dbh) {
 		this.id = id;
 		this.songIDs = songIDs;
 		this.dbh = dbh;

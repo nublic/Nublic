@@ -1,12 +1,15 @@
 package com.nublic.app.music.client.controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent;
 import com.bramosystems.oss.player.core.event.client.PlayStateEvent.State;
 import com.bramosystems.oss.player.core.event.client.PlayStateHandler;
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Random;
@@ -15,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.music.client.Constants;
 import com.nublic.app.music.client.datamodel.DataModel;
 import com.nublic.app.music.client.datamodel.SongInfo;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.MoveSongHandler;
 import com.nublic.app.music.client.datamodel.handlers.SavePlaylistSuccessHandler;
 import com.nublic.app.music.client.datamodel.handlers.SongHandler;
@@ -373,6 +377,26 @@ public class Controller extends URLController {
 			confirmDeletion.setHeight("175px");
 			confirmDeletion.center();
 		}
+	}
+	
+	public void removeFromCollection(final String collectionId, String artistId, String albumId) {
+		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
+			@Override
+			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
+				Collection<String> songsIDs = Collections2.transform(answerList, new Function<SongInfo, String>() {
+					@Override
+					public String apply(SongInfo s) {
+						return s.getId();
+					}
+				});
+				model.removeFromCollection(collectionId, songsIDs, new DeleteButtonHandler() {
+					@Override
+					public void onDelete() {
+						// TODO: remove from ui
+					}
+				});
+			}
+		}, false);
 	}
 	
 	// Useful auxiliar method for check if a playlist is being played

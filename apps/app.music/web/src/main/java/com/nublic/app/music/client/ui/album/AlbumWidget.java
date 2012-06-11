@@ -23,6 +23,7 @@ import com.nublic.app.music.client.controller.Controller;
 import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -60,14 +61,20 @@ public class AlbumWidget extends Composite {
 		setClickTarget(collectionId);
 
 		// Add button line
-		ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
-												 ButtonLineParam.ADD_AT_END,
-												 ButtonLineParam.PLAY),
-									  EnumSet.of(ButtonType.EDIT_ALBUM,
-											  	 ButtonType.PLAY_ALBUM));
+		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.EDIT,
+				 ButtonLineParam.ADD_AT_END,
+				 ButtonLineParam.PLAY);
+		EnumSet<ButtonType> buttonTypeSet = EnumSet.of(ButtonType.EDIT_ALBUM,
+			  	 ButtonType.PLAY_ALBUM);
+		if (collectionId != null) { // We're in an album view of a collection
+			buttonSet.add(ButtonLineParam.DELETE);
+			buttonTypeSet.add(ButtonType.DELETE_COLLECTION_ALBUM);
+		}
+		ButtonLine b = new ButtonLine(buttonSet, buttonTypeSet);
 		setEditButtonHandler(b);
 		setAddAtEndButtonHandler(b);
 		setPlayButtonHandler(b);
+		setDeleteButtonHandler(b);
 		labelAndButtonsPanel.add(b);
 		
 		// Artist list
@@ -136,6 +143,15 @@ public class AlbumWidget extends Composite {
 			@Override
 			public void onPlay() {
 				Controller.INSTANCE.play(artistId, album.getId(), collectionId);
+			}
+		});
+	}
+	
+	private void setDeleteButtonHandler(ButtonLine b) {
+		b.setDeleteButtonHandler(new DeleteButtonHandler() {
+			@Override
+			public void onDelete() {
+				Controller.INSTANCE.removeFromCollection(collectionId, artistId, album.getId());
 			}
 		});
 	}
