@@ -9,7 +9,7 @@ import com.nublic.ws.json.Method5
 import com.nublic.ws.json.WebSocketJsonRpc
 import net.liftweb.json._
 
-class AriaEventHandler {
+abstract class AriaEventHandler {
   def onConnect(): Unit
   def onDisconnect(): Unit
   def onStop(): Unit

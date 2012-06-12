@@ -2,7 +2,7 @@ all:
 	${MAVEN} package
 
 install:
-	mkdir -p ${DESTDIR}/var/lib/tomcat7/conf/Catalina/localhost
-	cp market.xml ${DESTDIR}/var/lib/tomcat7/conf/Catalina/localhost
-	mkdir -p ${DESTDIR}/var/lib/nublic/webapps
-	cp target/*.war ${DESTDIR}/var/lib/nublic/webapps/app.market.war
+	mkdir -p ${DESTDIR}/var/lib/nublic/apache2/apps/market
+	unzip target/*.war -d ${DESTDIR}/var/lib/nublic/apache2/apps/market
+	rm -rf ${DESTDIR}/var/lib/nublic/apache2/apps/market/META-INF
+	rm -rf ${DESTDIR}/var/lib/nublic/apache2/apps/market/WEB-INF

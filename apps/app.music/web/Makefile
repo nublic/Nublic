@@ -2,7 +2,7 @@ all:
 	${MAVEN} package
 
 install:
-	mkdir -p ${DESTDIR}/var/lib/tomcat7/conf/Catalina/localhost
-	cp music.xml ${DESTDIR}/var/lib/tomcat7/conf/Catalina/localhost
-	mkdir -p ${DESTDIR}/var/lib/nublic/webapps
-	cp target/*.war ${DESTDIR}/var/lib/nublic/webapps/app.music.web.war
+	mkdir -p ${DESTDIR}/var/lib/nublic/apache2/apps/music
+	unzip target/*.war -d ${DESTDIR}/var/lib/nublic/apache2/apps/music
+	rm -rf ${DESTDIR}/var/lib/nublic/apache2/apps/music/META-INF
+	rm -rf ${DESTDIR}/var/lib/nublic/apache2/apps/music/WEB-INF

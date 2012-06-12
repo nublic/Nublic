@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  */
-public class WelcomeApp implements EntryPoint {
+public class DownloadsApp implements EntryPoint {
 
-	// WelcomePage theUi;
+	TestingUi theUi;
 	
 	/**
 	 * This is the entry point method.
@@ -22,8 +22,8 @@ public class WelcomeApp implements EntryPoint {
 	}
 	
 	public void initUi() {
-		// theUi = new WelcomePage();
+		theUi = new TestingUi();
 		RootLayoutPanel rp = RootLayoutPanel.get();
-	    // rp.add(theUi);
+	    rp.add(theUi);
 	}	
 }
