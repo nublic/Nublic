@@ -45,6 +45,8 @@ public class Constants {
 			return I18N.deleteCollectionSongTootip();
 		case DELETE_COLLECTION_ALBUM:
 			return I18N.deleteCollectionAlbumTootip();
+		case DELETE_COLLECTION_ARTIST:
+			return I18N.deleteCollectionArtistTootip();
 		case EDIT_ALBUM:
 			return I18N.editAlbumTooltip();
 		case EDIT_ARTIST:

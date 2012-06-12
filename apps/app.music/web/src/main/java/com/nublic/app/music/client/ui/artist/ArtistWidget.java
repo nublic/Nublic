@@ -22,6 +22,7 @@ import com.nublic.app.music.client.datamodel.AlbumInfo;
 import com.nublic.app.music.client.datamodel.ArtistInfo;
 import com.nublic.app.music.client.datamodel.handlers.AddAtEndButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.AlbumHandler;
+import com.nublic.app.music.client.datamodel.handlers.DeleteButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.EditButtonHandler;
 import com.nublic.app.music.client.datamodel.handlers.PlayButtonHandler;
 import com.nublic.app.music.client.ui.ButtonLine;
@@ -72,16 +73,22 @@ public class ArtistWidget extends Composite {
 			setImage();
 			setClickTarget();
 			setMyselfAsAlbumHandler();
-
+			
 			// Add button line
-			ButtonLine b = new ButtonLine(EnumSet.of(ButtonLineParam.EDIT,
-													 ButtonLineParam.ADD_AT_END,
-													 ButtonLineParam.PLAY),
-										  EnumSet.of(ButtonType.EDIT_ARTIST,
-												     ButtonType.PLAY_ARTIST));
+			EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.EDIT,
+					 ButtonLineParam.ADD_AT_END,
+					 ButtonLineParam.PLAY);
+			EnumSet<ButtonType> buttonTypeSet = EnumSet.of(ButtonType.EDIT_ARTIST,
+				     ButtonType.PLAY_ARTIST);
+			if (collectionId != null) { // We're in an album view of a collection
+				buttonSet.add(ButtonLineParam.DELETE);
+				buttonTypeSet.add(ButtonType.DELETE_COLLECTION_ARTIST);
+			}
+			ButtonLine b = new ButtonLine(buttonSet, buttonTypeSet);
 			setEditButtonHandler(b);
 			setAddAtEndButtonHandler(b);
 			setPlayButtonHandler(b);
+			setDeleteButtonHandler(b);
 			labelAndButtonsPanel.add(b);
 		}
 	}
@@ -143,6 +150,21 @@ public class ArtistWidget extends Composite {
 			@Override
 			public void onPlay() {
 				Controller.INSTANCE.play(artist.getId(), null, collectionId);
+			}
+		});
+	}
+	
+	private void setDeleteButtonHandler(ButtonLine b) {
+		b.setDeleteButtonHandler(new DeleteButtonHandler() {
+			@Override
+			public void onDelete() {
+				Controller.INSTANCE.removeFromCollection(collectionId, artist.getId(), null, new DeleteButtonHandler() {
+					@Override
+					public void onDelete() {
+						// When deletion is complete handle the "deletion" of the widget from UI
+						ArtistWidget.this.removeFromParent();
+					}
+				});
 			}
 		});
 	}
