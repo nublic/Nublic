@@ -151,7 +151,13 @@ public class AlbumWidget extends Composite {
 		b.setDeleteButtonHandler(new DeleteButtonHandler() {
 			@Override
 			public void onDelete() {
-				Controller.INSTANCE.removeFromCollection(collectionId, artistId, album.getId());
+				Controller.INSTANCE.removeFromCollection(collectionId, artistId, album.getId(), new DeleteButtonHandler() {
+					@Override
+					public void onDelete() {
+						// When deletion is complete handle the "deletion" of the widget from UI
+						AlbumWidget.this.removeFromParent();
+					}
+				});
 			}
 		});
 	}

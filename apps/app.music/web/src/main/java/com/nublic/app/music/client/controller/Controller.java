@@ -379,22 +379,17 @@ public class Controller extends URLController {
 		}
 	}
 	
-	public void removeFromCollection(final String collectionId, String artistId, String albumId) {
+	public void removeFromCollection(final String collectionId, String artistId, String albumId, final DeleteButtonHandler dbh) {
 		model.askForSongs(0, 32000, albumId, artistId, collectionId, new SongHandler() {
 			@Override
 			public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-				Collection<String> songsIDs = Collections2.transform(answerList, new Function<SongInfo, String>() {
+				final Collection<String> songIDs = Collections2.transform(answerList, new Function<SongInfo, String>() {
 					@Override
 					public String apply(SongInfo s) {
 						return s.getId();
 					}
 				});
-				model.removeFromCollection(collectionId, songsIDs, new DeleteButtonHandler() {
-					@Override
-					public void onDelete() {
-						// TODO: remove from ui
-					}
-				});
+				model.removeFromCollection(collectionId, songIDs, dbh);
 			}
 		}, false);
 	}
