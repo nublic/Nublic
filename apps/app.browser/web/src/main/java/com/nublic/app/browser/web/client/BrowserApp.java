@@ -12,8 +12,8 @@ import com.nublic.app.browser.web.client.UI.EmptyUI;
 import com.nublic.app.browser.web.client.UI.UIUtils;
 import com.nublic.app.browser.web.client.model.BrowserModel;
 import com.nublic.app.browser.web.client.model.FolderNode;
-import com.nublic.app.browser.web.client.model.ParamsHashMap;
 import com.nublic.util.error.ErrorPopup;
+import com.nublic.util.messages.ParamsHashMap;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.

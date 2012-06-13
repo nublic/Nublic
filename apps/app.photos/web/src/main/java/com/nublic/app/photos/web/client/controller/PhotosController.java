@@ -74,7 +74,7 @@ public class PhotosController implements PutTagHandler {
 		});
 	}
 	
-	public void changeTo(ParamsHashMap params) {
+	public void changeTo(PhotoParamsHashMap params) {
 		View newView = params.getView() == null ? this.view : params.getView();
 		AlbumOrder newOrder = params.getOrder() == null ? this.order : params.getOrder();
 		

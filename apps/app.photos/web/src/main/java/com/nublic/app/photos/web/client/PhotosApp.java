@@ -6,7 +6,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.nublic.app.photos.web.client.controller.ParamsHashMap;
+import com.nublic.app.photos.web.client.controller.PhotoParamsHashMap;
 import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.view.MainUi;
 
@@ -51,7 +51,7 @@ public class PhotosApp implements EntryPoint, ValueChangeHandler<String> {
 	@Override
 	public void onValueChange(ValueChangeEvent<String> event) {
 		String args = event.getValue();
-		ParamsHashMap hmap = new ParamsHashMap(args);
+		PhotoParamsHashMap hmap = new PhotoParamsHashMap(args);
 		controller.changeTo(hmap);
 	}
 }

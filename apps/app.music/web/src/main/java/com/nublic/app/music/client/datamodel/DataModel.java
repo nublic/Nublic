@@ -1,6 +1,7 @@
 package com.nublic.app.music.client.datamodel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -314,6 +315,11 @@ public class DataModel {
 	
 	public synchronized void removeFromCollection(String collectionId, String songId, DeleteButtonHandler dbh) {
 		DeleteTagSongMessage dtsm = new DeleteTagSongMessage(collectionId, songId, dbh);
+		SequenceHelper.sendJustOne(dtsm, RequestBuilder.DELETE);
+	}
+	
+	public synchronized void removeFromCollection(String collectionId, Collection<String> songIDs, DeleteButtonHandler dbh) {
+		DeleteTagSongMessage dtsm = new DeleteTagSongMessage(collectionId, songIDs, dbh);
 		SequenceHelper.sendJustOne(dtsm, RequestBuilder.DELETE);
 	}
 

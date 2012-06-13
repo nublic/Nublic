@@ -20,6 +20,8 @@ public interface I18NMessages extends Messages {
 	String deletePlaylistTooltip();
 	String deletePlaylistSongTootip();
 	String deleteCollectionSongTootip();
+	String deleteCollectionAlbumTootip();
+	String deleteCollectionArtistTootip();
 	String playArtistTooltip();
 	String playAlbumTooltip();
 	String playSongTooltip();

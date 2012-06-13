@@ -78,7 +78,6 @@ public class AlbumPanel extends Composite {
 	
 	private void createButtonLine() {
 		EnumSet<ButtonLineParam> buttonSet = EnumSet.of(ButtonLineParam.ADD_AT_END, ButtonLineParam.PLAY);
-//		EnumSet<ButtonType> buttonTypeSet = EnumSet.of(ButtonType.PLAY_ALBUM);
 		EnumSet<ButtonType> buttonTypeSet = EnumSet.noneOf(ButtonType.class);
 		if (artistId != null) {
 			buttonTypeSet.add(ButtonType.PLAY_ARTIST);
