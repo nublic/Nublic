@@ -4635,13 +4635,13 @@ td.datePickerMonth {
 }
 /* For play buttons */
 .hoverGlow:hover {
-  border-color: #9cdffc;
+  border-color: rgba(4, 100, 140, 0.8);
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-box-shadow: 0 0 8px #39bff9;
-  -moz-box-shadow: 0 0 8px #39bff9;
-  box-shadow: 0 0 8px #39bff9;
+  -webkit-box-shadow: 0 0 8px rgba(4, 100, 140, 0.6);
+  -moz-box-shadow: 0 0 8px rgba(4, 100, 140, 0.6);
+  box-shadow: 0 0 8px rgba(4, 100, 140, 0.6);
   outline: 0;
   outline: thin dotted 9;
 }
@@ -4672,13 +4672,13 @@ td.datePickerMonth {
   border-radius: 3px;
 }
 .player-VolumeControl:hover {
-  border-color: #9cdffc;
+  border-color: rgba(4, 100, 140, 0.8);
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-box-shadow: 0 0 8px #39bff9;
-  -moz-box-shadow: 0 0 8px #39bff9;
-  box-shadow: 0 0 8px #39bff9;
+  -webkit-box-shadow: 0 0 8px rgba(4, 100, 140, 0.6);
+  -moz-box-shadow: 0 0 8px rgba(4, 100, 140, 0.6);
+  box-shadow: 0 0 8px rgba(4, 100, 140, 0.6);
   outline: 0;
   outline: thin dotted 9;
 }
