@@ -44,7 +44,6 @@ public class PlayerLayout extends Composite {
 		String marginleft();
 		String smallround();
 		String biground();
-		String glow();
 	}
 
 	@UiField PlayerStyle style;

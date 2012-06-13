@@ -36,14 +36,6 @@
 			-moz-border-radius: 21px;
 			border-radius: 21px;
 		}
-		.glow:hover {
-			border-color: rgba(82, 168, 236, 0.8);
-			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-			-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-			outline: 0;
-			outline: thin dotted 9;
-		}
 		.artlimits {
 			max-height: 48px;
 			max-width: 48px;
@@ -53,22 +45,22 @@
 	
 	<g:HorizontalPanel verticalAlignment="middle">
 		<!-- Player controls -->
-		<g:PushButton ui:field="prevButton" height="24px" width="24px" addStyleNames="{style.background} {style.smallround} {style.glow} {style.marginleft}">
+		<g:PushButton ui:field="prevButton" height="24px" width="24px" addStyleNames="{style.background} {style.smallround} hoverGlow {style.marginleft}">
 			<g:upFace image="{res.playerPrev}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="playButton" height="32px" width="32px" addStyleNames="{style.background} {style.biground} {style.glow}">
+		<g:PushButton ui:field="playButton" height="32px" width="32px" addStyleNames="{style.background} {style.biground} hoverGlow">
 			<g:upFace image="{res.playerPlay}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="pauseButton" height="32px" width="32px" addStyleNames="{style.background} {style.biground} {style.glow}">
+		<g:PushButton ui:field="pauseButton" height="32px" width="32px" addStyleNames="{style.background} {style.biground} hoverGlow">
 			<g:upFace image="{res.playerPause}"/>
 		</g:PushButton>
-		<g:PushButton ui:field="nextButton" height="24px" width="24px" addStyleNames="{style.background} {style.smallround} {style.glow}">
+		<g:PushButton ui:field="nextButton" height="24px" width="24px" addStyleNames="{style.background} {style.smallround} hoverGlow">
 			<g:upFace image="{res.playerNext}"/>
 		</g:PushButton>
-		
+
 		<!-- Progress bar -->
 		<g:VerticalPanel width="315px" horizontalAlignment="right">
-			<b:CSSSeekBar ui:field="seekBar" width="300px" addStyleNames="{style.glow}"/>
+			<b:CSSSeekBar ui:field="seekBar" width="300px" addStyleNames="hoverGlow"/>
 			<g:HorizontalPanel>
 				<g:Label ui:field="currentTime" text="0:00"/>
 				<g:Label text="/"/>

@@ -30,19 +30,6 @@
 		.background:hover {
 			opacity: 1;
 		}
-		/*.background {
-			background: transparent;
-			padding: 3px;
-			margin: 3px 15px 3px 3px;
-		}
-		.glow:hover {
-			border-color: rgba(82, 168, 236, 0.8);
-			-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-			-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-			box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-			outline: 0;
-			outline: thin dotted 9;
-		}*/
 	</ui:style>
 	<ui:with type="com.nublic.app.music.client.Resources" field="res"/>
 	<ui:with type="com.nublic.app.music.client.i18n.I18NMessages" field="msg"/>

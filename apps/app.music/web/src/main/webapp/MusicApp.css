@@ -34,93 +34,11 @@ body, html {
 	height: 100%;
 }
 
-/* For translucid buttons */
-.translucidPanel .translucidButton {
-  opacity: 0.02;
-}
-
-.translucidPanel:hover .translucidButton {
-  opacity: 0.4;
-}
-
-.translucidPanel:hover .translucidButton:hover {
-  opacity: 1.0;
-}
-
 /** Set ids using widget.getElement().setId("idOfElement") */
 #closeButton {
   margin: 15px 6px 6px;
 }
 
-
-/** progress bar */
- /** the seekbar itself */
-.player-CSSSeekBar {
-	background-color: #888888;
-	border: 1px solid #555555;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-}
- /** the loading progress indicator */
-.player-CSSSeekBar .loading {
-	background-color: #DDDDDD;
-}
- /** the playing progress indicator */
-.player-CSSSeekBar .playing {
-	background-color: #0064CD;
-}
-
-/** volume control */
- /** the slider widget */
-.player-VolumeControl {
-	background-color: #888888;
-	border: 1px solid #555555;
-	-webkit-border-radius: 3px;
-	-moz-border-radius: 3px;
-	border-radius: 3px;
-}
-.player-VolumeControl:hover {
-	border-color: rgba(82, 168, 236, 0.8);
-	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 0.6);
-	outline: 0;
-	outline: thin dotted 9;
-}
- /** the volume level indicator */
-.player-VolumeControl .volume {
-	background-color: #0064CD;
-}
- /** the sliders' track indicator */
-.player-VolumeControl .track  {
-	background-color: #DDDDDD;
-}
-
-/** Styles to select playing song in a playlist */
-.songselected {
-}
-.songselected td {
-	color: #0064CD;
-	font-weight: bold !important;
-}
-.songselected .playButton {
-	opacity: 1 !important;
-}
-
-/** So a playlist can be bold if it's being played */
-.bold-link a {
-	font-weight: bold;
-}
-
-/** Styles to indicate drop targets on rows */ 
-.insertup {
-	border-top: 2px solid #0088CC !important;
-}
-
-.insertdown {
-	border-bottom: 2px solid #0088CC !important;
-}
 
 /** Stripped tables */
 .stripped > tbody > tr:nth-child(odd) > td {

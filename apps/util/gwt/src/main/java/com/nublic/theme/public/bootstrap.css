@@ -3250,53 +3250,6 @@ input[type="submit"].btn.small,
 .popover-content p, .popover-content ul, .popover-content ol {
   margin-bottom: 0;
 }
-.proxyPanel {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
-  color: #FFFFFF;
-  border-color: #222222;
-  -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.7);
-  -moz-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.7);
-  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.7);
-  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
-  padding: 1px 20px 1px 20px;
-  opacity: 0.85;
-  filter: alpha(opacity=85);
-  background-color: #056e99;
-  background-image: -moz-linear-gradient(top, #0574a2, #04648c);
-  background-image: -ms-linear-gradient(top, #0574a2, #04648c);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0574a2), to(#04648c));
-  background-image: -webkit-linear-gradient(top, #0574a2, #04648c);
-  background-image: -o-linear-gradient(top, #0574a2, #04648c);
-  background-image: linear-gradient(top, #0574a2, #04648c);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0574a2', endColorstr='#04648c', GradientType=0);
-}
-.proxyAddPanel {
-  border: 1px solid #A5A5A5 !important;
-  color: #FFFFFF;
-  text-shadow: 1px #AAAAAA;
-  font-weight: bold;
-  font-size: 20px;
-  height: 18px;
-  width: 18px;
-  -webkit-border-radius: 9px;
-  -moz-border-radius: 9px;
-  border-radius: 9px;
-  vertical-align: middle;
-  background-color: #01bd12;
-  background-image: -moz-linear-gradient(top, #00ff0c, #025b1a);
-  background-image: -ms-linear-gradient(top, #00ff0c, #025b1a);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00ff0c), to(#025b1a));
-  background-image: -webkit-linear-gradient(top, #00ff0c, #025b1a);
-  background-image: -o-linear-gradient(top, #00ff0c, #025b1a);
-  background-image: linear-gradient(top, #00ff0c, #025b1a);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ff0c', endColorstr='#025b1a', GradientType=0);
-}
 .thumbnails {
   margin-left: -20px;
   list-style: none;
@@ -4619,4 +4572,139 @@ td.datePickerMonth {
   font-weight: bold;
   padding: 0px 4px;
   outline: none;
+}
+.proxyPanel {
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  color: #FFFFFF;
+  border-color: #222222;
+  -webkit-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.7);
+  -moz-box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 3px rgba(255, 255, 255, 0.7);
+  -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+  padding: 1px 20px 1px 20px;
+  opacity: 0.85;
+  filter: alpha(opacity=85);
+  background-color: #056e99;
+  background-image: -moz-linear-gradient(top, #0574a2, #04648c);
+  background-image: -ms-linear-gradient(top, #0574a2, #04648c);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0574a2), to(#04648c));
+  background-image: -webkit-linear-gradient(top, #0574a2, #04648c);
+  background-image: -o-linear-gradient(top, #0574a2, #04648c);
+  background-image: linear-gradient(top, #0574a2, #04648c);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0574a2', endColorstr='#04648c', GradientType=0);
+}
+.proxyAddPanel {
+  border: 1px solid #A5A5A5 !important;
+  color: #FFFFFF;
+  text-shadow: 1px #AAAAAA;
+  font-weight: bold;
+  font-size: 20px;
+  height: 18px;
+  width: 18px;
+  -webkit-border-radius: 9px;
+  -moz-border-radius: 9px;
+  border-radius: 9px;
+  vertical-align: middle;
+  background-color: #01bd12;
+  background-image: -moz-linear-gradient(top, #00ff0c, #025b1a);
+  background-image: -ms-linear-gradient(top, #00ff0c, #025b1a);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00ff0c), to(#025b1a));
+  background-image: -webkit-linear-gradient(top, #00ff0c, #025b1a);
+  background-image: -o-linear-gradient(top, #00ff0c, #025b1a);
+  background-image: linear-gradient(top, #00ff0c, #025b1a);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ff0c', endColorstr='#025b1a', GradientType=0);
+}
+/* For translucid buttons */
+.translucidPanel .translucidButton {
+  opacity: 0.02;
+  filter: alpha(opacity=2);
+}
+.translucidPanel:hover .translucidButton {
+  opacity: 0.4;
+  filter: alpha(opacity=40);
+}
+.translucidPanel:hover .translucidButton:hover {
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
+/* For play buttons */
+.hoverGlow:hover {
+  border-color: #9cdffc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-box-shadow: 0 0 8px #39bff9;
+  -moz-box-shadow: 0 0 8px #39bff9;
+  box-shadow: 0 0 8px #39bff9;
+  outline: 0;
+  outline: thin dotted 9;
+}
+/** progress bar */
+/** the seekbar itself */
+.player-CSSSeekBar {
+  background-color: #888888;
+  border: 1px solid #555555;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+/** the loading progress indicator */
+.player-CSSSeekBar .loading {
+  background-color: #DDDDDD;
+}
+/** the playing progress indicator */
+.player-CSSSeekBar .playing {
+  background-color: #04648c;
+}
+/** volume control */
+/** the slider widget */
+.player-VolumeControl {
+  background-color: #888888;
+  border: 1px solid #555555;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.player-VolumeControl:hover {
+  border-color: #9cdffc;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-box-shadow: 0 0 8px #39bff9;
+  -moz-box-shadow: 0 0 8px #39bff9;
+  box-shadow: 0 0 8px #39bff9;
+  outline: 0;
+  outline: thin dotted 9;
+}
+/** the volume level indicator */
+.player-VolumeControl .volume {
+  background-color: #04648c;
+}
+/** the sliders' track indicator */
+.player-VolumeControl .track {
+  background-color: #DDDDDD;
+}
+/** Styles to select playing song in a playlist */
+.songselected td {
+  color: #04648c;
+  font-weight: bold !important;
+}
+.songselected .playButton {
+  opacity: 1 !important;
+}
+/** So a playlist can be bold if it's being played */
+.bold-link a {
+  font-weight: bold;
+}
+/** Styles to indicate drop targets on rows */.insertup {
+  border-top: 2px solid #0574a2 !important;
+}
+.insertdown {
+  border-bottom: 2px solid #0574a2 !important;
 }
