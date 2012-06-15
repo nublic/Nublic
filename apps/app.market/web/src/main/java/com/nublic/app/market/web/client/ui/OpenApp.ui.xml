@@ -38,14 +38,35 @@
 		.text20 {
 			font-size: 120%;
 		}
+		
+		.leftDiv {
+			background-color: #CCCCCC;
+		}
+		.rightDiv {
+			overflow-y: auto;
+			position: absolute;
+			left: 0px; right: 0px; top: 0px; bottom: 0px;
+		}
+		.internalLeftDiv {
+			float: right;
+			margin-top: 50px;
+			margin-right: 10px;
+		}
+		.internalRightDiv {
+			float: left;
+			margin-left: 10px;
+		}
+		.relative {
+			position: relative;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.market.web.client.i18n.I18NMessages" field="msg"/>
 	
 	<!-- Top panel with resumed information -->
-	<g:DockLayoutPanel height="100%" width="100%">
-		<g:north size="109">
-			<g:SimplePanel addStyleNames="{style.topbackground}"> <!-- Just to include the background -->
-				<g:VerticalPanel addStyleNames="container">
+	<g:HorizontalPanel width="100%" height="100%">
+		<g:cell width="40%" height="100%">
+			<g:SimplePanel width="100%" height="100%" addStyleNames="{style.leftDiv}">
+				<g:VerticalPanel width="366px" horizontalAlignment="left" addStyleNames="{style.internalLeftDiv}">
 					<g:Hyperlink ui:field="backLink" text="{msg.goBack}"/>
 					<g:HorizontalPanel height="96px" width="100%">
 						<g:cell width="106px" horizontalAlignment="center" verticalAlignment="middle">
@@ -61,22 +82,24 @@
 								<g:Label ui:field="shortDescription" addStyleNames="{style.description}"/>
 							</g:VerticalPanel>
 						</g:cell>
-						<g:cell width="250px" verticalAlignment="middle">
-							<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
-						</g:cell>
 					</g:HorizontalPanel>
+					<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
 				</g:VerticalPanel>
 			</g:SimplePanel>
-		</g:north>
+		</g:cell>
 
 		<!-- Lower panel with screenshots and long description -->
-		<g:center>
-			<g:SimplePanel addStyleNames="{style.lowerscroll}">
-				<g:VerticalPanel ui:field="bodyPanel" addStyleNames="container {style.text20}">
+		<g:cell width="60%" height="100%">
+			<g:HTMLPanel height="100%" width="100%" addStyleNames="{style.relative}">
+			  <div class="{style.rightDiv}">
+				<g:VerticalPanel ui:field="bodyPanel" width="554px" addStyleNames="{style.text20} {style.internalRightDiv}">
 					<s:ImageSlider ui:field="imageSlider" addStyleNames="{style.longTextMargin}"/>
 					<g:HTMLPanel ui:field="longDescription" addStyleNames="{style.longTextMargin}"/>
 				</g:VerticalPanel>
-			</g:SimplePanel>
-		</g:center>
-	</g:DockLayoutPanel>
+			  </div>
+			</g:HTMLPanel>
+		</g:cell>
+	</g:HorizontalPanel>
+
+
 </ui:UiBinder> 

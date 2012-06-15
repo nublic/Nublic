@@ -6,9 +6,12 @@
 		.scroll {
 			overflow-y: auto;
 		}
+		.toppadding {
+			padding-top: 10px;
+		}
 	</ui:style>
 	<g:DeckPanel ui:field="deckPanel" height="100%" width="100%">
-		<g:SimplePanel addStyleNames="{style.scroll}">
+		<g:SimplePanel addStyleNames="{style.scroll} {style.toppadding}">
 			<n:AppPanel ui:field="appPanel" addStyleNames="container"/>
 		</g:SimplePanel>
 		<n:OpenPanel ui:field="openPanel"/>
