@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: libnublic-files-and-users-java
 Architecture: all
-Depends: ${misc:Depends}, libdbus-java, nublic-files-and-users, libguava10-java
+Depends: ${misc:Depends}, libdbus-java, nublic-files-and-users-client, libguava10-java
 Description: Nublic Files and Users Java bindings
  Nublic Files and Users Java bindings

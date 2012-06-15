@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-music-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, ffmpeg, lame, libnublic-file-watcher-scala, echoprint-codegen, nublic-resource
+Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, ffmpeg, lame, echoprint-codegen, libnublic-resource-java, nublic-file-watcher, nublic-files-and-users-client
 Description: Nublic Music app - server
  Music app for the Nublic platform - server part

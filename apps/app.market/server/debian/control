@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-market-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, nublic-app-market-daemon
+Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, nublic-app-market-daemon, libnublic-files-and-users-java
 Description: Nublic MArket app - server
  Market app for the Nublic platform - server part
