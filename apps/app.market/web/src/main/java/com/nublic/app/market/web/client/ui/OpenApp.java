@@ -43,7 +43,7 @@ public class OpenApp extends Composite {
 		String lowerscroll();
 		String image();
 		String space();
-		String textMargins();
+		String shortDescriptionText();
 		String description();
 		String buttonWidth();
 		String longTextMargin();

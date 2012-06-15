@@ -20,9 +20,9 @@
 			cursor: hand;
 		}
 		.imageLimits {
-			/* 790 / 450 */
-			max-height: 420px;
-			max-width: 760px;
+			/* 454 / 350 */
+			max-height: 320px;
+			max-width: 424px;
 		}
 		.imageShadow {
 			-webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
@@ -56,13 +56,13 @@
 	
 	<ui:with type="com.nublic.app.market.web.client.Resources" field="res"/>
 
-	<g:DockLayoutPanel addStyleNames="{style.mainPanelBackground}" height="450px" width="100%">
-		<g:west size="75">
+	<g:DockLayoutPanel addStyleNames="{style.mainPanelBackground}" height="350px" width="100%">
+		<g:west size="50">
 			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" height="100%" width="100%">
 				<g:Image resource="{res.prev2}" addStyleNames="{style.prevAndNext}" ui:field="prevButton"/>
 			</g:VerticalPanel>
 		</g:west>
-		<g:east size="75">
+		<g:east size="50">
 			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" height="100%" width="100%">
 				<g:Image resource="{res.next2}" addStyleNames="{style.prevAndNext}" ui:field="nextButton"/>
 			</g:VerticalPanel>
