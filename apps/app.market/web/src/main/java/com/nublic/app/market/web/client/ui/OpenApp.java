@@ -39,8 +39,6 @@ public class OpenApp extends Composite {
 	AppInfo info;
 	
 	public interface OpenStyle extends CssResource {
-		String topbackground();
-		String lowerscroll();
 		String image();
 		String space();
 		String shortDescriptionText();

@@ -4,28 +4,33 @@
 	xmlns:n="urn:import:com.nublic.app.market.web.client.ui"
 	xmlns:s="urn:import:com.nublic.app.market.web.client.ui.slider">
 	<ui:style type="com.nublic.app.market.web.client.ui.OpenApp.OpenStyle">
-		.topbackground {
-			background-color: #CCCCCC;
-		}
-		.lowerscroll {
-			overflow-y: auto;
-		}
 		.image {
 			max-width: 96px;
 			max-height: 96px;
+		}
+		.imageBox {
+			background-color: #f2f6f8;
+			-webkit-border-radius: 5px;
+  			-moz-border-radius: 5px;
+  			border-radius: 5px;
+			-webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8);
+  			-moz-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8);
+  			box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.8);
+  			margin-left: 10px;
+  			margin-bottom: 10px;
 		}
 		.space {
 			margin-right: 4px;
 		}
 		.shortDescriptionText {
 			text-align: right;
-			margin-left: 10px;
-			margin-top: 5px;
-			margin-right: 5px;
 		}
 		.description {
 			margin-top: 3px;
-			opacity: 0.75;
+			opacity: 0.5;
+		}
+		.developer {
+			opacity: 0.5;
 		}
 		.buttonWidth {
 			width: 240px;
@@ -39,9 +44,31 @@
 		.text20 {
 			font-size: 120%;
 		}
-		
 		.leftDiv {
-			background-color: #CCCCCC;
+			background-color: #0b1b21;
+			color: #FFF;
+			-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  			-moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  			box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+		}
+		.whiteLink {
+			opacity: 0.75;
+			color: white;
+		}
+		.whiteLink:hover, .whiteLink:active {
+			opacity: 1.0;
+			color: white ;
+			text-decoration: none;
+		}
+		.whiteLink a {
+            color: white;
+            text-decoration: none;
+        }
+        .whiteLink a:hover {
+			text-decoration: none;
+		}
+		.whiteH {
+			color: white;
 		}
 		.rightDiv {
 			overflow-y: auto;
@@ -73,22 +100,22 @@
 			<g:SimplePanel width="100%" height="100%" addStyleNames="{style.leftDiv}">
 				<g:VerticalPanel width="366px" horizontalAlignment="right" addStyleNames="{style.internalLeftDiv}">
 					<g:cell horizontalAlignment="left">
-						<g:Hyperlink ui:field="backLink" text="{msg.goBack}" addStyleNames="{style.backLinkMargin}"/>
+						<g:Hyperlink ui:field="backLink" text="{msg.goBack}" addStyleNames="{style.backLinkMargin} {style.whiteLink}"/>
 					</g:cell>
-					<g:HorizontalPanel height="96px" width="100%">
+					<g:HorizontalPanel height="106px" width="100%">
 						<g:cell horizontalAlignment="right" verticalAlignment="top">
 							<g:VerticalPanel addStyleNames="{style.shortDescriptionText}" horizontalAlignment="right">
-								<g:HTMLPanel><h2><g:Label ui:field="name"/></h2></g:HTMLPanel>
+								<g:HTMLPanel><h2 class="{style.whiteH}"><g:Label ui:field="name"/></h2></g:HTMLPanel>
 								<g:HorizontalPanel addStyleNames="{style.text10}">
-									<g:Label text="{msg.developer}" addStyleNames="{style.space}"/>
-									<g:Anchor ui:field="developer"/>
+									<g:Label text="{msg.developer}" addStyleNames="{style.space} {style.developer}"/>
+									<g:Anchor ui:field="developer" addStyleNames="{style.whiteLink}"/>
 								</g:HorizontalPanel>
 								<g:Label ui:field="shortDescription" addStyleNames="{style.description}"/>
 							</g:VerticalPanel>
 						</g:cell>
-						<g:cell width="106px" horizontalAlignment="center" verticalAlignment="middle">
+						<g:VerticalPanel width="106px" height="106px" horizontalAlignment="center" verticalAlignment="middle" addStyleNames="{style.imageBox}">
 							<g:Image ui:field="image" addStyleNames="{style.image}"/>
-						</g:cell>
+						</g:VerticalPanel>
 					</g:HorizontalPanel>
 					<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
 				</g:VerticalPanel>

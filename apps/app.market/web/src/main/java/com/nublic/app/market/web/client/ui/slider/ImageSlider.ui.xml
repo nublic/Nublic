@@ -3,13 +3,11 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.nublic.app.market.web.client.ui.slider.ImageSlider.SliderStyle">
 		.mainPanelBackground {
-			background-color: #555555;
+			background-color: #f2f6f8;
+			border: solid 1px #CCC;
 			-webkit-border-radius: 10px;
 			-moz-border-radius: 10px;
 			border-radius: 10px;
-			-webkit-box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-			-moz-box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-			box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
 		}
 		.prevAndNext {
 			opacity: 0.7;
@@ -41,16 +39,16 @@
 			-ms-transition: all 500ms ease-in-out;
 		}
 		.positionLeft {
-			-webkit-transform: translate(-800px, 0);
-			-moz-transform: translate(-800px, 0);
-			-o-transform: translate(-800px, 0);
-			-ms-transform: translate(-800px, 0);
+			-webkit-transform: translate(-460px, 0);
+			-moz-transform: translate(-460px, 0);
+			-o-transform: translate(-460px, 0);
+			-ms-transform: translate(-460px, 0);
 		}
 		.positionRight {
-			-webkit-transform: translate(800px, 0);
-			-moz-transform: translate(800px, 0);
-			-o-transform: translate(800px, 0);
-			-ms-transform: translate(800px, 0);
+			-webkit-transform: translate(460px, 0);
+			-moz-transform: translate(460px, 0);
+			-o-transform: translate(460px, 0);
+			-ms-transform: translate(460px, 0);
 		}
 	</ui:style>
 	
