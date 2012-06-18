@@ -40,7 +40,7 @@
             cursor: hand;
         }
         .action {
-            opacity: 0.3 !important;
+            opacity: 0.45 !important;
             color: white !important;
         }
         .action:hover, .action:active {

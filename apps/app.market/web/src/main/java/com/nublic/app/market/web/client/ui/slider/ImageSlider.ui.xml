@@ -3,13 +3,11 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style type="com.nublic.app.market.web.client.ui.slider.ImageSlider.SliderStyle">
 		.mainPanelBackground {
-			background-color: #555555;
+			background-color: #f2f6f8;
+			border: solid 1px #CCC;
 			-webkit-border-radius: 10px;
 			-moz-border-radius: 10px;
 			border-radius: 10px;
-			-webkit-box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-			-moz-box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-			box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
 		}
 		.prevAndNext {
 			opacity: 0.7;
@@ -20,9 +18,9 @@
 			cursor: hand;
 		}
 		.imageLimits {
-			/* 790 / 450 */
-			max-height: 420px;
-			max-width: 760px;
+			/* 454 / 350 */
+			max-height: 320px;
+			max-width: 424px;
 		}
 		.imageShadow {
 			-webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
@@ -41,28 +39,28 @@
 			-ms-transition: all 500ms ease-in-out;
 		}
 		.positionLeft {
-			-webkit-transform: translate(-800px, 0);
-			-moz-transform: translate(-800px, 0);
-			-o-transform: translate(-800px, 0);
-			-ms-transform: translate(-800px, 0);
+			-webkit-transform: translate(-460px, 0);
+			-moz-transform: translate(-460px, 0);
+			-o-transform: translate(-460px, 0);
+			-ms-transform: translate(-460px, 0);
 		}
 		.positionRight {
-			-webkit-transform: translate(800px, 0);
-			-moz-transform: translate(800px, 0);
-			-o-transform: translate(800px, 0);
-			-ms-transform: translate(800px, 0);
+			-webkit-transform: translate(460px, 0);
+			-moz-transform: translate(460px, 0);
+			-o-transform: translate(460px, 0);
+			-ms-transform: translate(460px, 0);
 		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.market.web.client.Resources" field="res"/>
 
-	<g:DockLayoutPanel addStyleNames="{style.mainPanelBackground}" height="450px" width="100%">
-		<g:west size="75">
+	<g:DockLayoutPanel addStyleNames="{style.mainPanelBackground}" height="350px" width="100%">
+		<g:west size="50">
 			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" height="100%" width="100%">
 				<g:Image resource="{res.prev2}" addStyleNames="{style.prevAndNext}" ui:field="prevButton"/>
 			</g:VerticalPanel>
 		</g:west>
-		<g:east size="75">
+		<g:east size="50">
 			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" height="100%" width="100%">
 				<g:Image resource="{res.next2}" addStyleNames="{style.prevAndNext}" ui:field="nextButton"/>
 			</g:VerticalPanel>
