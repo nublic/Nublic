@@ -12,6 +12,7 @@ public interface I18NMessages extends Messages {
 	String welcomeToNublic();
 	SafeHtml thanksForTesting();
 	String yourApps();
+	SafeHtml findMoreInMarket();
 	
 	// Errors
 	String errorLoadingAppList();

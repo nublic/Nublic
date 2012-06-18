@@ -45,6 +45,10 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 		AppDataMessage msg = new AppDataMessage(this);
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		// Add tab for welcome
+		navBar.addToSecondaryTab(Constants.marketAppName,
+				"images/market.png", 
+				Constants.I18N.market(), 
+				"#" + Constants.marketAppName);
 		navBar.addToSecondaryTab(Constants.settingsAppName,
 				"images/settings.png", 
 				Constants.I18N.settings(), 
