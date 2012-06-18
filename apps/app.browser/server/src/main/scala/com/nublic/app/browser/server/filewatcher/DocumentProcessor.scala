@@ -10,13 +10,16 @@ import com.nublic.app.browser.server.filewatcher.workers.Workers
 
 class DocumentProcessor(watcher: FileWatcherActor) extends Processor("document", watcher, false) {
   
-  def process(c: FileChange) = c match {
-    case Created(filename, _, false)  => process_updated_file(filename)
-    case Modified(filename, _, false) => process_updated_file(filename)
-    case Moved(from, to, _, false)    => process_moved_file(from, to)
-    case Moved(from, to, _, true)     => process_moved_folder(from, to)
-    case Deleted(filename, _, false)  => process_deleted_file(filename)
-    case _                            => { /* Nothing */ }
+  def process(c: FileChange) = {
+    Console.println(c)
+    c match {
+      case Created(filename, _, false)  => process_updated_file(filename)
+      case Modified(filename, _, false) => process_updated_file(filename)
+      case Moved(from, to, _, false)    => process_moved_file(from, to)
+      case Moved(from, to, _, true)     => process_moved_folder(from, to)
+      case Deleted(filename, _, false)  => process_deleted_file(filename)
+      case _                            => { /* Nothing */ }
+    }
   }
   
   def process_updated_file(filename: String): Unit = {
