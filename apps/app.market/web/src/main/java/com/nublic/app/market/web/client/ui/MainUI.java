@@ -1,7 +1,11 @@
 package com.nublic.app.market.web.client.ui;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -34,8 +38,20 @@ public class MainUI extends Composite {
 		Controller.INSTANCE.getModel().askForAppList(new AppListHandler() {
 			@Override
 			public void onAppListReceived(Map<String, AppInfo> appMap) {
+				// Clear panel
 				appPanel.clear();
-				for (AppInfo app : appMap.values()) {
+
+				// Order the list of apps by their name
+				ArrayList<AppInfo> appList = Lists.newArrayList(appMap.values());
+				Collections.sort(appList, new Comparator<AppInfo>() {
+					@Override
+					public int compare(AppInfo app1, AppInfo app2) {
+						return app1.getName().toLowerCase().compareTo(app2.getName().toLowerCase());
+					}
+				});
+
+				// Create and add widgets
+				for (AppInfo app : appList) {
 					AppWidget appW = new AppWidget(app);
 					appPanel.addAppWidget(appW);
 				}
