@@ -35,21 +35,15 @@
 		.buttonWidth {
 			width: 240px;
 		}
-		.longTextMargin {
+		.longText {
 			margin-top: 10px;
+			text-align: justify;
 		}
 		.text10 {
 			font-size: 110%;
 		}
 		.text20 {
 			font-size: 120%;
-		}
-		.leftDiv {
-			background-color: #0b1b21;
-			color: #FFF;
-			-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-  			-moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-  			box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
 		}
 		.whiteLink {
 			opacity: 0.75;
@@ -70,39 +64,80 @@
 		.whiteH {
 			color: white;
 		}
-		.rightDiv {
-			overflow-y: auto;
-			position: absolute;
-			left: 0px; right: 0px; top: 0px; bottom: 0px;
-		}
-		.internalLeftDiv {
-			float: right;
-			margin-top: 15px;
-			margin-right: 30px;
-		}
-		.internalRightDiv {
-			float: left;
-			margin-left: 10px;
-			margin-bottom: 15px;
-		}
-		.relative {
-			position: relative;
-		}
 		.backLinkMargin {
 			margin-bottom: 50px;
 		}
+		.backgroundLeft {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			bottom: 0px;
+			right: 50%;
+		}
+		.internalLeft1 {
+			position: absolute;
+			right: 150px;
+			top: 0px;
+			bottom: 0px;
+			left: 0;
+			background-color: #0b1b21;
+			color: #FFF;
+			-webkit-box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  			-moz-box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  			box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+		}
+		.internalLeft2 {
+			position: absolute;
+			right: 0px;
+			top: 0px;
+			bottom: 0px;
+			width: 320px;
+		}
+		.leftTable {
+			margin-top: 15px;
+			margin-right: 30px;
+		}
+		.backgroundRight {
+			position: absolute;
+			left: 50%;
+			right: 0px;
+			top: 0px;
+			bottom: 0px;
+		}
+		.internalRight1 {
+			position: absolute;
+			left: -150px;
+			right: 0px;
+			top: 0px;
+			bottom: 0px;
+			overflow-y: auto;
+		}
+		.internalRight2 {
+			position: absolute;
+			left: 0px;
+			top: 0px;
+			bottom: 0px;
+			width: 620px;
+			border-right: solid 1px #CCC;
+		}
+		.rigthTable {
+			margin-left: 10px;
+			margin-bottom: 15px;
+			margin-right: 10px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.market.web.client.i18n.I18NMessages" field="msg"/>
-	
-	<!-- Top panel with resumed information -->
-	<g:HorizontalPanel width="100%" height="100%">
-		<g:cell width="40%" height="100%">
-			<g:SimplePanel width="100%" height="100%" addStyleNames="{style.leftDiv}">
-				<g:VerticalPanel width="366px" horizontalAlignment="right" addStyleNames="{style.internalLeftDiv}">
+
+	<g:HTMLPanel>
+		<!-- Left panel with resumed information -->
+		<div class="{style.backgroundLeft}">
+			<div class="{style.internalLeft1}">
+			  <div class="{style.internalLeft2}">
+				<g:VerticalPanel horizontalAlignment="right" addStyleNames="{style.leftTable}">
 					<g:cell horizontalAlignment="left">
 						<g:Hyperlink ui:field="backLink" text="{msg.goBack}" addStyleNames="{style.backLinkMargin} {style.whiteLink}"/>
 					</g:cell>
-					<g:HorizontalPanel height="106px" width="100%">
+					<g:HorizontalPanel height="116px" width="100%" horizontalAlignment="right">
 						<g:cell horizontalAlignment="right" verticalAlignment="top">
 							<g:VerticalPanel addStyleNames="{style.shortDescriptionText}" horizontalAlignment="right">
 								<g:HTMLPanel><h2 class="{style.whiteH}"><g:Label ui:field="name"/></h2></g:HTMLPanel>
@@ -113,27 +148,30 @@
 								<g:Label ui:field="shortDescription" addStyleNames="{style.description}"/>
 							</g:VerticalPanel>
 						</g:cell>
-						<g:VerticalPanel width="106px" height="106px" horizontalAlignment="center" verticalAlignment="middle" addStyleNames="{style.imageBox}">
-							<g:Image ui:field="image" addStyleNames="{style.image}"/>
-						</g:VerticalPanel>
+						<g:cell width="106px" height="106px">
+							<g:VerticalPanel width="106px" height="106px" horizontalAlignment="center" verticalAlignment="middle" addStyleNames="{style.imageBox}">
+								<g:Image ui:field="image" addStyleNames="{style.image}"/>
+							</g:VerticalPanel>
+						</g:cell>
 					</g:HorizontalPanel>
 					<n:InstallButton ui:field="installButton" addStyleNames="{style.buttonWidth} btn btn-large"/>
 				</g:VerticalPanel>
-			</g:SimplePanel>
-		</g:cell>
+			  </div>
+			</div>
+		</div>
 
-		<!-- Lower panel with screenshots and long description -->
-		<g:cell width="60%" height="100%">
-			<g:HTMLPanel height="100%" width="100%" addStyleNames="{style.relative}">
-			  <div class="{style.rightDiv}">
-				<g:VerticalPanel ui:field="bodyPanel" width="554px" addStyleNames="{style.text20} {style.internalRightDiv}">
-					<s:ImageSlider ui:field="imageSlider" addStyleNames="{style.longTextMargin}"/>
-					<g:HTMLPanel ui:field="longDescription" addStyleNames="{style.longTextMargin}"/>
+		<!-- Right panel with screenshots and long description -->
+		<div class="{style.backgroundRight}">
+			<div class="{style.internalRight1}">
+			  <div class="{style.internalRight2}">
+				<g:VerticalPanel ui:field="bodyPanel" addStyleNames="{style.text20} {style.rigthTable}">
+					<s:ImageSlider ui:field="imageSlider" addStyleNames="{style.longText}"/>
+					<g:HTMLPanel ui:field="longDescription" addStyleNames="{style.longText}"/>
 				</g:VerticalPanel>
 			  </div>
-			</g:HTMLPanel>
-		</g:cell>
-	</g:HorizontalPanel>
+			</div>
+		</div>
+	</g:HTMLPanel>
 
 
 </ui:UiBinder> 
