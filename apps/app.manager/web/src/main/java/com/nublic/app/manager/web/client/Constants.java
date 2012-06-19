@@ -17,4 +17,5 @@ public class Constants {
 	
 	public static String settingsAppName = "settings";
 	public static String welcomeAppName  = "welcome";
+	public static String marketAppName   = "market";
 }

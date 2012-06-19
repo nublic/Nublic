@@ -5,6 +5,8 @@ import java.io.FileReader
 import java.io.InputStreamReader
 import java.lang.Long
 import java.net.URLDecoder
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 import org.apache.commons.httpclient.HttpClient
 import org.apache.commons.httpclient.methods.GetMethod
 import org.scalatra._
@@ -21,7 +23,7 @@ class MarketServer extends ScalatraServlet with JsonSupport {
   implicit val formats = Serialization.formats(NoTypeHints)
 
   val PACKAGES_URL: String = "http://nublic.com/packages.json"
-  val MAX_UPDATE_DIFF: Long = 1 // 2 * 3600 * 1000 // 2 hours
+  val MAX_UPDATE_DIFF: Long = 2 * 3600 * 1000 // 2 hours
   val USE_LOCAL = true
   val LOCAL_PACKAGES_PATH = "/var/lib/nublic/packages.json"
 
@@ -199,7 +201,7 @@ class MarketServer extends ScalatraServlet with JsonSupport {
           lst.find(p => p.id == pkg_name) match {
             case None => halt(status = 404,
                               headers = Map("Content-Type" -> "application/json"),
-                              body = write(InstallStatus(InstallStatus.STATUS_NOT_EXIST, None)))
+                              body = write(InstallStatus(Package.STATUS_DOES_NOT_EXIST)))
             case Some(pkg) => action(pkg)
           }
       }
@@ -208,9 +210,13 @@ class MarketServer extends ScalatraServlet with JsonSupport {
 
   var packages_being_installed = scala.collection.mutable.HashSet[String]()
   var packages_being_removed = scala.collection.mutable.HashSet[String]()
+  var packages_with_error = scala.collection.mutable.HashSet[String]()
 
   def get_package_status(p: Package): String = {
-    if (packages_being_installed.contains(p.id)) {
+    if (packages_with_error.contains(p.id)) {
+      packages_with_error -= p.id
+      Package.STATUS_ERROR
+    } else if (packages_being_installed.contains(p.id)) {
       Package.STATUS_INSTALLING
     } else if (packages_being_removed.contains(p.id)) {
       Package.STATUS_REMOVING
@@ -236,27 +242,38 @@ class MarketServer extends ScalatraServlet with JsonSupport {
 
   getUser("/status/:package") { _ =>
     withGetPackage { pkg =>
-      write(get_package_status(pkg))
+      write(InstallStatus(get_package_status(pkg)))
     }
   }
 
-  def try_and_send_result(b: Boolean) = {
-    if (b) {
-      write(InstallStatus(InstallStatus.STATUS_OK, None))
-    } else {
-      write(InstallStatus(InstallStatus.STATUS_ERROR, None))
+  val command_pool: ExecutorService = Executors.newSingleThreadExecutor()
+  def try_apt_command(pkg: Package, f: Package => Boolean, hset: scala.collection.mutable.HashSet[String]) = {
+    hset += pkg.id
+    val r: Runnable = new Runnable() {
+      def run() = {
+        // Run the corresponding action and check for errors
+        try {
+          if (!f(pkg)) {
+            packages_with_error += pkg.id
+          }
+        } catch {
+          case _ => packages_with_error += pkg.id
+        }
+        hset -= pkg.id
+      }
     }
+    command_pool.execute(r)
   }
 
   putUser("/packages") { _ =>
     withPostPackage { pkg =>
       if (Singleton.getApt().is_package_installed(pkg.deb)) {
-        write(InstallStatus(InstallStatus.STATUS_ALREADY, None))
+        write(InstallStatus(Package.STATUS_INSTALLED))
       } else {
-        packages_being_installed += pkg.id
-        val result = Singleton.getApt().install_package(pkg.deb)
-        packages_being_installed -= pkg.id
-        try_and_send_result(result)
+        try_apt_command(pkg, 
+                        (p: Package) => Singleton.getApt().install_package(p.deb),
+                        packages_being_installed)
+        write(InstallStatus(Package.STATUS_INSTALLING))
       }
     }
   }
@@ -264,18 +281,18 @@ class MarketServer extends ScalatraServlet with JsonSupport {
   deleteUser("/packages") { _ =>
     withPostPackage { pkg =>
       if (!Singleton.getApt().is_package_installed(pkg.deb)) {
-        write(InstallStatus(InstallStatus.STATUS_NOT, None))
+        write(InstallStatus(Package.STATUS_NOT_INSTALLED))
       } else {
-        packages_being_removed += pkg.id
-        val result = Singleton.getApt().remove_package(pkg.deb)
-        packages_being_removed -= pkg.id
-        try_and_send_result(result)
+        try_apt_command(pkg, 
+                        (p: Package) => Singleton.getApt().remove_package(p.deb),
+                        packages_being_installed)
+        write(InstallStatus(Package.STATUS_REMOVING))
       }
     }
   }
 
   postUser("/upgrade") { _ =>
-    try_and_send_result(Singleton.getApt().upgrade_system())
+    /* Do nothing by now */
   }
   
   notFound {  // Executed when no other route succeeds

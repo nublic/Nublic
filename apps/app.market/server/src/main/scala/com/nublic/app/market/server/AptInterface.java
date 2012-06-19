@@ -7,8 +7,6 @@ package com.nublic.app.market.server;
 
 import org.freedesktop.dbus.DBusInterface;
 import org.freedesktop.dbus.DBusInterfaceName;
-import org.freedesktop.dbus.DBusSignal;
-import org.freedesktop.dbus.exceptions.DBusException;
 
 @DBusInterfaceName("com.nublic.apt")
 interface AptInterface extends DBusInterface {

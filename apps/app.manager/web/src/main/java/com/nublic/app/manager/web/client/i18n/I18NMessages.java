@@ -8,6 +8,7 @@ public interface I18NMessages extends Messages {
 	String titleWithoutApp();
 	String titleWithApp(String app);
 	String settings();
+	String market();
 	
 	// Errors
 	String errorLoadingAppList();
