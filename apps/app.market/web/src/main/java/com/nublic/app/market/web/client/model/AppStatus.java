@@ -2,11 +2,16 @@ package com.nublic.app.market.web.client.model;
 
 import com.nublic.app.market.web.client.Constants;
 
-//<package_status> ::= "installed"
+//<package_status> ::= "does-not-exist"
+//| "installed"
 //| "installing"
+//| "removing"
 //| "not-installed"
 //| "error" (was tried to install and did not success)
 public enum AppStatus {
+	DOESNT_EXIST("does-not-exist",
+			Constants.I18N.doesntExist(),
+			Constants.ERROR_STYLE),
 	INSTALLED("installed",
 			Constants.I18N.installed(),
 			Constants.INSTALLED_STYLE,
@@ -14,6 +19,9 @@ public enum AppStatus {
 			Constants.INSTALLED_HOVER_STYLE),
 	INSTALLING("installing",
 			Constants.I18N.installing(),
+			Constants.INSTALLING_STYLE),
+	REMOVING("removing",
+			Constants.I18N.removing(),
 			Constants.INSTALLING_STYLE),
 	NOT_INSTALLED("not-installed",
 			Constants.I18N.notInstalled(),
@@ -74,7 +82,7 @@ public enum AppStatus {
 				return s;
 			}
 		}
-		return null;
+		return ERROR;
 	}
 	
 }

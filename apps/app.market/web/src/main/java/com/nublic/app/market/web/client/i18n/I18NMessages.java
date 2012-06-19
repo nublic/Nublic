@@ -9,9 +9,11 @@ public interface I18NMessages extends Messages {
 	String goBack();
 
 	// Buttons
+	String doesntExist();
 	String installed();
 	String installedHover();
 	String installing();
+	String removing();
 	String notInstalled();
 	String notInstalledHover();
 	String error();
