@@ -1,8 +1,10 @@
 package com.nublic.app.market.web.client.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.user.client.Timer;
@@ -18,7 +20,7 @@ import com.nublic.util.messages.SequenceHelper;
 
 public class DataModel {
 	Map<String, AppInfo> appMap = null;
-	List<AppInfo> pendingAppsList = new ArrayList<AppInfo>();
+	Set<AppInfo> pendingAppsSet = new HashSet<AppInfo>();
 	Timer updateTimer = new StatusTimer();
 	
 	public DataModel() {
@@ -41,15 +43,13 @@ public class DataModel {
 
 	public void changeAppStatus(String id, AppStatus status) {
 		AppInfo appToChange = appMap.get(id);
-		if (appToChange.getStatus() == AppStatus.INSTALLING && status != AppStatus.INSTALLING) {
-			// Was in the pending list and it should be no longer there
-			pendingAppsList.remove(appToChange);
-		} else if (appToChange.getStatus() != AppStatus.INSTALLING && status == AppStatus.INSTALLING) {
-			// This app has turn into INSTALLING state, should add it to pending list
-			pendingAppsList.add(appToChange);
+		if (status == AppStatus.INSTALLING || status == AppStatus.REMOVING) {
+			pendingAppsSet.add(appToChange);
+		} else {
+			pendingAppsSet.remove(appToChange);
 		}
 		appToChange.setStatus(status);
-		setTimerAccordingToPendingList();
+		setTimerAccordingToPendingSet();
 	}
 	
 	public void getAppFromId(String appId, AppReceivedHandler arh) {
@@ -66,7 +66,7 @@ public class DataModel {
 	private class StatusTimer extends Timer {
 		@Override
 		public void run() {
-			List<AppInfo> tempPendingList = new ArrayList<AppInfo>(pendingAppsList);
+			List<AppInfo> tempPendingList = new ArrayList<AppInfo>(pendingAppsSet);
 			// pendingAppsList can be modified inside the loop
 			for (AppInfo app : tempPendingList) {
 				StatusMessage.sendStatusMessage(app.getId(), new StatusChangeActionHandler(app));
@@ -89,8 +89,8 @@ public class DataModel {
 		}
 	}
 	
-	private void setTimerAccordingToPendingList() {
-		if (pendingAppsList.isEmpty()) {
+	private void setTimerAccordingToPendingSet() {
+		if (pendingAppsSet.isEmpty()) {
 			updateTimer.cancel();
 		} else {
 			updateTimer.scheduleRepeating(Constants.POLLING_TIME);
