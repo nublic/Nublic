@@ -6,14 +6,22 @@
 		.scroll {
 			overflow-y: auto;
 		}
-		.toppadding {
-			padding-top: 10px;
+		.mainPanelBackground {
+			background-color: #f2f6f8;
+			border-right: solid 1px #CCC;
+			border-left: solid 1px #CCC;
+			height: 100%;
+		}
+		.internalMain {
+			margin: 30px;
 		}
 	</ui:style>
 	<g:DeckPanel ui:field="deckPanel" height="100%" width="100%">
-		<g:SimplePanel addStyleNames="{style.scroll} {style.toppadding}">
-			<n:AppPanel ui:field="appPanel" addStyleNames="container"/>
-		</g:SimplePanel>
+		<g:HTMLPanel addStyleNames="{style.scroll}" height="100%">
+			<div class="container {style.mainPanelBackground}">
+				<n:AppPanel ui:field="appPanel" addStyleNames="{style.internalMain}"/>
+			</div>
+		</g:HTMLPanel>
 		<n:OpenPanel ui:field="openPanel"/>
 	</g:DeckPanel>
 </ui:UiBinder> 
