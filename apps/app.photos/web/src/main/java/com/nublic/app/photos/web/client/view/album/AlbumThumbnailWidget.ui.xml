@@ -20,11 +20,6 @@
 			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
 			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
 		}
-		/*.shadowed {
-			-webkit-box-shadow: 0 0 10px rgba(100,100,100,.5);  
-  			-moz-box-shadow: 0 0 10px rgba(100,100,100,.5);  
-  			box-shadow: 0 0 10px rgba(100,100,100,.5);  
-		}*/ /* nice exterior shadow */
 		.shadowed {
 	    	opacity: 0.5;
 		}
@@ -66,13 +61,13 @@
 	</ui:style>
 
 	<g:VerticalPanel width="116px" height="131px" addStyleNames="{style.inLine} {style.panelWithImage}" verticalAlignment="MIDDLE">
-			<g:HTMLPanel width="116px" height="116px" addStyleNames="{style.centerImage}">
-			    <n:AnchorPanel ui:field="imagePanel" width="116px" height="116px" addStyleNames="{style.centerImage}">
-			        <g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" width="116px" height="116px">
-						<g:Image ui:field="image" addStyleNames="{style.maxImageDimensions} {style.border}"/>
-			        </g:VerticalPanel>
-			    </n:AnchorPanel>
-			</g:HTMLPanel>
+		<g:HTMLPanel width="116px" height="116px" addStyleNames="{style.centerImage}">
+			<n:AnchorPanel ui:field="imagePanel" width="116px" height="116px" addStyleNames="{style.centerImage}">
+				<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" width="116px" height="116px">
+					<g:Image ui:field="image" addStyleNames="{style.maxImageDimensions} {style.border}"/>
+			    </g:VerticalPanel>
+			</n:AnchorPanel>
+		</g:HTMLPanel>
 		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="116px" height="15px">
             <g:Hyperlink ui:field="fileName" styleName="{style.ellipcenter}"/>
 		</g:VerticalPanel>

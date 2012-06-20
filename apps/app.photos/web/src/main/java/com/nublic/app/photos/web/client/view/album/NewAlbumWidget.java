@@ -17,7 +17,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.controller.PhotosController;
@@ -32,8 +32,10 @@ public class NewAlbumWidget extends Composite implements HasMouseDownHandlers, C
 	interface NewAlbumWidgetUiBinder extends UiBinder<Widget, NewAlbumWidget> {
 	}
 
-	@UiField PushButton newButton;
+//	@UiField PushButton newButton;
 	@UiField Anchor fileName;
+	@UiField Image image;
+	
 	
 	PhotosController controller;
 	
@@ -43,7 +45,7 @@ public class NewAlbumWidget extends Composite implements HasMouseDownHandlers, C
 		
 		this.controller = controller;
 		
-		newButton.addClickHandler(this);
+		image.addClickHandler(this);
 		fileName.addClickHandler(this);
 	}
 

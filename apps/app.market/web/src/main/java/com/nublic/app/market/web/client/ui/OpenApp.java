@@ -44,7 +44,7 @@ public class OpenApp extends Composite {
 		String shortDescriptionText();
 		String description();
 		String buttonWidth();
-		String longTextMargin();
+		String longText();
 	}
 	
 	public OpenApp(AppInfo info) {
@@ -70,7 +70,7 @@ public class OpenApp extends Composite {
 		}
 		for (URLInfo url : info.getLinkList()) {
 			Label l = new Label(url.getText() + ":");
-			l.addStyleName(style.space()); l.addStyleName(style.longTextMargin());
+			l.addStyleName(style.space()); l.addStyleName(style.longText());
 			Anchor a = new Anchor(url.getUrl(), url.getUrl());
 			a.setTarget("_blank");
 			HorizontalPanel panel = new HorizontalPanel();
