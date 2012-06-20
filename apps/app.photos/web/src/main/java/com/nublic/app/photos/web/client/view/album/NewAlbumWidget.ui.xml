@@ -5,7 +5,7 @@
 	<ui:style>
 		.inLine {
 			display: inline-table;
-			margin: 15px;
+			margin: 5px;
 		}
 		.maxheight {
 			max-height: 96px;
@@ -20,11 +20,6 @@
 			text-overflow: ellipsis;					/* IE, WebKit (Safari, Chrome), Firefox 7, Opera 11 */
 			-moz-binding: url('ellipsis.xml#ellipsis'); /* Firfox 6 and below (from http://mattsnider.com/css/css-string-truncation-with-ellipsis/) */   
 		}
-		/*.shadowed {
-			-webkit-box-shadow: 0 0 10px rgba(100,100,100,.5);  
-  			-moz-box-shadow: 0 0 10px rgba(100,100,100,.5);  
-  			box-shadow: 0 0 10px rgba(100,100,100,.5);  
-		}*/ /* nice exterior shadow */
 		.shadowed {
 	    	opacity: 0.5;
 		}
@@ -53,16 +48,14 @@
 	</ui:style>
 	<ui:with type="com.nublic.app.photos.web.client.Images" field="images"/>
 	<ui:with type="com.nublic.app.photos.web.client.i18n.I18NMessages" field="msg"/>
-
-	<g:VerticalPanel width="96px" height="116px" styleName="{style.inLine}" verticalAlignment="MIDDLE">
-		<g:AbsolutePanel width="96px" height="96px" addStyleNames="{style.centerImage}">
-			<g:at left='0' top='0'>
-			    <g:PushButton ui:field="newButton" width="96px" height="96px" addStyleNames="{style.nobackground}" >
-			       <g:upFace image="{images.newAlbum}"></g:upFace>
-			    </g:PushButton>
-			</g:at>
-		</g:AbsolutePanel>
-		<g:VerticalPanel verticalAlignment="bottom" horizontalAlignment="center" width="96px" height="20px">
+	
+	<g:VerticalPanel width="116px" height="131px" addStyleNames="{style.inLine}" verticalAlignment="MIDDLE">
+		<g:HTMLPanel width="116px" height="116px" addStyleNames="{style.centerImage}">
+			<g:VerticalPanel verticalAlignment="middle" horizontalAlignment="center" width="116px" height="116px">
+				<g:Image ui:field="image" addStyleNames="{style.maxImageDimensions} {style.addAlbum}" resource="{images.newAlbum}"/>
+			</g:VerticalPanel>
+		</g:HTMLPanel>
+		<g:VerticalPanel ui:field="textPanel" verticalAlignment="bottom" horizontalAlignment="center" width="116px" height="15px">
             <g:Anchor ui:field="fileName" addStyleNames="{style.addAlbum}"><ui:text from="{msg.addNewAlbum}"/></g:Anchor>
 		</g:VerticalPanel>
 	</g:VerticalPanel>
