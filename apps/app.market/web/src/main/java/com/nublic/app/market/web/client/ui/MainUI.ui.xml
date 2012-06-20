@@ -3,13 +3,23 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.app.market.web.client.ui">
 	<ui:style>
+		.relative {
+			position: relative;
+		}
 		.scroll {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
 			overflow-y: auto;
 		}
 		.mainPanelBackground {
 			background-color: #f2f6f8;
 			border-right: solid 1px #CCC;
 			border-left: solid 1px #CCC;
+			position: relative;
+			top: 0;
 			height: 100%;
 		}
 		.internalMain {
@@ -17,9 +27,12 @@
 		}
 	</ui:style>
 	<g:DeckPanel ui:field="deckPanel" height="100%" width="100%">
-		<g:HTMLPanel addStyleNames="{style.scroll}" height="100%">
-			<div class="container {style.mainPanelBackground}">
-				<n:AppPanel ui:field="appPanel" addStyleNames="{style.internalMain}"/>
+		<g:HTMLPanel addStyleNames="{style.relative}" height="100%" width="100%">
+			<div class="container {style.mainPanelBackground}"/>
+			<div class="{style.scroll}">
+				<div class="container">
+					<n:AppPanel ui:field="appPanel" addStyleNames="{style.internalMain}"/>
+				</div>
 			</div>
 		</g:HTMLPanel>
 		<n:OpenPanel ui:field="openPanel"/>
