@@ -18,7 +18,7 @@ export DEBUILD="debuild -d -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
 export MAVEN_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=1024m"
 
 # Config options
-export SHOULD_CLEAN_MAVEN=0 # 1 for running 'maven clean'
+export SHOULD_CLEAN_MAVEN=1 # 1 for running 'maven clean'
 
 install_in_maven_repo() {
     ${MAVEN} install:install-file -Dfile=$1 -DgroupId=$2 \
@@ -42,10 +42,23 @@ initialize() {
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/grizzly-http-client/grizzly-http-client-1.0-2.jar" org.glassfish.grizzly grizzly-http-client 1.0-2
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
+}
+
+copy_and_touch() {
+    echo
+    echo "COPYING DEBS FROM " $1
+    sleep 1
+    cd "$1"
+    for f in *.deb
+    do
+        cp $f "${TARGET_DIR}"
+        touch "${TARGET_DIR}/$f"
+    done
+    cd "${INITIAL_DIR}"
 }
 
 package_and_install() {
@@ -146,9 +159,10 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
-cp 3rd-party-libs/python-pyinotify/*.deb ${TARGET_DIR}
-cp 3rd-party-libs/python-fstab/*.deb ${TARGET_DIR}
-cp 3rd-party-libs/python-sqlalchemy/*.deb ${TARGET_DIR}
+copy_and_touch 3rd-party-libs/aria2
+copy_and_touch 3rd-party-libs/python-pyinotify
+copy_and_touch 3rd-party-libs/python-fstab
+copy_and_touch 3rd-party-libs/python-sqlalchemy
 build_deb_package 3rd-party-libs/guava
 # bst-player fork
 package_and_install_dev_mode player
@@ -168,8 +182,7 @@ build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 # Utilities
 package_and_install apps/util/gwt
-build_deb_package apps/util/ws-json
-install_in_maven_repo apps/util/ws-json/target/*jar-with-dependencies.jar com.nublic websockets-json 0.0.1-SNAPSHOT
+package_and_install apps/util/ws-json
 # Manager App
 build_deb_package apps/app.manager/server
 build_deb_package apps/app.manager/web

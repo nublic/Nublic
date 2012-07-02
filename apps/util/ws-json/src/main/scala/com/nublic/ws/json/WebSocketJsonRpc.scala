@@ -2,7 +2,7 @@ package com.nublic.ws.json
 
 import com.ning.http.client.AsyncHttpClient
 import com.ning.http.client.AsyncHttpClientConfig
-import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider
+import com.ning.http.client.providers.netty.NettyAsyncHttpProvider
 import com.ning.http.client.websocket.WebSocket
 import com.ning.http.client.websocket.WebSocketTextListener
 import com.ning.http.client.websocket.WebSocketUpgradeHandler
@@ -42,12 +42,14 @@ abstract class WebSocketJsonRpc {
   private var _connected: Boolean = false
   // private val client = new WebSocketClient(new EventHandler(this))
 
+  def connected: Boolean = _connected
+
   // Connecting
   // ==========
 
   def connect(url: String): Unit = {
     val config = new AsyncHttpClientConfig.Builder().build();
-    val c = new AsyncHttpClient(new GrizzlyAsyncHttpProvider(config), config);
+    val c = new AsyncHttpClient(new NettyAsyncHttpProvider(config), config);
     val listener = new Listener(this)
     val handler = (new WebSocketUpgradeHandler.Builder()).addWebSocketListener(listener).build()
     _client = c.prepareGet(url).execute(handler).get()
@@ -124,11 +126,14 @@ abstract class WebSocketJsonRpc {
       _callbacksLock.writeLock().unlock()
 
       // Send the JSON-RPC message
-      // Console.err.println("Sending message with id " + id)
+      Console.err.println("Sending message with id " + id)
+      Console.err.println("Sending message with method " + method)
+      Console.err.println("Sending message with params " + params)
+      Console.err.println("Sending message with null client " + (_client == null))
       _client.sendTextMessage(_createMessage(id, method, params))
   
       // Now wait to its conclusion
-      // Console.err.println("Waiting for message with id " + id)
+      Console.err.println("Waiting for message with id " + id)
       val result = waiter.take()
       // and then remove it from the map
       _callbacksLock.writeLock().lock()
@@ -147,7 +152,7 @@ abstract class WebSocketJsonRpc {
       _callbacksLock.writeLock().unlock()
 
       // Send the JSON-RPC message
-      // Console.err.println("Sending async message with id " + id)
+      Console.err.println("Sending async message with id " + id)
       _client.sendTextMessage(_createMessage(id, method, params))
     }
   }

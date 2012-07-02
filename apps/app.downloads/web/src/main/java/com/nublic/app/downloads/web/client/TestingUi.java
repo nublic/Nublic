@@ -3,8 +3,8 @@ package com.nublic.app.downloads.web.client;
 import java.io.Serializable;
 import java.util.List;
 
-import org.atmosphere.gwt.client.AtmosphereClient;
-import org.atmosphere.gwt.client.AtmosphereListener;
+import net.zschech.gwt.comet.client.CometClient;
+import net.zschech.gwt.comet.client.CometListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-public class TestingUi extends Composite implements AtmosphereListener {
+public class TestingUi extends Composite implements CometListener {
 
 	private static TestingUiUiBinder uiBinder = GWT.create(TestingUiUiBinder.class);
 
@@ -27,12 +27,12 @@ public class TestingUi extends Composite implements AtmosphereListener {
 	@UiField TextBox request;
 	@UiField TextArea responses;
 	
-	AtmosphereClient client;
+	CometClient client;
 
 	public TestingUi() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-        client = new AtmosphereClient(GWT.getModuleBaseURL() + "server", this);
+        client = new CometClient(GWT.getHostPageBaseURL() + "server/poll", this);
         client.start();
         
         request.addKeyUpHandler(new KeyUpHandler() {
@@ -41,7 +41,7 @@ public class TestingUi extends Composite implements AtmosphereListener {
 			public void onKeyUp(KeyUpEvent event) {
 				if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
 					event.preventDefault();
-					client.post(request.getText());
+					// TODO: Send event
 					request.setText("");
 				}
 			}
@@ -59,13 +59,8 @@ public class TestingUi extends Composite implements AtmosphereListener {
 	}
 
 	@Override
-	public void onConnected(int heartbeat, int connectionID) {
-		addMessage("Connected with id " + connectionID);
-	}
-
-	@Override
-	public void onBeforeDisconnected() {
-		addMessage("Before disconnected");
+	public void onConnected(int heartbeat) {
+		addMessage("Connected");
 	}
 
 	@Override
@@ -75,7 +70,7 @@ public class TestingUi extends Composite implements AtmosphereListener {
 
 	@Override
 	public void onError(Throwable exception, boolean connected) {
-		addMessage("Error -> " + exception.getMessage());
+		addMessage("Error -> " + exception.toString());
 	}
 
 	@Override
@@ -89,14 +84,9 @@ public class TestingUi extends Composite implements AtmosphereListener {
 	}
 
 	@Override
-	public void onAfterRefresh() {
-		addMessage("After resfresh");
-	}
-
-	@Override
 	public void onMessage(List<? extends Serializable> messages) {
-		for (Object m : messages) {
-			addMessage("Message -> " + m.toString());
+		for (Serializable s : messages) {
+			addMessage("Message -> " + s.toString());
 		}
 	}
 

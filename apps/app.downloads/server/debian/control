@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-downloads-server
 Architecture: all
-Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, aria2, nublic-resource, libnublic-file-watcher-scala, libnublic-files-and-users-java, libnublic-resource-java, linublic-ws-json-scala
+Depends: ${misc:Depends}, tomcat7, scala-library, libdbus-java, aria2, nublic-resource, libnublic-file-watcher-scala, libnublic-files-and-users-java, libnublic-resource-java
 Description: Nublic Downloads app - server
  Downloads app for the Nublic platform - server part

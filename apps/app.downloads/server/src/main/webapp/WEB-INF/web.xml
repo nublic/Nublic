@@ -6,20 +6,25 @@
     version="3.0">
 	
   <servlet>
-    <servlet-name>AtmosphereServlet</servlet-name>
-    <servlet-class>org.atmosphere.cpr.AtmosphereServlet</servlet-class>
+    <servlet-name>ScalatraServlet</servlet-name>
+    <servlet-class>com.nublic.app.downloads.server.CommandDownloadsServer</servlet-class>
     <load-on-startup>10</load-on-startup>
-    <async-supported>true</async-supported>
-
-    <init-param>
-      <param-name>org.atmosphere.cpr.AtmosphereHandler</param-name>
-      <param-value>com.nublic.app.downloads.server.AtmosphereServer</param-value>
-    </init-param>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>AtmosphereServlet</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <servlet-name>ScalatraServlet</servlet-name>
+    <url-pattern>/command/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>CometServlet</servlet-name>
+    <servlet-class>com.nublic.app.downloads.server.CometDownloadsServer</servlet-class>
+    <load-on-startup>10</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>CometServlet</servlet-name>
+    <url-pattern>/poll/*</url-pattern>
   </servlet-mapping>
 
 </web-app>

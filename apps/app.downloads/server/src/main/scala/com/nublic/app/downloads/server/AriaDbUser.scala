@@ -8,12 +8,25 @@ import java.io.FileWriter
 import java.io.PrintWriter
 import java.util.Timer
 import java.util.TimerTask
+import net.zschech.gwt.comet.server.CometSession
 import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.Session
 import org.squeryl.SessionFactory
 import org.squeryl.adapters.PostgreSqlAdapter
 import scala.collection.mutable.HashMap
 import scala.collection.mutable.MultiMap
+
+object AriaDbUser {
+  var _instance: Option[AriaDbUser] = None
+  def get: AriaDbUser = _instance match {
+    case None => {
+      val v = new AriaDbUser()
+      _instance = Some(v)
+      v
+    }
+    case Some(d) => d
+  }
+}
 
 class AriaDbUser extends AriaEventHandler {
   
@@ -22,51 +35,62 @@ class AriaDbUser extends AriaEventHandler {
   private val conn: Aria = new Aria()
   conn.addEventHandler(this)
   conn.connect("ws://localhost:6800/jsonrpc")
-
   // Keep connection alive
   val timer = new Timer()
   class ShootTask(a: Aria) extends TimerTask {
     def run(): Unit = {
       if (a.connected) {
+        Console.print("sending heartbeat\n")
         a.getVersion.shoot()
       }
     }
   }
   timer.schedule(new ShootTask(conn), 5000, 5000)
 
+  def connected = conn.connected
+
   // Information about downloads
   var aria_id_to_db_id = Map[String, Long]()  // aria_id -> db_id
   val downloads_for_uid = new HashMap[Long, scala.collection.mutable.Set[Long]] with MultiMap[Long, Long]  // uid -> { db_id }
 
+  // Information about connected users
+  var uids_to_connections = new HashMap[Long, scala.collection.mutable.Set[CometSession]] with MultiMap[Long, CometSession] // uid -> { conn }
+
+  /* ARIA HANDLING */
   def onConnect(): Unit = {
-    // Initialize information
-    // Get list of files in Aria
-    val active = conn.tellActive() match {
-      case Result(a) => a
-      case _         => List()
-    }
-    val waiting = conn.tellWaiting(0, 1000) match {
-      case Result(a) => a
-      case _         => List()
-    }
-    val stopped = conn.tellStopped(0, 1000) match {
-      case Result(a) => a
-      case _         => List()
-    }
-    // Save the information in the maps
-    for (download_status <- active ++ waiting ++ stopped) {
-      val download_gid = download_status.gid
-      conn.getUris(download_gid.get) match {
-        case Result(uris) => Database.downloadBySource(uris(0).uri) match {
-          case Some(down_db) => {
-            aria_id_to_db_id += download_gid.get -> down_db.id
-            downloads_for_uid.addBinding(down_db.uid, down_db.id)
-          }
-          case None          => { /* Do nothing */ }
+    def task = new TimerTask() {
+      def run(): Unit = {
+        // Initialize information
+        // Get list of files in Aria
+        val active = conn.tellActive() match {
+          case Result(a) => a
+          case _         => List()
         }
-        case _ => { /* Can't do nothing */ }
+        val waiting = conn.tellWaiting(0, 1000) match {
+          case Result(a) => a
+          case _         => List()
+        }
+        val stopped = conn.tellStopped(0, 1000) match {
+          case Result(a) => a
+          case _         => List()
+        }
+        // Save the information in the maps
+        for (download_status <- active ++ waiting ++ stopped) {
+          val download_gid = download_status.gid
+          conn.getUris(download_gid.get) match {
+            case Result(uris) => Database.downloadBySource(uris(0).uri) match {
+              case Some(down_db) => {
+                aria_id_to_db_id += download_gid.get -> down_db.id
+                downloads_for_uid.addBinding(down_db.uid, down_db.id)
+              }
+              case None          => { /* Do nothing */ }
+            }
+            case _ => { /* Can't do nothing */ }
+          }
+        }
       }
     }
+    (new Timer()).schedule(task, 2000)
   }
 
   def onDisconnect(): Unit = {
@@ -81,8 +105,20 @@ class AriaDbUser extends AriaEventHandler {
 
   }
 
-  def getGlobalStats = conn.getGlobalStat()
+  /* COMET SESSION HANDLING */
+  def addUserConnection(session: CometSession) = {
 
+  }
+
+  def removeUserConnection(session: CometSession) = {
+
+  }
+
+  /* ARIA COMMANDS */
+  def getGlobalStats = conn.getGlobalStat()
+  def getVersion = conn.getVersion()
+
+  /* DATABASE HANDLING */
   def loadDb(): Unit = {
     try {
       // Get information from nublic-resource

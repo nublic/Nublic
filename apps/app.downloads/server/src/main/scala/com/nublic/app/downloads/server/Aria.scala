@@ -23,20 +23,15 @@ class Aria extends WebSocketJsonRpc {
     handlers ::= h
   }
 
-  var connected = false
-
   def onConnect(): Unit = {
-    connected = true
     handlers.map(_.onConnect())
   }
 
   def onDisconnect(): Unit = {
-    connected = false
     handlers.map(_.onDisconnect())
   }
 
   def onStop(): Unit = {
-    connected = false
     handlers.map(_.onStop())
   }
 
