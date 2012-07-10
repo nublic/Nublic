@@ -13,7 +13,7 @@ abstract class AriaEventHandler {
   def onConnect(): Unit
   def onDisconnect(): Unit
   def onStop(): Unit
-  def onDownloadStart(gid: Long): Unit
+  def onDownloadStart(gid: String): Unit
 }
 
 class Aria extends WebSocketJsonRpc {
@@ -36,7 +36,7 @@ class Aria extends WebSocketJsonRpc {
   }
 
   def onError(e: Throwable): Unit = {
-    Console.err.println(e.getMessage())
+    Console.err.println("Error: " + e.getMessage())
   }
 
   val addUri = new Method1[Array[String], String]("aria2.addUri", this)
@@ -88,13 +88,13 @@ class Aria extends WebSocketJsonRpc {
   val shutdown = new Method0[String]("aria2.shutdown", this)
   val forceShutdown = new Method0[String]("aria2.forcerShutdown", this)
 
-  def notificationTypes = Map("onDowloadStart" -> Array(manifest[Long]))
+  def notificationTypes = Map("onDowloadStart" -> Array(manifest[String]))
 
   def unknownNotification(method: String, params: Array[JValue]): Unit = {
     Console.err.println("Received unknown notification " + method)
   }
 
-  def onDownloadStart(gid: Long) = {
+  def onDownloadStart(gid: String) = {
     handlers.map(_.onDownloadStart(gid))
   }
 }

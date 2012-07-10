@@ -6,7 +6,7 @@ import org.squeryl.PrimitiveTypeMode._
 import org.squeryl.KeyedEntity
 import org.squeryl.Table
 
-class Download(val id: Long, val source: String, var target: String, val uid: Long) extends KeyedEntity[Long] {
+class Download(var id: Long, var source: String, var target: String, var uid: Int) extends KeyedEntity[Long] {
   def this() = this(0, "", "", 0)
 }
 
