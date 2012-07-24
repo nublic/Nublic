@@ -11,6 +11,9 @@
     ProxyErrorOverride Off
     ProxyPreserveHost On
     # Add custom error webpages
+    
+    WSGIPassAuthorization On
+    WSGIDaemonProcess nublic user=tomcat7 group=tomcat7 threads=10
 
     # In tomcat .conf files
     <Location  /app-tomcat>
