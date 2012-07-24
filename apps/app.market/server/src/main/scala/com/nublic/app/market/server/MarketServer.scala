@@ -285,7 +285,7 @@ class MarketServer extends ScalatraServlet with JsonSupport {
       } else {
         try_apt_command(pkg, 
                         (p: Package) => Singleton.getApt().remove_package(p.deb),
-                        packages_being_installed)
+                        packages_being_removed)
         write(InstallStatus(Package.STATUS_REMOVING))
       }
     }

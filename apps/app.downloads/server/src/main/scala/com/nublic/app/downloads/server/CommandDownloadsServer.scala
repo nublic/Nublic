@@ -1,6 +1,8 @@
 package com.nublic.app.downloads.server
 
-/*import com.nublic.filesAndUsers.java.User
+import com.nublic.filesAndUsers.java.User
+import com.nublic.ws.json.Response
+import com.nublic.ws.json.Result
 import java.io.File
 import java.lang.Long
 import java.net.URI
@@ -18,7 +20,7 @@ import org.scalatra.util.MapWithIndifferentAccess
 import org.scalatra.util.MultiMapHeadView
 import scala.collection.JavaConversions
 
-class DownloadsServer with JsonSupport {
+class CommandDownloadsServer extends ScalatraServlet with JsonSupport {
   // JsonSupport adds the ability to return JSON objects
   
   val NUBLIC_DATA_ROOT = "/var/nublic/data/"
@@ -113,28 +115,90 @@ class DownloadsServer with JsonSupport {
     withUser(action)
   }
 
-  val aria = new Aria()
-  aria.connect("ws://localhost:6800/jsonrpc")
-
-  val timer = new Timer()
-  class ShootTask(a: Aria) extends TimerTask {
-    def run(): Unit = {
-      if (a.connected) {
-        a.getVersion.shoot()
+  def getAria(routeMatchers: org.scalatra.RouteMatcher)(action: (User, AriaDbUser) => Any) = getUser(routeMatchers) {
+    user => {
+      if (AriaDbUser.get.connected) {
+        action(user, AriaDbUser.get)
+      } else {
+        write("not-connected")
       }
     }
   }
-  timer.schedule(new ShootTask(aria), 5000, 5000)
 
-  get("/aria-version") {
-    if (aria.connected) {
-      write(aria.getVersion())
-    } else {
-      write("not-connected")
+  def postAria(routeMatchers: org.scalatra.RouteMatcher)(action: (User, AriaDbUser) => Any) = postUser(routeMatchers) {
+    user => {
+      if (AriaDbUser.get.connected) {
+        action(user, AriaDbUser.get)
+      } else {
+        write("not-connected")
+      }
     }
   }
+
+  def postAriaId(routeMatchers: org.scalatra.RouteMatcher)(action: (User, AriaDbUser, Long) => Any) = postAria(routeMatchers) {
+    (user, aria) => {
+      val downloadId = Long.parseLong(params("id"))
+      if (aria.isOf(user, downloadId)) {
+        action(user, aria, downloadId)
+      } else {
+        halt(404)
+      }
+    }
+  }
+
+  /* DOWNLOADS */
+
+  postAria("/add") { (user, aria) => {
+    if (params("source") != null && params("target") != null) {
+      aria.addDownload(user, params("source"), params("target")) match {
+        case None    => halt(500)
+        case Some(s) => s
+      }
+    } else {
+      halt(500)
+    }
+  } }
+
+  postAriaId("/pause") { (user, aria, dId) => {
+
+  } }
+
+  postAriaId("/unpause") { (user, aria, dId) => {
+
+  } }
+
+  postAriaId("/stop") { (user, aria, dId) => {
+
+  } }
+  
+  postAriaId("/remove") { (user, aria, dId) => {
+
+  } }
+
+  postAriaId("/change-target") { (user, aria, dId) => {
+
+  } }
+
+  getAria("/ask-properties") { (user, aria) => {
+
+  } }
+
+  /* OPTIONS */
+
+  getAria("/global-options") { (user, aria) => {
+
+  } }
+
+  postAria("/global-options") { (user, aria) => {
+
+  } }
+
+  getAria("/aria-version") { (user, aria) => aria.getVersion match {
+    case Result(r) => write(r)
+    case _         => halt(500)
+  } }
 
   notFound {  // Executed when no other route succeeds
     JNull
   }
-}*/
+}

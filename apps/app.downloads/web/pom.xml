@@ -67,9 +67,9 @@
 			<version>11.0.2</version>
 		</dependency>
 		<dependency>
-			<groupId>org.atmosphere</groupId>
-			<artifactId>atmosphere-gwt-client</artifactId>
-			<version>0.9.4</version>
+			<groupId>gwt-comet</groupId>
+			<artifactId>gwt-comet</artifactId>
+			<version>1.2.3</version>
 		</dependency>
 	</dependencies>
 

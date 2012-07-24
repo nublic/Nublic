@@ -5,11 +5,37 @@
 		
 	</ui:style>
 	<g:DockLayoutPanel>
-	   <g:north size="60">
-	       <g:TextBox ui:field="request" height="100%" width="100%"  />
-	   </g:north>
-	   <g:center>
-	       <g:TextArea readOnly="true" ui:field="responses" height="100%" width="100%" />
-	   </g:center>
+	  <g:north size="160">
+	   <g:HTMLPanel width="100%" height="120px">
+	     <table width="100%">
+	       <tr>
+	         <td>id</td>
+	         <td width="100%"><g:TextBox ui:field="idText" width="100%" /></td>
+	       </tr>
+	       <tr>
+             <td>source</td>
+             <td><g:TextBox ui:field="sourceText" width="100%" /></td>
+           </tr>
+           <tr>
+             <td>target</td>
+             <td><g:TextBox ui:field="targetText" width="100%" /></td>
+           </tr>
+	     </table>
+	     <table width="100%" height="30px">
+	       <tr>
+	         <td>
+	           <g:PushButton ui:field="addButton" width="15%">add</g:PushButton>
+	           <g:PushButton ui:field="pauseButton" width="15%">pause</g:PushButton>
+	           <g:PushButton ui:field="unpauseButton" width="15%">unpause</g:PushButton>
+	           <g:PushButton ui:field="removeButton" width="15%">remove</g:PushButton>
+	           <g:PushButton ui:field="stopButton" width="15%">stop</g:PushButton>
+	         </td>
+	       </tr>
+	     </table>
+	   </g:HTMLPanel>
+	  </g:north>
+	  <g:center>
+	    <g:TextArea readOnly="true" ui:field="responses" height="100%" width="100%" />
+	  </g:center>
 	</g:DockLayoutPanel>
 </ui:UiBinder> 

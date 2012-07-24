@@ -2,7 +2,7 @@ package com.nublic.ws.json
 
 import com.ning.http.client.AsyncHttpClient
 import com.ning.http.client.AsyncHttpClientConfig
-import com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider
+import com.ning.http.client.providers.netty.NettyAsyncHttpProvider
 import com.ning.http.client.websocket.WebSocket
 import com.ning.http.client.websocket.WebSocketTextListener
 import com.ning.http.client.websocket.WebSocketUpgradeHandler
@@ -42,12 +42,14 @@ abstract class WebSocketJsonRpc {
   private var _connected: Boolean = false
   // private val client = new WebSocketClient(new EventHandler(this))
 
+  def connected: Boolean = _connected
+
   // Connecting
   // ==========
 
   def connect(url: String): Unit = {
     val config = new AsyncHttpClientConfig.Builder().build();
-    val c = new AsyncHttpClient(new GrizzlyAsyncHttpProvider(config), config);
+    val c = new AsyncHttpClient(new NettyAsyncHttpProvider(config), config);
     val listener = new Listener(this)
     val handler = (new WebSocketUpgradeHandler.Builder()).addWebSocketListener(listener).build()
     _client = c.prepareGet(url).execute(handler).get()
@@ -124,11 +126,14 @@ abstract class WebSocketJsonRpc {
       _callbacksLock.writeLock().unlock()
 
       // Send the JSON-RPC message
-      // Console.err.println("Sending message with id " + id)
+      //Console.err.println("Sending message with id " + id)
+      //Console.err.println("Sending message with method " + method)
+      //Console.err.println("Sending message with params " + params)
+      //Console.err.println("Sending message with null client " + (_client == null))
       _client.sendTextMessage(_createMessage(id, method, params))
   
       // Now wait to its conclusion
-      // Console.err.println("Waiting for message with id " + id)
+      //Console.err.println("Waiting for message with id " + id)
       val result = waiter.take()
       // and then remove it from the map
       _callbacksLock.writeLock().lock()
@@ -147,7 +152,7 @@ abstract class WebSocketJsonRpc {
       _callbacksLock.writeLock().unlock()
 
       // Send the JSON-RPC message
-      // Console.err.println("Sending async message with id " + id)
+      //Console.err.println("Sending async message with id " + id)
       _client.sendTextMessage(_createMessage(id, method, params))
     }
   }
@@ -197,20 +202,20 @@ abstract class WebSocketJsonRpc {
   class JsonParseException(message: String) extends Exception(message)
 
   private def _isNotificationMessage(fields: List[JField]) = fields.exists(f => f.name == "method")
-  private def _isResultMessage(fields: List[JField]) = fields.exists(f => f.name == "result")
+  private def _isResultMessage(fields: List[JField]) = fields.exists(f => f.name == "result" || f.name == "error")
 
   private def handleMessageReceived(json: JValue) = json match {
     case JObject(fields) => {
-      // Console.err.println("Received message")
+      //Console.err.println("Received message")
       if (_isNotificationMessage(fields)) {
 	handleNotificationMessage(fields)
       } else if (_isResultMessage(fields)) {
 	handleResultMessage(fields)
       } else {
-	onError(new JsonParseException("Received JSON value is not in correct format"))
+	onError(new JsonParseException("Received JSON value is not in correct format: " + json))
       }
     }
-    case _ => onError(new JsonParseException("Received JSON value is not an object"))
+    case _ => onError(new JsonParseException("Received JSON value is not an object: " + json))
   }
 
   private def handleNotificationMessage(fields: List[JField]) = {
@@ -252,7 +257,7 @@ abstract class WebSocketJsonRpc {
       case _                           => None
     }
     // Check we have all the fields
-    // Console.err.println("Handling message " + fields)
+    //Console.err.println("Handling message " + fields)
     val correctResponse = (result.isDefined && !error.isDefined) || (!result.isDefined && error.isDefined) 
     if (msgId.isDefined && correctResponse) {
       // Create response
