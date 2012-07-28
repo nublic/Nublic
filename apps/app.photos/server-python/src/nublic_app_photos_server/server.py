@@ -1,4 +1,5 @@
 from nublic.filewatcher import init_watcher, Processor
+from nublic.files_and_users import get_all_mirrors
 
 import logging
 #import sys
@@ -30,6 +31,10 @@ app.logger.error('Starting photos app')
 def hello_world():
     auth = request.authorization
     return 'Hello ' + auth.username
+
+@app.route('/mirrors')
+def mirrors():
+    return str(get_all_mirrors())
 
 if __name__ == '__main__':
     app.run()
