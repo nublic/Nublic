@@ -3,8 +3,6 @@
     RewriteEngine On
     RewriteLog /var/log/apache2/rewrite.log
 
-    Include /var/lib/nublic/apache2/apps/*.conf
-
     ErrorLog /var/log/apache2/error.log
 
     ProxyRequests Off
@@ -13,7 +11,9 @@
     # Add custom error webpages
     
     WSGIPassAuthorization On
-    WSGIDaemonProcess nublic user=tomcat7 group=tomcat7 threads=10
+    WSGIDaemonProcess nublic user=tomcat7 group=tomcat7
+    
+    Include /var/lib/nublic/apache2/apps/*.conf
 
     # In tomcat .conf files
     <Location  /app-tomcat>

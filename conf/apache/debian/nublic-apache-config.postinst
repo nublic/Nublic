@@ -4,6 +4,7 @@ a2enmod proxy
 a2enmod proxy_html
 a2enmod proxy_http
 a2enmod proxy_ajp
+a2dismod python
 a2enmod wsgi
 a2dissite default
 a2ensite nublic
