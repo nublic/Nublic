@@ -3,7 +3,7 @@ import dbus
 import dbus.mainloop.glib
 import string
 
-from user import User
+import user
 
 WORK_FOLDER_DATA_ROOT = "/var/nublic/data/work-folders/"
 
@@ -49,7 +49,7 @@ class WorkFolder:
         return _call_work_folder_method(lambda i: i.change_synced_folder_name(self._id, name))
     
     def get_owner(self):
-        return User(_call_work_folder_method(lambda i: i.get_synced_folder_owner(self._id)))
+        return user.User(_call_work_folder_method(lambda i: i.get_synced_folder_owner(self._id)))
     
     def get_path(self):
         return WORK_FOLDER_DATA_ROOT + str(self._id)
@@ -57,9 +57,9 @@ class WorkFolder:
     def delete(self, remove_in_file_system):
         return _call_work_folder_method(lambda i: i.delete_synced_folder(self._id, remove_in_file_system))
     
-    def can_be_read_by(self, user):
-        return user.can_read(self.get_path())
+    def can_be_read_by(self, usr):
+        return usr.can_read(self.get_path())
     
-    def can_be_written_by(self, user):
-        return user.can_write(self.get_path())
+    def can_be_written_by(self, usr):
+        return usr.can_write(self.get_path())
     

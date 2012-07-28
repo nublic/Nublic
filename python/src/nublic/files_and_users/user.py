@@ -4,8 +4,8 @@ import dbus.mainloop.glib
 import os
 import string
 
-from mirror import get_all_mirrors
-from work_folder import get_all_work_folders
+import mirror
+import work_folder
 
 DATA_ROOT = "/var/nublic/data"
 
@@ -89,16 +89,16 @@ class User:
         self._check_permissions(path, self._writable_paths, 0020, 0002)
     
     def get_owned_mirrors(self):
-        return filter(lambda m: self.is_owner(m.get_path()), get_all_mirrors())
+        return filter(lambda m: self.is_owner(m.get_path()), mirror.get_all_mirrors())
     
     def get_owned_work_folders(self):
-        return filter(lambda m: self.is_owner(m.get_path()), get_all_work_folders())
+        return filter(lambda m: self.is_owner(m.get_path()), work_folder.get_all_work_folders())
     
     def get_accessible_mirrors(self):
-        return filter(lambda m: self.can_read(m.get_path()), get_all_mirrors())
+        return filter(lambda m: self.can_read(m.get_path()), mirror.get_all_mirrors())
     
     def get_accessible_work_folders(self):
-        return filter(lambda m: self.can_read(m.get_path()), get_all_work_folders())
+        return filter(lambda m: self.can_read(m.get_path()), work_folder.get_all_work_folders())
     
     def add_public_key(self, key):
         _call_user_method(lambda i: i.add_public_key(self._username, key))
