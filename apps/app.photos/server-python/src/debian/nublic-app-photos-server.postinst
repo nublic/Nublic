@@ -1,3 +1,4 @@
 #!/bin/bash -e
 touch /var/lib/nublic/webapps/app.photos/app.photos.wsgi
 service apache2 restart
+#DEBHELPER#
