@@ -24,9 +24,15 @@ if __name__ == '__main__':
         user = sys.argv[2]
         delete_user(to_utf8(user))
         sys.stdout.write("User deleted\n")
-    # Chnage user name
+    # Change user name
     elif sys.argv[1] == 'name':
         user = sys.argv[2]
         sys.stdout.write("Name to be shown: ")
         name = sys.stdin.readline().strip()
         change_user_name(to_utf8(user), to_utf8(name))
+    # List registered users
+    elif sys.argv[1] == 'list':
+        for u in list_users():
+            sys.stdout.write(str(u))
+            sys.stdout.write("\n")
+

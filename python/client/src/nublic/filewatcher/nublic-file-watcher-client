@@ -1,0 +1,51 @@
+#!/usr/bin/python
+
+import logging
+import dbus
+from dbus.mainloop.glib import DBusGMainLoop
+import gobject
+from pickle import Pickler
+import simplejson as json
+import sys
+
+class FileWatcher():
+    '''
+    Class that handles watching to actors
+    '''
+    def __init__(self, app_name, logger):
+        self._app_name = app_name
+        self._picker = Pickler(sys.stdout)
+        self._logger = logger
+        # Connect to D-Bus
+        bus = dbus.SystemBus()
+        object_path = '/com/nublic/filewatcher/' + app_name
+        o = bus.get_object('com.nublic.filewatcher', object_path)
+        iface = dbus.Interface(o, dbus_interface='com.nublic.filewatcher')
+        iface.connect_to_signal('file_changed', self.file_changed)
+    
+    def file_changed(self, ty, pathname, src_pathname, isdir, context):
+        #self._logger.error('File changed received')
+        o = { 'ty': unicode(ty), 'context': unicode(context), 'isdir': bool(isdir),
+              'pathname': unicode(pathname), 'src_pathname': unicode(src_pathname) }
+        #self._logger.error(o)
+        self._picker.dump(json.dumps(o))
+        #self._picker.clear_memo()
+        sys.stdout.flush()
+
+if __name__ == '__main__':
+    # Set logging
+    handler = logging.FileHandler('/var/log/nublic/nublic-file-watcher-client-' + sys.argv[1] + '.log')
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    logger = logging.getLogger('file-watcher')
+    logger.addHandler(handler)
+    # Init DBus main loop
+    dbus_loop = DBusGMainLoop(set_as_default=True)
+    # Run watcher
+    FileWatcher(sys.argv[1], logger)
+    # Start GObject loop
+    loop = gobject.MainLoop()
+    gobject.threads_init()
+    loop.run()

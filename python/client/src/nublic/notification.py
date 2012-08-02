@@ -1,10 +1,8 @@
 
-import dbus
-import dbus.mainloop.glib
+from dbus_in_other_thread import call_without_return
 
 def send_notification(app, user, level, text):
-    dbus_loop = dbus.mainloop.glib.DBusGMainLoop()
-    bus = dbus.SystemBus(mainloop = dbus_loop)
-    o = bus.get_object('com.nublic.notification', '/com/nublic/notification/Messages')
-    iface = dbus.Interface(o, dbus_interface='com.nublic.notification')
-    return iface.new_message(app, user, level, text)
+    return call_without_return('com.nublic.notification',
+                               '/com/nublic/notification/Messages',
+                               'com.nublic.notification',
+                               lambda i: i.new_message(app, user, level, text))

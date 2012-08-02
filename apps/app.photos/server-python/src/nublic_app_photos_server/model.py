@@ -1,22 +1,24 @@
-from flaskext.sqlalchemyext import SQLAlchemy
+from nublic_server.sqlalchemyext import SQLAlchemy
 
 # Create database to base the model
 db = SQLAlchemy()
 
 photoAlbums = db.Table('PhotoAlbum',
-    db.Column('photoId', db.BigInteger, db.ForeignKey('photo.id')),
-    db.Column('albumId', db.BigInteger, db.ForeignKey('album.id'))
+    db.Column('photoId', db.BigInteger, db.ForeignKey('Photo.id')),
+    db.Column('albumId', db.BigInteger, db.ForeignKey('Album.id'))
 )
 
 class Photo(db.Model):
+    __tablename__ = 'Photo'
+    
     id = db.Column(db.BigInteger, primary_key=True)
     file = db.Column(db.Unicode)
     title = db.Column(db.Unicode)
     date = db.Column(db.DateTime)
     lastModified = db.Column(db.DateTime)
     
-    def __init__(self, file, title, date, lastModified):
-        self.file = file
+    def __init__(self, file_, title, date, lastModified):
+        self.file = file_
         self.title = title
         self.date = date
         self.lastModified = lastModified
@@ -24,13 +26,14 @@ class Photo(db.Model):
     def __repr__(self):
         return '<Photo %r "%r" at %r>' % (self.id, self.title, self.file)
     
-    albums = db.relationship('Album', secondary=photoAlbums,
-        backref=db.backref('photos', lazy='dynamic'))
+    albums = db.relationship('Album', secondary=photoAlbums)
 
 def photo_by_filename(filename):
     Photo.query.filter_by(file=filename).first()
 
 class Album(db.Model):
+    __tablename__ = 'Album'
+    
     id = db.Column(db.BigInteger, primary_key=True)
     name = db.Column(db.Unicode)
     
@@ -40,8 +43,7 @@ class Album(db.Model):
     def __repr__(self):
         return '<Album %r "%r">' % (self.id, self.name)
     
-    photos = db.relationship('Photo', secondary=photoAlbums,
-        backref=db.backref('albums', lazy='dynamic'))
+    photos = db.relationship('Photo', secondary=photoAlbums)
 
 def album_by_name(album_name):
     Album.query.filter_by(name=album_name).first()

@@ -4,6 +4,7 @@ import pexpect
 import pwd
 import spwd
 import grp
+import sys
 
 from elixir import *
 from model import *
@@ -148,11 +149,13 @@ class UserDBus(dbus.service.Object):
     @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 's')
     def get_user_shown_name(self, username_):
         # Convert to utf-8
+        sys.stderr.write('Starting to get user shown name for ' + username_ + '\n')
         username = from_utf8(username_)
         # Do things
         if ' ' in username or not self.user_exists(username):
             raise NameError()
         # query in database
+        sys.stderr.write('Starting to ask the database ' + username_ + '\n')
         user = User.get_by(username=username)
         return user.name
     

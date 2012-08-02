@@ -20,31 +20,33 @@ handler.setFormatter(logging.Formatter(
 app.logger.addHandler(handler)
 
 # Get resource information
-app = App('nublic_app_photos')
-key = app.get('db')
-db_uri = 'jdbc:postgresql://' + key.value('user') + ':' + key.value('pass') + \
-         '@localhost:5432/' + key.value('database')
+res_app = App('nublic_app_photos')
+res_key = res_app.get('db')
+db_uri = 'postgresql://' + res_key.value('user') + ':' + res_key.value('pass') + \
+         '@localhost:5432/' + res_key.value('database')
 
 # Init DB
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+db.app = app
 db.init_app(app)
 db.create_all()
 
 # Set up processors
 class NothingProcessor(Processor):
-    def __init__(self, watcher):
-        Processor.__init__(self, 'nothing', watcher, False)
+    def __init__(self, logger, watcher):
+        Processor.__init__(self, 'nothing', watcher, False, logger)
 
     def process(self, change):
         app.logger.error('Nothing processor: %s', change)
-init_watcher('Photos', [lambda w: NothingProcessor.start(w)], app.logger)
+        
+init_watcher('Photos', [lambda w: NothingProcessor.start(app.logger, w)], app.logger)
 
 app.logger.error('Starting photos app')
 
 @app.route('/')
 def hello_world():
     auth = request.authorization
-    user = User(auth)
+    user = User(auth.username)
     return 'Hello ' + user.get_shown_name()
 
 @app.route('/mirrors')
@@ -54,7 +56,7 @@ def mirrors():
 @app.route('/test')
 def test():
     auth = request.authorization
-    user = User(auth)
+    user = User(auth.username)
     return str(user.can_read('/var/nublic/data/nublic-only/fotos'))
 
 @app.route('/photos')

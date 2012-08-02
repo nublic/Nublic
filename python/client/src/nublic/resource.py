@@ -1,6 +1,5 @@
 
-import dbus
-import dbus.mainloop.glib
+from dbus_in_other_thread import call_expecting_return
 
 class App:
     def __init__(self, name):
@@ -15,8 +14,7 @@ class Key:
         self.key = key
     
     def value(self, subkey):
-        dbus_loop = dbus.mainloop.glib.DBusGMainLoop()
-        bus = dbus.SystemBus(mainloop = dbus_loop)
-        o = bus.get_object('com.nublic.resource', '/com/nublic/resource/' + self.app.name + '/' + self.key)
-        iface = dbus.Interface(o, dbus_interface='com.nublic.resource.value')
-        return iface.value(subkey)
+        return call_expecting_return('com.nublic.resource',
+                                     '/com/nublic/resource/' + self.app.name + '/' + self.key,
+                                     'com.nublic.resource.value',
+                                     lambda i: i.value(subkey))

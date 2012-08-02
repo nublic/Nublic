@@ -24,6 +24,22 @@ def delete_user(username):
     bus = dbus.SystemBus(mainloop = dbus_loop)
     userService = bus.get_object('com.nublic.users', '/com/nublic/Users')
     userService.delete_user(username, dbus_interface='com.nublic.users')
+    
+def list_users():
+    dbus_loop = DBusGMainLoop()
+    bus = dbus.SystemBus(mainloop = dbus_loop)
+    userService = bus.get_object('com.nublic.users', '/com/nublic/Users')
+    notSplitted = userService.get_all_users(dbus_interface='com.nublic.users')
+    if notSplitted == '':
+        return []
+    # Take elements apart
+    splitted = string.split(notSplitted, ':')
+    userList = []
+    for userS in splitted:
+        uid = userService.get_user_uid(userS, dbus_interface='com.nublic.users')
+        shown_name = userService.get_user_shown_name(userS, dbus_interface='com.nublic.users')
+        userList.append({ 'id': userS, 'uid': uid, 'shown_name': shown_name })
+    return userList
 
 def create_mirror(name, owner):
     dbus_loop = DBusGMainLoop()
