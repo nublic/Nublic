@@ -9,6 +9,7 @@
 	    content="Nublic Cube es un pequeño aparato, que puedas instalar en tu casa y que te da acceso a una extraordinaria nube privada, Nublic." />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
+    <!-- facebook -->
     <script type="text/javascript">
       (
         function(d, s, id) {
@@ -21,32 +22,49 @@
         (document, 'script', 'facebook-jssdk')
       );
     </script>
+    
+    <!-- twitter -->
     <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
-</head>
-<body>
+    
+    <!-- analytics -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-27531577-1']);
+      _gaq.push(['_trackPageview']);
 
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+</head>
+
+<body class="background-style">
+
+  <!-- Header, navbar -->
 	<div class="navbar navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container-fluid">
-				<a class="brand" style="height: 16px; margin-top: -5px;" href="#welcome">
+				<a class="brand" style="height: 16px; margin-top: -5px;" href="index.html">
 				  <img src="images/logo.png">
 				</a>
 				<ul class="nav">
 					<li>
-					  <a href="#browser" style="padding-bottom: 8px; padding-top: 8px;">
-					    <img src="images/cloud_icon&16.png" style="margin-top: 2px; float: left;"/>
+					  <a href="index.html" style="padding-bottom: 8px; padding-top: 8px;">
+					    <img src="images/cloud_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Welcome</span>
 					  </a>
 					</li>
-					<li>
-					  <a href="#photos" style="padding-bottom: 8px; padding-top: 8px;">
-					    <img src="images/home_icon&16.png" style="margin-top: 2px; float: left;"/>
+					<li class="active">
+					  <a href="home.html" style="padding-bottom: 8px; padding-top: 8px;">
+					    <img src="images/home_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Nublic at home</span>
 					  </a>
 					</li>
 					<li>
 					  <a href="#music" style="padding-bottom: 8px; padding-top: 8px;">
-					    <img src="images/shopping_bag_icon&16.png" style="margin-top: 2px; float: left;"/>
+					    <img src="images/shopping_bag_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Applications</span>
 					  </a>
 					</li>
@@ -59,24 +77,129 @@
 				  </li>
 				  <li>
 				    <div class="social-container">
-  				    <div class="fb-like" data-href="http://www.facebook.com/pages/Nublic" data-send="false" data-layout="button_count" data-width="110" data-show-faces="false" data-colorscheme="dark"></div>
+  				    <div class="fb-like" data-href="http://www.facebook.com/pages/Nublic" data-send="false" data-layout="button_count" data-width="110" data-show-faces="false"></div>
   				  </div>
 				  </li>
 					<li>
 					  <a href="#market" style="padding-bottom: 8px; padding-top: 8px;">
-					    <img src="images/flag_icon&16.png" style="margin-top: 2px; float: left;"/>
+					    <img src="images/flag_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Language</span>
 					  </a>
 					</li>
 					<li>
 					  <a href="#settings" style="padding-bottom: 8px; padding-top: 8px;">
-					    <img src="images/users_icon&16.png" style="margin-top: 2px; float: left;"/>
+					    <img src="images/users_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">About us</span>
 					  </a>
 					</li>
 				</ul>
 			</div>
 		</div>
+	</div>
+
+  <!-- "body" -->
+	<div class="container">
+	
+	  <!-- images pentagon -->
+    <div class="mainbox homebox">
+	    <div style="margin-left: 290px;">
+        <div style="width: 360px; height: 220px;">
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-top: 80px; margin-right: 30px;">
+            <img src="images/phone72.png"/>
+          </div>
+          <div style="float: left; width: 100px; height: 200px;">
+            <div style="width: 100px; height: 86px; padding-top: 14px; margin-bottom: 20px;">
+              <img src="images/laptop72.png"/>
+            </div>
+            <div style="width: 100px; height: 86px; padding-top: 14px;">
+              <img src="images/device72.png"/>
+            </div>
+          </div>
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-top: 80px; margin-left: 30px;">
+            <img src="images/music72.png"/>
+          </div>
+        </div>
+        <div style="width: 240px; height: 115px; margin-left: 60px;">
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-right: 40px; margin-top: 15px;">
+            <img src="images/tv72.png"/>
+          </div>
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-top: 15px;">
+            <img src="images/internet72.png"/>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- <div class="mainbox homebox">
+	    <div style="margin-left: 300px; background-image: url(resources/pentagon.png);">
+        <div style="width: 340px; height: 220px; opacity: 0.5;">
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; background-color: #0FF; margin-top: 80px; margin-right: 20px;">
+            <img src="images/phone72.png"/>
+          </div>
+          <div style="float: left; width: 100px; height: 200px;">
+            <div style="width: 100px; height: 86px; padding-top: 14px; background-color: #F0F; margin-bottom: 20px;">
+              <img src="images/laptop72.png"/>
+            </div>
+            <div style="width: 100px; height: 86px; padding-top: 14px; background-color: #F00;">
+              <img src="images/device72.png"/>
+            </div>
+          </div>
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; background-color: #FF0; margin-top: 80px; margin-left: 20px;">
+            <img src="images/music72.png"/>
+          </div>
+        </div>
+        <div style="width: 220px; height: 120px; margin-left: 60px; opacity: 0.5;">
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; background-color: #00F; margin-right: 20px; margin-top: 20px;">
+            <img src="images/tv72.png"/>
+          </div>
+          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; background-color: #0F0; margin-top: 20px;">
+            <img src="images/internet72.png"/>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+
+    <!-- links -->
+	  <div style="margin-bottom: 50px; height: 175px;">
+	    <a href="#browser">
+	      <div class="mainbox linkbox">
+	        <div style="margin-top: 10px;">
+	          <h3>Nublic at home</h3>
+	        </div>
+	        <div>
+	          <img src="images/home.png"/>
+	        </div>
+	      </div>
+	    </a>
+	    <a href="#browser">
+	      <div class="mainbox linkbox">
+	        <div style="margin-top: 10px;">
+	          <h3>Applications</h3>
+	        </div>
+	        <div>
+	          <img src="images/apps.png"/>
+	        </div>
+	      </div>
+	    </a>
+	    <a href="#browser">
+	      <div class="mainbox linkbox lastlinkbox">
+	        <div style="margin-top: 10px;">
+	          <h3>About us</h3>
+	        </div>
+	        <div>
+	          <img src="images/about_us.png"/>
+	        </div>
+	      </div>
+	    </a>
+	  </div>
+	  
+	  <!-- footer -->
+	  <hr width="100%"/>
+	  <div style="text-align: center; color: #888; line-height: 5px;">
+	    Copyright © 2012 <b>Nublic</b>. All rights reserved.
+	  </div>
+ 	  <hr width="100%" style="margin-bottom: 10px;"/>
 	</div>
 
 </body>
