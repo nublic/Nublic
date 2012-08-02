@@ -10,7 +10,7 @@ class Processor(ThreadingActor):
     Defines a processor for watcher events
     '''
     
-    def __init__(self, name, watcher, throwException):
+    def __init__(self, name, watcher, throwException, logger = None):
         '''
         Creates a new processor
         
@@ -24,6 +24,7 @@ class Processor(ThreadingActor):
         self._name = name
         self._watcher = watcher
         self._throwException = throwException
+        self._logger = None
     
     def process(self, change):
         '''
@@ -47,8 +48,12 @@ class Processor(ThreadingActor):
                 if self._throwException:
                     raise
                 else:
-                    logging.error('ERROR in %s PROCESSOR: %s', self._name, str(e))
+                    if self._logger != None:
+                        self._logger.error('ERROR in %s PROCESSOR: %s', self._name, str(e))
             # Tell back the parent watcher
-            self._watcher.tell({'command': 'back', 'app_name': self._name,
-                                'id': message.get('id'), 'change': message.get('change')})
+            #self._watcher.tell({'command': 'back', 'app_name': self._name,
+            #                    'id': message.get('id'), 'change': message.get('change')})
+        else:
+            if self._logger != None:
+                self._logger.error('Message without change or id: %s', str(message))
             

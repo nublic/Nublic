@@ -1,23 +1,21 @@
 
-import dbus
-import dbus.mainloop.glib
 import os
 import string
 
+from ..dbus_in_other_thread import call_expecting_return, call_without_return
 import mirror
 import work_folder
 
 DATA_ROOT = "/var/nublic/data"
 
+def _call_user_method_return(m):
+    return call_expecting_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
+
 def _call_user_method(m):
-    dbus_loop = dbus.mainloop.glib.DBusGMainLoop()
-    bus = dbus.SystemBus(mainloop = dbus_loop)
-    o = bus.get_object('com.nublic.users', '/com/nublic/Users')
-    iface = dbus.Interface(o, dbus_interface='com.nublic.users')
-    return m(iface)
+    return call_without_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
 
 def get_all_users():
-    notSplitted = _call_user_method(lambda i: i.get_all_users())
+    notSplitted = _call_user_method_return(lambda i: i.get_all_users())
     if notSplitted == '':
         return []
     # Take elements apart
@@ -35,24 +33,24 @@ class User:
         self._writable_paths = [DATA_ROOT + '/nublic-only']
         
     def exists(self):
-        return _call_user_method(lambda i: i.user_exists(self._username))
+        return _call_user_method_return(lambda i: i.user_exists(self._username))
     
     def create(self, password, shown_name):
-        return _call_user_method(lambda i: i.user_create(self._username, password, shown_name))
+        return _call_user_method_return(lambda i: i.user_create(self._username, password, shown_name))
     
     def delete(self):
-        return _call_user_method(lambda i: i.delete_user(self._username))
+        return _call_user_method_return(lambda i: i.delete_user(self._username))
     
     def get_username(self):
         return self._username
     
     def get_id(self):
         if self._uid == None:
-            self._uid = _call_user_method(lambda i: i.get_user_uid(self._username))
+            self._uid = _call_user_method_return(lambda i: i.get_user_uid(self._username))
         return self._uid
     
     def get_shown_name(self):
-        return _call_user_method(lambda i: i.get_user_shown_name(self._username))
+        return _call_user_method_return(lambda i: i.get_user_shown_name(self._username))
     
     def change_shown_name(self, shown_name):
         _call_user_method(lambda i: i.change_user_shown_name(self._username, shown_name))
@@ -83,10 +81,10 @@ class User:
         return (mode & group_bits != 0) or (mode & others_bits != 0)
     
     def can_read(self, path):
-        self._check_permissions(path, self._readable_paths, 0040, 0004)
+        return self._check_permissions(path, self._readable_paths, 0040, 0004)
     
     def can_write(self, path):
-        self._check_permissions(path, self._writable_paths, 0020, 0002)
+        return self._check_permissions(path, self._writable_paths, 0020, 0002)
     
     def get_owned_mirrors(self):
         return filter(lambda m: self.is_owner(m.get_path()), mirror.get_all_mirrors())
