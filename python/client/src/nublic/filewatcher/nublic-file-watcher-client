@@ -24,13 +24,16 @@ class FileWatcher():
         iface.connect_to_signal('file_changed', self.file_changed)
     
     def file_changed(self, ty, pathname, src_pathname, isdir, context):
-        #self._logger.error('File changed received')
-        o = { 'ty': unicode(ty), 'context': unicode(context), 'isdir': bool(isdir),
-              'pathname': unicode(pathname), 'src_pathname': unicode(src_pathname) }
-        #self._logger.error(o)
-        self._picker.dump(json.dumps(o))
-        #self._picker.clear_memo()
-        sys.stdout.flush()
+        try:
+            #self._logger.error('File changed received')
+            o = { 'ty': unicode(ty), 'context': unicode(context), 'isdir': bool(isdir),
+                  'pathname': unicode(pathname), 'src_pathname': unicode(src_pathname) }
+            #self._logger.error(o)
+            self._picker.dump(json.dumps(o))
+            #self._picker.clear_memo()
+            sys.stdout.flush()
+        except IOError:
+            sys.exit(0)
 
 if __name__ == '__main__':
     # Set logging

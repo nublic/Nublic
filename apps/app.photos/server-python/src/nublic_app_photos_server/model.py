@@ -14,8 +14,8 @@ class Photo(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     file = db.Column(db.Unicode)
     title = db.Column(db.Unicode)
-    date = db.Column(db.DateTime)
-    lastModified = db.Column(db.DateTime)
+    date = db.Column(db.BigInteger)
+    lastModified = db.Column(db.BigInteger)
     
     def __init__(self, file_, title, date, lastModified):
         self.file = file_
@@ -30,6 +30,12 @@ class Photo(db.Model):
 
 def photo_by_filename(filename):
     Photo.query.filter_by(file=filename).first()
+
+def photo_as_json(photo):
+    return { 'id': photo.id,
+             'title': photo.title,
+             'date': photo.date
+           }
 
 class Album(db.Model):
     __tablename__ = 'Album'
@@ -47,6 +53,11 @@ class Album(db.Model):
 
 def album_by_name(album_name):
     Album.query.filter_by(name=album_name).first()
+
+def album_as_json(album):
+    return { 'id': album.id,
+             'name': album.name
+           }
 
 def get_or_create_album(album_name):
     ab = album_by_name(album_name)

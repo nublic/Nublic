@@ -16,7 +16,7 @@ def init_watcher(app_name, processors, logger=None):
     # Init process
     p = subprocess.Popen(["/usr/bin/nublic-file-watcher-client", app_name], 
         stdout=subprocess.PIPE, universal_newlines=True)
-    atexit.register(lambda p: p.kill())
+    atexit.register(lambda: p.kill())
     # Start actor
     #if logger != None:
     #    logger.error('Starting actor')
