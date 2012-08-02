@@ -6,6 +6,7 @@ import com.nublic.ws.json.Method2
 import com.nublic.ws.json.Method3
 import com.nublic.ws.json.Method4
 import com.nublic.ws.json.Method5
+import com.nublic.ws.json.Notification1
 import com.nublic.ws.json.WebSocketJsonRpc
 import net.liftweb.json._
 
@@ -14,6 +15,7 @@ abstract class AriaEventHandler {
   def onDisconnect(): Unit
   def onStop(): Unit
   def onDownloadStart(gid: String): Unit
+  def onDownloadError(gid: String): Unit
 }
 
 class Aria extends WebSocketJsonRpc {
@@ -88,14 +90,15 @@ class Aria extends WebSocketJsonRpc {
   val shutdown = new Method0[String]("aria2.shutdown", this)
   val forceShutdown = new Method0[String]("aria2.forcerShutdown", this)
 
-  def notificationTypes = Map("onDowloadStart" -> Array(manifest[String]))
+  def notifications = List(new Notification1[AriaGid]("aria2.onDownloadStart") {
+                             def notify(gid: AriaGid) = handlers.map(_.onDownloadStart(gid.gid))
+                           }
+                         , new Notification1[AriaGid]("aria2.onDownloadError") {
+                             def notify(gid: AriaGid) = handlers.map(_.onDownloadError(gid.gid))
+                           })
 
   def unknownNotification(method: String, params: Array[JValue]): Unit = {
     Console.err.println("Received unknown notification " + method)
-  }
-
-  def onDownloadStart(gid: String) = {
-    handlers.map(_.onDownloadStart(gid))
   }
 }
 object Aria {
@@ -103,6 +106,8 @@ object Aria {
   val POSITION_CURRENT = "POS_CUR"
   val POSITION_END     = "POS_END"
 }
+
+case class AriaGid(val gid: String)
 
 case class AriaDownloadStatus(val gid: Option[String],
                               val status: Option[String],

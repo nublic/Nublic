@@ -1,0 +1,14 @@
+Source: python-nublic-server
+Section: nublic
+Priority: optional
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7), cdbs, python-support
+Standards-Version: 3.9.1
+XS-Python-Version: >= 2.6
+Homepage: http://nublic.com
+
+Package: python-nublic-server
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, dbus, python-dbus, python-pykka, python (>= 2.6), python-central, python-support (>= 0.90), python-flask, python-sqlalchemy, python-nublic
+Description: Nublic Python Server Library
+ This library provides common functionality for Nublic servers written in Python.

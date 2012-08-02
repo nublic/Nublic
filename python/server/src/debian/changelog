@@ -1,0 +1,6 @@
+python-nublic-server (0.01) unstable; urgency=low
+
+  [ Nublic Packaging Team ]
+  * Initial release of python-nublic-server
+
+ -- Alejandro Serrano Mena <alex@nublic.com>  Sun, 29 Jul 2012 17:52:36 +0100

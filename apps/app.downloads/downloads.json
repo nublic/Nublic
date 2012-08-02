@@ -29,5 +29,6 @@
   }
 , "filewatcher" : {
     "supported" : false
+  , "paths"     : []
   }
 }

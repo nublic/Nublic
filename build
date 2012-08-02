@@ -27,7 +27,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx
     # sudo update-java-alternatives -s java-1.7.0-\*
     rm -rf "${REPO_DIR}"
     # Create build folders, if non existant
@@ -160,9 +160,8 @@ cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-p
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 copy_and_touch 3rd-party-libs/aria2
-copy_and_touch 3rd-party-libs/python-pyinotify
 copy_and_touch 3rd-party-libs/python-fstab
-copy_and_touch 3rd-party-libs/python-sqlalchemy
+build_deb_package 3rd-party-libs/pykka
 build_deb_package 3rd-party-libs/guava
 # bst-player fork
 package_and_install_dev_mode player
@@ -199,7 +198,7 @@ build_deb_package apps/app.music/fs/src
 build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Photos App
-build_deb_package apps/app.photos/server
+build_deb_package apps/app.photos/server-python/src
 build_deb_package apps/app.photos/web
 build_deb_package apps/app.photos
 # Downloads App

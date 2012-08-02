@@ -34,6 +34,24 @@ sealed abstract class Response[R] {
 case class Result[R](val result: R) extends Response[R]
 case class Error[R](val code: BigInt, val message: String, val error: Option[JValue]) extends Response[R]
 
+abstract class Notification(val method: String) {
+  def _notify(v: Array[JValue]): Unit
+}
+
+abstract class Notification1[R](method: String)(implicit m: Manifest[R]) extends Notification(method) {
+  implicit val formats = Serialization.formats(NoTypeHints)
+
+  def notify(arg: R): Unit
+  def _notify(v: Array[JValue]): Unit = notify(v(0).extract[R])
+}
+
+abstract class Notification2[R, S](method: String)(implicit m: Manifest[R], n: Manifest[S]) extends Notification(method) {
+  implicit val formats = Serialization.formats(NoTypeHints)
+
+  def notify(arg1: R, arg2: S): Unit
+  def _notify(v: Array[JValue]) = notify(v(0).extract[R], v(1).extract[S])
+}
+
 abstract class WebSocketJsonRpc {
 
   implicit val formats = Serialization.formats(NoTypeHints)
@@ -176,21 +194,12 @@ abstract class WebSocketJsonRpc {
   // Notifications
   // =============
 
-  def notificationTypes: Map[String, Array[Manifest[_]]]
-
-  private def _eraseType(m: Manifest[_]): Class[_] = m.erasure
+  def notifications: List[Notification]
 
   private def _onNotification(method: String, params: Array[JValue]): Unit = {
-    if (notificationTypes.get(method).isDefined) {
-      // Get method types
-      val types: Array[Manifest[_]] = notificationTypes(method)
-      // Get parameters
-      val valuesAndTypes: Array[(JValue, Manifest[_])] = params.zip(notificationTypes(method))
-      val values: Array[AnyRef] = valuesAndTypes.map(x => x._1.extract)
-      // Now call the method
-      ClassHelpers.invokeMethod(this.getClass(), this, method, values, types.map(_eraseType))
-    } else {
-      unknownNotification(method, params)
+    notifications.find(_.method == method) match {
+      case Some(n) => n._notify(params)
+      case None    => unknownNotification(method, params)
     }
   }
 

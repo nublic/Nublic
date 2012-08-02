@@ -12,6 +12,10 @@ do
 done
 # Set tomcat7 to be able to read apps configurations
 setfacl -Rdm u:tomcat7:rx /var/lib/nublic/apps
+# Allow tomcat7 to write logs
+mkdir -p /var/log/nublic
+setfacl -Rdm u:tomcat7:rwx /var/log/nublic
+chmod 777 /var/log/nublic
 # Set OpenJDK 7 as default virtual machine
 update-java-alternatives -s java-1.7.0-openjdk-\*
 # Set ubuntu firewall

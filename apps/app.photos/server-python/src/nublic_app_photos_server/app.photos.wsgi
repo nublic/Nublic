@@ -1,0 +1,1 @@
+from nublic_app_photos_server.server import app as application

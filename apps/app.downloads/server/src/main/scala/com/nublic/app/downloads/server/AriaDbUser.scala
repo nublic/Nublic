@@ -101,12 +101,15 @@ class AriaDbUser extends AriaEventHandler {
     
   }
 
+  def onDownloadError(gid: String): Unit = {
+
+  }
+
   // Periodically send information
   val info_timer = new Timer()
   class SendInfoTask(a: AriaDbUser) extends TimerTask {
     def run(): Unit = {
       if (a.connected) {
-        Console.print("sending information\n")
         a.sendInfo()
       }
     }
@@ -230,7 +233,10 @@ class AriaDbUser extends AriaEventHandler {
             // 5. Finish
             Some(s)
           }
-          case _ => None // Strange error
+          case _ => {
+            Console.println("this uri is not here")
+            None // Strange error
+          }
         }
       }
       case None    => None
