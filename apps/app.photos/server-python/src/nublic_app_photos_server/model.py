@@ -3,11 +3,6 @@ from nublic_server.sqlalchemyext import SQLAlchemy
 # Create database to base the model
 db = SQLAlchemy()
 
-photoAlbums = db.Table('PhotoAlbum',
-    db.Column('photoId', db.BigInteger, db.ForeignKey('Photo.id')),
-    db.Column('albumId', db.BigInteger, db.ForeignKey('Album.id'))
-)
-
 class Photo(db.Model):
     __tablename__ = 'Photo'
     
@@ -25,8 +20,6 @@ class Photo(db.Model):
     
     def __repr__(self):
         return '<Photo %r "%r" at %r>' % (self.id, self.title, self.file)
-    
-    albums = db.relationship('Album', secondary=photoAlbums)
 
 def photo_by_filename(filename):
     Photo.query.filter_by(file=filename).first()
@@ -36,6 +29,9 @@ def photo_as_json(photo):
              'title': photo.title,
              'date': photo.date
            }
+
+def photos_and_row_count_as_json(row_count, photos):
+    return { 'row_count': row_count, 'photos': map(photo_as_json, photos) }
 
 class Album(db.Model):
     __tablename__ = 'Album'
@@ -48,8 +44,6 @@ class Album(db.Model):
     
     def __repr__(self):
         return '<Album %r "%r">' % (self.id, self.name)
-    
-    photos = db.relationship('Photo', secondary=photoAlbums)
 
 def album_by_name(album_name):
     Album.query.filter_by(name=album_name).first()
@@ -68,3 +62,16 @@ def get_or_create_album(album_name):
         return ab
     else:
         return ab
+
+class PhotoAlbum(db.Model):
+    __tablename__ = 'PhotoAlbum'
+    
+    photoId = db.Column('photoId', db.BigInteger, db.ForeignKey('Photo.id'), primary_key=True)
+    albumId = db.Column('albumId', db.BigInteger, db.ForeignKey('Album.id'), primary_key=True)
+    
+    def __init__(self, albumId, photoId):
+        self.photoId = photoId
+        self.albumId = albumId
+    
+    photo = db.relationship(Photo, backref='albums')
+    album = db.relationship(Album, backref='photos')

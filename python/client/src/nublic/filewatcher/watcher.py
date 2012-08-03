@@ -61,6 +61,9 @@ class FileWatcherActor(ThreadingActor):
             #    self._logger.error('Adding a processor')
             self._processors.append(processor(self))
     
+    def get_logger(self):
+        return self._logger
+    
     def on_receive(self, message):
         #self._logger.error('Message received in actor: %s', str(message))
         if message['command'] == 'forward':
