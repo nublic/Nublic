@@ -4,12 +4,13 @@ import random
 import simplejson as json
 from sqlalchemy.sql.expression import func
 
-from nublic.filewatcher import init_watcher, Processor
+from nublic.filewatcher import init_watcher
 from nublic.files_and_users import User
 from nublic.resource import App
 from nublic_server.places import get_cache_folder
 
 from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, photos_and_row_count_as_json
+from photo_watcher import PhotoProcessor
 
 # Init app
 app = Flask(__name__)
@@ -38,19 +39,11 @@ db_uri = 'postgresql://' + res_key.value('user') + ':' + res_key.value('pass') +
 
 # Init DB
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-#db.app = app
 db.init_app(app)
 db.create_all(app=app)
 
-# Set up processors
-class NothingProcessor(Processor):
-    def __init__(self, logger, watcher):
-        Processor.__init__(self, 'nothing', watcher, False, logger)
-
-    def process(self, change):
-        app.logger.error('Nothing processor: %s', change)
-        
-init_watcher('Photos', [lambda w: NothingProcessor.start(app.logger, w)], app.logger)
+# Init watching
+init_watcher('Photos', [lambda w: PhotoProcessor.start(app.logger, w)], app.logger)
 
 app.logger.error('Starting photos app')
 
