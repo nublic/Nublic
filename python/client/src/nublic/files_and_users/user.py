@@ -25,6 +25,17 @@ def get_all_users():
         userList.append(User(username))
     return userList
 
+def get_file_owner(path):
+    owner_uid = os.stat(path).st_uid
+    for u in get_all_users():
+        if u.get_id() == owner_uid:
+            return u
+    return None
+
+def is_file_shared(path):
+    mode = os.stat(path).st_mode
+    return (mode & 0040 != 0) or (mode & 0004 != 0)
+
 class User:
     def __init__(self, username):
         self._username = username

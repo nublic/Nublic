@@ -39,6 +39,7 @@ db_uri = 'postgresql://' + res_key.value('user') + ':' + res_key.value('pass') +
 
 # Init DB
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+db.app = app
 db.init_app(app)
 db.create_all(app=app)
 
@@ -52,12 +53,6 @@ def split_reasonable(s, separator):
         return []
     else:
         return filter(lambda st: st != '', s.split(separator))
-
-#@app.route('/')
-#def hello_world():
-#    auth = request.authorization
-#    user = User(auth.username)
-#    return 'Hello ' + user.get_shown_name()
 
 def require_user():
     auth = request.authorization

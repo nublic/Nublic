@@ -24,7 +24,7 @@ class Processor(ThreadingActor):
         self._name = name
         self._watcher = watcher
         self._throwException = throwException
-        self._logger = None
+        self._logger = logger
     
     def process(self, change):
         '''
@@ -34,6 +34,12 @@ class Processor(ThreadingActor):
         :type change: a FileChange instance
         '''
         raise NotImplementedError("Should be implemented in derived classes")
+    
+    def get_logger(self):
+        '''
+        Gets the logger object associated to this processor
+        '''
+        return self._logger
     
     def on_receive(self, message):
         '''
