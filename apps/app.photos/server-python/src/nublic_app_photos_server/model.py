@@ -9,14 +9,18 @@ class Photo(db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     file = db.Column(db.Unicode)
     title = db.Column(db.Unicode)
-    date = db.Column(db.BigInteger)
-    lastModified = db.Column(db.BigInteger)
+    date = db.Column(db.DateTime)
+    lastModified = db.Column(db.DateTime)
+    owner = db.Column(db.String(255))
+    shared = db.Column(db.Boolean)
     
-    def __init__(self, file_, title, date, lastModified):
+    def __init__(self, file_, title, date, lastModified, owner, shared):
         self.file = file_
         self.title = title
         self.date = date
         self.lastModified = lastModified
+        self.owner = owner
+        self.shared = shared
     
     def __repr__(self):
         return '<Photo %r "%r" at %r>' % (self.id, self.title, self.file)
@@ -27,7 +31,7 @@ def photo_by_filename(filename):
 def photo_as_json(photo):
     return { 'id': photo.id,
              'title': photo.title,
-             'date': photo.date
+             'date': int(photo.date.strftime('%s'))
            }
 
 def photos_and_row_count_as_json(row_count, photos):
