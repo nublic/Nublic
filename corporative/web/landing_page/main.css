@@ -130,3 +130,24 @@
 .navbar .nav .active > a, .navbar .nav .active > a:hover {
   color: #FFFFFF !important;
 }
+
+.navbar .nav .dropdown .active > a, .navbar .nav .dropdown .active > a:hover {
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  background-image: none !important;
+  filter: none !;
+  background-color: #04648c !important;
+}
+
+.navbar .nav .dropdown-menu li > a:hover, .dropdown-menu .active > a, .dropdown-menu .active > a:hover {
+  color: #555;
+  text-decoration: none;
+  font-weight: bold !important;
+  background-color: #ffffff;
+}
+
+.navbar .nav .dropdown .active > a, .navbar .nav .dropdown .active > a:hover {
+  color: #FFFFFF !important;
+}
+
