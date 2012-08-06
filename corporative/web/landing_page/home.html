@@ -43,7 +43,7 @@
 <body class="background-style">
 
   <!-- Header, navbar -->
-	<div class="navbar navbar-fixed-top">
+	<div class="navbar">
 		<div class="navbar-inner">
 			<div class="container-fluid">
 				<a class="brand" style="height: 16px; margin-top: -5px;" href="index.html">
@@ -63,7 +63,7 @@
 					  </a>
 					</li>
 					<li>
-					  <a href="#music" style="padding-bottom: 8px; padding-top: 8px;">
+					  <a href="apps.html" style="padding-bottom: 8px; padding-top: 8px;">
 					    <img src="images/shopping_bag_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Applications</span>
 					  </a>
@@ -99,117 +99,81 @@
 
   <!-- "body" -->
 	<div class="container">
-	
-	  <!-- images pentagon -->
-    <!-- <div class="mainbox homebox" style="background-image: url(images/home_background2.png);">
-	    <div style="margin-left: 290px; width: 360px;">
-        <div style="width: 360px; height: 220px;">
-          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-top: 80px; margin-right: 30px;">
-            <div style="float: left; width: 24px;">
-              <img src="images/android24.png"/>
-              <img src="images/apple24.png"/>
-            </div>
-            <img src="images/phone72.png" style="float: left;"/>
-          </div>
-          <div style="float: left; width: 100px; height: 200px;">
-            <div style="width: 100px; height: 86px; padding-top: 14px; margin-bottom: 20px;">
-              <img src="images/laptop72.png" style="float: left;"/>
-              <div style="float: left; width: 24px;">
-                <img src="images/samba24.png"/>
-                <img src="images/sparkleshare24.png"/>
-              </div>
-            </div>
-            <div style="width: 100px; height: 86px; padding-top: 14px;">
-              <img src="images/device72.png"/>
-            </div>
-          </div>
-          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-top: 80px; margin-left: 30px;">
-            <img src="images/music72.png" style="float: left;"/>
-            <div style="float: left; width: 24px;">
-              <img src="images/dlna24.png"/>
-            </div>
-          </div>
-        </div>
-        <div style="width: 240px; height: 115px; margin-left: 60px;">
-          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-right: 40px; margin-top: 15px;">
-            <div style="float: left; width: 24px;">
-              <img src="images/dlna24.png"/>
-            </div>
-            <img src="images/tv72.png" style="float: left;"/>
-          </div>
-          <div style="float: left; width: 100px; height: 86px; padding-top: 14px; margin-top: 15px;">
-            <img src="images/internet72.png" style="float: left;"/>
-            <div style="float: left; width: 24px;">
-              <img src="images/html24.png"/>
-              <img src="images/ftp24.png"/>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div> -->
-    
-    
+
+    <!-- pentagon header -->
     <div class="mainbox homebox" style="background-image: url(images/home_background2.png);">
 	    <div style="width: 430px; height: 340px; float: left;">
 	      <div style="width: 110px; height: 80px; margin: 80px 120px 80px 200px;">
 	        <!-- phone -->
-	        <div style="float: left; width: 30px;">
-            <img src="images/android24.png" title="Android"/>
-            <img src="images/apple24.png" title="iOS"/>
-          </div>
-          <div style="width: 80px; float: left;">
-            <img src="images/phone72.png"/>
-          </div>
+	        <a href="#phone">
+	          <div style="float: left; width: 30px;">
+              <img src="images/android24.png" title="Android"/>
+              <img src="images/apple24.png" title="iOS"/>
+            </div>
+            <div style="width: 80px; float: left;">
+              <img src="images/phone72.png"/>
+            </div>
+          </a>
 	      </div>
 	      <div style="width: 110px; height: 100px; margin: 0px 10px 20px 310px;">
 	        <!-- tv -->
-	        <div style="float: left; width: 30px;">
-            <img src="images/dlna24.png" title="DLNA"/>
-          </div>
-          <div style="width: 80px; float: left;">
-            <img src="images/tv72.png"/>
-          </div>
+          <a class="transition-link" href="#cloud">
+	          <div style="float: left; width: 30px;">
+              <img src="images/dlna24.png" title="DLNA"/>
+            </div>
+            <div style="width: 80px; float: left;">
+              <img src="images/tv72.png"/>
+            </div>
+          </a>
 	      </div>
 	    </div>
 	    <div style="width: 80px; height: 340px; float: left;">
 	      <!-- laptop -->
-	      <div style="width: 80px; height: 80px;">
-	        <img src="images/laptop72.png" style="float: left;"/>
-	      </div>
-	      <div style="width: 80px; height: 80px; margin-top: 40px;">
-	        <img src="images/device72.png" style="float: left;"/>
-	      </div>
+        <a href="#computer">
+  	      <div style="width: 80px; height: 80px;">
+  	        <img src="images/laptop72.png" style="float: left;"/>
+	        </div>
+	      </a>
+        <div style="width: 80px; height: 80px; margin-top: 40px;">
+          <img src="images/device72.png" style="float: left;"/>
+        </div>
 	    </div>
 	    <div style="width: 430px; height: 340px; float: left;">
-	      <div style="width: 30px; height: 80px; margin: 0px 0px 160px 0px; float: left;">
-  	      <img src="images/samba24.png" title="SAMBA"/>
-          <img src="images/sparkleshare24.png" title="Sparkleshare"/>
-	      </div>
+        <div style="width: 30px; height: 80px; margin: 0px 0px 160px 0px; float: left;">
+  	      <a href="#computer">
+    	      <img src="images/samba24.png" title="SAMBA"/>
+            <img src="images/sparkleshare24.png" title="Sparkleshare"/>
+  	      </a>
+        </div>
 	      <div style="width: 110px; height: 80px; margin: 80px 200px 80px 90px; float: left;">
 	        <!-- internet -->
-	        <div style="width: 80px; float: left;">
-	          <img src="images/internet72.png"/>
-	        </div>
-          <div style="float: left; width: 30px;">
-            <img src="images/http24.png" title="http"/>
-            <img src="images/ftp24.png" title="FTP"/>
-          </div>
+          <a href="#internet">
+	          <div style="width: 80px; float: left;">
+	            <img src="images/internet72.png"/>
+	          </div>
+            <div style="float: left; width: 30px;">
+              <img src="images/http24.png" title="http"/>
+              <img src="images/ftp24.png" title="FTP"/>
+            </div>
+	        </a>
 	      </div>
 	      <div style="width: 110px; height: 100px; margin: 0px 310px 20px 10px;">
 	        <!-- music -->
-	        <div style="width: 80px; float: left;">
-	          <img src="images/music72.png"/>
-	        </div>
-          <div style="float: left; width: 30px;">
-            <img src="images/dlna24.png" title="DLNA"/>
-          </div>
+          <a href="#cloud">
+	          <div style="width: 80px; float: left;">
+              <img src="images/music72.png"/>
+	          </div>
+            <div style="float: left; width: 30px;">
+              <img src="images/dlna24.png" title="DLNA"/>
+            </div>
+          </a>
 	      </div>
 	    </div>
     </div>
 	  
     
     <!-- Domestic cloud -->
-    <div style="margin-top: 50px; height: 200px; width: 100%;">
+    <div id="cloud" style="margin-top: 30px; padding-top: 20px; height: 220px; width: 100%;">
       <div class="mainbox" style="float: left; width: 310px; height: 195px;">
         
       </div>
@@ -225,7 +189,9 @@
             With all the security deserved to manage your data. Only in your local net and with the posibility to hide any file that needs more privacy.
           </p>
           <div style="float: left; width: 64px; height: 42px;">
-            <img src="images/dlna_complete.png" title="DLNA"/>
+            <a href="http://www.dlna.org/" target="_blank">
+              <img src="images/dlna_complete.png" title="DLNA"/>
+            </a>
           </div>
           <div style="float: left; margin-left: 20px; width: 494px; height: 42px;">
             <p>Nublic is a DLNA server which provides all your centralized data to the multimedia devices at home.</p>
@@ -235,7 +201,7 @@
     </div>
     
     <!-- Access from everywhere -->
-    <div style="margin-top: 50px; height: 245px; width: 100%;">
+    <div id="internet" style="margin-top: 30px; padding-top: 20px; height: 265px; width: 100%;">
       <div class="mainbox" style="float: right; width: 310px; height: 195px;">
         
       </div>
@@ -253,7 +219,9 @@
             <p>Access to Nublic using your favourite web browser, such as Google Chrome <img src="images/chrome18.png" title="Google Chrome"/>, Firefox <img src="images/firefox18.png" title="Firefox"/>, Safari <img src="images/safari18.png" title="Safari"/>, Opera <img src="images/opera18.png" title="Opera"/> or Internet Explorer <img src="images/ie18.png" title="Internet explorer"/>.</p>
           </div>
           <div style="float: left; width: 64px;">
-            <img src="images/ftp64.png" title="FTP"/>
+            <a href="http://en.wikipedia.org/wiki/File_Transfer_Protocol" target="_blank">
+              <img src="images/ftp64.png" title="FTP"/>
+            </a>
           </div>
           <div style="float: left; margin-left: 20px; width: 494px; margin-top: 22px;">
             <p>Access using a Secure FTP client to your files in Nublic.</p>
@@ -263,7 +231,7 @@
     </div>
     
     <!-- In sync with your computer -->
-    <div style="margin-top: 50px; height: 245px; width: 100%;">
+    <div id="computer" style="margin-top: 30px; padding-top: 20px; height: 265px; width: 100%;">
       <div class="mainbox" style="float: left; width: 310px; height: 195px;">
         
       </div>
@@ -275,23 +243,27 @@
           <p> Nublic allows you to access your data always in your own terms. Use Windows <img src="images/windows18.png" title="Windows"/>, Mac <img src="images/mac18.png" title="Mac"/> or Linux <img src="images/linux18.png" title="Linux"/> to manage your information in Nublic.
           </p>
           <div style="float: left; width: 64px; height: 64px;">
-            <img src="images/samba64.png" title="SAMBA"/>
+            <a href="http://www.samba.org/samba/" target="_blank">
+              <img src="images/samba64.png" title="SAMBA"/>
+            </a>
           </div>
           <div style="float: left; margin-left: 20px; width: 494px; height: 64px; margin-top: 14px;">
             <p>With SAMBA you will access Nublic from your OS browser in a native way. For instance, you will find Nublic folders on "My network sites" on Windows.</p>
           </div>
           <div style="float: left; width: 64px;">
-            <img src="images/sparkleshare64.png" title="Sparkleshare"/>
+            <a href="http://sparkleshare.org/" target="_blank">
+              <img src="images/sparkleshare64.png" title="Sparkleshare"/>
+            </a>
           </div>
           <div style="float: left; margin-left: 20px; width: 494px;">
-            <p>Sparkleshare is a software that allows you to synchronize the local files in your computer with Nublic automatically. Surprisingly effortless backup of any file in your Nublic</p>
+            <p>Sparkleshare is a software that allows you to synchronize the local files in your computer with Nublic automatically. Surprisingly effortless backup of any file in your Nublic.</p>
           </div>
         </div>
       </div>
     </div>
     
     <!-- Mobile phone friendly -->
-    <div style="margin-top: 50px; height: 245px; width: 100%; margin-bottom: 50px;">
+    <div id="phone" style="margin-top: 30px; padding-top: 20px; height: 265px; width: 100%; margin-bottom: 50px;">
       <div class="mainbox" style="float: right; width: 310px; height: 195px;">
         
       </div>
@@ -312,7 +284,7 @@
             <img src="images/apple64.png" title="iOS"/>
           </div>
           <div style="float: left; margin-left: 20px; width: 494px; height: 64px; margin-top: 14px;">
-            <p>You will find the Nublic application for iOS in Apple Store to delight Nublic in your iPhone or iPad</p>
+            <p>You will find the Nublic application for iOS in Apple Store to delight Nublic in your iPhone or iPad.</p>
           </div>
         </div>
       </div>
@@ -320,17 +292,17 @@
 
     <!-- links -->
 	  <div style="margin-bottom: 50px; height: 175px;">
-	    <a href="#browser">
+	    <a href="index.html">
 	      <div class="mainbox linkbox">
 	        <div style="margin-top: 10px;">
-	          <h3>Nublic at home</h3>
+	          <h3>Welcome to Nublic</h3>
 	        </div>
 	        <div>
-	          <img src="images/home.png"/>
+	          <img src="images/logo128.png"/>
 	        </div>
 	      </div>
 	    </a>
-	    <a href="#browser">
+	    <a href="apps.html">
 	      <div class="mainbox linkbox">
 	        <div style="margin-top: 10px;">
 	          <h3>Applications</h3>
