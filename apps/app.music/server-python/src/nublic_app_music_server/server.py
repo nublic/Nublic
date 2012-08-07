@@ -7,170 +7,138 @@ from nublic.files_and_users import User
 from nublic_server.helpers import init_nublic_server, split_reasonable, require_user
 from nublic_server.places import get_cache_folder
 
-from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, photos_and_row_count_as_json
-from photo_watcher import PhotoProcessor
+from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist, \
+    collection_or_playlist_as_json, album_as_json, artist_as_json
+from music_watcher import MusicProcessor
 
 # Init app
 app = Flask(__name__)
 app.debug = True
-init_nublic_server(app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos',
-                   db, 'photos', [lambda w: PhotoProcessor.start(app.logger, w)])
-app.logger.error('Starting photos app')
+init_nublic_server(app, '/var/log/nublic/nublic-app-music.python.log', 'nublic_app_music',
+                   db, 'photos', [lambda w: MusicProcessor.start(app.logger, w)])
+app.logger.error('Starting music app')
 
-@app.route('/albums', methods=['GET', 'PUT', 'DELETE'])
-def albums():
+# COLLECTIONS HANDLING
+# ====================
+
+@app.route('/collections', methods=['GET', 'PUT', 'DELETE'])
+def collections():
     require_user()
     if request.method == 'GET':
-        return albums_get()
+        return collections_get()
     elif request.method == 'PUT':
-        return albums_put()
+        return collections_put()
     elif request.method == 'DELETE':
-        return albums_delete()
+        return collections_delete()
 
-def albums_get():
-    albums = Album.query.order_by(func.lower(Album.name)).all()
-    return json.dumps(albums, default=album_as_json)
+def collections_get():
+    colls = Collection.query.order_by(func.lower(Collection.name)).all()
+    return json.dumps(colls, default=collection_or_playlist_as_json)
 
-def albums_put():
+def collections_put():
     name = request.form.get('name', None)
-    new_album = Album(name)
-    db.session.add(new_album)
+    new_coll = Collection(name)
+    db.session.add(new_coll)
     db.session.commit()
-    return str(new_album.id)
+    return str(new_coll.id)
 
-def albums_delete():
+def collections_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
-    album = Album.query.get(id_as_int)
-    if album != None:
-        PhotoAlbum.query.filter_by(albumId=id_as_int).delete()
-        db.session.delete(album)
+    coll = Collection.query.get(id_as_int)
+    if coll != None:
+        SongCollection.query.filter_by(collectionId=id_as_int).delete()
+        db.session.delete(coll)
         db.session.commit()
     return 'ok'
 
-@app.route('/album/<int:album_id>', methods=['PUT', 'DELETE'])
-def album(album_id):
+@app.route('/collection/<int:collection_id>', methods=['PUT', 'DELETE'])
+def collection(collection_id):
     if request.method == 'PUT':
-        return one_album_put(album_id)
+        return one_collection_put(collection_id)
     elif request.method == 'DELETE':
-        return one_album_delete(album_id)
+        return one_collection_delete(collection_id)
 
-def one_album_put(album_id):
-    ids = split_reasonable(request.form.get('photos', None), ',')
+def one_collection_put(collection_id):
+    ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
         #app.logger.error('Trying to add %s to album %s', str(id_as_int), str(album_id))
-        relation = PhotoAlbum.query.filter_by(albumId=album_id, photoId=id_as_int).first()
+        relation = SongCollection.query.filter_by(collectionId=collection_id, songId=id_as_int).first()
         if relation == None:
-            relation = PhotoAlbum(album_id, id_as_int)
+            relation = SongCollection(collection_id, id_as_int)
             db.session.add(relation)
             db.session.commit()
     return 'ok'
 
-def one_album_delete(album_id):
-    ids = split_reasonable(request.form.get('photos', None), ',')
+def one_collection_delete(collection_id):
+    ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
-        PhotoAlbum.query.filter_by(albumId=album_id, photoId=id_as_int).delete()
+        SongCollection.query.filter_by(collectionId=collection_id, songId=id_as_int).delete()
     db.session.commit()
     return 'ok'
 
-@app.route('/photos')
-def photos():
-    require_user()
-    return photos_get('title', 'asc', 0, 20, [])
-    
-@app.route('/photos/')
-def photos_():
-    require_user()
-    return photos_get('title', 'asc', 0, 20, [])
-    
-@app.route('/photos/<order>/<asc>/<int:start>/<int:length>')
-def photos_without_albums(order, asc, start, length):
-    require_user()
-    return photos_get(order, asc, start, length, [])
+# PLAYLISTS HANDLING
+# ==================
 
-@app.route('/photos/<order>/<asc>/<int:start>/<int:length>/')
-def photos_without_albums_(order, asc, start, length):
+@app.route('/playlists', methods=['GET', 'PUT', 'DELETE'])
+def playlists():
     require_user()
-    return photos_get(order, asc, start, length, [])
+    if request.method == 'GET':
+        return playlists_get()
+    elif request.method == 'PUT':
+        return playlists_put()
+    elif request.method == 'DELETE':
+        return playlists_delete()
 
-@app.route('/photos/<order>/<asc>/<int:start>/<int:length>/<path:album_ids>')
-def photos_with_albums(order, asc, start, length, album_ids):
-    require_user
-    ids = split_reasonable(album_ids, '/')
+def playlists_get():
+    ps = Playlist.query.order_by(func.lower(Playlist.name)).all()
+    return json.dumps(ps, default=collection_or_playlist_as_json)
+
+def playlists_put():
+    name = request.form.get('name', None)
+    new_ps = Playlist(name)
+    db.session.add(new_ps)
+    db.session.commit()
+    return str(new_ps.id)
+
+def playlists_delete():
+    id_ = request.form.get('id', None)
+    id_as_int = int(id_)
+    ps = Playlist.query.get(id_as_int)
+    if ps != None:
+        SongPlaylist.query.filter_by(playlistId=id_as_int).delete()
+        db.session.delete(ps)
+        db.session.commit()
+    return 'ok'
+
+@app.route('/playlist/<int:playlist_id>', methods=['PUT', 'DELETE'])
+def playlist(playlist_id):
+    if request.method == 'PUT':
+        return one_playlist_put(playlist_id)
+    elif request.method == 'DELETE':
+        return one_playlist_delete(playlist_id)
+
+def one_playlist_put(playlist_id):
+    ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
-    return photos_get(order, asc, start, length, ids_as_ints)
-
-def photos_get(order, asc, start, length, album_ids):
-    # Get order
-    if asc == 'asc':
-        asc_desc = lambda x: x
-    elif asc == 'desc':
-        asc_desc = lambda x: x.desc()
-    if order == 'title':
-        order_by = lambda s: s.order_by(asc_desc(Photo.title))
-    elif order == 'date':
-        order_by = lambda s: s.order_by(asc_desc(Photo.date), asc_desc(Photo.title))
-    # Get query
-    if not album_ids:
-        query = order_by(Photo.query)
-    else:
-        query = order_by(Photo.query.join(PhotoAlbum).filter(PhotoAlbum.albumId.in_(album_ids)))
-    # Paginate the results
-    query_offset = query.offset(start).limit(length)
-    return json.dumps(photos_and_row_count_as_json(query.count(), query_offset.all()))
-
-@app.route('/photo-info/<int:photo_id>')
-def photo_info(photo_id):
-    require_user()
-    photo = Photo.query.get_or_404(photo_id)
-    return json.dumps(photo, default=photo_as_json)
-
-@app.route('/photo-title/<int:photo_id>', methods=['POST'])
-def photo_title(photo_id):
-    require_user()
-    photo = Photo.query.get_or_404(photo_id)
-    photo.title = request.form['title']
-    db.session.commit()
+    for id_as_int in ids_as_ints:
+        #app.logger.error('Trying to add %s to album %s', str(id_as_int), str(album_id))
+        relation = SongCollection.query.filter_by(collectionId=collection_id, songId=id_as_int).first()
+        if relation == None:
+            relation = SongCollection(collection_id, id_as_int)
+            db.session.add(relation)
+            db.session.commit()
     return 'ok'
 
-@app.route('/raw/<int:photo_id>')
-def photo_raw(photo_id):
-    require_user()
-    photo = Photo.query.get_or_404(photo_id)
-    return send_file(photo.file)
-
-THUMBNAIL_FILENAME = 'thumbnail.png'
-IMAGE_FILENAME = 'image.png'
-
-@app.route('/view/<int:photo_id>.png')
-def photo_view(photo_id):
-    require_user()
-    photo = Photo.query.get_or_404(photo_id)
-    return send_file(get_cache_folder(photo.file) + '/' + IMAGE_FILENAME)
-
-@app.route('/thumbnail/<int:photo_id>.png')
-def photo_thumbnail(photo_id):
-    require_user()
-    photo = Photo.query.get_or_404(photo_id)
-    return send_file(get_cache_folder(photo.file) + '/' + THUMBNAIL_FILENAME)
-
-@app.route('/random/<time>/<int:album_id>.png')
-def random_album_thumbnail(time, album_id):
-    require_user()
-    number_photos = PhotoAlbum.query.filter_by(albumId=album_id).count()
-    if number_photos > 0:
-        n = random.randint(0, number_photos - 1)
-        relation = PhotoAlbum.query.filter_by(albumId=album_id).offset(n).first()
-        photo = Photo.query.get(relation.photoId)
-        return send_file(get_cache_folder(photo.file) + '/' + THUMBNAIL_FILENAME)
-    else:
-        abort(404)
-
-@app.route('/random/<int:album_id>.png')
-def random_album_thumbnail_(album_id):
-    return random_album_thumbnail(0, album_id)
+def one_playlist_delete(playlist_id):
+    ids = split_reasonable(request.form.get('songs', None), ',')
+    ids_as_ints = map(lambda s: int(s), ids)
+    for id_as_int in ids_as_ints:
+        SongCollection.query.filter_by(collectionId=collection_id, songId=id_as_int).delete()
+    db.session.commit()
+    return 'ok'
 
 if __name__ == '__main__':
     app.run()

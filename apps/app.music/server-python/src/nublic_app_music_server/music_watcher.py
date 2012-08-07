@@ -6,10 +6,10 @@ import os.path
 from nublic.filewatcher import FileChange, Processor
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
-from model import db, Photo, Album, PhotoAlbum, get_or_create_album
+from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist
 
 # Set up processors
-class PhotoProcessor(Processor):
+class MusicProcessor(Processor):
     def __init__(self, logger, watcher):
         Processor.__init__(self, 'photo', watcher, False, logger)
         logger.error('Photo processor initialised')
