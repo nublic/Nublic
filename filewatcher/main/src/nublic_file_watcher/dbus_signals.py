@@ -11,6 +11,7 @@ import dbus.service
 import os
 import os.path
 import re
+import simplejson
 import sys
 
 def to_utf8(string):
@@ -30,6 +31,7 @@ class DbusSignaler(dbus.service.Object):
         # Try to find configuration
         self.app_info = app
         self.config = config
+        self.sockets = []
         # If new app, try to add a watch
         if app.app_id in config[u'apps']:
             self.supports_watching = True
@@ -153,9 +155,18 @@ class DbusSignaler(dbus.service.Object):
         else:
              # Try as a new pathname
              self.add_context(new_pathname, do_touch)
-             
+    
+    def add_socket(self, socket):
+        self.sockets.append(socket)
+    
     @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir, context):
+        o = { 'ty': unicode(ty), 'pathname': unicode(pathname), 'src_pathname': unicode(src_pathname), \
+              'isdir': bool(isdir), 'context': unicode(context) }
+        o_string = simplejson.dumps(o)
+        for socket in self.sockets:
+            socket.write(o_string + '\n')
+            socket.flush()
         try:
             sys.stderr.write("%s %s (context %s)\n" % (ty, pathname, context))
         except:
