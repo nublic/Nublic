@@ -180,6 +180,8 @@ build_deb_package filewatcher/main/src
 build_deb_package filewatcher/scala
 install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 # Utilities
+build_deb_package python/client/src
+build_deb_package python/server/src
 package_and_install apps/util/gwt
 package_and_install apps/util/ws-json
 # Manager App
