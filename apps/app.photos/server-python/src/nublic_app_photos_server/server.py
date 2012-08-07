@@ -1,12 +1,10 @@
-from flask import Flask, Request, request, abort, send_file
-import logging
+from flask import Flask, request, abort, send_file
 import random
 import simplejson as json
 from sqlalchemy.sql.expression import func
 
-from nublic.filewatcher import init_socket_watcher
 from nublic.files_and_users import User
-from nublic.resource import App
+from nublic_server.helpers import init_nublic_server, split_reasonable, require_user
 from nublic_server.places import get_cache_folder
 
 from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, photos_and_row_count_as_json
@@ -15,51 +13,9 @@ from photo_watcher import PhotoProcessor
 # Init app
 app = Flask(__name__)
 app.debug = True
-
-class RequestWithDelete(Request):
-    @property
-    def want_form_data_parsed(self):
-        return self.environ['REQUEST_METHOD'] in ['DELETE', 'PUT', 'POST']
-
-app.request_class = RequestWithDelete
-
-# Set up logging handlers
-handler = logging.FileHandler('/var/log/nublic/nublic-app-photos.python.log')
-handler.setFormatter(logging.Formatter(
-    '%(asctime)s %(levelname)s: %(message)s '
-    '[in %(pathname)s:%(lineno)d]'
-))
-app.logger.addHandler(handler)
-
-# Get resource information
-res_app = App('nublic_app_photos')
-res_key = res_app.get('db')
-db_uri = 'postgresql://' + res_key.value('user') + ':' + res_key.value('pass') + \
-         '@localhost:5432/' + res_key.value('database')
-
-# Init DB
-app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
-db.app = app
-db.init_app(app)
-db.create_all(app=app)
-
-# Init watching
-init_socket_watcher('photos', [lambda w: PhotoProcessor.start(app.logger, w)], app.logger)
-
+init_nublic_server(app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos',
+                   db, 'photos', [lambda w: PhotoProcessor.start(app.logger, w)])
 app.logger.error('Starting photos app')
-
-def split_reasonable(s, separator):
-    if s == None:
-        return []
-    else:
-        return filter(lambda st: st != '', s.split(separator))
-
-def require_user():
-    auth = request.authorization
-    user = User(auth.username)
-    if not user.exists():
-        abort(401)
-    return user
 
 @app.route('/albums', methods=['GET', 'PUT', 'DELETE'])
 def albums():

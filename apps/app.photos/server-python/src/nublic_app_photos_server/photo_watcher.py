@@ -85,7 +85,7 @@ class PhotoProcessor(Processor):
             photo.shared = is_file_shared(filename)
             db.session.commit()
         else:
-            process_updated_file(filename, context)
+            self.process_updated_file(filename, context)
     
     def process_deleted_file(self, filename):
         photo = Photo.query.filter_by(file=filename).first()
@@ -109,4 +109,4 @@ class PhotoProcessor(Processor):
             photo.file = to
             db.session.commit()
         else:
-            process_updated_file(to, context)
+            self.process_updated_file(to, context)
