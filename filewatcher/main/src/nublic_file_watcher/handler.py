@@ -10,8 +10,10 @@ from dbus_signals import (DbusSignaler)
 import os
 import os.path
 import pyinotify
+import socket
 import solr
 import sys
+import threading
 import traceback
 
 class FakeCreationEvent:
@@ -25,6 +27,31 @@ class FakeMoveEvent:
         self.src_pathname = src_pathname
         self.dir = isdir
 
+class SocketListener(threading.Thread):
+    MAX_CONN = 100
+    
+    def __init__(self, handler):
+        self.handler = handler
+        threading.Thread.__init__(self)
+    
+    def run(self):
+        serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        serversocket.bind(('localhost', 5438))
+        serversocket.listen(10)
+        while True:
+            # accept client
+            sys.stderr.write('Waiting socket\n')
+            (c, _) = serversocket.accept()
+            clientsocket = c.makefile()
+            # receive its name
+            sys.stderr.write('Accepted socket\n')
+            name = clientsocket.readline()[:-1]
+            sys.stderr.write('Added app ' + name + '\n')
+            # add to corresponding signaler
+            for signaler in self.handler.signalers:
+                if signaler.app_info.app_id == name:
+                    signaler.add_socket(clientsocket)
+
 class EventHandler(pyinotify.ProcessEvent):
     '''
     Listens the inotify events
@@ -37,6 +64,7 @@ class EventHandler(pyinotify.ProcessEvent):
         self.apps_info = apps_info
         self.signalers = []
         self.create_initial_signalers()
+        SocketListener(self).start()
 
     def create_initial_signalers(self):
         for app_id in self.apps_info:

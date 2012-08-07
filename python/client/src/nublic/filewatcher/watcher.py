@@ -9,6 +9,7 @@ from pykka.actor import ThreadingActor
 import threading
 from pickle import Unpickler
 import simplejson as json
+import socket
 
 from change import parse_file_change
 
@@ -43,6 +44,32 @@ class WatcherThread(threading.Thread):
             #self._unpickler.memo = {}
             #if self._logger != None:
             #    self._logger.error('Message received')
+            self._actor.tell({'command': 'forward', 'change': change})
+
+def init_socket_watcher(app_name, processors, logger=None):
+    actor = FileWatcherActor.start(app_name, processors, logger)
+    SocketWatcherThread(actor, logger, app_name).start()
+
+class SocketWatcherThread(threading.Thread):
+    def __init__(self, actor, logger, app_name):
+        self._actor = actor
+        self._logger = logger
+        self._app_name = app_name
+        threading.Thread.__init__(self)
+        
+    def run(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect(('localhost', 5438))
+        fs = s.makefile()
+        fs.write(self._app_name + '\n')
+        fs.flush()
+        while True:
+            line = fs.readline()[:-1]
+            e = json.loads(line)
+            change = parse_file_change(e['ty'], e['pathname'], e['src_pathname'], e['context'], e['isdir'])
+            #self._unpickler.memo = {}
+            if self._logger != None:
+                self._logger.error('Message received')
             self._actor.tell({'command': 'forward', 'change': change})
 
 class FileWatcherActor(ThreadingActor):

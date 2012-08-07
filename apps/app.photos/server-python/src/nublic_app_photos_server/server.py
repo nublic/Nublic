@@ -4,7 +4,7 @@ import random
 import simplejson as json
 from sqlalchemy.sql.expression import func
 
-from nublic.filewatcher import init_watcher
+from nublic.filewatcher import init_socket_watcher
 from nublic.files_and_users import User
 from nublic.resource import App
 from nublic_server.places import get_cache_folder
@@ -44,7 +44,7 @@ db.init_app(app)
 db.create_all(app=app)
 
 # Init watching
-init_watcher('Photos', [lambda w: PhotoProcessor.start(app.logger, w)], app.logger)
+init_socket_watcher('photos', [lambda w: PhotoProcessor.start(app.logger, w)], app.logger)
 
 app.logger.error('Starting photos app')
 
