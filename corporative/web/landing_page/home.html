@@ -4,8 +4,6 @@
     <title>Nublic. Coming soon</title>
     <link rel="stylesheet" type="text/css" href="bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="main.css" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="bootstrap-dropdown.js"></script>
     <link rel="shortcut icon" href="images/favicon.ico" />
     <meta name="description"
 	    content="Nublic Cube es un pequeño aparato, que puedas instalar en tu casa y que te da acceso a una extraordinaria nube privada, Nublic." />
@@ -40,6 +38,10 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    
+    <!-- dropdown -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="bootstrap-dropdown.js"></script>
 </head>
 
 <body class="background-style">
@@ -52,13 +54,13 @@
 				  <img src="images/logo.png">
 				</a>
 				<ul class="nav">
-					<li class="active">
+					<li>
 					  <a href="index.html" style="padding-bottom: 8px; padding-top: 8px;">
 					    <img src="images/cloud_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Welcome</span>
 					  </a>
 					</li>
-					<li>
+					<li class="active">
 					  <a href="home.html" style="padding-bottom: 8px; padding-top: 8px;">
 					    <img src="images/home_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">Nublic at home</span>
@@ -88,13 +90,13 @@
 				      <span style="margin-left: 5px;">Language</span>
 				      <b class="caret"></b>
 				    </a>
-                                    <ul class="dropdown-menu">
-                                      <li><a href="#">Espa&ntilde;ol</a></li>
-                                      <li class="active"><a href="#">English</a></li>
-                                    </ul>
+            <ul class="dropdown-menu">
+              <li><a href="#">Espa&ntilde;ol</a></li>
+              <li class="active"><a href="#">English</a></li>
+            </ul>
 				  </li>
 					<li>
-					  <a href="#settings" style="padding-bottom: 8px; padding-top: 8px;">
+					  <a href="about.html" style="padding-bottom: 8px; padding-top: 8px;">
 					    <img src="images/users_icon&16.png" class="navimage"/>
 					    <span style="margin-left: 5px;">About us</span>
 					  </a>
@@ -313,7 +315,7 @@
 	        </div>
 	      </div>
 	    </a>
-	    <a href="#browser">
+	    <a href="about.html">
 	      <div class="mainbox linkbox lastlinkbox">
 	        <div style="margin-top: 10px;">
 	          <h3>About us</h3>
