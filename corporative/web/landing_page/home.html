@@ -39,9 +39,18 @@
       })();
     </script>
     
-    <!-- dropdown -->
+    <!-- bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="bootstrap-dropdown.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script type="text/javascript">
+$(function() {
+    $('[rel=tooltip]').tooltip();
+});
+$(function() {
+    $('[rel=tooltip-bottom]').tooltip({placement:'bottom'});
+});
+ 
+    </script>
 </head>
 
 <body class="background-style">
@@ -117,11 +126,11 @@
 	        <!-- phone -->
 	        <a href="#phone">
 	          <div style="float: left; width: 30px;">
-              <img src="images/android24.png" title="Android"/>
-              <img src="images/apple24.png" title="iOS"/>
+              <img rel="tooltip" src="images/android24.png" title="Android"/>
+              <img rel="tooltip-bottom" src="images/apple24.png" title="iOS"/>
             </div>
             <div style="width: 80px; float: left;">
-              <img src="images/phone72.png"/>
+              <img src="images/phone72.png" alt="Phone"/>
             </div>
           </a>
 	      </div>
@@ -129,7 +138,7 @@
 	        <!-- tv -->
           <a class="transition-link" href="#cloud">
 	          <div style="float: left; width: 30px;">
-              <img src="images/dlna24.png" title="DLNA"/>
+              <img rel="tooltip" src="images/dlna24.png" title="DLNA"/>
             </div>
             <div style="width: 80px; float: left;">
               <img src="images/tv72.png"/>
@@ -151,8 +160,8 @@
 	    <div style="width: 430px; height: 340px; float: left;">
         <div style="width: 30px; height: 80px; margin: 0px 0px 160px 0px; float: left;">
   	      <a href="#computer">
-    	      <img src="images/samba24.png" title="SAMBA"/>
-            <img src="images/sparkleshare24.png" title="Sparkleshare"/>
+    	      <img rel="tooltip" src="images/samba24.png" title="SAMBA"/>
+              <img rel="tooltip-bottom" src="images/sparkleshare24.png" title="Sparkleshare"/>
   	      </a>
         </div>
 	      <div style="width: 110px; height: 80px; margin: 80px 200px 80px 90px; float: left;">
@@ -162,8 +171,8 @@
 	            <img src="images/internet72.png"/>
 	          </div>
             <div style="float: left; width: 30px;">
-              <img src="images/http24.png" title="http"/>
-              <img src="images/ftp24.png" title="FTP"/>
+              <img rel="tooltip" src="images/http24.png" title="http"/>
+              <img rel="tooltip-bottom" src="images/ftp24.png" title="FTP"/>
             </div>
 	        </a>
 	      </div>
@@ -174,7 +183,7 @@
               <img src="images/music72.png"/>
 	          </div>
             <div style="float: left; width: 30px;">
-              <img src="images/dlna24.png" title="DLNA"/>
+              <img rel="tooltip" src="images/dlna24.png" title="DLNA"/>
             </div>
           </a>
 	      </div>
