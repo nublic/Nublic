@@ -159,6 +159,11 @@
     top: 50%;
 }
 
+.modal {
+    width: 1030px !important;
+    margin: -300px 0 0 -525px !important;
+    max-height: 600px !important;
+}
+
 #file1_modal {
-    width: 1030px;
 }
