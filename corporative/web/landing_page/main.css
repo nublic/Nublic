@@ -151,3 +151,14 @@
   color: #FFFFFF !important;
 }
 
+.modal.fade {
+    -webkit-transition: opacity .3s linear;
+    -moz-transition: opacity .3s linear;
+    -ms-transition: opacity .3s linear;
+    -o-transition: opacity .3s linear;
+    transition: opacity .3s linear;i
+    top: -25%;
+
+}
+
+

@@ -8,7 +8,7 @@ class Photo(db.Model):
     
     id = db.Column(db.BigInteger, primary_key=True)
     file = db.Column(db.Unicode)
-    title = db.Column(db.Unicode)
+    title = db.Column(db.UnicodeText)
     date = db.Column(db.DateTime)
     lastModified = db.Column(db.DateTime)
     owner = db.Column(db.String(255))
@@ -41,7 +41,7 @@ class Album(db.Model):
     __tablename__ = 'Album'
     
     id = db.Column(db.BigInteger, primary_key=True)
-    name = db.Column(db.Unicode)
+    name = db.Column(db.UnicodeText)
     
     def __init__(self, name):
         self.name = name
