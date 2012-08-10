@@ -15,6 +15,8 @@ class MusicProcessor(Processor):
         logger.error('Photo processor initialised')
 
     def process(self, change):
+        return
+        # Do nothing by now
         self.get_logger().error('Photo processor file: %s, context: %s', change.filename, change.context)
         if change.kind == FileChange.CREATED and not change.is_dir:
             self.process_updated_file(change.filename, change.context)
