@@ -22,10 +22,10 @@ def artist_as_json((id_, name, songs, albums)):
              'name': name,
              'songs': songs,
              'albums': albums
-        }
+           }
 
 def artists_and_row_count_as_json(row_count, artists):
-    return { 'row_count': row_count, 'albums': map(artist_as_json, artists) }
+    return { 'row_count': row_count, 'artists': map(artist_as_json, artists) }
 
 def get_or_create_artist(artist_name):
     normalized_name = unidecode.unidecode(unicode(artist_name).lower())
@@ -78,7 +78,7 @@ class Song(db.Model):
     albumId = db.Column(db.BigInteger, db.ForeignKey('Album.id'))
     length = db.Column(db.Integer)
     year = db.Column(db.Integer)
-    track = db.Column(db.Integerr)
+    track = db.Column(db.Integer)
     disc_no = db.Column(db.Integer)
     owner = db.Column(db.String(255))
     shared = db.Column(db.Boolean)

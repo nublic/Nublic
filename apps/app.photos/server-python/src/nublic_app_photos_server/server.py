@@ -50,6 +50,10 @@ def albums_delete():
 
 @app.route('/album/<int:album_id>', methods=['PUT', 'DELETE'])
 def album(album_id):
+    require_user()
+    album = Album.query.filter_by(albumId=album_id).first()
+    if album == None:
+        abort(404)
     if request.method == 'PUT':
         return one_album_put(album_id)
     elif request.method == 'DELETE':
@@ -97,7 +101,7 @@ def photos_without_albums_(order, asc, start, length):
 
 @app.route('/photos/<order>/<asc>/<int:start>/<int:length>/<path:album_ids>')
 def photos_with_albums(order, asc, start, length, album_ids):
-    require_user
+    require_user()
     ids = split_reasonable(album_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
     return photos_get(order, asc, start, length, ids_as_ints)

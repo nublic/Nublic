@@ -161,8 +161,10 @@ build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 copy_and_touch 3rd-party-libs/aria2
 copy_and_touch 3rd-party-libs/python-fstab
+copy_and_touch 3rd-party-libs/tomcat7
+copy_and_touch 3rd-party-libs/lucene-solr
 build_deb_package 3rd-party-libs/pykka
-build_deb_package 3rd-party-libs/guava
+# build_deb_package 3rd-party-libs/guava
 # bst-player fork
 package_and_install_dev_mode player
 # Base modules
