@@ -1,4 +1,5 @@
 from flask import Flask, request, abort, send_file
+import os.path
 import random
 import simplejson as json
 from sqlalchemy.sql.expression import func
@@ -11,6 +12,7 @@ from model import db, Album, Artist, Collection, Playlist, Song, SongCollection,
     collection_or_playlist_as_json, album_as_json, artist_as_json,\
     artists_and_row_count_as_json, albums_and_row_count_as_json
 from music_watcher import MusicProcessor
+from folder import get_artist_folder, get_albums_folder, THUMBNAIL_FILENAME
 
 # Init app
 app = Flask(__name__)
@@ -255,7 +257,7 @@ def albums_artist_(artist_id):
     return albums_get(artist_id, 'asc', 0, 20, [])
 
 @app.route('/albums/<artist_id>/<asc>/<int:start>/<int:length>/<path:collection_ids>')
-def albums_with_colls(asc, start, length, collection_ids):
+def albums_with_colls(artist_id, asc, start, length, collection_ids):
     require_user()
     ids = split_reasonable(collection_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
@@ -293,6 +295,17 @@ def get_album_info(a):
     a_songs = Song.query.filter_by(albumId=a.id).count()
     a_artists = Artist.query.filter(Song.artistId==Artist.id).filter(Song.albumId==a.id).distinct().all()
     return (a.id, a.name, a_songs, map(lambda artist: artist.id, a_artists))
+
+# IMAGES
+# ======
+
+@app.route('/artist-art/<int:artist_id>.png')
+def artist_art(artist_id):
+    return send_file(os.path.join(get_artist_folder(artist_id)), THUMBNAIL_FILENAME)
+
+@app.route('/album-art/<int:album_id>.png')
+def album_art(album_id):
+    return send_file(os.path.join(get_album_folder(album_id)), THUMBNAIL_FILENAME)
 
 if __name__ == '__main__':
     app.run()

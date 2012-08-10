@@ -25,7 +25,7 @@ def artist_as_json((id_, name, songs, albums)):
            }
 
 def artists_and_row_count_as_json(row_count, artists):
-    return { 'row_count': row_count, 'albums': map(artist_as_json, artists) }
+    return { 'row_count': row_count, 'artists': map(artist_as_json, artists) }
 
 def get_or_create_artist(artist_name):
     normalized_name = unidecode.unidecode(unicode(artist_name).lower())
