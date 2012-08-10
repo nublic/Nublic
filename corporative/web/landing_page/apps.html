@@ -38,10 +38,11 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
-    
-    <!-- dropdown -->
+
+    <!-- bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="bootstrap-dropdown.js"></script>
+    <script src="bootstrap.min.js"></script>
+
 </head>
 
 <body class="background-style">
@@ -113,11 +114,17 @@
 	  <div style="text-shadow: 0px 1px 1px #bbb; width: 100%; text-align: center; margin-top: 20px;">
       <h1>Files</h1>
     </div>
+    <div class="modal hide fade" id="file1_modal">
+      <div class="modal-body">
+        <img src="images/files1_big.png"/> 
+      </div>
+    </div>
     
     <div style="height: 200px; width: 100%;">
-      <div class="mainbox" style="float: right; width: 310px; height: 195px;">
-        
-      </div>
+<!--     <a class="btn" data-toggle="modal" href="#myModal" > -->
+      <a class="mainbox" href="#file1_modal" data-toggle="modal" style="float: right; width: 310px; height: 195px; background-image: url(images/files1.png);">
+      </a>
+<!--      </a> -->
       <div style="float: right; margin-right: 50px; width: 578px; height: 200px;">
         <div class="inner-text" style="width: 100%; padding-top: 53px;">
           <p>Browse your files fast and easy from any computer or table. With the feeling of a local file browser but over the net. Have all your files accesible from everywhere with Nublic.</p>
@@ -125,11 +132,16 @@
         </div>
       </div>
     </div>
-    
-    <div style="height: 200px; width: 100%;">
-      <div class="mainbox" style="float: left; width: 310px; height: 195px;">
-        
+
+    <div class="modal hide fade" id="file2_modal">
+      <div class="modal-body">
+        <img src="images/files2_big.png"/> 
       </div>
+    </div>
+ 
+    <div style="height: 200px; width: 100%;">
+      <a class="mainbox" href="#file2_modal" data-toggle="modal" style="float: left; width: 310px; height: 195px; background-image: url(images/files2.png);">
+      </a>
       <div style="float: left; margin-left: 50px; width: 578px; height: 200px;">
         <div class="inner-text" style="width: 100%; padding-top: 43px;">
           <p>And you will be able to view all your content without the need of installing any additional software. The easiest and fastest way to access to your files.</p>
@@ -139,14 +151,20 @@
     </div>
 	  
 	  <!-- Music -->
-	  <div style="text-shadow: 0px 1px 1px #bbb; width: 100%; text-align: center; margin-top: 30px;">
+    <div style="text-shadow: 0px 1px 1px #bbb; width: 100%; text-align: center; margin-top: 30px;">
       <h1>Music</h1>
     </div>
+
+    <div class="modal hide fade" id="music1_modal">
+      <div class="modal-body">
+        <img src="images/music1_big.png"/> 
+      </div>
+    </div>
+ 
     
     <div style="height: 200px; width: 100%;">
-      <div class="mainbox" style="float: right; width: 310px; height: 195px;">
-        
-      </div>
+      <a class="mainbox" href="#music1_modal" data-toggle="modal" style="float: right; width: 310px; height: 195px; background-image: url(images/music1.png);">
+      </a>
       <div style="float: right; margin-right: 50px; width: 578px; height: 200px;">
         <div class="inner-text" style="width: 100%; padding-top: 43px;">
           <p>Thanks to Nublic your music is accessible in your local network via DLNA, but this application grants you access everywhere via a web browser.</p>
@@ -154,11 +172,17 @@
         </div>
       </div>
     </div>
-    
-    <div style="height: 200px; width: 100%;">
-      <div class="mainbox" style="float: left; width: 310px; height: 195px;">
-        
+   
+    <div class="modal hide fade" id="music2_modal">
+      <div class="modal-body">
+        <img src="images/music2_big.png"/> 
       </div>
+    </div>
+  
+    <div style="height: 200px; width: 100%;">
+      <a class="mainbox" href="#music2_modal" data-toggle="modal" style="float: left; width: 310px; height: 195px; background-image: url(images/music2.png);">
+      </a>
+       
       <div style="float: left; margin-left: 50px; width: 578px; height: 200px;">
         <div class="inner-text" style="width: 100%; padding-top: 43px;">
           <p>Nublic music player will also allow you to create music collections easily. It is prepared to host huge amounts of music and it will always be at your fingertips.</p>
@@ -171,11 +195,17 @@
 	  <div style="text-shadow: 0px 1px 1px #bbb; width: 100%; text-align: center; margin-top: 30px;">
       <h1>Photos</h1>
     </div>
-    
-    <div style="height: 200px; width: 100%;">
-      <div class="mainbox" style="float: right; width: 310px; height: 195px;">
-        
+
+    <div class="modal hide fade" id="photos1_modal">
+      <div class="modal-body">
+        <img src="images/photos1_big.png"/> 
       </div>
+    </div>
+
+    <div style="height: 200px; width: 100%;">
+
+      <a class="mainbox" href="#photos1_modal" data-toggle="modal" style="float: right; width: 310px; height: 195px; background-image: url(images/photos1.png);">
+      </a>
       <div style="float: right; margin-right: 50px; width: 578px; height: 200px;">
         <div class="inner-text" style="width: 100%; padding-top: 53px;">
           <p>With Nublic photos application you can view your pictures everywhere. The interface is very easy to use, which makes it very usefull.</p>
@@ -183,11 +213,18 @@
         </div>
       </div>
     </div>
-    
-    <div style="height: 200px; width: 100%;">
-      <div class="mainbox" style="float: left; width: 310px; height: 195px;">
-        
+
+    <div class="modal hide fade" id="photos2_modal">
+      <div class="modal-body">
+        <img src="images/photos2_big.png"/> 
       </div>
+    </div>
+ 
+    <div style="height: 200px; width: 100%; margin-bottom: 50px;">
+
+      <a class="mainbox" href="#photos2_modal" data-toggle="modal" style="float: left; width: 310px; height: 195px; background-image: url(images/photos2.png);">
+      </a>
+
       <div style="float: left; margin-left: 50px; width: 578px; height: 200px;">
         <div class="inner-text" style="width: 100%; padding-top: 53px;">
           <p>And you can create albums to organize all the pictures. You can maintain your photographs under your control at your own home and, at the same time, share a link to the images you want to show to your friends.</p>
@@ -197,10 +234,16 @@
     </div>
     
     <!-- Bazaar -->
-	  <div style="text-shadow: 0px 1px 1px #bbb; width: 100%; text-align: center; margin-top: 30px;">
+	  <!-- <div style="text-shadow: 0px 1px 1px #bbb; width: 100%; text-align: center; margin-top: 30px;">
       <h1>Bazaar</h1>
     </div>
-    
+ 
+   <div class="modal hide fade" id="bazar_modal">
+      <div class="modal-body">
+        <img src="images/bazar_big.png"/> 
+      </div>
+    </div>
+  
     <div style="height: 200px; width: 100%; margin-bottom: 50px;">
       <div class="mainbox" style="float: right; width: 310px; height: 195px;">
         
@@ -211,7 +254,7 @@
           <p>Stay updated with the upcoming apps and get the best of your Nublic device. Add applications whenever you want or need them and discover all the possibilities that Nublic offers you.</p>
         </div>
       </div>
-    </div>
+    </div> -->
 	  
     <!-- links -->
 	  <div style="margin-bottom: 50px; height: 175px;">

@@ -39,9 +39,18 @@
       })();
     </script>
     
-    <!-- dropdown -->
+    <!-- bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="bootstrap-dropdown.js"></script>
+    <script src="bootstrap.min.js"></script>
+    <script type="text/javascript">
+$(function() {
+    $('[rel=tooltip]').tooltip();
+});
+$(function() {
+    $('[rel=tooltip-bottom]').tooltip({placement:'bottom'});
+});
+ 
+    </script>
 </head>
 
 <body class="background-style">
@@ -117,11 +126,11 @@
 	        <!-- phone -->
 	        <a href="#phone">
 	          <div style="float: left; width: 30px;">
-              <img src="images/android24.png" title="Android"/>
-              <img src="images/apple24.png" title="iOS"/>
+              <img rel="tooltip" src="images/android24.png" title="Android"/>
+              <img rel="tooltip-bottom" src="images/apple24.png" title="iOS"/>
             </div>
             <div style="width: 80px; float: left;">
-              <img src="images/phone72.png"/>
+              <img src="images/phone72.png" alt="Phone"/>
             </div>
           </a>
 	      </div>
@@ -129,7 +138,7 @@
 	        <!-- tv -->
           <a class="transition-link" href="#cloud">
 	          <div style="float: left; width: 30px;">
-              <img src="images/dlna24.png" title="DLNA"/>
+              <img rel="tooltip" src="images/dlna24.png" title="DLNA"/>
             </div>
             <div style="width: 80px; float: left;">
               <img src="images/tv72.png"/>
@@ -151,8 +160,8 @@
 	    <div style="width: 430px; height: 340px; float: left;">
         <div style="width: 30px; height: 80px; margin: 0px 0px 160px 0px; float: left;">
   	      <a href="#computer">
-    	      <img src="images/samba24.png" title="SAMBA"/>
-            <img src="images/sparkleshare24.png" title="Sparkleshare"/>
+    	      <img rel="tooltip" src="images/samba24.png" title="SAMBA"/>
+              <img rel="tooltip-bottom" src="images/sparkleshare24.png" title="Sparkleshare"/>
   	      </a>
         </div>
 	      <div style="width: 110px; height: 80px; margin: 80px 200px 80px 90px; float: left;">
@@ -162,8 +171,8 @@
 	            <img src="images/internet72.png"/>
 	          </div>
             <div style="float: left; width: 30px;">
-              <img src="images/http24.png" title="http"/>
-              <img src="images/ftp24.png" title="FTP"/>
+              <img rel="tooltip" src="images/http24.png" title="http"/>
+              <img rel="tooltip-bottom" src="images/ftp24.png" title="FTP"/>
             </div>
 	        </a>
 	      </div>
@@ -174,7 +183,7 @@
               <img src="images/music72.png"/>
 	          </div>
             <div style="float: left; width: 30px;">
-              <img src="images/dlna24.png" title="DLNA"/>
+              <img rel="tooltip" src="images/dlna24.png" title="DLNA"/>
             </div>
           </a>
 	      </div>
@@ -184,7 +193,7 @@
     
     <!-- Domestic cloud -->
     <div id="cloud" style="margin-top: 30px; padding-top: 20px; height: 220px; width: 100%;">
-      <div class="mainbox" style="float: left; width: 310px; height: 195px;">
+      <div class="mainbox" style="float: left; width: 310px; height: 195px; background-image: url(images/livingroom.png);">
         
       </div>
       <div style="float: left; margin-left: 50px; width: 578px; height: 200px;">
@@ -208,7 +217,7 @@
     
     <!-- Access from everywhere -->
     <div id="internet" style="margin-top: 30px; padding-top: 20px; height: 265px; width: 100%;">
-      <div class="mainbox" style="float: right; width: 310px; height: 195px;">
+      <div class="mainbox" style="float: right; width: 310px; height: 195px; background-image: url(images/url.png);">
         
       </div>
       <div style="float: right; margin-right: 50px; width: 578px; height: 245px;">
@@ -216,7 +225,7 @@
           <h3>Access from everywhere</h3>
         </div>
         <div class="inner-text" style="width: 100%;">
-          <p>Use your own personal URL, your username and your password to access all the data stored in your home and all the services offered by your <a>Nublic applications</a>. Confortable, secure and more private than ever on the internet.</p>
+          <p>Use your own personal URL, your username and your password to access all the data stored in your home and all the services offered by your <a href="apps.html">Nublic applications</a>. Confortable, secure and more private than ever on the internet.</p>
           <div style="float: left; width: 64px; height: 64px;">
             <img src="images/http64.png" title="HTTP"/>
           </div>
@@ -237,7 +246,7 @@
     
     <!-- In sync with your computer -->
     <div id="computer" style="margin-top: 30px; padding-top: 20px; height: 265px; width: 100%;">
-      <div class="mainbox" style="float: left; width: 310px; height: 195px;">
+      <div class="mainbox" style="float: left; width: 310px; height: 195px; background-image: url(images/sambaOS.png);">
         
       </div>
       <div style="float: left; margin-left: 50px; width: 578px; height: 245px;">
@@ -268,7 +277,7 @@
     
     <!-- Mobile phone friendly -->
     <div id="phone" style="margin-top: 30px; padding-top: 20px; height: 265px; width: 100%; margin-bottom: 50px;">
-      <div class="mainbox" style="float: right; width: 310px; height: 195px;">
+      <div class="mainbox" style="float: right; width: 310px; height: 195px; background-image: url(images/mobiles.png);">
         
       </div>
       <div style="float: right; margin-right: 50px; width: 578px; height: 245px;">
@@ -331,6 +340,9 @@
 	  <hr width="100%"/>
 	  <div style="text-align: center; color: #888; line-height: 5px;">
 	    Copyright © 2012 <strong>Nublic</strong>. All rights reserved. Contact us at <a href="mailto:info@nublic.com">info@nublic.com</a>
+	  </div>
+	  <div style="text-align: center; color: #888; line-height: 20px;">
+	    Living room picture by <a href="http://www.flickr.com/photos/diametrik/159762082/sizes/m/" target="_blank">diametrik</a>
 	  </div>
  	  <hr width="100%" style="margin-bottom: 10px;"/>
 	</div>

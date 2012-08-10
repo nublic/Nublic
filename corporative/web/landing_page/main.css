@@ -151,3 +151,35 @@
   color: #FFFFFF !important;
 }
 
+.modal.fade {
+    top: 52%;
+}
+
+.modal.fade.in {
+    top: 50%;
+}
+
+.modal {
+    width: 1030px !important;
+    margin: -310px 0 0 -525px !important;
+    max-height: 620px !important;
+}
+
+#file2_modal {
+    width: 880px !important;
+    margin: -310px 0 0 -440px !important;
+   
+}
+
+#music1_modal {
+    width: 940px !important;
+    margin: -310px 0 0 -470px !important;
+   
+}
+
+#music2_modal, #photos1_modal, #photos2_modal {
+    width: 900px !important;
+    margin: -310px 0 0 -450px !important;
+   
+}
+
