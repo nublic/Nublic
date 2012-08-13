@@ -1,0 +1,12 @@
+Source: pyechonest
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Section: python
+Priority: optional
+Build-Depends: python-all (>= 2.6.6-3), debhelper (>= 7)
+Standards-Version: 3.9.1
+
+Package: python-pyechonest
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}, python-simplejson
+Description: Python interface to The Echo Nest APIs.
+
