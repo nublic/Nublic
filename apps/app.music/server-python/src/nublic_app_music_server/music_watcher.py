@@ -2,22 +2,65 @@ import datetime
 import EXIF
 import os
 import os.path
+from unidecode import unidecode
 
 from nublic.filewatcher import FileChange, Processor
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
 from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist
 
+TAGGED_MIME_TYPES = [
+      # MP4
+      "audio/mp4",
+      # MP3
+      "audio/mpeg", "audio/x-mpeg", "audio/mp3",
+      "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
+      "audio/mpg", "audio/x-mpg", "audio/x-mpegaudio",
+      # OGG
+      "audio/ogg", "application/ogg", "audio/x-ogg",
+      "application/x-ogg",
+      # ASF
+      "audio/asf",
+      # WMA
+      "audio/x-ms-wma",
+      # Real
+      "audio/rmf", "audio/x-rmf",
+      # FLAC
+      "audio/flac"
+      ]
+TAGGED_EXTENSIONS = ["mp3", "mp4", "ogg", "flac", "wma", "rm"]
+
+SUPPORTED_MIME_TYPES = TAGGED_MIME_TYPES + [
+      # AAC
+      "audio/aac", "audio/x-aac",
+      # AC3
+      "audio/ac3",
+      # AIFF
+      "audio/aiff", "audio/x-aiff", "sound/aiff",
+      "audio/x-pn-aiff",
+      # MIDI
+      "audio/mid", "audio/x-midi", 
+      # AU
+      "audio/basic", "audio/x-basic", "audio/au", 
+      "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
+      # PCM
+      "application/x-pcm",
+      # WAV
+      "audio/wav", "audio/x-wav", "audio/wave",
+      "audio/x-pn-wav",
+      # Various
+      "audio/vnd.qcelp", "audio/x-gsm", "audio/snd"
+      ]
+SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + ["wav", "aac", "ac3", "aiff", "mid", "midi", "au", "pcm"]
+
 # Set up processors
 class MusicProcessor(Processor):
     def __init__(self, logger, watcher):
-        Processor.__init__(self, 'photo', watcher, False, logger)
-        logger.error('Photo processor initialised')
+        Processor.__init__(self, 'music', watcher, False, logger)
+        logger.error('Music processor initialised')
 
     def process(self, change):
-        return
-        # Do nothing by now
-        self.get_logger().error('Photo processor file: %s, context: %s', change.filename, change.context)
+        self.get_logger().error('Music processor file: %s, context: %s', change.filename, change.context)
         if change.kind == FileChange.CREATED and not change.is_dir:
             self.process_updated_file(change.filename, change.context)
         elif change.kind == FileChange.MODIFIED and not change.is_dir:
@@ -38,77 +81,128 @@ class MusicProcessor(Processor):
     
     def process_updated_file(self, filename, context):
         if not self.is_hidden(filename) and get_mime_type(filename).startswith('image/'):
-            # Get modification time
-            f = open(filename, 'rb')
-            tags = EXIF.process_file(f, stop_tag='DateTimeOriginal')
-            if 'EXIF DateTimeOriginal' in tags:
-                date_as_string = tags['EXIF DateTimeOriginal'].values
-                date = datetime.datetime.strptime(date_as_string, '%Y:%m:%d %H:%M:%S')
-            else:
-                date = datetime.datetime.fromtimestamp(os.path.getmtime(filename))
-            f.close()
-            # Update or write new
-            photo = Photo.query.filter_by(file=filename).first()
-            now = datetime.datetime.now()
-            owner = get_file_owner(filename).get_username()
-            shared = is_file_shared(filename)
-            if photo != None:
-                photo.date = date
-                photo.lastModified = now
-                photo.owner = owner
-                photo.shared = shared
-                db.session.commit()
-            else:
-                photo = Photo(filename, os.path.basename(filename), date, \
-                              datetime.datetime.now(), owner, shared)
-                db.session.add(photo)
-                db.session.commit()
-                # Add to album
-                context_path = '/var/nublic/data/' + context[:-1]
-                (parent, _basename) = os.path.split(filename)
-                (p_parent, p_basename) = os.path.split(parent)
-                (_p_p_parent, p_p_basename) = os.path.split(p_parent)
-                if context_path == parent:
-                    album = None
-                elif context_path == p_parent:
-                    album = p_basename
-                else:
-                    album = p_p_basename + '/' + p_basename
-                if album != None:
-                    ab = get_or_create_album(album)
-                    relation = PhotoAlbum(ab.id, photo.id)
-                    db.session.add(relation)
-                    db.session.commit()
+            # Process
+            pass
     
     def process_attribs_change(self, filename, context):
-        photo = Photo.query.filter_by(file=filename).first()
-        if photo != None:
-            photo.owner = get_file_owner(filename).get_username()
-            photo.shared = is_file_shared(filename)
+        song = Song.query.filter_by(file=filename).first()
+        if song != None:
+            song.owner = get_file_owner(filename).get_username()
+            song.shared = is_file_shared(filename)
             db.session.commit()
         else:
             self.process_updated_file(filename, context)
     
     def process_deleted_file(self, filename):
-        photo = Photo.query.filter_by(file=filename).first()
-        if photo != None:
-            PhotoAlbum.query.filter_by(photoId=photo.id).delete()
-            db.session.delete(photo)
+        song = Song.query.filter_by(file=filename).first()
+        if song != None:
+            # Delete from collections
+            SongCollection.query.filter_by(songId=song.id).delete()
+            db.session.commit()
+            # Delete from playlists
+            relation = SongPlaylist.query.filter_by(songId=song.id).first()
+            while relation != None:
+                rest = SongPlaylist.query.filter_by(playlistId=relation.playlistId).filter(SongPlaylist.position > relation.position).all()
+                for other_song in rest:
+                    other_song.position -= 1
+                relation.delete()
+                db.session.commit()
+                # Try again
+                relation = SongPlaylist.query.filter_by(songId=song.id).first()
+            # Delete the song itself
+            self.delete_artist_if_no_assoc(song.artistId)
+            self.delete_album_if_no_assoc(song.albumId)
+            db.session.delete(song)
             db.session.commit()
     
     def process_moved_folder(self, from_, to, context):
-        for e in os.listdir(from_):
+        for e in os.listdir(to):
             file_from = os.path.join(from_, e)
             file_to = os.path.join(to, e)
-            if os.path.isdir(file_from) and not self.is_hidden(file_from):
+            if os.path.isdir(file_to) and not self.is_hidden(file_to):
                 self.process_moved_folder(file_from, file_to, context)
             else:
                 self.process_moved_file(file_from, file_to, context)
     
     def process_moved_file(self, from_, to, context):
-        photo = Photo.query.filter_by(file=from_).first()
-        if photo != None:
-            photo.file = to
+        song = Song.query.filter_by(file=from_).first()
+        if song != None:
+            song.file = to
             db.session.commit()
         else:
             self.process_updated_file(to, context)
+    
+    def ensure_or_create_artist(self, artist_name):
+        n_artist = unidecode(unicode(artist_name).lower())
+        # Try to find an artist
+        artist = Artist.query.filter_by(normalized=n_artist).first()
+        if artist != None:
+            return artist
+        else:
+            new_artist = Artist(artist_name)
+            db.session.add(new_artist)
+            db.session.commit()
+            return new_artist
+    
+    def ensure_or_create_album(self, file_, artist_name, album_name):
+        directory, _ = os.path.split(file_)
+        # Case 1. we have artist and album name
+        if artist_name != None and album_name != None:
+            ab = self.find_album_with_artist(artist_name, album_name)
+            if ab != None:
+                return ab
+            else:
+                return self.find_album_by_directory(directory, album_name)
+        elif album_name != None:
+            return self.find_album_by_directory(directory, album_name)
+        else:
+            if artist_name == None:
+                r_artist_name = ''
+            else:
+                r_artist_name = artist_name
+            if album_name == None:
+                r_album_name = ''
+            else:
+                r_album_name = artist_name
+            ab = self.find_album_with_artist(r_artist_name, r_album_name)
+            if ab != None:
+                return ab
+            else:
+                new_album = Album(r_album_name)
+                db.session.add(new_album)
+                db.session.commit()
+                return new_album
+
+    def find_album_with_artist(self, artist_name, album_name):
+        n_artist = unidecode(unicode(artist_name).lower())
+        n_album = unidecode(unicode(album_name).lower())
+        # Try to get artist
+        artist = Artist.query.filter_by(normalized=n_artist).first()
+        if artist == None:
+            return None
+        else:
+            return Album.query.filter_by(normalized=n_album).filter(Song.albumId==Album.id).filter(Song.artistId==artist.id).first()
+    
+    def find_album_by_directory(self, directory, album_name):
+        n_album = unidecode(unicode(album_name).lower())
+        # Try to find a song with name album name
+        ab = Album.query.filter_by(normalized=n_album).filter(Song.albumId==Album.id).filter(Song.file.like(directory + '/%')).first()
+        if ab != None:
+            return ab
+        else:
+            new_album = Album(r_album_name)
+            db.session.add(new_album)
+            db.session.commit()
+            return new_album
+    
+    def delete_artist_if_no_assoc(self, artist_id):
+        songs = Song.query.filter_by(artistId=artist_id).count()
+        if songs == 0:
+            Artist.query.filter_by(id=artist_id).delete()
+            db.session.commit()
+            
+    def delete_album_if_no_assoc(self, album_id):
+        songs = Song.query.filter_by(albumId=album_id).count()
+        if songs == 0:
+            Album.query.filter_by(id=album_id).delete()
+            db.session.commit()
