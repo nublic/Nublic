@@ -1,20 +1,32 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html lang="es" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Nublic. Coming soon</title>
-    <meta name="description"
-	    content="Nublic is an amazing software for a small device, that you can install in your home and gives you access to an extraordinary private cloud, Nublic" />
+  <title>Nublic. Coming soon</title>
+  <meta name="description"
+    content="Nublic is an amazing software for a small device, that you can install in your home and gives you access to an extraordinary private cloud, Nublic" />
 
-<script >
+  <!-- analytics -->
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-27531577-1']);
+    _gaq.push(['_trackPageview']);
 
-var language = window.navigator.userLanguage || window.navigator.language;
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
 
-if (language.indexOf('en') !== -1) window.location.replace("index_en.html") 
-else if (language.indexOf('es') !== -1) window.location.replace("index_es.html")
-else window.location.replace("index.html")
-/*alert(language); //works IE/SAFARI/CHROME/FF*/
-                 
-</script>
+  <!-- select proper language page -->
+  <script>
+    var language = window.navigator.userLanguage || window.navigator.language;
+
+    if (language.indexOf('en') !== -1) window.location.replace("index_en.html") 
+    else if (language.indexOf('es') !== -1) window.location.replace("index_es.html")
+    else window.location.replace("index.html")
+    /*alert(language); //works IE/SAFARI/CHROME/FF*/                
+  </script>
 </head>
 
 <body class="background-style">
