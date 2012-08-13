@@ -10,5 +10,5 @@ ARTIST_THUMBNAIL_SIZE = 96
 def get_artist_folder(artist_id):
     return os.path.join(ARTISTS_FOLDER, str(artist_id))
 
-def get_albums_folder(artist_id):
+def get_album_folder(artist_id):
     return os.path.join(ALBUMS_FOLDER, str(artist_id))
