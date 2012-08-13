@@ -21,7 +21,7 @@ remove_folder apps/app.manager/web
 remove_folder apps/app.browser/server
 remove_folder apps/app.browser/web
 remove_folder apps/app.music/server
-# remove_folder apps/app.music/web
+remove_folder apps/app.music/web
 
 exit 0
 
