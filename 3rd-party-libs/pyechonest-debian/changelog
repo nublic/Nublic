@@ -1,0 +1,5 @@
+pyechonest (4.2.21) unstable; urgency=low
+
+  * Packaged for Debian
+
+ -- Alejandro Serrano <packaging@nublic.com>  Mon, 13 Aug 2012 15:23:13 +0200

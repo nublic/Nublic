@@ -9,6 +9,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-music-server
 Architecture: all
-Depends: dbus, python (>= 2.6), python-central, python-support (>= 0.90),libapache2-mod-wsgi, python-nublic, python-nublic-server, ffmpeg, lame, echoprint-codegen, python-unidecode
+Depends: dbus, python (>= 2.6), python-central, python-support (>= 0.90),libapache2-mod-wsgi, python-nublic, python-nublic-server, ffmpeg, lame, echoprint-codegen, python-unidecode, python-pyechonest, python-mutagen, python-pymad
 Description: The Nublic Music App Server
  The server serving the music information to the users.

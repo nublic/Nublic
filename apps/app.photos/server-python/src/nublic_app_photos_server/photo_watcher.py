@@ -95,10 +95,10 @@ class PhotoProcessor(Processor):
             db.session.commit()
     
     def process_moved_folder(self, from_, to, context):
-        for e in os.listdir(from_):
+        for e in os.listdir(to):
             file_from = os.path.join(from_, e)
             file_to = os.path.join(to, e)
-            if os.path.isdir(file_from) and not self.is_hidden(file_from):
+            if os.path.isdir(file_to) and not self.is_hidden(file_to):
                 self.process_moved_folder(file_from, file_to, context)
             else:
                 self.process_moved_file(file_from, file_to, context)

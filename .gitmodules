@@ -13,3 +13,6 @@
 [submodule "3rd-party-libs/pykka"]
 	path = 3rd-party-libs/pykka
 	url = https://github.com/mopidy/pykka-deb.git
+[submodule "3rd-party-libs/pyechonest"]
+	path = 3rd-party-libs/pyechonest
+	url = https://github.com/echonest/pyechonest
