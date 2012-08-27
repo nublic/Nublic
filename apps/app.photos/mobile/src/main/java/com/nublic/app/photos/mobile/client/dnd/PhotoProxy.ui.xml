@@ -1,0 +1,33 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.plus {
+			/* margin-top: -3px;  TODO: fix plus top margin on chrome */
+			margin-left: 3px;
+			line-height: 16px;
+		}
+		.art {
+			margin: 5px;
+			max-height: 48px;
+			max-width: 48px;
+		}
+		.rightmargin {
+			margin-right: 10px;
+		}
+	</ui:style>
+
+	<g:AbsolutePanel width="700px" height="80px">
+		<g:at left='8' top='8'>
+			<g:HorizontalPanel addStyleNames="proxyPanel" height="58px" verticalAlignment="middle">
+				<g:Image ui:field="art" addStyleNames="{style.art}"/>
+				<g:Label ui:field="text" addStyleNames="{style.rightmargin}"/>
+			</g:HorizontalPanel>
+		</g:at>
+		<g:at left='1' top='1'>
+			<g:SimplePanel ui:field="plusPanel" addStyleNames="proxyAddPanel">
+				<g:Label addStyleNames="{style.plus}" text="+"/>
+			</g:SimplePanel>
+		</g:at>
+	</g:AbsolutePanel>
+</ui:UiBinder> 
