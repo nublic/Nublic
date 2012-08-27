@@ -43,6 +43,7 @@ initialize() {
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
     install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwtmobile/gwtmobile-1.1.jar" gwtmobile gwtmobile 1.1
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key

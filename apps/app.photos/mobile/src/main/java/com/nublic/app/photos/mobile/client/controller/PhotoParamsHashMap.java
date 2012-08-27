@@ -1,7 +1,5 @@
-package com.nublic.app.photos.web.client.controller;
+package com.nublic.app.photos.mobile.client.controller;
 
-import com.nublic.app.photos.web.client.Constants;
-import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.util.messages.ParamsHashMap;
 
 
@@ -12,17 +10,17 @@ public class PhotoParamsHashMap extends ParamsHashMap {
 		super(args);
 	}
 
-	public long getAlbum() {
-		if (this.containsKey("album")) {
-			try {
-				return Long.parseLong(this.get("album"));
-			} catch (Throwable e) {
-				return Constants.ALL_ALBUMS;
-			}
-		} else {
-			return Constants.ALL_ALBUMS;
-		}
-	}
+//	public long getAlbum() {
+//		if (this.containsKey("album")) {
+//			try {
+//				return Long.parseLong(this.get("album"));
+//			} catch (Throwable e) {
+//				return Constants.ALL_ALBUMS;
+//			}
+//		} else {
+//			return Constants.ALL_ALBUMS;
+//		}
+//	}
 
 	public long getPhotoPosition() {
 		if (this.containsKey("photo")) {
@@ -36,15 +34,15 @@ public class PhotoParamsHashMap extends ParamsHashMap {
 		}
 	}
 
-	public AlbumOrder getOrder() {
-		if (this.containsKey("order")) {
-			AlbumOrder o = AlbumOrder.fromParameter(this.get("order"));
-			if (o != null) {
-				return o;
-			}
-		}
-		return null;
-	}
+//	public AlbumOrder getOrder() {
+//		if (this.containsKey("order")) {
+//			AlbumOrder o = AlbumOrder.fromParameter(this.get("order"));
+//			if (o != null) {
+//				return o;
+//			}
+//		}
+//		return null;
+//	}
 
 	public View getView() {
 		if (this.containsKey("view")) {

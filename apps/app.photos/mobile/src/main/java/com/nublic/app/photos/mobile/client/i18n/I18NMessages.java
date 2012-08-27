@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client.i18n;
+package com.nublic.app.photos.mobile.client.i18n;
 
 import com.google.gwt.i18n.client.Messages;
 import com.google.gwt.i18n.client.LocalizableResource.DefaultLocale;

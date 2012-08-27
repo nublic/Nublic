@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client.model;
+package com.nublic.app.photos.mobile.client.model;
 
 class RequestStartAlbum extends Request {
 

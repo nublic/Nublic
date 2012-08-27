@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client.model;
+package com.nublic.app.photos.mobile.client.model;
 
 import com.google.gwt.core.client.JavaScriptObject;
 

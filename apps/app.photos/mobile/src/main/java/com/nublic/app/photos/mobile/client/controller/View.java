@@ -1,4 +1,4 @@
-package com.nublic.app.photos.web.client.controller;
+package com.nublic.app.photos.mobile.client.controller;
 
 public enum View {
 	AS_ALBUMS("albums"),
