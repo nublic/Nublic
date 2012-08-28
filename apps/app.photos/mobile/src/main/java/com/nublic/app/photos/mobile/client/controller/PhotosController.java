@@ -1,7 +1,41 @@
 package com.nublic.app.photos.mobile.client.controller;
 
+import java.util.Map;
+
+import com.nublic.app.photos.mobile.client.model.CallbackListOfAlbums;
+import com.nublic.app.photos.mobile.client.model.PhotosModel;
+import com.nublic.app.photos.mobile.client.ui.MainUi;
+
 
 public class PhotosController {
+	public static PhotosController INSTANCE;
+	MainUi ui;
+	PhotosModel model;
+	
+	public static void create(MainUi mainUi) {
+		INSTANCE = new PhotosController(mainUi);		
+	}
+
+	public PhotosController(MainUi mainUi) {
+		this.ui = mainUi;
+		model = new PhotosModel();
+		askForAlbums();
+	}
+
+	private void askForAlbums() {
+		model.albums(new CallbackListOfAlbums() {
+			@Override
+			public void list(Map<Long, String> albums) {
+				ui.setAlbumList(albums);
+			}
+			@Override
+			public void error() {
+				// nothing
+			}
+		});
+	}
+	
+	
 //public class PhotosController implements PutTagHandler {
 //
 //	private MainUi theUi;
