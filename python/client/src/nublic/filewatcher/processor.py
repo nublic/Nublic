@@ -4,6 +4,7 @@
 
 import logging
 from pykka.actor import ThreadingActor
+import traceback
 
 class Processor(ThreadingActor):
     '''
@@ -55,7 +56,7 @@ class Processor(ThreadingActor):
                     raise
                 else:
                     if self._logger != None:
-                        self._logger.error('ERROR in %s PROCESSOR: %s', self._name, str(e))
+                        self._logger.error('ERROR in %s PROCESSOR: %s\n%s', self._name, str(e), traceback.format_exc())
             # Tell back the parent watcher
             #self._watcher.tell({'command': 'back', 'app_name': self._name,
             #                    'id': message.get('id'), 'change': message.get('change')})

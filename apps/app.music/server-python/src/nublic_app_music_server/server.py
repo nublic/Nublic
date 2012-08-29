@@ -13,13 +13,13 @@ from model import db, Album, Artist, Collection, Playlist, Song, SongCollection,
     artists_and_row_count_as_json, albums_and_row_count_as_json,\
     song_as_json, songs_and_row_count_as_json
 from music_watcher import MusicProcessor
-from folder import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
+from images import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
 
 # Init app
 app = Flask(__name__)
 app.debug = True
 init_nublic_server(app, '/var/log/nublic/nublic-app-music.python.log', 'nublic_app_music',
-                   db, 'photos', [lambda w: MusicProcessor.start(app.logger, w)])
+                   db, 'music', [lambda w: MusicProcessor.start(app.logger, w)])
 app.logger.error('Starting music app')
 
 # COLLECTIONS HANDLING
@@ -440,8 +440,10 @@ def raw_song(song_id):
 @app.route('/view/<int:song_id>.mp3')
 def view_song(song_id):
     require_user()
+    app.logger.error('Getting song %i', song_id)
     song = Song.query.get_or_404(song_id)
     mp3_file = os.path.join(get_cache_folder(song.file), 'audio.mp3')
+    app.logger.error('Getting file %s', mp3_file)
     if os.path.exists(mp3_file):
         return send_file(mp3_file)
     else:
