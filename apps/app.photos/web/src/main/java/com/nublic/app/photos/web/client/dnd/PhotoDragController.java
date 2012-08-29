@@ -6,8 +6,8 @@ import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.web.client.PhotosApp;
-import com.nublic.app.photos.web.client.model.PhotoInfo;
 
 public class PhotoDragController extends PickupDragController implements HasProxy {
 

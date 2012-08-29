@@ -2,8 +2,8 @@ package com.nublic.app.photos.mobile.client.controller;
 
 import java.util.Map;
 
-import com.nublic.app.photos.mobile.client.model.CallbackListOfAlbums;
-import com.nublic.app.photos.mobile.client.model.PhotosModel;
+import com.nublic.app.photos.common.model.CallbackListOfAlbums;
+import com.nublic.app.photos.common.model.PhotosModel;
 import com.nublic.app.photos.mobile.client.ui.MainUi;
 
 

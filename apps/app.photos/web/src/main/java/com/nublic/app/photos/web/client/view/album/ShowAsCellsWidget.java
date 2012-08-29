@@ -23,17 +23,17 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.common.model.AlbumInfo;
+import com.nublic.app.photos.common.model.AlbumOrder;
+import com.nublic.app.photos.common.model.CallbackOneAlbum;
+import com.nublic.app.photos.common.model.CallbackPhotosRemoval;
+import com.nublic.app.photos.common.model.CallbackRowCount;
+import com.nublic.app.photos.common.model.PhotosModel;
+import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.PhotosApp;
 import com.nublic.app.photos.web.client.controller.PhotosController;
 import com.nublic.app.photos.web.client.controller.SelectedPhotosChangeHandler;
-import com.nublic.app.photos.web.client.model.AlbumInfo;
-import com.nublic.app.photos.web.client.model.AlbumOrder;
-import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
-import com.nublic.app.photos.web.client.model.CallbackPhotosRemoval;
-import com.nublic.app.photos.web.client.model.CallbackRowCount;
-import com.nublic.app.photos.web.client.model.PhotoInfo;
-import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.DisposableWidget;
 
 public class ShowAsCellsWidget extends Composite implements ScrollHandler, ResizeHandler, DisposableWidget, SelectedPhotosChangeHandler {

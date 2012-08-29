@@ -19,10 +19,10 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.common.model.CallbackOneAlbum;
+import com.nublic.app.photos.common.model.PhotosModel;
 import com.nublic.app.photos.web.client.Images;
 import com.nublic.app.photos.web.client.controller.PhotosController;
-import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
-import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.widgets.AnchorPanel;
 

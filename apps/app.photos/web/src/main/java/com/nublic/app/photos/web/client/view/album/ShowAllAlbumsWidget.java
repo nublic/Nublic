@@ -20,11 +20,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.common.model.CallbackListOfAlbums;
+import com.nublic.app.photos.common.model.CallbackOneAlbum;
+import com.nublic.app.photos.common.model.PhotosModel;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.controller.PhotosController;
-import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
-import com.nublic.app.photos.web.client.model.CallbackOneAlbum;
-import com.nublic.app.photos.web.client.model.PhotosModel;
 
 public class ShowAllAlbumsWidget extends Composite implements ScrollHandler, ResizeHandler {
 

@@ -204,7 +204,9 @@ build_deb_package apps/app.music/web
 build_deb_package apps/app.music
 # Photos App
 build_deb_package apps/app.photos/server-python/src
+package_and_install apps/app.photos/common
 build_deb_package apps/app.photos/web
+build_deb_package apps/app.photos/mobile
 build_deb_package apps/app.photos
 # Downloads App
 build_deb_package apps/app.downloads/server
