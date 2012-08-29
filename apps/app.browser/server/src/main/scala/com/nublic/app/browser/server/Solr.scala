@@ -1,12 +1,12 @@
 package com.nublic.app.browser.server
 
-import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer
+import org.apache.solr.client.solrj.impl.HttpSolrServer
 import org.apache.solr.client.solrj.SolrQuery
 import org.apache.solr.client.solrj.SolrRequest
 
 object Solr {
   val SOLR_SERVER_URL = "http://localhost:8080/solr"
-  val solrServer = new CommonsHttpSolrServer(SOLR_SERVER_URL);
+  val solrServer = new HttpSolrServer(SOLR_SERVER_URL);
   
   def getMimeType(filepath: String): Option[String] = {
     var query = new SolrQuery("path:\"" + filepath + "\"")
