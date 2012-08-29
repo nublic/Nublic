@@ -8,13 +8,10 @@
 	<ui:with type="com.nublic.app.photos.mobile.client.i18n.I18NMessages" field="msg"/>
 
 	<g:HTMLPanel>
-		<m:HeaderPanel><g:Label>Nublic test</g:Label></m:HeaderPanel>
+		<m:HeaderPanel><g:Label>Nublic Photos</g:Label></m:HeaderPanel>
 		<m:ScrollPanel>
 			<m:ListPanel ui:field="list" showArrow="true">
 				<g:Label><ui:text from="{msg.allPhotos}"/></g:Label>
-				<g:Label>Upload photo</g:Label>
-				<g:Label>Music</g:Label>
-				<g:Label>Photos</g:Label>
 			</m:ListPanel>
 		</m:ScrollPanel>
 	</g:HTMLPanel>

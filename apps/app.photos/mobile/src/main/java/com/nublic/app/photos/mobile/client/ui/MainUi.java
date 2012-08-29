@@ -52,8 +52,8 @@ public class MainUi extends Page {
     }
 
 
-	public Object getNavigationPanel() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	public Object getNavigationPanel() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 }
