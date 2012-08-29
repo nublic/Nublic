@@ -159,6 +159,7 @@ initialize
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
+build_submodule_lib pyechonest
 copy_and_touch 3rd-party-libs/aria2
 copy_and_touch 3rd-party-libs/python-fstab
 copy_and_touch 3rd-party-libs/tomcat7
@@ -187,7 +188,7 @@ build_deb_package python/server/src
 package_and_install apps/util/gwt
 package_and_install apps/util/ws-json
 # Manager App
-build_deb_package apps/app.manager/server
+build_deb_package apps/app.manager/server-python/src
 build_deb_package apps/app.manager/web
 build_deb_package apps/app.manager/welcome
 build_deb_package apps/app.manager/settings

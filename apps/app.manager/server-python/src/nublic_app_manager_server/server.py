@@ -3,7 +3,7 @@ import os
 import os.path
 import simplejson as json
 
-from nublic.files_and_users import get_all_users
+from nublic.files_and_users import get_all_users, Mirror, WorkFolder, create_mirror, create_work_folder
 from nublic_server.helpers import init_bare_nublic_server, require_user
 
 # Init app
@@ -83,6 +83,90 @@ def user_info():
             return 'ok'
         else:
             abort(500)
+
+@app.route('/mirrors', methods=['GET', 'PUT', 'DELETE'])
+def mirrors():
+    user = require_user()
+    # Get mirrors information
+    if request.method == 'GET':
+        return_mirrors = []
+        for mirror in user.get_owned_mirrors():
+            return_mirror = { 'id': mirror.get_id(), 'name': mirror.get_name() }
+            return_mirrors.append(return_mirror)
+        return_mirrors.sort(key=lambda m: m['name'])
+        return json.dumps(return_mirrors)
+    # Create a new mirror
+    elif request.method == 'PUT':
+        name = request.form.get('name', None)
+        if name != None:
+            mirror = create_mirror(name, user.get_username())
+            return str(mirror.get_id())
+        else:
+            abort(500)
+    # Delete a mirror
+    elif request.method == 'DELETE':
+        mid = int(request.form.get('id'))
+        m = Mirror(mid)
+        if m.exists() and m.get_owner() == user.get_username():
+            m.delete(False)
+            abort(200)
+        else:
+            abort(403)
+
+@app.route('/mirror-name', methods=['PUT'])
+def mirror_name():
+    user = require_user()
+    name = request.form.get('name', None)
+    mid = int(request.form.get('id'))
+    m = Mirror(mid)
+    if name != None and m.exists() and m.get_owner() == user.get_username():
+        # Change name
+        m.change_name(name)
+        abort(200)
+    else:
+        abort(403)
+
+@app.route('/synceds', methods=['GET', 'PUT', 'DELETE'])
+def synceds():
+    user = require_user()
+    # Get mirrors information
+    if request.method == 'GET':
+        return_synceds = []
+        for synced in user.get_owned_work_folders():
+            return_synced = { 'id': synced.get_id(), 'name': synced.get_name() }
+            return_synceds.append(return_synced)
+        return_synceds.sort(key=lambda m: m['name'])
+        return json.dumps(return_synceds)
+    # Create a new mirror
+    elif request.method == 'PUT':
+        name = request.form.get('name', None)
+        if name != None:
+            synced = create_work_folder(name, user.get_username())
+            return str(synced.get_id())
+        else:
+            abort(500)
+    # Delete a mirror
+    elif request.method == 'DELETE':
+        sid = int(request.form.get('id'))
+        s = WorkFolder(sid)
+        if s.exists() and s.get_owner() == user.get_username():
+            s.delete(False)
+            abort(200)
+        else:
+            abort(403)
+
+@app.route('/synced-name', methods=['PUT'])
+def synced_name():
+    user = require_user()
+    name = request.form.get('name', None)
+    sid = int(request.form.get('id'))
+    s = WorkFolder(sid)
+    if name != None and s.exists() and s.get_owner() == user.get_username():
+        # Change name
+        s.change_name(name)
+        abort(200)
+    else:
+        abort(403)
 
 if __name__ == '__main__':
     app.run()
