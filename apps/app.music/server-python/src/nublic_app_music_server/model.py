@@ -13,7 +13,7 @@ class Artist(db.Model):
     
     def __init__(self, name):
         self.name = name
-        self.normalized = unidecode.unidecode(unicode(name).lower())
+        self.normalized = unidecode(unicode(name).lower())
     
     songs = db.relationship('Song', backref='artist', lazy='dynamic')
 
@@ -28,7 +28,7 @@ def artists_and_row_count_as_json(row_count, artists):
     return { 'row_count': row_count, 'artists': map(artist_as_json, artists) }
 
 def get_or_create_artist(artist_name):
-    normalized_name = unidecode.unidecode(unicode(artist_name).lower())
+    normalized_name = unidecode(unicode(artist_name).lower())
     a = Artist.query.filter_by(normalized=normalized_name).first()
     if a == None:
         a = Artist(artist_name)
@@ -45,7 +45,7 @@ class Album(db.Model):
     
     def __init__(self, name):
         self.name = name
-        self.normalized = unidecode.unidecode(unicode(name).lower())
+        self.normalized = unidecode(unicode(name).lower())
     
     songs = db.relationship('Song', backref='album', lazy='dynamic')
 
@@ -60,7 +60,7 @@ def albums_and_row_count_as_json(row_count, albums):
     return { 'row_count': row_count, 'albums': map(album_as_json, albums) }
 
 def get_or_create_album(album_name):
-    normalized_name = unidecode.unidecode(unicode(album_name).lower())
+    normalized_name = unidecode(unicode(album_name).lower())
     a = Album.query.filter_by(normalized=normalized_name).first()
     if a == None:
         a = Album(album_name)

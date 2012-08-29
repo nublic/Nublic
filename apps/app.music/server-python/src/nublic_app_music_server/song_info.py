@@ -3,6 +3,7 @@ import mutagen
 import os.path
 import re
 import subprocess
+import traceback
 
 from pyechonest import config
 from pyechonest.song import identify
@@ -34,13 +35,19 @@ class SongInfo:
         else:
             return self.clone()
 
-def get_song_info(file_, context):
-    tag_info = extract_using_mutagen(file_).clean()
+def get_song_info(file_, context, logger = None):
+    if logger != None:
+        logger.error('Extracting from mutagen: %s', file_)
+    tag_info = extract_using_mutagen(file_, logger).clean()
     if tag_info.has_important_info_missing():
-        echonest_info = extract_using_echonest(file_)
+        if logger != None:
+            logger.error('Extracting from Echonest: %s', file_)
+        echonest_info = extract_using_echonest(file_).clean()
         tag_info = merge_song_infos(tag_info, echonest_info)
     if tag_info.has_important_info_missing():
-        file_info = extract_using_filename(file_, context)
+        if logger != None:
+            logger.error('Extracting from filename: %s', file_)
+        file_info = extract_using_filename(file_, context, logger).clean()
         tag_info = merge_song_infos(tag_info, file_info)
     return tag_info
 
@@ -71,7 +78,7 @@ def _merge_info(i1, i2):
 def empty_song_info():
     return SongInfo('', '', '', None, None, None, None)
 
-def extract_using_mutagen(file_):
+def extract_using_mutagen(file_, logger=None):
     # Use Mad for length
     try:
         madf = mad.MadFile(file_)
@@ -80,33 +87,35 @@ def extract_using_mutagen(file_):
         length = None
     # Use Mutagen for tags
     try:
-        mutf = mutagen.File(file_, easy=True)
-        if 'title' in mutf:
-            title = mutf['title']
-        else:
+        mutf = mutagen.File(file_.encode('utf-8'), easy=True)
+        try:
+            title = mutf['title'][0]
+        except:
             title = None
-        if 'artist' in mutf:
-            artist = mutf['artist']
-        else:
+        try:
+            artist = mutf['artist'][0]
+        except:
             artist = None
-        if 'album' in mutf:
-            album = mutf['album']
-        else:
+        try:
+            album = mutf['album'][0]
+        except:
             album = None
-        if 'date' in mutf:
-            year = int(mutf['date'].split('-')[0])
-        else:
+        try:
+            year = int(mutf['date'][0].split('-')[0])
+        except:
             year = None
-        if 'tracknumber' in mutf:
-            track_no = int(mutf['tracknumber'].split('/')[0])
-        else:
+        try:
+            track_no = int(mutf['tracknumber'][0].split('/')[0])
+        except:
             track_no = None
-        if 'discnumber' in mutf:
-            disc_no = mutf['discnumber']
-        else:
+        try:
+            disc_no = int(mutf['discnumber'][0])
+        except:
             disc_no = None
         return SongInfo(title, artist, album, length, year, track_no, disc_no)
     except:
+        if logger != None:
+            logger.error("%s", traceback.format_exc())
         return empty_song_info()
 
 def extract_using_echonest(file_):
@@ -119,14 +128,17 @@ def extract_using_echonest(file_):
     # Identify via Echo Nest
     config.ECHO_NEST_API_KEY = 'UR4VKX7JXDXAULIWB'
     config.CODEGEN_BINARY_OVERRIDE = '/usr/bin/echoprint-codegen'
-    possible_songs = identify(filename=file_)
-    if possible_songs:
-        song = possible_songs[0]
-        return SongInfo(song.title, song.artist_name, '', length, None, None, None)
-    else:
+    try:
+        possible_songs = identify(filename=file_)
+        if possible_songs:
+            song = possible_songs[0]
+            return SongInfo(song.title, song.artist_name, '', length, None, None, None)
+        else:
+            return empty_song_info()
+    except:
         return empty_song_info()
 
-def extract_using_filename(file_, context):
+def extract_using_filename(file_, context, logger=None):
     # Get length
     try:
         madf = mad.MadFile(file_)
@@ -134,7 +146,11 @@ def extract_using_filename(file_, context):
     except:
         length = None
     # Get information from filename
-    no_context = file_.replace(context + '/', '', 1)
+    if logger != None:
+        logger.error('File: %s, context: %s', file_, context)
+    no_context = file_.replace('/var/nublic/data/' + context, '', 1)
+    if logger != None:
+        logger.error('No context: %s', no_context)
     parent, filename = os.path.split(no_context)
     # Initialize to empty
     track = None
@@ -154,12 +170,14 @@ def extract_using_filename(file_, context):
         album = ar_ab_title_match.group(2).strip()
         title = ar_ab_title_match.group(3).strip()
     elif ar_title_match != None:
-        artist = ar_ab_title_match.group(1).strip()
-        title = ar_ab_title_match.group(2).strip()
+        artist = ar_title_match.group(1).strip()
+        title = ar_title_match.group(2).strip()
     else:
         title = filename
     # Get information from path
-    while parent != '':
+    while parent != '' and parent != '/':
+        if logger != None:
+            logger.error('Parent is now: %s', parent)
         p_parent, p_name = os.path.split(parent)
         if album == None:
             ar_ab_match = re.match(r"\s*(.*)-\s*(.*)$", p_name)

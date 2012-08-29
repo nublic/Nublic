@@ -153,20 +153,24 @@ class DbusSignaler(dbus.service.Object):
             self.app_config.append(new_account_path)
             apps.write_app_config(self.config)
         else:
-             # Try as a new pathname
-             self.add_context(new_pathname, do_touch)
+            # Try as a new pathname
+            self.add_context(new_pathname, do_touch)
     
     def add_socket(self, socket):
         self.sockets.append(socket)
     
     @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir, context):
-        o = { 'ty': unicode(ty), 'pathname': unicode(pathname), 'src_pathname': unicode(src_pathname), \
-              'isdir': bool(isdir), 'context': unicode(context) }
+        o = { 'ty': unicode(ty), 'pathname': unicode(pathname.decode('utf-8')), \
+              'src_pathname': unicode(src_pathname.decode('utf-8')), \
+              'isdir': bool(isdir), 'context': unicode(context.decode('utf-8')) }
         o_string = simplejson.dumps(o)
         for socket in self.sockets:
-            socket.write(o_string + '\n')
-            socket.flush()
+            try:
+                socket.write(o_string + '\n')
+                socket.flush()
+            except:
+                pass
         try:
             sys.stderr.write("%s %s (context %s)\n" % (ty, pathname, context))
         except:
