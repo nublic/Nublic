@@ -51,7 +51,7 @@ def albums_delete():
 @app.route('/album/<int:album_id>', methods=['PUT', 'DELETE'])
 def album(album_id):
     require_user()
-    album = Album.query.filter_by(albumId=album_id).first()
+    album = Album.query.filter_by(id=album_id).first()
     if album == None:
         abort(404)
     if request.method == 'PUT':
