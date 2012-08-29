@@ -15,10 +15,10 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.common.model.CallbackListOfAlbums;
+import com.nublic.app.photos.common.model.PhotosModel;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.dnd.AlbumDropController;
-import com.nublic.app.photos.web.client.model.CallbackListOfAlbums;
-import com.nublic.app.photos.web.client.model.PhotosModel;
 import com.nublic.app.photos.web.client.view.MainUi;
 
 public class NavigationPanel extends Composite {

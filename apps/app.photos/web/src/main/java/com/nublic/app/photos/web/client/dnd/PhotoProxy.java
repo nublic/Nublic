@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.web.client.Constants;
 import com.nublic.app.photos.web.client.Images;
-import com.nublic.app.photos.web.client.model.PhotoInfo;
 import com.nublic.util.widgets.ImageHelper;
 
 public class PhotoProxy extends Composite implements DragProxy {

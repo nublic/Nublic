@@ -1,7 +1,7 @@
 package com.nublic.app.photos.web.client.controller;
 
+import com.nublic.app.photos.common.model.AlbumOrder;
 import com.nublic.app.photos.web.client.Constants;
-import com.nublic.app.photos.web.client.model.AlbumOrder;
 import com.nublic.util.messages.ParamsHashMap;
 
 
