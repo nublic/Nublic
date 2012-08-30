@@ -1,12 +1,10 @@
 import datetime
-from flask import Flask, request, abort, send_file
-import os
-import os.path
-import random
+from flask import Flask, request, abort
+from pykka.actor import ThreadingActor
+import requests
 import simplejson as json
-import string
 
-from nublic.files_and_users import get_all_users, Mirror, WorkFolder, create_mirror, create_work_folder
+import nublic.market
 from nublic_server.helpers import init_bare_nublic_server, require_user
 
 # Init app
@@ -15,225 +13,166 @@ app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-market.python.log')
 app.logger.error('Starting market app')
 
-APP_INFO_ROOT = '/var/lib/nublic/apps'
+PACKAGES_URL = "http://nublic.com/packages.json"
+MAX_UPDATE_DIFF = datetime.timedelta(hours=2)
+USE_LOCAL = True
+LOCAL_PACKAGES_PATH = "/var/lib/nublic/packages.json"
 
-def load_apps():
-    apps = dict()
-    for f in os.listdir(APP_INFO_ROOT):
-        if f.endswith('.json'):
-            fp = open(os.path.join(APP_INFO_ROOT, f))
-            app = json.load(fp)
-            fp.close()
-            apps[app['id']] = app
-    return apps
+PACKAGES_LIST = None
+LAST_PACKAGES_UPGRADE = None
 
-@app.route('/apps')
-def apps():
+@app.route('/about')
+def about():
+    return 'Nublic Server v0.0.3'
+
+def ensure_updated_packages():
+    global PACKAGES_LIST, LAST_PACKAGES_UPGRADE, MAX_UPDATE_DIFF
+    now = datetime.datetime.now()
+    if PACKAGES_LIST == None or LAST_PACKAGES_UPGRADE == None or (now - LAST_PACKAGES_UPGRADE) > MAX_UPDATE_DIFF:
+        try:
+            nublic.market.update_cache()
+        except:
+            pass
+        new_pkgs = grab_packages()
+        if new_pkgs != None:
+            PACKAGES_LIST = new_pkgs
+            LAST_PACKAGES_UPGRADE = now 
+
+def grab_packages():
+    global PACKAGES_URL, USE_LOCAL, LOCAL_PACKAGES_PATH
+    if USE_LOCAL:
+        fp = open(LOCAL_PACKAGES_PATH)
+        pkgs = json.load(fp)
+        fp.close()
+        return pkgs
+    else:
+        r = requests.get(PACKAGES_URL)
+        pkgs = json.loads(r.content)
+        return pkgs
+
+def require_package_list():
+    global PACKAGES_LIST
+    ensure_updated_packages()
+    if PACKAGES_LIST != None:
+        return PACKAGES_LIST
+    else:
+        abort(500)
+
+def require_package(pkg_name):
+    pkgs = require_package_list()
+    for pkg in pkgs:
+        if pkg['id'] == pkg_name:
+            return pkg
+    abort(404)
+
+# Needed to handle more than one change at a time
+PACKAGES_BEING_INSTALLED = []
+PACKAGES_BEING_REMOVED = []
+PACKAGES_WITH_ERROR = []
+
+# Magic names
+STATUS_DOES_NOT_EXIST = "does-not-exist"
+STATUS_INSTALLED      = "installed"
+STATUS_INSTALLING     = "installing"
+STATUS_REMOVING       = "removing"
+STATUS_NOT_INSTALLED  = "not-installed"
+STATUS_ERROR          = "error"
+
+class PackageActor(ThreadingActor):
+    def on_receive(self, message):
+        global PACKAGES_BEING_INSTALLED, PACKAGES_BEING_REMOVED, PACKAGES_WITH_ERROR
+        pkg = message['pkg']
+        order = message['order']
+        if order == 'install':
+            PACKAGES_BEING_INSTALLED.append(pkg['id'])
+            try:
+                if not nublic.market.install_package(pkg['deb']):
+                    PACKAGES_WITH_ERROR.append(pkg['id'])
+            except:
+                PACKAGES_WITH_ERROR.append(pkg['id'])
+            PACKAGES_BEING_INSTALLED.remove(pkg['id'])
+        elif order == 'remove':
+            PACKAGES_BEING_REMOVED.append(pkg['id'])
+            try:
+                if not nublic.market.remove_package(pkg['deb']):
+                    PACKAGES_WITH_ERROR.append(pkg['id'])
+            except:
+                PACKAGES_WITH_ERROR.append(pkg['id'])
+            PACKAGES_BEING_REMOVED.remove(pkg['id'])
+
+PACKAGE_ACTOR = PackageActor()
+
+def get_package_status(pkg):
+    global PACKAGES_BEING_INSTALLED, PACKAGES_BEING_REMOVED, PACKAGES_WITH_ERROR
+    if pkg['id'] in PACKAGES_WITH_ERROR:
+        PACKAGES_WITH_ERROR.remove(pkg['id'])
+        return STATUS_ERROR
+    elif pkg['id'] in PACKAGES_BEING_INSTALLED:
+        return STATUS_INSTALLING
+    elif pkg['id'] in PACKAGES_BEING_REMOVED:
+        return STATUS_REMOVING
+    elif nublic.market.is_package_installed(pkg['deb']):
+        return STATUS_INSTALLED
+    else:
+        return STATUS_NOT_INSTALLED
+
+@app.route('/packages', methods=['GET', 'PUT', 'DELETE'])
+def packages():
     require_user()
-    apps = load_apps()
-    return_apps = []
-    for app_id in apps:
-        app = apps[app_id]
-        if 'web' in app:
-            return_app = { 'id': app['id'], 'name': app['name'],
-                           'developer': app['developer'], 'web': app['web'] }
-            return_apps.append(return_app)
-    return json.dumps(return_apps)
+    if request.method == 'GET':
+        return get_packages()
+    else:
+        pkg_name = request.form.get('package', None)
+        if pkg_name == None:
+            abort(500)
+        else:
+            pkg = require_package(pkg_name)
+            if request.method == 'PUT':
+                return put_package(pkg)
+            elif request.method == 'DELETE':
+                return delete_package(pkg)
 
-@app.route('/app-image/<style>/<app_id>/<size>')
-def app_image(style, app_id, size):
+def get_packages():
+    pkgs = require_package_list()
+    for pkg in pkgs:
+        pkg['status'] = get_package_status(pkg)
+    return json.dumps(pkgs)
+
+def put_package(pkg):
+    global PACKAGE_ACTOR
+    if nublic.market.is_package_installed(pkg['deb']):
+        return json.dumps({ 'status': STATUS_INSTALLED })
+    elif pkg['id'] in PACKAGES_BEING_INSTALLED:
+        return json.dumps({ 'status': STATUS_INSTALLING })
+    else:
+        PACKAGE_ACTOR.tell({ 'pkg': pkg, 'order': 'install' })
+        return json.dumps({ 'status': STATUS_INSTALLING })
+
+def delete_package(pkg):
+    if not nublic.market.is_package_installed(pkg['deb']):
+        return json.dumps({ 'status': STATUS_NOT_INSTALLED })
+    elif pkg['id'] in PACKAGES_BEING_REMOVED:
+        return json.dumps({ 'status': STATUS_REMOVING })
+    else:
+        PACKAGE_ACTOR.tell({ 'pkg': pkg, 'order': 'uninstall' })
+        return json.dumps({ 'status': STATUS_REMOVING })
+
+@app.route('/package/<pkg_name>')
+def package_info(pkg_name):
     require_user()
-    apps = load_apps()
-    if app_id in apps:
-        app = apps[app_id]
-        style_icon = style + '_icon'
-        if style_icon in app:
-            icon_info = app[style_icon]
-        else:
-            icon_info = app['color_icon']
-        if size in icon_info:
-            return send_file(icon_info[size])
-    else:
-        abort(404)
+    pkg = require_package(pkg_name)
+    pkg['status'] = get_package_status(pkg)
+    return json.dumps(pkg)
 
-@app.route('/users')
-def users():
+@app.route('/status/<pkg_name>')
+def package_status(pkg_name):
     require_user()
-    return_users = []
-    for user in get_all_users():
-        return_user = { 'username': user.get_username(),
-                        'uid': user.get_id(),
-                        'name': user.get_shown_name() }
-        return_users.append(return_user)
-    return json.dumps(return_users)
+    pkg = require_package(pkg_name)
+    return json.dumps({ 'status': get_package_status(pkg) })
 
-@app.route('/user-name')
-def user_name():
-    user = require_user()
-    return user.get_shown_name()
-
-@app.route('/user-info', methods=['GET', 'PUT'])
-def user_info():
-    user = require_user()
-    if request.method == 'GET':
-        return json.dumps({ 'username': user.get_username(),
-                            'uid': user.get_id(),
-                            'name': user.get_shown_name() })
-    elif request.method == 'PUT':
-        name = request.form.get('name', None)
-        if name != None:
-            user.change_shown_name(name)
-            return 'ok'
-        else:
-            abort(500)
-
-@app.route('/mirrors', methods=['GET', 'PUT', 'DELETE'])
-def mirrors():
-    user = require_user()
-    # Get mirrors information
-    if request.method == 'GET':
-        return_mirrors = []
-        for mirror in user.get_owned_mirrors():
-            return_mirror = { 'id': mirror.get_id(), 'name': mirror.get_name() }
-            return_mirrors.append(return_mirror)
-        return_mirrors.sort(key=lambda m: m['name'])
-        return json.dumps(return_mirrors)
-    # Create a new mirror
-    elif request.method == 'PUT':
-        name = request.form.get('name', None)
-        if name != None:
-            mirror = create_mirror(name, user.get_username())
-            return str(mirror.get_id())
-        else:
-            abort(500)
-    # Delete a mirror
-    elif request.method == 'DELETE':
-        mid = int(request.form.get('id'))
-        m = Mirror(mid)
-        if m.exists() and m.get_owner().get_username() == user.get_username():
-            m.delete(False)
-            abort(200)
-        else:
-            abort(403)
-
-@app.route('/mirror-name', methods=['PUT'])
-def mirror_name():
-    user = require_user()
-    name = request.form.get('name', None)
-    mid = int(request.form.get('id'))
-    m = Mirror(mid)
-    if name != None and m.exists() and m.get_owner().get_username() == user.get_username():
-        # Change name
-        m.change_name(name)
-        abort(200)
-    else:
-        abort(403)
-
-@app.route('/synceds', methods=['GET', 'PUT', 'DELETE'])
-def synceds():
-    user = require_user()
-    # Get mirrors information
-    if request.method == 'GET':
-        return_synceds = []
-        for synced in user.get_owned_work_folders():
-            return_synced = { 'id': synced.get_id(), 'name': synced.get_name() }
-            return_synceds.append(return_synced)
-        return_synceds.sort(key=lambda m: m['name'])
-        return json.dumps(return_synceds)
-    # Create a new mirror
-    elif request.method == 'PUT':
-        name = request.form.get('name', None)
-        if name != None:
-            synced = create_work_folder(name, user.get_username())
-            return str(synced.get_id())
-        else:
-            abort(500)
-    # Delete a mirror
-    elif request.method == 'DELETE':
-        sid = int(request.form.get('id'))
-        s = WorkFolder(sid)
-        if s.exists() and s.get_owner().get_username() == user.get_username():
-            s.delete(False)
-            abort(200)
-        else:
-            abort(403)
-
-@app.route('/synced-name', methods=['PUT'])
-def synced_name():
-    user = require_user()
-    name = request.form.get('name', None)
-    sid = int(request.form.get('id'))
-    s = WorkFolder(sid)
-    if name != None and s.exists() and s.get_owner().get_username() == user.get_username():
-        # Change name
-        s.change_name(name)
-        abort(200)
-    else:
-        abort(403)
-
-# Work on SSH keys
-current_upload_keys = []
-
-def prune_old_upload_keys():
-    global current_upload_keys
-    five_minutes = datetime.timedelta(minutes=5)
-    five_minutes_before_now = datetime.datetime.now() - five_minutes
-    current_upload_keys = filter(lambda x: x['time'] > five_minutes_before_now, current_upload_keys)
-
-@app.route('/synced-generate-invite/<int:sid>')
-def synced_generate_invite(sid):
-    user = require_user()
-    s = WorkFolder(sid)
-    #app.logger.error('User: %s, existance: %s, owner: %s', user.get_username(), str(s.exists()), s.get_owner().get_username())
-    if s.exists() and s.get_owner().get_username() == user.get_username():
-        random_id = random.randint(100, 2000000)
-        current_upload_keys.append({ 'id': random_id, 'time': datetime.datetime.now(), 'synced_id': sid, 'user': user })
-        return str(random_id)
-    else:
-        abort(403)
-
-@app.route('/synced-invite/<int:iid>')
-def synced_invite(iid):
-    prune_old_upload_keys()
-    invite = [i for i in current_upload_keys if i['id'] == iid]
-    if invite:
-        r_invite = invite[0]
-        s = WorkFolder(r_invite['synced_id'])
-        user = r_invite['user']
-        if s.exists() and s.get_owner().get_username() == user.get_username():
-            manager_path, _ = os.path.split(request.url_root[:-1])
-            server = os.path.split(manager_path)[0].replace('http://', '')
-            xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + \
-                  "<sparkleshare>\n" + \
-                  "  <invite>\n" + \
-                  "    <address>ssh://" + user.get_username() + "@" + server + "/</address>\n" + \
-                  "    <remote_path>/var/nublic/work-folders/" + str(s.get_id()) + "</remote_path>\n" + \
-                  "    <accept_url>http://" + server + "/manager/server/synced-upload-key/" + str(s.get_id()) + "</accept_url>\n" + \
-                  "  </invite>\n" + \
-                  "</sparkleshare>"
-            return xml
-    else:
-        abort(403)
-
-@app.route('/synced-upload-key/<int:iid>')
-def synced_upload_key(iid, methods=['POST']):
-    prune_old_upload_keys()
-    invite = [i for i in current_upload_keys if i['id'] == iid]
-    if invite:
-        # Get user
-        r_invite = invite[0]
-        user = r_invite['user']
-        # Work on public key to make it in correct format
-        pubkey = request.form.get('pubkey', None)
-        token_list = pubkey.split(' ')
-        ssh_initial = token_list[0]
-        ssh_name = token_list[-1]
-        ssh_rest = token_list[1:-1]
-        real_key = ssh_initial + ' ' + string.join(ssh_rest, '+') + ' ' + ssh_name
-        # Finally add key
-        user.add_public_key(real_key)
-    else:
-        abort(403)
+@app.route('/upgrade')
+def upgrade():
+    pass # Do nothing by now
 
 if __name__ == '__main__':
     app.run()

@@ -18,7 +18,7 @@
                 , "text" : { "default" : "Nublic", "translated" : { } }
                 }
 , "deb" : "nublic-app-example"
-}
+},
 { "id" : "photos"
 , "icon" : "/manager/server/app-image/dark/photos/48"
 , "name" : { "default" : "Photos", "translated": { "es" : "Fotos" } }
@@ -38,7 +38,7 @@
                 , "text" : { "default" : "Nublic", "translated" : { } }
                 }
 , "deb" : "nublic-app-photos"
-}
+},
 { "id" : "elinks"
 , "icon" : "http://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Elinks_wikipedia.png/250px-Elinks_wikipedia.png"
 , "name" : { "default" : "eLinks", "translated": { "es" : "eLinks" } }
@@ -58,7 +58,7 @@
                 , "text" : { "default" : "eLinks team", "translated" : { } }
                 }
 , "deb" : "elinks"
-}
+},
 { "id" : "gimp"
 , "icon" : "http://www.gimp.org/images/news-icons/wilber.png"
 , "name" : { "default" : "gimp", "translated": { } }
