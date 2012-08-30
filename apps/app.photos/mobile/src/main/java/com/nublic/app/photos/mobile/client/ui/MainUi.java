@@ -47,7 +47,7 @@ public class MainUi extends Page {
     	if (e.getSelection() == 0) {
 //    		goTo(new AllPhotos());
     	} else {
-//    		goTo(new AlbumGrid(idList.get(e.getSelection())));
+    		goTo(new AlbumGrid(idList.get(e.getSelection())));
     	}
     }
 
