@@ -137,9 +137,9 @@ def one_playlist_put(playlist_id):
     for id_as_int in ids_as_ints:
         song = Song.query.get(id_as_int)
         if song != None:
-            ps_count += 1
             relation = SongPlaylist(playlist_id, id_as_int, ps_count)
             db.session.add(relation)
+            ps_count += 1
     db.session.commit()
     return 'ok'
 
@@ -170,12 +170,14 @@ def playlist_order(playlist_id):
         if from_ < to_:
             rest = SongPlaylist.query.filter_by(playlistId=playlist_id).filter(SongPlaylist.position > from_).filter(SongPlaylist.position < to_).all()
             for r in rest:
-                r.position -= 1
+                if r.id != relation.id:
+                    r.position -= 1
             relation.position = to_ - 1
         elif from_ > to_:
             rest = SongPlaylist.query.filter_by(playlistId=playlist_id).filter(SongPlaylist.position >= to_).filter(SongPlaylist.position < from_).all()
             for r in rest:
-                r.position += 1
+                if r.id != relation.id:
+                    r.position += 1
             relation.position = to_
         db.session.commit()
     return 'ok'

@@ -31,6 +31,16 @@ def init_nublic_server(app, log_file, resource_app, db, filewatcher_app_name, pr
     db.create_all(app=app)
     # Init watching
     init_socket_watcher(filewatcher_app_name, processors, app.logger)
+    
+def init_bare_nublic_server(app, log_file):
+    app.request_class = RequestWithDelete
+    # Set up logging handlers
+    handler = logging.FileHandler(log_file)
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s '
+        '[in %(pathname)s:%(lineno)d]'
+    ))
+    app.logger.addHandler(handler)
 
 def split_reasonable(s, separator):
     if s == None:
