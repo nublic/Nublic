@@ -33,11 +33,11 @@ public class WebData extends JavaScriptObject {
 		return this.developer;
 	}-*/;
 	
-	public final native String getPath() /*-{
-		return this.path;
+	public final native String getWebPath() /*-{
+		return this.web.path;
 	}-*/;
 	
-	public final native boolean isFavourite() /*-{
-		return this.favourite;
+	public final native String getWebExtra() /*-{
+		return this.web.extra;
 	}-*/;
 }
