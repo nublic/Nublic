@@ -3,6 +3,7 @@ from flask import Flask, request, abort
 from pykka.actor import ThreadingActor
 import requests
 import simplejson as json
+import traceback
 
 import nublic.market
 from nublic_server.helpers import init_bare_nublic_server, require_user
@@ -79,6 +80,9 @@ STATUS_NOT_INSTALLED  = "not-installed"
 STATUS_ERROR          = "error"
 
 class PackageActor(ThreadingActor):
+    def __init__(self):
+        ThreadingActor.__init__(self)
+    
     def on_receive(self, message):
         global PACKAGES_BEING_INSTALLED, PACKAGES_BEING_REMOVED, PACKAGES_WITH_ERROR
         pkg = message['pkg']
@@ -89,6 +93,7 @@ class PackageActor(ThreadingActor):
                 if not nublic.market.install_package(pkg['deb']):
                     PACKAGES_WITH_ERROR.append(pkg['id'])
             except:
+                app.logger.error(traceback.format_exc())
                 PACKAGES_WITH_ERROR.append(pkg['id'])
             PACKAGES_BEING_INSTALLED.remove(pkg['id'])
         elif order == 'remove':
@@ -97,10 +102,14 @@ class PackageActor(ThreadingActor):
                 if not nublic.market.remove_package(pkg['deb']):
                     PACKAGES_WITH_ERROR.append(pkg['id'])
             except:
+                app.logger.error(traceback.format_exc())
                 PACKAGES_WITH_ERROR.append(pkg['id'])
             PACKAGES_BEING_REMOVED.remove(pkg['id'])
 
-PACKAGE_ACTOR = PackageActor()
+PACKAGE_ACTOR = PackageActor.start()
+
+# Get packages in meanwhile
+ensure_updated_packages()
 
 def get_package_status(pkg):
     global PACKAGES_BEING_INSTALLED, PACKAGES_BEING_REMOVED, PACKAGES_WITH_ERROR
@@ -111,10 +120,14 @@ def get_package_status(pkg):
         return STATUS_INSTALLING
     elif pkg['id'] in PACKAGES_BEING_REMOVED:
         return STATUS_REMOVING
-    elif nublic.market.is_package_installed(pkg['deb']):
-        return STATUS_INSTALLED
     else:
-        return STATUS_NOT_INSTALLED
+        try:
+            if nublic.market.is_package_installed(pkg['deb']):
+                return STATUS_INSTALLED
+            else:
+                return STATUS_NOT_INSTALLED
+        except:
+            return STATUS_ERROR
 
 @app.route('/packages', methods=['GET', 'PUT', 'DELETE'])
 def packages():
@@ -140,22 +153,29 @@ def get_packages():
 
 def put_package(pkg):
     global PACKAGE_ACTOR
-    if nublic.market.is_package_installed(pkg['deb']):
-        return json.dumps({ 'status': STATUS_INSTALLED })
-    elif pkg['id'] in PACKAGES_BEING_INSTALLED:
-        return json.dumps({ 'status': STATUS_INSTALLING })
-    else:
-        PACKAGE_ACTOR.tell({ 'pkg': pkg, 'order': 'install' })
-        return json.dumps({ 'status': STATUS_INSTALLING })
+    try:
+        if pkg['id'] in PACKAGES_BEING_INSTALLED:
+            return json.dumps({ 'status': STATUS_INSTALLING })
+        elif nublic.market.is_package_installed(pkg['deb']):
+            return json.dumps({ 'status': STATUS_INSTALLED })
+        else:
+            PACKAGE_ACTOR.tell({ 'pkg': pkg, 'order': 'install' })
+            return json.dumps({ 'status': STATUS_INSTALLING })
+    except:
+        return json.dumps({ 'status': STATUS_ERROR })
 
 def delete_package(pkg):
-    if not nublic.market.is_package_installed(pkg['deb']):
-        return json.dumps({ 'status': STATUS_NOT_INSTALLED })
-    elif pkg['id'] in PACKAGES_BEING_REMOVED:
-        return json.dumps({ 'status': STATUS_REMOVING })
-    else:
-        PACKAGE_ACTOR.tell({ 'pkg': pkg, 'order': 'uninstall' })
-        return json.dumps({ 'status': STATUS_REMOVING })
+    global PACKAGE_ACTOR
+    try:
+        if pkg['id'] in PACKAGES_BEING_REMOVED:
+            return json.dumps({ 'status': STATUS_REMOVING })
+        elif not nublic.market.is_package_installed(pkg['deb']):
+            return json.dumps({ 'status': STATUS_NOT_INSTALLED })
+        else:
+            PACKAGE_ACTOR.tell({ 'pkg': pkg, 'order': 'remove' })
+            return json.dumps({ 'status': STATUS_REMOVING })
+    except:
+        return json.dumps({ 'status': STATUS_ERROR })
 
 @app.route('/package/<pkg_name>')
 def package_info(pkg_name):

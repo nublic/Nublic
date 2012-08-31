@@ -11,13 +11,13 @@ def install_package(pkg):
     return call_expecting_return('com.nublic.apt',
                                  '/com/nublic/Apt',
                                  'com.nublic.apt',
-                                 lambda i: i.install_package(pkg))
+                                 lambda i: i.install_package(pkg, timeout=300))
 
 def remove_package(pkg):
     return call_expecting_return('com.nublic.apt',
                                  '/com/nublic/Apt',
                                  'com.nublic.apt',
-                                 lambda i: i.remove_package(pkg))
+                                 lambda i: i.remove_package(pkg, timeout=300))
 
 def update_cache():
     return call_expecting_return('com.nublic.apt',
