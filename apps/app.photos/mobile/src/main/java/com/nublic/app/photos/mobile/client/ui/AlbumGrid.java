@@ -29,7 +29,7 @@ import com.nublic.app.photos.common.model.CallbackListOfPhotos;
 import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.common.model.PhotosModel;
 
-public class AlbumGrid extends Page{
+public class AlbumGrid extends Page {
 	private static AlbumGridUiBinder uiBinder = GWT.create(AlbumGridUiBinder.class);
 	interface AlbumGridUiBinder extends UiBinder<Widget, AlbumGrid> { }
 
@@ -59,7 +59,7 @@ public class AlbumGrid extends Page{
 	}
 	
 	private void addPhotoToGrid(PhotoInfo pi) {
-		grid.add(new PhotoThumbnail(pi));
+		grid.add(new PhotoThumbnail(pi, this));
 	}
 
 

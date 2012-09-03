@@ -1,6 +1,8 @@
 package com.nublic.app.photos.mobile.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
@@ -15,11 +17,13 @@ public class PhotoThumbnail extends Composite {
 
 	@UiField Image thumbnail;
 	PhotoInfo photo;
+	AlbumGrid parentPage;
 	
-	public PhotoThumbnail(PhotoInfo pi) {
+	public PhotoThumbnail(PhotoInfo pi, AlbumGrid albumGrid) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		photo = pi;
+		this.photo = pi;
+		this.parentPage = albumGrid;
 		load();
 	}
 	
@@ -31,6 +35,17 @@ public class PhotoThumbnail extends Composite {
 //		fileName.setText(photo.getTitle());
 //		fileName.setTitle(photo.getTitle());
 //		fileThumbnail.setTitle(photo.getTitle());
+		
+		addClickHandler();
+	}
+
+	private void addClickHandler() {
+		this.addDomHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				parentPage.goTo(new PhotoView(photo));
+			}
+		}, ClickEvent.getType());
 	}
 
 }

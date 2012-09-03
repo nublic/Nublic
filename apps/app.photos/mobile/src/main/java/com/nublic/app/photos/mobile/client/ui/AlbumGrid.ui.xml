@@ -3,17 +3,13 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:m="urn:import:com.gwtmobile.ui.client.widgets">
 	<ui:style>
-		/*.fullwidth {
-			width: 100%;
-		}*/
 	</ui:style>
+
 	<g:HTMLPanel>
 		<m:HeaderPanel ui:field="header" leftButton="Back">
 			<g:Label>Album title</g:Label>			
 		</m:HeaderPanel>
 		<m:ScrollPanel>
-<!-- 			<m:ListPanel ui:field="list" showArrow="false"> -->
-<!-- 			</m:ListPanel> -->
 			<g:FlowPanel ui:field="grid">
 			</g:FlowPanel>
 		</m:ScrollPanel>

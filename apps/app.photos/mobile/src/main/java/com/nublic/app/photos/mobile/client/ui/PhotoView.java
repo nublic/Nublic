@@ -28,19 +28,16 @@ import com.gwtmobile.ui.client.widgets.HeaderPanel;
 import com.gwtmobile.ui.client.widgets.SlidePanel;
 import com.gwtmobile.ui.client.widgets.Slide;
 import com.gwtmobile.ui.client.widgets.SlidePanel.SlideProvider;
+import com.nublic.app.photos.common.model.PhotoInfo;
 
-public class SlidePanelPage extends Page implements SlideProvider{
+public class PhotoView extends Page implements SlideProvider {
+	private static PhotoViewUiBinder uiBinder = GWT.create(PhotoViewUiBinder.class);
+	interface PhotoViewUiBinder extends UiBinder<Widget, PhotoView> { }
 
 	@UiField HeaderPanel header;
 	@UiField SlidePanel slider;
-	
-	private static SlidePanelPageUiBinder uiBinder = GWT
-			.create(SlidePanelPageUiBinder.class);
 
-	interface SlidePanelPageUiBinder extends UiBinder<Widget, SlidePanelPage> {
-	}
-
-	public SlidePanelPage() {
+	public PhotoView(PhotoInfo photo) {
 		initWidget(uiBinder.createAndBindUi(this));		
 		
 		slider.setSlideCount(10);
