@@ -25,6 +25,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.nublic.app.photos.common.model.AlbumInfo;
+import com.nublic.app.photos.common.model.AlbumOrder;
 import com.nublic.app.photos.common.model.CallbackListOfPhotos;
 import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.common.model.PhotosModel;
@@ -42,7 +43,7 @@ public class AlbumGrid extends Page {
 	}
 
 	private void createInterface(Long albumId) {
-		// TODO: Not using album!!
+		PhotosModel.get().startNewAlbum(albumId, AlbumOrder.DATE_ASC);
 		PhotosModel.get().photoList(0, 35000, new CallbackListOfPhotos() {
 			@Override
 			public void list(AlbumInfo info, long start, long length, List<PhotoInfo> photos) {
@@ -60,6 +61,10 @@ public class AlbumGrid extends Page {
 	
 	private void addPhotoToGrid(PhotoInfo pi) {
 		grid.add(new PhotoThumbnail(pi, this));
+	}
+
+	public void openPicture(PhotoInfo photo) {
+		goTo(new PhotoView(photo));
 	}
 
 

@@ -43,7 +43,7 @@ public class PhotoThumbnail extends Composite {
 		this.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				parentPage.goTo(new PhotoView(photo));
+				parentPage.openPicture(photo);
 			}
 		}, ClickEvent.getType());
 	}

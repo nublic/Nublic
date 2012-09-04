@@ -15,4 +15,4 @@
 	<g:VerticalPanel addStyleNames="{style.thumbborder}" width="60px" height="45px" verticalAlignment="middle" horizontalAlignment="center">
     	<g:Image ui:field="thumbnail" addStyleNames="{style.imagelimits}"/>
 	</g:VerticalPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

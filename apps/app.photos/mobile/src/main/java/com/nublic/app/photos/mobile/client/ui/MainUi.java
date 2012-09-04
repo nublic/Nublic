@@ -44,11 +44,11 @@ public class MainUi extends Page {
 
 	@UiHandler("list")
 	void onListSelectionChanged(SelectionChangedEvent e) {
-    	if (e.getSelection() == 0) {
+		goTo(new AlbumGrid(idList.get(e.getSelection())));
+//    	if (e.getSelection() == 0) {
 //    		goTo(new AllPhotos());
-    	} else {
-    		goTo(new AlbumGrid(idList.get(e.getSelection())));
-    	}
+//    	} else {
+//    	}
     }
 
 
