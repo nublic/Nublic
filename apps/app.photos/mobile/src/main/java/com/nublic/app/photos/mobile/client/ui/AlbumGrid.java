@@ -47,8 +47,9 @@ public class AlbumGrid extends Page {
 		PhotosModel.get().photoList(0, 35000, new CallbackListOfPhotos() {
 			@Override
 			public void list(AlbumInfo info, long start, long length, List<PhotoInfo> photos) {
+				int index = 0;
 				for (PhotoInfo pi : photos) {
-					addPhotoToGrid(pi);
+					addPhotoToGrid(pi, index++);
 				}
 			}
 
@@ -59,13 +60,13 @@ public class AlbumGrid extends Page {
 		});
 	}
 	
-	private void addPhotoToGrid(PhotoInfo pi) {
-		grid.add(new PhotoThumbnail(pi, this));
+	private void addPhotoToGrid(PhotoInfo pi, int photoIndex) {
+		grid.add(new PhotoThumbnail(pi, this, photoIndex));
 	}
 
-	public void openPicture(PhotoInfo photo) {
-		goTo(new PhotoView(photo));
-	}
+//	public void openPicture(PhotoInfo photo) {
+//		goTo(new PhotoView(photo));
+//	}
 
 
 }

@@ -1,34 +1,24 @@
-/*
- * Copyright (c) 2010 Zhihua (Dennis) Jiang
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
-
 package com.nublic.app.photos.mobile.client.ui;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.gwtmobile.ui.client.widgets.HeaderPanel;
-import com.gwtmobile.ui.client.widgets.SlidePanel;
 import com.gwtmobile.ui.client.widgets.Slide;
+import com.gwtmobile.ui.client.widgets.SlidePanel;
 import com.gwtmobile.ui.client.widgets.SlidePanel.SlideProvider;
+import com.nublic.app.photos.common.model.AlbumInfo;
+import com.nublic.app.photos.common.model.CallbackRowCount;
+import com.nublic.app.photos.common.model.CallbackThreePhotos;
 import com.nublic.app.photos.common.model.PhotoInfo;
+import com.nublic.app.photos.common.model.PhotosModel;
+import com.nublic.util.gwt.LocationUtil;
 
 public class PhotoView extends Page implements SlideProvider {
 	private static PhotoViewUiBinder uiBinder = GWT.create(PhotoViewUiBinder.class);
@@ -36,43 +26,84 @@ public class PhotoView extends Page implements SlideProvider {
 
 	@UiField HeaderPanel header;
 	@UiField SlidePanel slider;
+	
+	ArrayList<Image> imageArray = new ArrayList<Image>();
 
-	public PhotoView(PhotoInfo photo) {
+	public PhotoView(final int photoIndex) {
 		initWidget(uiBinder.createAndBindUi(this));		
 		
-		slider.setSlideCount(10);
-		slider.setSlideProvider(this);
-
-		header.setLeftButtonClickHandler(new ClickHandler() {			
+		PhotosModel.get().rowCount(new CallbackRowCount() {
 			@Override
-			public void onClick(ClickEvent event) {
-				if (slider.getCurrentSlideIndex() > 0) {
-					slider.previous();
-				}
-				else {
-					goBack(null);
-				}
+			public void rowCount(AlbumInfo info, long rowCount) {
+				slider.setSlideCount((int) rowCount);
+//				imageArray.ensureCapacity((int) rowCount);
+				slider.setSlideProvider(PhotoView.this);
+				slider.getSlideProvider().loadSlide(photoIndex);
+			}
+			@Override
+			public void error() {
+				// nothing				
 			}
 		});
 
-		header.setRightButtonClickHandler(new ClickHandler() {			
-			@Override
-			public void onClick(ClickEvent event) {
-				slider.next();
-			}
-		});
+//		header.setLeftButtonClickHandler(new ClickHandler() {			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				if (slider.getCurrentSlideIndex() > 0) {
+//					slider.previous();
+//				}
+//				else {
+//					goBack(null);
+//				}
+//			}
+//		});
+
+//		header.setRightButtonClickHandler(new ClickHandler() {			
+//			@Override
+//			public void onClick(ClickEvent event) {
+//				slider.next();
+//			}
+//		});
 	}
 
 	@Override
-	public Slide loadSlide(int index) {
-		if (index < 2) {
-			return null;
-		}
+	public Slide loadSlide(final int index) {
 		Slide slide = new Slide();
 		slide.addStyleName("Slide-Content");
-		slide.add(new HTML("Slide Me!"));
-		slide.add(new HTML("Dynamic Slide " + index));
-		return slide;		
+		
+		if (imageArray.get(index) == null) {
+			imageArray.set(index, new Image());
+		}
+
+		PhotosModel.get().photosAround(index, new CallbackThreePhotos() {
+			@Override
+			public void list(AlbumInfo info, PhotoInfo prev, PhotoInfo current, PhotoInfo next) {
+				if (index - 1 >= 0) {
+					setArrayImage(index -1, prev);
+				}
+				setArrayImage(index, current);
+				if (index + 1 < imageArray.size()) {
+					setArrayImage(index +1, next);
+				}
+			}
+			@Override
+			public void error() {
+				// nothing
+			}
+		});
+
+		slide.add(imageArray.get(index));
+		slide.add(new HTML("Photo " + index));
+		return slide;
 	}
+	
+	private void setArrayImage(int index, PhotoInfo photo) {
+		if (imageArray.get(index) == null) {
+			imageArray.set(index, new Image());
+		}
+		imageArray.get(index).setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png"));
+	}
+	
+	
 
 }

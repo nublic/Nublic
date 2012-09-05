@@ -18,12 +18,14 @@ public class PhotoThumbnail extends Composite {
 	@UiField Image thumbnail;
 	PhotoInfo photo;
 	AlbumGrid parentPage;
+	int photoIndex;
 	
-	public PhotoThumbnail(PhotoInfo pi, AlbumGrid albumGrid) {
+	public PhotoThumbnail(PhotoInfo pi, AlbumGrid albumGrid, int photoIndex) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.photo = pi;
 		this.parentPage = albumGrid;
+		this.photoIndex = photoIndex;
 		load();
 	}
 	
@@ -43,7 +45,7 @@ public class PhotoThumbnail extends Composite {
 		this.addDomHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				parentPage.openPicture(photo);
+				parentPage.goTo(new PhotoView(photoIndex));
 			}
 		}, ClickEvent.getType());
 	}
