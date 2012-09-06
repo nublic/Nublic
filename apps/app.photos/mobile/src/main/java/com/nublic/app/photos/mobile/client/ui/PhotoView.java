@@ -5,6 +5,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.gwtmobile.ui.client.widgets.HeaderPanel;
@@ -24,9 +25,11 @@ public class PhotoView extends Page implements SlideProvider {
 
 	@UiField HeaderPanel header;
 	@UiField SlidePanel slider;
+	@UiField Label title;
 	
 	int rowCount;
 	Image[] imageArray;
+	String[] titlesArray;
 
 	public PhotoView(final int photoIndex) {
 		initWidget(uiBinder.createAndBindUi(this));		
@@ -37,6 +40,7 @@ public class PhotoView extends Page implements SlideProvider {
 				rowCount = (int) _rowCount;
 				slider.setSlideCount(rowCount);
 				imageArray = new Image[rowCount];
+				titlesArray = new String[rowCount];
 				slider.setSlideProvider(PhotoView.this);
 				slider.getSlideProvider().loadSlide(photoIndex);
 			}
@@ -73,39 +77,53 @@ public class PhotoView extends Page implements SlideProvider {
 		} else {
 			Slide slide = new Slide();
 			slide.addStyleName("Slide-Content");
-			
-			if (imageArray[index] == null) {
+
+			// necessary because it will be added to the slide, cannot be null
+			boolean wasNull = imageArray[index] == null;
+			if (wasNull) {
 				imageArray[index] = new Image();
+				titlesArray[index] = new String();
 			}
-	
-			PhotosModel.get().photosAround(index, new CallbackThreePhotos() {
-				@Override
-				public void list(AlbumInfo info, PhotoInfo prev, PhotoInfo current, PhotoInfo next) {
-					if (index - 1 >= 0) {
-						setArrayImage(index -1, prev);
+
+			// If we don't have the picture or the surrounding ones we get it from server
+			if (wasNull ||
+					(index - 1 >= 0 && imageArray[index - 1] == null) ||
+					(index + 1 < rowCount && imageArray[index + 1] == null)) {
+				PhotosModel.get().photosAround(index, new CallbackThreePhotos() {
+					@Override
+					public void list(AlbumInfo info, PhotoInfo prev, PhotoInfo current, PhotoInfo next) {
+						if (index - 1 >= 0) {
+							setArrayImage(index -1, prev);
+						}
+						setArrayImage(index, current);
+						if (index + 1 < rowCount) {
+							setArrayImage(index +1, next);
+						}
 					}
-					setArrayImage(index, current);
-					if (index + 1 < rowCount) {
-						setArrayImage(index +1, next);
+					@Override
+					public void error() {
+						// nothing
 					}
-				}
-				@Override
-				public void error() {
-					// nothing
-				}
-			});
+				});
+			}
 	
 			slide.add(imageArray[index]);
 			slide.add(new HTML("Photo " + index));
+			
+			title.setText(titlesArray[index]);
 			return slide;
 		}
 	}
 	
 	private void setArrayImage(int index, PhotoInfo photo) {
-		if (imageArray[index] == null) {
-			imageArray[index] = new Image();
+		if (index < rowCount) {
+			if (imageArray[index] == null) {
+				imageArray[index] = new Image();
+				titlesArray[index] = new String();
+			}
+			imageArray[index].setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png"));
+			titlesArray[index] = photo.getTitle();
 		}
-		imageArray[index].setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png"));
 	}
 	
 	
