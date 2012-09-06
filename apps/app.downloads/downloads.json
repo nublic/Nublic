@@ -25,7 +25,8 @@
   , "48" : "/var/lib/nublic/app-images/downloads_dark_48.png"
   }
 , "web" : {
-    "path" : "#"
+    "path"  : ""
+  , "extra" : "#"
   }
 , "filewatcher" : {
     "supported" : false

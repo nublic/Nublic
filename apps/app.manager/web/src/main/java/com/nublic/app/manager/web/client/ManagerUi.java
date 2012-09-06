@@ -70,9 +70,18 @@ public class ManagerUi extends Composite implements AppUrlChangeHandler {
 	}
 	
 	public void go(String token) {
-		String newHref = LocationUtil.getHostBaseUrl() + token;
-		if (apps != null && apps.containsKey(token) && apps.get(token).getPath() != null) {
-			newHref += "/" + apps.get(token).getPath();
+		String newHref = LocationUtil.getHostBaseUrl() + token + "/";
+		if (apps != null && apps.containsKey(token)) {
+		    if (apps.get(token).getWebPath() != null) {
+		        newHref += apps.get(token).getWebPath();
+		    }
+		}
+		// Add query parameters passed to manager
+		newHref += Location.getQueryString();
+		if (apps != null && apps.containsKey(token)) {
+		    if (apps.get(token).getWebExtra() != null) {
+		        newHref += apps.get(token).getWebExtra();
+		    }
 		}
 		innerFrame.setHref(newHref);
 	}

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+touch /var/lib/nublic/webapps/app.market/app.market.wsgi
+service apache2 restart
+
+#DEBHELPER#

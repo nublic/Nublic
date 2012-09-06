@@ -24,7 +24,8 @@
   , "48" : "/var/lib/nublic/app-images/music_color_48.png"
   }
 , "web" : {
-    "path" : "#"
+    "path"  : ""
+  , "extra" : "#"
   }
 , "filewatcher" : {
     "supported" : true

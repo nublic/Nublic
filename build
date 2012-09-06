@@ -215,7 +215,7 @@ build_deb_package apps/app.downloads/web
 build_deb_package apps/app.downloads
 # Market App
 build_deb_package apps/app.market/daemon/src
-build_deb_package apps/app.market/server
+build_deb_package apps/app.market/server-python/src
 build_deb_package apps/app.market/web
 build_deb_package apps/app.market
 # Extra configuration packages

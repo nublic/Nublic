@@ -1,0 +1,82 @@
+[
+{ "id" : "example"
+, "icon" : "http://nublic.com"
+, "name" : { "default" : "Example", "translated": { "es" : "Ejemplo" } }
+, "short_description" : { "default" : "Example app for Nublic Market"
+                        , "translated" : { "es" : "Aplicación de ejemplo de Nublic Market" }
+                        }
+, "long_description" : { "default" : "This is the fist Market to appear"
+                       , "translated" : { "es" : "La primera aplicación del Mercado" }
+                       }
+, "screenshots" : [ ]
+, "categories" : [ ]
+, "links" : [ { "url"  : "http://nublic.com"
+              , "text" : { "default" : "Homepage", "translated" : { "es": "Página principal" } }
+              }
+            ]
+, "developer" : { "url"  : "http://nublic.com"
+                , "text" : { "default" : "Nublic", "translated" : { } }
+                }
+, "deb" : "nublic-app-example"
+},
+{ "id" : "photos"
+, "icon" : "/manager/server/app-image/dark/photos/48"
+, "name" : { "default" : "Photos", "translated": { "es" : "Fotos" } }
+, "short_description" : { "default" : "Nublic default photo application"
+                        , "translated" : { "es" : "Aplicación de fotos de Nublic" }
+                        }
+, "long_description" : { "default" : "With Nublic photo application you will have the posibility to organize all your pictures in an easy and comfortable way. You will be able to create albums and observe how your pictures shine in such an explendid frame"
+                       , "translated" : { "es" : "Con la aplicación de fotos de nublic tendrá la oportunidad de organizar todas sus fotos de una forma sencilla y agradable. Será capaz de crear álbumes y observar cómo sus fotos lucen en un marco tan expléndido" }
+                       }
+, "screenshots" : [ ]
+, "categories" : [ ]
+, "links" : [ { "url"  : "http://nublic.com"
+              , "text" : { "default" : "Homepage", "translated" : { "es": "Página principal" } }
+              }
+            ]
+, "developer" : { "url"  : "http://nublic.com"
+                , "text" : { "default" : "Nublic", "translated" : { } }
+                }
+, "deb" : "nublic-app-photos"
+},
+{ "id" : "elinks"
+, "icon" : "http://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Elinks_wikipedia.png/250px-Elinks_wikipedia.png"
+, "name" : { "default" : "eLinks", "translated": { "es" : "eLinks" } }
+, "short_description" : { "default" : "Web browser"
+                        , "translated" : { "es" : "Navegador web" }
+                        }
+, "long_description" : { "default" : "Web browser eLinks. Cool, isn't it?"
+                       , "translated" : { "es" : "Navegador web eLinks, ¿mola o qué?" }
+                       }
+, "screenshots" : [ ]
+, "categories" : [ ]
+, "links" : [ { "url"  : "http://es.wikipedia.org/wiki/ELinks"
+              , "text" : { "default" : "Homepage", "translated" : { "es": "Página principal" } }
+              }
+            ]
+, "developer" : { "url"  : "http://es.wikipedia.org/wiki/ELinks"
+                , "text" : { "default" : "eLinks team", "translated" : { } }
+                }
+, "deb" : "elinks"
+},
+{ "id" : "gimp"
+, "icon" : "http://www.gimp.org/images/news-icons/wilber.png"
+, "name" : { "default" : "gimp", "translated": { } }
+, "short_description" : { "default" : "Free source image editor for all platforms"
+                        , "translated" : { "es" : "Editor de imágenes libre para todas las plataformas" }
+                        }
+, "long_description" : { "default" : "This is the official GIMP web site. It contains information about downloading, installing, using, and enhancing it. This site also serves as a distribution point for the latest releases. We try to provide as much information about the GIMP community and related projects as possible. Hopefully you will find what you need here. Grab a properly chilled beverage and enjoy."
+                       , "translated" : { "es" : "Con este proyecto pretendemos acercar The GIMP a todos los hispanohablantes, creando un site donde tanto profesionales como usuarios puedan compartir recursos e información. Ponemos a tu disposición tutoriales, guías, ... así como un foro y una lista de correo donde puedes entrar en contacto de forma directa con nosotros y colaborar activamente." }
+                       }
+, "screenshots" : [ "http://www.gimp.org/screenshots/linux_fullscreen.jpg?rand=97424009", "http://www.gimp.org/screenshots/linux_mixer.jpg?rand=545972521", "http://www.gimp.org/screenshots/windows_crop.jpg?rand=635496599" ]
+, "categories" : [ ]
+, "links" : [ { "url"  : "http://www.gimp.org/"
+              , "text" : { "default" : "Homepage", "translated" : { "es": "Página principal" } }
+              }
+            ]
+, "developer" : { "url"  : "http://www.gimp.org/"
+                , "text" : { "default" : "GNU", "translated" : { } }
+                }
+, "deb" : "gimp"
+}
+]
