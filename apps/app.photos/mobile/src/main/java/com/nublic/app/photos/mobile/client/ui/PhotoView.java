@@ -1,7 +1,5 @@
 package com.nublic.app.photos.mobile.client.ui;
 
-import java.util.ArrayList;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -27,16 +25,18 @@ public class PhotoView extends Page implements SlideProvider {
 	@UiField HeaderPanel header;
 	@UiField SlidePanel slider;
 	
-	ArrayList<Image> imageArray = new ArrayList<Image>();
+	int rowCount;
+	Image[] imageArray;
 
 	public PhotoView(final int photoIndex) {
 		initWidget(uiBinder.createAndBindUi(this));		
 		
 		PhotosModel.get().rowCount(new CallbackRowCount() {
 			@Override
-			public void rowCount(AlbumInfo info, long rowCount) {
-				slider.setSlideCount((int) rowCount);
-//				imageArray.ensureCapacity((int) rowCount);
+			public void rowCount(AlbumInfo info, long _rowCount) {
+				rowCount = (int) _rowCount;
+				slider.setSlideCount(rowCount);
+				imageArray = new Image[rowCount];
 				slider.setSlideProvider(PhotoView.this);
 				slider.getSlideProvider().loadSlide(photoIndex);
 			}
@@ -68,40 +68,44 @@ public class PhotoView extends Page implements SlideProvider {
 
 	@Override
 	public Slide loadSlide(final int index) {
-		Slide slide = new Slide();
-		slide.addStyleName("Slide-Content");
-		
-		if (imageArray.get(index) == null) {
-			imageArray.set(index, new Image());
+		if (imageArray == null) {
+			return null;
+		} else {
+			Slide slide = new Slide();
+			slide.addStyleName("Slide-Content");
+			
+			if (imageArray[index] == null) {
+				imageArray[index] = new Image();
+			}
+	
+			PhotosModel.get().photosAround(index, new CallbackThreePhotos() {
+				@Override
+				public void list(AlbumInfo info, PhotoInfo prev, PhotoInfo current, PhotoInfo next) {
+					if (index - 1 >= 0) {
+						setArrayImage(index -1, prev);
+					}
+					setArrayImage(index, current);
+					if (index + 1 < rowCount) {
+						setArrayImage(index +1, next);
+					}
+				}
+				@Override
+				public void error() {
+					// nothing
+				}
+			});
+	
+			slide.add(imageArray[index]);
+			slide.add(new HTML("Photo " + index));
+			return slide;
 		}
-
-		PhotosModel.get().photosAround(index, new CallbackThreePhotos() {
-			@Override
-			public void list(AlbumInfo info, PhotoInfo prev, PhotoInfo current, PhotoInfo next) {
-				if (index - 1 >= 0) {
-					setArrayImage(index -1, prev);
-				}
-				setArrayImage(index, current);
-				if (index + 1 < imageArray.size()) {
-					setArrayImage(index +1, next);
-				}
-			}
-			@Override
-			public void error() {
-				// nothing
-			}
-		});
-
-		slide.add(imageArray.get(index));
-		slide.add(new HTML("Photo " + index));
-		return slide;
 	}
 	
 	private void setArrayImage(int index, PhotoInfo photo) {
-		if (imageArray.get(index) == null) {
-			imageArray.set(index, new Image());
+		if (imageArray[index] == null) {
+			imageArray[index] = new Image();
 		}
-		imageArray.get(index).setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png"));
+		imageArray[index].setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png"));
 	}
 	
 	
