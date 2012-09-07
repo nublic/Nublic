@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.gwtmobile.ui.client.widgets.HeaderPanel;
 import com.gwtmobile.ui.client.widgets.Slide;
-import com.gwtmobile.ui.client.widgets.SlidePanel;
 import com.gwtmobile.ui.client.widgets.SlidePanel.SlideProvider;
 import com.nublic.app.photos.common.model.AlbumInfo;
 import com.nublic.app.photos.common.model.CallbackRowCount;
@@ -24,7 +23,7 @@ public class PhotoView extends Page implements SlideProvider {
 	interface PhotoViewUiBinder extends UiBinder<Widget, PhotoView> { }
 
 	@UiField HeaderPanel header;
-	@UiField SlidePanel slider;
+	@UiField SeekSlidePanel slider;
 	@UiField Label title;
 	
 	int rowCount;
@@ -42,11 +41,11 @@ public class PhotoView extends Page implements SlideProvider {
 				imageArray = new Image[rowCount];
 				titlesArray = new String[rowCount];
 				slider.setSlideProvider(PhotoView.this);
-				slider.getSlideProvider().loadSlide(photoIndex);
+				slider.seekToSlide(photoIndex);
 			}
 			@Override
 			public void error() {
-				// nothing				
+				// nothing	
 			}
 		});
 
