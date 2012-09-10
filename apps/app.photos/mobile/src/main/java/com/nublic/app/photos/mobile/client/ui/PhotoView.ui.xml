@@ -6,7 +6,7 @@
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel>
-		<m:HeaderPanel ui:field="header" leftButton="Back" rightButton="Next">
+		<m:HeaderPanel leftButton="Back">
 			<g:Label ui:field="title">Photo View</g:Label>			
 		</m:HeaderPanel>
 		<n:SeekSlidePanel ui:field="slider">
