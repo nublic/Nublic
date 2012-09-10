@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -18,13 +20,21 @@ public class MainUi extends Page {
 	private static MainUiUiBinder uiBinder = GWT.create(MainUiUiBinder.class);
 	interface MainUiUiBinder extends UiBinder<Widget, MainUi> {	}
 
-	public MainUi() {
-		initWidget(uiBinder.createAndBindUi(this));
-	}
-
 	@UiField ListPanel list;
+	@UiField Label addAlbumButton;
 	ArrayList<Long> idList = new ArrayList<Long>();
 	ArrayList<String> titleList = new ArrayList<String>();
+	
+	public MainUi() {
+		initWidget(uiBinder.createAndBindUi(this));
+
+		addAlbumButton.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				goTo(new ChooseNamePage(NameType.NEW_ALBUM));
+			}
+		});
+	}
 	
 	public void setAlbumList(Map<Long, String> albums) {
 		list.clear();

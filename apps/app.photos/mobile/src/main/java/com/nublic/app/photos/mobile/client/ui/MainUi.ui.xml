@@ -3,16 +3,27 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:m="urn:import:com.gwtmobile.ui.client.widgets">
 	<ui:style>
-		
+		.plusButton {
+			width: 100%;
+			color: #AAA;
+			text-align: center;
+			text-shadow: black 0.1em 0.1em 0.2em;
+			font-size: 1.5em;
+			font-weight: bold;
+			margin-top: 5px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.photos.mobile.client.i18n.I18NMessages" field="msg"/>
 
 	<g:HTMLPanel>
 		<m:HeaderPanel><g:Label>Nublic Photos</g:Label></m:HeaderPanel>
 		<m:ScrollPanel>
-			<m:ListPanel ui:field="list" showArrow="true">
-				<g:Label><ui:text from="{msg.allPhotos}"/></g:Label>
-			</m:ListPanel>
+			<g:FlowPanel>
+				<m:ListPanel ui:field="list" showArrow="true">
+					<g:Label><ui:text from="{msg.allPhotos}"/></g:Label>
+				</m:ListPanel>
+				<g:Label ui:field="addAlbumButton" addStyleNames="{style.plusButton}">+</g:Label>
+			</g:FlowPanel>
 		</m:ScrollPanel>
 	</g:HTMLPanel>
 
