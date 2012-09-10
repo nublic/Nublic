@@ -77,6 +77,7 @@ public class PhotoView extends Page implements SlideProvider {
 							setArrayImage(index -1, prev);
 						}
 						setArrayImage(index, current);
+						title.setText(titlesArray[index]);
 						if (index + 1 < rowCount) {
 							setArrayImage(index +1, next);
 						}
