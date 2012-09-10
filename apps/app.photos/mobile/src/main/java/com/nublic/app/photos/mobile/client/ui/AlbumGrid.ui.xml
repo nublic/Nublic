@@ -7,7 +7,7 @@
 
 	<g:HTMLPanel>
 		<m:HeaderPanel ui:field="header" leftButton="Back">
-			<g:Label>Album title</g:Label>			
+			<g:Label ui:field="titleLabel">Album title</g:Label>			
 		</m:HeaderPanel>
 		<m:ScrollPanel>
 			<g:FlowPanel ui:field="grid">

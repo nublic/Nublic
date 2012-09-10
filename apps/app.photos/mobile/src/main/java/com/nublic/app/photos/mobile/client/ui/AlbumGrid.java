@@ -22,6 +22,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.nublic.app.photos.common.model.AlbumInfo;
@@ -35,14 +36,16 @@ public class AlbumGrid extends Page {
 	interface AlbumGridUiBinder extends UiBinder<Widget, AlbumGrid> { }
 
 	@UiField FlowPanel grid;
+	@UiField Label titleLabel;
 	
-	public AlbumGrid(Long albumId) {
+	public AlbumGrid(Long albumId, String title) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		createInterface(albumId);
+		createInterface(albumId, title);
 	}
 
-	private void createInterface(Long albumId) {
+	private void createInterface(Long albumId, String title) {
+		titleLabel.setText(title);
 		PhotosModel.get().startNewAlbum(albumId, AlbumOrder.DATE_ASC);
 		PhotosModel.get().photoList(0, 35000, new CallbackListOfPhotos() {
 			@Override
@@ -63,10 +66,5 @@ public class AlbumGrid extends Page {
 	private void addPhotoToGrid(PhotoInfo pi, int photoIndex) {
 		grid.add(new PhotoThumbnail(pi, this, photoIndex));
 	}
-
-//	public void openPicture(PhotoInfo photo) {
-//		goTo(new PhotoView(photo));
-//	}
-
 
 }

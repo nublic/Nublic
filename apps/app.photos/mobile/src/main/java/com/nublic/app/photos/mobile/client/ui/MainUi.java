@@ -24,6 +24,7 @@ public class MainUi extends Page {
 
 	@UiField ListPanel list;
 	ArrayList<Long> idList = new ArrayList<Long>();
+	ArrayList<String> titleList = new ArrayList<String>();
 	
 	public void setAlbumList(Map<Long, String> albums) {
 		list.clear();
@@ -36,24 +37,14 @@ public class MainUi extends Page {
 		}
 	}
 	
-	
     private void addNewAlbum(Long id, String title) {
     	idList.add(id);
+    	titleList.add(title);
     	list.add(new Label(title));
 	}
 
 	@UiHandler("list")
 	void onListSelectionChanged(SelectionChangedEvent e) {
-		goTo(new AlbumGrid(idList.get(e.getSelection())));
-//    	if (e.getSelection() == 0) {
-//    		goTo(new AllPhotos());
-//    	} else {
-//    	}
+		goTo(new AlbumGrid(idList.get(e.getSelection()), titleList.get(e.getSelection())));
     }
-
-
-//	public Object getNavigationPanel() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 }
