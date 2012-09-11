@@ -48,6 +48,7 @@ public class MainUi extends Page {
 	public void setAlbumList(Map<Long, String> albums) {
 		list.clear();
 		idList.clear();
+		titleList.clear();
 		
 		addNewAlbum(Long.valueOf(-1), Constants.I18N.allPhotos());
 				
@@ -61,6 +62,23 @@ public class MainUi extends Page {
     	titleList.add(title);
     	list.add(new Label(title));
 	}
+    
+    public void deleteAlbum(Long id) {
+    	int index = -1;
+    	for (int i = 0; i < idList.size() ; i++) {
+    		Long currentId = idList.get(i);
+    		if (currentId == id) {
+    			index = i;
+    			break;
+    		}
+    	}
+    	
+    	if (index != -1) {
+    		idList.remove(index);
+    		titleList.remove(index);
+    		list.remove(index);
+    	}
+    }
 
 	@UiHandler("list")
 	void onListSelectionChanged(SelectionChangedEvent e) {
