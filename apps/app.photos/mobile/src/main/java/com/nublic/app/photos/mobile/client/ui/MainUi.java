@@ -20,6 +20,15 @@ public class MainUi extends Page {
 	private static MainUiUiBinder uiBinder = GWT.create(MainUiUiBinder.class);
 	interface MainUiUiBinder extends UiBinder<Widget, MainUi> {	}
 
+	public static MainUi INSTANCE;
+	
+	public static MainUi create() {
+		if (INSTANCE == null) {
+			INSTANCE = new MainUi();
+		}
+		return INSTANCE;
+	}
+	
 	@UiField ListPanel list;
 	@UiField Label addAlbumButton;
 	ArrayList<Long> idList = new ArrayList<Long>();
@@ -47,7 +56,7 @@ public class MainUi extends Page {
 		}
 	}
 	
-    private void addNewAlbum(Long id, String title) {
+    public void addNewAlbum(Long id, String title) {
     	idList.add(id);
     	titleList.add(title);
     	list.add(new Label(title));

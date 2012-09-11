@@ -10,6 +10,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.gwtmobile.ui.client.widgets.Button;
 import com.gwtmobile.ui.client.widgets.TextBox;
+import com.nublic.app.photos.common.model.CallbackOneAlbum;
+import com.nublic.app.photos.common.model.PhotosModel;
 
 public class ChooseNamePage extends Page {
 	private static ChooseNamePageUiBinder uiBinder = GWT.create(ChooseNamePageUiBinder.class);
@@ -43,8 +45,17 @@ public class ChooseNamePage extends Page {
 	}
 
 	private void createNewAlbum(String albumTitle) {
-		// TODO Auto-generated method stub
-		
+		PhotosModel.get().newAlbum(albumTitle, new CallbackOneAlbum() {
+			@Override
+			public void list(long id, String name) {
+				MainUi.INSTANCE.addNewAlbum(id, name);
+				goBack(null);
+			}
+			@Override
+			public void error() {
+				goBack(null);
+			}
+		});
 	}
 
 }
