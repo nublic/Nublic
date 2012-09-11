@@ -3,9 +3,12 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:m="urn:import:com.gwtmobile.ui.client.widgets">
 	<ui:style>
-		.modify > div > div {
+		.modify > div > * {
 			-webkit-box-flex: 1;
 			margin: 0 .5em 0 .5em;
+		}
+		.full {
+			display: table-cell;
 		}
 	</ui:style>
 	
@@ -16,9 +19,9 @@
 			<g:Label ui:field="title">Choose a name</g:Label>
 		</m:HeaderPanel>
 		<m:ScrollPanel>
-			<m:ListPanel selectable="false" secondaryStyle="{style.modify}">
+			<m:ListPanel selectable="false" addStyleNames="{style.modify}">
 				<m:ListItem>
-					<m:TextBox ui:field="nameBox"/>
+					<m:TextBox ui:field="nameBox" addStyleNames="{style.full}"/>
 				</m:ListItem>
 				<m:ListItem>
 					<m:Button ui:field="okButton">OK</m:Button>
