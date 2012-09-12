@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -64,17 +65,19 @@ public class AlbumGrid extends Page {
 		header.setRightButtonClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				PhotosModel.get().deleteAlbum(albumId, new CallbackOneAlbum() {
-					@Override
-					public void list(long id, String name) {
-						MainUi.INSTANCE.deleteAlbum(id);
-						goBack(null);
-					}
-					@Override
-					public void error() {
-						goBack(null);
-					}
-				});
+				if (Window.confirm("Confirm deletion")) {
+					PhotosModel.get().deleteAlbum(albumId, new CallbackOneAlbum() {
+						@Override
+						public void list(long id, String name) {
+							MainUi.INSTANCE.deleteAlbum(id);
+							goBack(null);
+						}
+						@Override
+						public void error() {
+							goBack(null);
+						}
+					});
+				}
 			}
 		});
 	}
