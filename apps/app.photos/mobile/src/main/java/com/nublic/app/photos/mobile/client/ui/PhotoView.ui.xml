@@ -6,10 +6,10 @@
 	<ui:style>
 	</ui:style>
 	<g:HTMLPanel>
-		<m:HeaderPanel leftButton="Back">
-			<g:Label ui:field="title">Photo View</g:Label>			
+		<m:HeaderPanel ui:field="header" leftButton="Back" rightButton="Edit">
+			<g:Label ui:field="title">Photo View</g:Label>
 		</m:HeaderPanel>
 		<n:SeekSlidePanel ui:field="slider">
 		</n:SeekSlidePanel>
-	</g:HTMLPanel>	
-</ui:UiBinder> 
+	</g:HTMLPanel>
+</ui:UiBinder>

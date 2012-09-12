@@ -1,6 +1,8 @@
 package com.nublic.app.photos.mobile.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.LoadEvent;
 import com.google.gwt.event.dom.client.LoadHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -10,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
+import com.gwtmobile.ui.client.widgets.HeaderPanel;
 import com.gwtmobile.ui.client.widgets.Slide;
 import com.gwtmobile.ui.client.widgets.SlidePanel.SlideProvider;
 import com.nublic.app.photos.common.model.AlbumInfo;
@@ -25,15 +28,25 @@ public class PhotoView extends Page implements SlideProvider {
 
 	@UiField SeekSlidePanel slider;
 	@UiField Label title;
+	@UiField HeaderPanel header;
 	
 	boolean sliderLoaded = false;
 	int rowCount;
 	Image[] imageArray;
 	String[] titlesArray;
+	PhotoInfo[] infoArray;
+	int currentIndex;
 
 	public PhotoView(final int photoIndex) {
-		initWidget(uiBinder.createAndBindUi(this));		
+		initWidget(uiBinder.createAndBindUi(this));
 		
+		header.setRightButtonClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				goTo(new EditPage(infoArray[currentIndex]));
+			}
+		});
+
 		PhotosModel.get().rowCount(new CallbackRowCount() {
 			@Override
 			public void rowCount(AlbumInfo info, long _rowCount) {
@@ -41,6 +54,7 @@ public class PhotoView extends Page implements SlideProvider {
 				slider.setSlideCount(rowCount);
 				imageArray = new Image[rowCount];
 				titlesArray = new String[rowCount];
+				infoArray = new PhotoInfo[rowCount];
 				slider.setSlideProvider(PhotoView.this);
 				slider.seekToSlide(photoIndex);
 			}
@@ -92,6 +106,7 @@ public class PhotoView extends Page implements SlideProvider {
 			addImageToSlide(slide, imageArray[index]);
 
 			title.setText(titlesArray[index]);
+			currentIndex = index;
 			return slide;
 		}
 	}
@@ -118,6 +133,8 @@ public class PhotoView extends Page implements SlideProvider {
 				imageArray[index] = new Image();
 				titlesArray[index] = new String();
 			}
+			infoArray[index] = photo;
+			
 			imageArray[index].setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/view/" + photo.getId() + ".png"));
 			
 			// This is made to solve the problem to know the space available before anything is displayed
