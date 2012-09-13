@@ -153,6 +153,15 @@ public class PhotoView extends Page implements SlideProvider {
 		}
 	}
 	
+	@Override
+	protected void onNavigateBack(Page from, Object object) {
+		super.onNavigateBack(from, object);
+
+		if (object != null) {
+			title.setText((String) object);
+		}
+	}
+	
 	
 
 }

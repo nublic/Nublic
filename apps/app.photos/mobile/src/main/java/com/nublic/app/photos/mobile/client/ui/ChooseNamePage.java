@@ -22,24 +22,36 @@ public class ChooseNamePage extends Page {
 	@UiField TextBox nameBox;
 
 	NameType type;
+	Object param;
 	
 	public ChooseNamePage(NameType type) {
+		this(type, null);
+	}
+	
+	public ChooseNamePage(NameType type, Object param) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.type = type;
+		this.param = param;
 		
 		switch (type) {
 		case NEW_ALBUM:
 			title.setText("Enter new album name");
 			break;
+		case RENAME_PICURE:
+			title.setText("Enter picture new name");
+			break;
 		}
 	}
-	
+
 	@UiHandler("okButton")
-	public void onClickOk(ClickEvent e) {
+	public void onClickOkButton(ClickEvent e) {
 		switch (type) {
 		case NEW_ALBUM:
 			createNewAlbum(nameBox.getText());
+			break;
+		case RENAME_PICURE:
+			renamePicture((Long)param, nameBox.getText());
 			break;
 		}
 	}
@@ -56,6 +68,11 @@ public class ChooseNamePage extends Page {
 				goBack(null);
 			}
 		});
+	}
+	
+	private void renamePicture(Long id, String text) {
+		PhotosModel.get().changePhotoTitle(id, text);
+		goBack(text);
 	}
 
 }

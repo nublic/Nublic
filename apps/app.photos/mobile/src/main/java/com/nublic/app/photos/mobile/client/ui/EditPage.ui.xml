@@ -21,7 +21,7 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<m:HeaderPanel leftButton="Back">
+		<m:HeaderPanel ui:field="header" leftButton="Back">
 			<g:Label>Edit photo</g:Label>
 		</m:HeaderPanel>
 		<m:ScrollPanel>
