@@ -1,5 +1,7 @@
 package com.nublic.app.photos.mobile.client.ui;
 
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -19,7 +21,9 @@ import com.gwtmobile.ui.client.widgets.Button;
 import com.gwtmobile.ui.client.widgets.CheckBox;
 import com.gwtmobile.ui.client.widgets.CheckBoxGroup;
 import com.gwtmobile.ui.client.widgets.HeaderPanel;
+import com.nublic.app.photos.common.model.CallbackListOfAlbums;
 import com.nublic.app.photos.common.model.PhotoInfo;
+import com.nublic.app.photos.common.model.PhotosModel;
 import com.nublic.util.gwt.LocationUtil;
 
 public class EditPage extends Page {
@@ -56,14 +60,35 @@ public class EditPage extends Page {
 	}
 	
 	private void addAlbumsCheckBoxes() {
-
-		CheckBox cb = new CheckBox();
-		cb.setText("Album playa");
-		checkGroup.add(cb);
-
-		CheckBox cb2 = new CheckBox();
-		cb2.setText("Album montaña");
-		checkGroup.add(cb2);
+		// Get albums containing the picture
+		PhotosModel.get().albums(new CallbackListOfAlbums() {
+			@Override
+			public void list(final Map<Long, String> selectedAlbums) {
+				// Get all albums and create checkboxes
+				// mark them selected if they have the picture
+				PhotosModel.get().albums(new CallbackListOfAlbums() {
+					@Override
+					public void list(Map<Long, String> albums) {
+						for (Map.Entry<Long, String> album : albums.entrySet()) {
+							CheckBox cb = new CheckBox();
+							cb.setText(album.getValue());
+							checkGroup.add(cb);
+							if (selectedAlbums.containsKey(album.getKey())) {
+								cb.setValue(true, false);
+							}
+						}
+					}
+					@Override
+					public void error() {
+						// nothing
+					}
+				});
+			}
+			@Override
+			public void error() {
+				// nothing
+			}
+		}, info.getId());
 
 		checkGroup.addSelectionChangedHandler(new SelectionChangedHandler() {
 			@Override

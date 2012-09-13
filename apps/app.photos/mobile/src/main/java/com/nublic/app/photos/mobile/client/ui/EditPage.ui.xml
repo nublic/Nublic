@@ -39,6 +39,9 @@
  					<m:Button ui:field="renameButton">Rename photo</m:Button>
 				</m:ListItem>
 				<m:ListItem>
+					<g:Label>Albums containing the picture</g:Label>
+				</m:ListItem>
+				<m:ListItem>
 					<m:CheckBoxGroup ui:field="checkGroup"/>
 				</m:ListItem>
 			</m:ListPanel>
