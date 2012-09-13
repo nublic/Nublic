@@ -48,6 +48,12 @@ def albums_delete():
         db.session.commit()
     return 'ok'
 
+@app.route('/albums/<int:photo_id>')
+def photo_album(photo_id):
+    require_user()
+    albums = Album.query.join(PhotoAlbum).filter(PhotoAlbum.photoId.in_(photo_id)).order_by(func.lower(Album.name)).all()
+    return json.dumps(albums, default=album_as_json)
+
 @app.route('/album/<int:album_id>', methods=['PUT', 'DELETE'])
 def album(album_id):
     require_user()
@@ -130,12 +136,6 @@ def photo_info(photo_id):
     require_user()
     photo = Photo.query.get_or_404(photo_id)
     return json.dumps(photo, default=photo_as_json)
-
-@app.route('/photo-album/<int:photo_id>')
-def photo_album(photo_id):
-    require_user()
-    albums = Album.query.join(PhotoAlbum).filter(PhotoAlbum.photoId.in_(photo_id)).order_by(func.lower(Album.name)).all()
-    return json.dumps(albums, default=album_as_json)
 
 @app.route('/photo-title/<int:photo_id>', methods=['POST'])
 def photo_title(photo_id):
