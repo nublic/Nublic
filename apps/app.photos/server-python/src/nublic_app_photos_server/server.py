@@ -48,6 +48,12 @@ def albums_delete():
         db.session.commit()
     return 'ok'
 
+@app.route('/albums/<int:photo_id>')
+def photo_album(photo_id):
+    require_user()
+    albums = Album.query.join(PhotoAlbum).filter(PhotoAlbum.photoId.in_(photo_id)).order_by(func.lower(Album.name)).all()
+    return json.dumps(albums, default=album_as_json)
+
 @app.route('/album/<int:album_id>', methods=['PUT', 'DELETE'])
 def album(album_id):
     require_user()
