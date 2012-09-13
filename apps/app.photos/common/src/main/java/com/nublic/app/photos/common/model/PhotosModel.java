@@ -94,6 +94,11 @@ public class PhotosModel {
 		offerRequest(new RequestStartAlbum(this, album, order, false));
 	}
 	
+	// Albums in which a concrete picture is inside.
+	public void albums(CallbackListOfAlbums cb, long photoId) {
+		offerRequest(new RequestListOfAlbums(this, photoId, cb));
+	}
+	
 	public void startNewAlbum(long album, AlbumOrder order, boolean force) {
 		offerRequest(new RequestStartAlbum(this, album, order, force));
 	}

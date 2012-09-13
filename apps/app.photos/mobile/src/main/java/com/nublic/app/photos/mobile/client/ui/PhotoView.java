@@ -161,7 +161,5 @@ public class PhotoView extends Page implements SlideProvider {
 			title.setText((String) object);
 		}
 	}
-	
-	
 
 }
