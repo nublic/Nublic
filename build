@@ -27,6 +27,7 @@ install_in_maven_repo() {
 
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
+    # You need to install maven3!! It's not in the repository and needs to be manually installed
     # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx
     # sudo update-java-alternatives -s java-1.7.0-\*
     rm -rf "${REPO_DIR}"
