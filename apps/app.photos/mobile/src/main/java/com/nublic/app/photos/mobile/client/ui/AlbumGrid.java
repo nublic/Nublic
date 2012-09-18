@@ -27,23 +27,29 @@ public class AlbumGrid extends Page {
 	@UiField FlowPanel grid;
 	@UiField Label titleLabel;
 	@UiField HeaderPanel header;
+
+	Long albumId;
+	String title;
 	
 	public AlbumGrid(Long albumId, String title) {
 		initWidget(uiBinder.createAndBindUi(this));
+		this.albumId = albumId;
+		this.title = title;
 		
-		createInterface(albumId, title);
+		createInterface(false);
 		if (albumId != -1) {
 			addDeleteButton(albumId);
 		}
 	}
 
-	private void createInterface(Long albumId, String title) {
+	private void createInterface(boolean reload) {
 		titleLabel.setText(title);
-		PhotosModel.get().startNewAlbum(albumId, AlbumOrder.DATE_ASC);
+		PhotosModel.get().startNewAlbum(albumId, AlbumOrder.DATE_ASC, reload);
 		PhotosModel.get().photoList(0, 35000, new CallbackListOfPhotos() {
 			@Override
 			public void list(AlbumInfo info, long start, long length, List<PhotoInfo> photos) {
 				int index = 0;
+				grid.clear();
 				for (PhotoInfo pi : photos) {
 					addPhotoToGrid(pi, index++);
 				}
@@ -80,6 +86,12 @@ public class AlbumGrid extends Page {
 				}
 			}
 		});
+	}
+	
+	@Override
+	protected void onNavigateBack(Page from, Object object) {
+		super.onNavigateBack(from, object);
+		createInterface(true);
 	}
 
 }
