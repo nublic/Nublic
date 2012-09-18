@@ -48,7 +48,7 @@ public class RequestListOfAlbums extends Request {
 
 			@Override
 			public void onError() {
-				// Nothing
+				cb.error();
 				model.removeFirstRequest();
 			}
 		}, RequestBuilder.GET);

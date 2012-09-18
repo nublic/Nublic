@@ -1,5 +1,6 @@
 package com.nublic.app.photos.mobile.client.ui;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -10,7 +11,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,6 +37,7 @@ public class EditPage extends Page {
 	@UiField HeaderPanel header;
 	@UiField CheckBoxGroup checkGroup;
 	PhotoInfo info;
+	ArrayList<Long> albumIdList = new ArrayList<Long>();
 
 	public EditPage(PhotoInfo info) {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -49,7 +50,6 @@ public class EditPage extends Page {
 		dateLabel.setText(formatter.format(info.getDate()));
 		thumbnail.setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + info.getId() + ".png"));
 		addAlbumsCheckBoxes();
-		
 		
 		header.setLeftButtonClickHandler(new ClickHandler() {
 			@Override
@@ -70,6 +70,7 @@ public class EditPage extends Page {
 					@Override
 					public void list(Map<Long, String> albums) {
 						for (Map.Entry<Long, String> album : albums.entrySet()) {
+							albumIdList.add(album.getKey());
 							CheckBox cb = new CheckBox();
 							cb.setText(album.getValue());
 							checkGroup.add(cb);
@@ -93,9 +94,24 @@ public class EditPage extends Page {
 		checkGroup.addSelectionChangedHandler(new SelectionChangedHandler() {
 			@Override
 			public void onSelectionChanged(SelectionChangedEvent e) {
-				Window.alert("Change in " + e.getSelection());
+				int index = e.getSelection();
+				CheckBox cb = (CheckBox)checkGroup.getWidget(index);
+				boolean isSelected = cb.getValue();
+				if (isSelected) {
+					addToAlbum(albumIdList.get(index));
+				} else {
+					removeFromAlbum(albumIdList.get(index));
+				}
 			}
-		});
+		});		
+	}
+	
+	private void addToAlbum(Long albumId) {
+		PhotosModel.get().addPhotoToAlbum(info.getId(), albumId);
+	}
+	
+	private void removeFromAlbum(Long albumId) {
+		PhotosModel.get().removePhotoFromAlbum(info.getId(), albumId);
 	}
 
 	@UiHandler("renameButton")
