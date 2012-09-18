@@ -128,6 +128,8 @@ public class PhotosModel {
 		// TODO: by now, just reload everything
 		startNewAlbum(currentAlbum.getId(), currentAlbum.getOrder(), true);
 	}
+	
+	// TODO: deletePhotos(Set<Long> photoIds, CallbackPhotosRemoval cb, FROM_ALBUM);
 
 	// Album cache management
 	private Object albumLock = new Object();
