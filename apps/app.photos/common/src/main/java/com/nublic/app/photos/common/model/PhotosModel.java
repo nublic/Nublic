@@ -128,6 +128,14 @@ public class PhotosModel {
 		// TODO: by now, just reload everything
 		startNewAlbum(currentAlbum.getId(), currentAlbum.getOrder(), true);
 	}
+	
+	public void addPhotoToAlbum(Long photoId, Long albumId) {
+		offerRequest(new RequestPhotoAlbumChange(this, photoId, albumId, AlbumChangeType.ADD));
+	}
+	
+	public void removePhotoFromAlbum(Long photoId, Long albumId) {
+		offerRequest(new RequestPhotoAlbumChange(this, photoId, albumId, AlbumChangeType.REMOVE));
+	}
 
 	// Album cache management
 	private Object albumLock = new Object();

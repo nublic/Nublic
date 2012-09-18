@@ -40,6 +40,7 @@ public class RequestListOfAlbums extends Request {
 						albumCache.put((long)json_album.getId(), json_album.getName());
 					}
 					cb.list(albumCache);
+					model.removeFirstRequest();
 				} else {
 					onError();
 				}
@@ -47,7 +48,8 @@ public class RequestListOfAlbums extends Request {
 
 			@Override
 			public void onError() {
-				// Nothing
+				cb.error();
+				model.removeFirstRequest();
 			}
 		}, RequestBuilder.GET);
 	}
