@@ -1,0 +1,15 @@
+Source: nublic-dyndnschecker
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-dyndnschecker
+Architecture: all
+Depends: ${misc:Depends} 
+Description: Nublic dyndnschecker
+ Update freedns values for dynamic IPs.
+ Include the needed configuration for freeDNS
+
