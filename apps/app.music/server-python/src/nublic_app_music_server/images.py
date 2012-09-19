@@ -34,7 +34,7 @@ def _ensure(id_, folderer, getter):
     # Create thumbnail
     thumb = os.path.join(folder, THUMBNAIL_FILENAME)
     if os.path.exists(original) and not os.path.exists(thumb):
-        img = Image(thumb)
+        img = Image(original)
         img.scale((THUMBNAIL_SIZE, THUMBNAIL_SIZE))
         img.write(thumb)
 
