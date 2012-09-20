@@ -225,7 +225,9 @@ def artists_get(asc, start, length, collection_ids):
     # Generate information about artist
     result = []
     for a in q_offset.all():
-        result.append(get_artist_info(a))
+        artistInfo = get_artist_info(a)
+        if artistInfo != None:
+            result.append(artistInfo)
     return json.dumps(artists_and_row_count_as_json(count, result))
 
 @app.route('/artist-info/<int:id>')
@@ -236,8 +238,11 @@ def artist_info(id):
 
 def get_artist_info(a):
     a_songs = Song.query.filter_by(artistId=a.id).count()
-    a_albums = Album.query.filter(Song.albumId==Album.id).filter(Song.artistId==a.id).distinct().count()
-    return (a.id, a.name, a_songs, a_albums)
+    if a_songs != 0:
+        a_albums = Album.query.filter(Song.albumId==Album.id).filter(Song.artistId==a.id).distinct().count()
+        return (a.id, a.name, a_songs, a_albums)
+    else:
+        return None
 
 # ALBUMS
 # ======
@@ -290,7 +295,9 @@ def albums_get(artist, asc, start, length, collection_ids):
     # Generate information about artist
     result = []
     for a in q_offset.all():
-        result.append(get_album_info(a))
+        albumInfo = get_album_info(a)
+        if albumInfo != None:
+            result.append(albumInfo)
     return json.dumps(albums_and_row_count_as_json(count, result))
 
 @app.route('/album-info/<int:id>')
@@ -301,8 +308,11 @@ def album_info(id):
 
 def get_album_info(a):
     a_songs = Song.query.filter_by(albumId=a.id).count()
-    a_artists = Artist.query.filter(Song.artistId==Artist.id).filter(Song.albumId==a.id).distinct().all()
-    return (a.id, a.name, a_songs, map(lambda artist: artist.id, a_artists))
+    if a_songs != 0:
+        a_artists = Artist.query.filter(Song.artistId==Artist.id).filter(Song.albumId==a.id).distinct().all()
+        return (a.id, a.name, a_songs, map(lambda artist: artist.id, a_artists))
+    else:
+        return None
 
 # SONGS
 # =====
@@ -453,3 +463,4 @@ def view_song(song_id):
 
 if __name__ == '__main__':
     app.run()
+
