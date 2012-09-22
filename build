@@ -26,9 +26,7 @@ install_in_maven_repo() {
 }
 
 initialize() {
-    # Make sure you have libdbus-java maven2 and reprepro installed
-    # You need to install maven3!! It's not in the repository and needs to be manually installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx
+    # Make sure you have maven 3 and reprepro installed
     # sudo update-java-alternatives -s java-1.7.0-\*
     rm -rf "${REPO_DIR}"
     # Create build folders, if non existant
@@ -37,14 +35,6 @@ initialize() {
     mkdir -p "${MAVEN_REPO_DIR}"
     # Delete previous builds
     rm -rf "${TARGET_DIR}"/*.{deb,build,changes}
-    # Install libraries in maven repo
-    install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
-    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwtmobile/gwtmobile-1.1.jar" gwtmobile gwtmobile 1.1
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
@@ -157,69 +147,87 @@ create_repo() {
 
 git submodule update --init --merge
 initialize
-# Libraries
+
+# External GWT libraries
+install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
+install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
+install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
+install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwtmobile/gwtmobile-1.1.jar" gwtmobile gwtmobile 1.1
+
+# Build third party libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
 build_submodule_lib echoprint-codegen
 build_submodule_lib sunburnt
 build_submodule_lib pyechonest
+build_deb_package 3rd-party-libs/pykka
+
+# Copy libraries from Quantal
 copy_and_touch 3rd-party-libs/aria2
 copy_and_touch 3rd-party-libs/python-fstab
 copy_and_touch 3rd-party-libs/tomcat7
 copy_and_touch 3rd-party-libs/jetty8
 copy_and_touch 3rd-party-libs/lucene-solr
-build_deb_package 3rd-party-libs/pykka
-# build_deb_package 3rd-party-libs/guava
-# bst-player fork
+
+# BST Player fork
 package_and_install_dev_mode player
+
 # Base modules
 build_deb_package resource/main/src
-build_deb_package resource/java
-package_and_install resource/java
+#build_deb_package resource/java
+#package_and_install resource/java
 build_deb_package notification/main/src
-build_deb_package notification/java
-package_and_install notification/java
+#build_deb_package notification/java
+#package_and_install notification/java
 build_deb_package files_and_users/main/src
 build_deb_package files_and_users/client/src
-build_deb_package files_and_users/java
-package_and_install files_and_users/java
+#build_deb_package files_and_users/java
+#package_and_install files_and_users/java
 build_deb_package filewatcher/main/src
-build_deb_package filewatcher/scala
-install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
-# Utilities
+#build_deb_package filewatcher/scala
+#install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
+
+# Basic building blocks for servers and clients
 build_deb_package python/client/src
 build_deb_package python/server/src
 package_and_install apps/util/gwt
 package_and_install apps/util/ws-json
+
 # Manager App
 build_deb_package apps/app.manager/server-python/src
 build_deb_package apps/app.manager/web
 build_deb_package apps/app.manager/welcome
 build_deb_package apps/app.manager/settings
 build_deb_package apps/app.manager
+
 # Browser App
 build_deb_package apps/app.browser/server-python/src
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
+
 # Music App
 build_deb_package apps/app.music/server-python/src
 build_deb_package apps/app.music/fs/src
 build_deb_package apps/app.music/web
 build_deb_package apps/app.music
+
 # Photos App
 build_deb_package apps/app.photos/server-python/src
 package_and_install apps/app.photos/common
 build_deb_package apps/app.photos/web
 build_deb_package apps/app.photos/mobile
 build_deb_package apps/app.photos
+
 # Downloads App
 build_deb_package apps/app.downloads/server
 build_deb_package apps/app.downloads/web
 build_deb_package apps/app.downloads
+
 # Market App
 build_deb_package apps/app.market/daemon/src
 build_deb_package apps/app.market/server-python/src
 build_deb_package apps/app.market/web
 build_deb_package apps/app.market
+
 # Extra configuration packages
 build_deb_package conf/apache
 build_deb_package conf/samba
@@ -233,6 +241,8 @@ build_deb_package conf/openssh
 build_deb_package conf/dyndnschecker
 build_deb_package conf/unattended-upgrades
 build_deb_package conf/nublic
+
+# Put everything new in the repository
 create_repo
 # create_repo_cd
 
