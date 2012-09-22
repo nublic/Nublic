@@ -1,0 +1,11 @@
+nublic-app-browser-server (2012-09-22-11-18) precise; urgency=low
+
+  * Building on sáb sep 22 11:19:07 CEST 2012
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Sat, 22 Sep 2012 11:19:09 +0200
+
+nublic-app-browser-server (0.01) unstable; urgency=low
+
+  * Initial release
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Sat, 22 Sep 2012 11:12:00 +0200

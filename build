@@ -165,6 +165,7 @@ build_submodule_lib pyechonest
 copy_and_touch 3rd-party-libs/aria2
 copy_and_touch 3rd-party-libs/python-fstab
 copy_and_touch 3rd-party-libs/tomcat7
+copy_and_touch 3rd-party-libs/jetty8
 copy_and_touch 3rd-party-libs/lucene-solr
 build_deb_package 3rd-party-libs/pykka
 # build_deb_package 3rd-party-libs/guava
@@ -196,7 +197,7 @@ build_deb_package apps/app.manager/welcome
 build_deb_package apps/app.manager/settings
 build_deb_package apps/app.manager
 # Browser App
-build_deb_package apps/app.browser/server
+build_deb_package apps/app.browser/server-python/src
 build_deb_package apps/app.browser/web
 build_deb_package apps/app.browser
 # Music App
