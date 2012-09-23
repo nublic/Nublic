@@ -1,0 +1,15 @@
+Source: nublic-solr-jetty8-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-solr-jetty8-config
+Architecture: all
+Depends: ${misc:Depends}, jetty8 (>= 8.1), libjetty8-extra-java (>= 8.1), solr-common
+Replaces: solr-common
+Conflicts: solr-jetty, solr-tomcat, solr-tomcat6
+Description: Nublic Solr configuration files
+ Nublic Solr configuration files for Jetty 8

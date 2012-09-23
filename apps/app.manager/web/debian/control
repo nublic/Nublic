@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-manager-web
 Architecture: all
-Depends: ${misc:Depends}, tomcat7
+Depends: ${misc:Depends}, apache2
 Description: Nublic Manager app - server
  Manager app for the Nublic platform - server part

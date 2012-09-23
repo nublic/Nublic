@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-photos-web
 Architecture: all
-Depends: ${misc:Depends}, tomcat7
+Depends: ${misc:Depends}, apache2
 Description: Nublic Photos app - GWT client
  Web client for Nublic photos app

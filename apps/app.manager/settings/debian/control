@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-manager-settings
 Architecture: all
-Depends: ${misc:Depends}, tomcat7
+Depends: ${misc:Depends}, apache2
 Description: Nublic Settings app
  Settings app for the Nublic platform

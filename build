@@ -164,7 +164,7 @@ build_deb_package 3rd-party-libs/pykka
 # Copy libraries from Quantal
 copy_and_touch 3rd-party-libs/aria2
 copy_and_touch 3rd-party-libs/python-fstab
-copy_and_touch 3rd-party-libs/tomcat7
+#copy_and_touch 3rd-party-libs/tomcat7
 copy_and_touch 3rd-party-libs/jetty8
 copy_and_touch 3rd-party-libs/lucene-solr
 
@@ -231,9 +231,10 @@ build_deb_package apps/app.market
 # Extra configuration packages
 build_deb_package conf/apache
 build_deb_package conf/samba
-build_deb_package conf/solr
-build_deb_package conf/tomcat6
-build_deb_package conf/tomcat7
+#build_deb_package conf/tomcat6
+#build_deb_package conf/tomcat7
+#build_deb_package conf/solr
+build_deb_package conf/solr-jetty8
 build_deb_package conf/minidlna
 build_deb_package conf/upstart
 build_deb_package conf/lshell
