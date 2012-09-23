@@ -1,0 +1,2 @@
+nublic_file_watcher/nublic-file-watcher-daemon /usr/sbin
+nublic-file-watcher.conf /etc/init

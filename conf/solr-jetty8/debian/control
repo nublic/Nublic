@@ -8,7 +8,7 @@ Homepage: http://nublic.com
 
 Package: nublic-solr-jetty8-config
 Architecture: all
-Depends: ${misc:Depends}, jetty8 (>= 8.1), libjetty8-extra-java (>= 8.1), solr-common
+Depends: ${misc:Depends}, jetty8 (>= 8.1), libjetty8-extra-java (>= 8.1), solr-common, nublic-jetty8-config
 Replaces: solr-common
 Conflicts: solr-jetty, solr-tomcat, solr-tomcat6
 Description: Nublic Solr configuration files

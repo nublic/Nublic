@@ -46,6 +46,10 @@ class WatcherThread(threading.Thread):
             #    self._logger.error('Message received')
             self._actor.tell({'command': 'forward', 'change': change})
 
+def init_socket_watcher_for_everything(processors, logger=None):
+    actor = FileWatcherActor.start('Filewatcher', processors, logger)
+    SocketWatcherThread(actor, logger, 'Filewatchet').start()
+
 def init_socket_watcher(app_name, processors, logger=None):
     actor = FileWatcherActor.start(app_name, processors, logger)
     SocketWatcherThread(actor, logger, app_name).start()

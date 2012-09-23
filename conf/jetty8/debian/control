@@ -1,0 +1,14 @@
+Source: nublic-jetty8-config
+Section: nublic
+Priority: extra
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: http://nublic.com
+
+Package: nublic-jetty8-config
+Architecture: all
+Depends: ${misc:Depends}, jetty8
+Replaces: jetty8
+Description: Nublic Jetty 8 configuration files
+ Nublic Jetty 8 configuration files

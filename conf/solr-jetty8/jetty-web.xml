@@ -3,7 +3,7 @@
 "http://jetty.mortbay.org/configure.dtd">
 
 <!-- Set the solr.solr.home system property -->
-<Configure class="org.mortbay.jetty.webapp.WebAppContext">
+<Configure class="org.eclipse.jetty.webapp.WebAppContext">
   <Call name="setProperty" class="java.lang.System">
     <Arg type="String">solr.solr.home</Arg>
     <Arg type="String">/usr/share/solr</Arg>

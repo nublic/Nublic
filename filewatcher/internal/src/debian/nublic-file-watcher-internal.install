@@ -1,0 +1,3 @@
+nublic_file_watcher_internal/nublic-file-watcher-internal-daemon /usr/sbin
+com.nublic.filewatcher.conf /etc/dbus-1/system.d
+nublic-file-watcher-internal.conf /etc/init

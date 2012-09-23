@@ -1,1 +1,1 @@
-/usr/share/solr/webapp /var/lib/jetty8/webapps/solr
+/usr/share/solr/web /var/lib/jetty8/webapps/solr
