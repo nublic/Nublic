@@ -41,7 +41,9 @@ public class WelcomePage extends Composite {
 			}
 			@Override
 			public void onSuccess(Response response) {
-				welcomeLabel.setText(Constants.I18N.greeting(response.getText()));
+				if (response.getStatusCode() == Response.SC_OK) {
+					welcomeLabel.setText(Constants.I18N.greeting(response.getText()));
+				}
 			}
 			@Override
 			public void onError() {
