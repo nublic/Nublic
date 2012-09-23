@@ -9,7 +9,6 @@ Created on 06/09/2011
 import gobject
 import os
 import pyinotify
-import apps
 # from dbus_signals import DbusSignaler
 from handler import EventHandler
 from manager import WatchManager2
