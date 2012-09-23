@@ -969,7 +969,15 @@ public class BrowserUi extends Composite implements ModelUpdateHandler, OpenHand
 		});
 	}
 	
-	public native boolean hasFlashPlayer() /*-{
+	public boolean hasFlashPlayer() {
+		return (!(getUserAgent().contains("chrome")) && _hasFlashPlayer());
+	}
+
+	public static native String getUserAgent() /*-{
+		return navigator.userAgent.toLowerCase();
+	}-*/;	
+	
+	public native boolean _hasFlashPlayer() /*-{
 		return $wnd.swfobject.hasFlashPlayerVersion("10");
 	}-*/;
 
