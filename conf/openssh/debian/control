@@ -9,5 +9,6 @@ Homepage: http://nublic.com
 Package: nublic-openssh-config
 Architecture: all
 Depends: ${misc:Depends}, openssh-server
+Replaces: openssh-server
 Description: Nublic OpenSSH configuration files
  Nublic OpenSSH configuration files

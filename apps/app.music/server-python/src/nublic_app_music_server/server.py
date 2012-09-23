@@ -225,7 +225,9 @@ def artists_get(asc, start, length, collection_ids):
     # Generate information about artist
     result = []
     for a in q_offset.all():
-        result.append(get_artist_info(a, collection_ids))
+        artistInfo = get_artist_info(a, collection_ids)
+        if artistInfo != None:
+            result.append(artistInfo)
     return json.dumps(artists_and_row_count_as_json(count, result))
 
 @app.route('/artist-info/<int:id>')
@@ -244,8 +246,11 @@ def get_artist_info(a, collection_ids=None):
         q_albums = q_albums.filter(SongCollection.songId==Song.id).filter(SongCollection.collectionId.in_(collection_ids))
     # Ask DB
     a_songs = q_songs.distinct().count()
-    a_albums = q_albums.distinct().count()
-    return (a.id, a.name, a_songs, a_albums)
+    if a_songs != 0:
+        a_albums = q_albums.distinct().count()
+        return (a.id, a.name, a_songs, a_albums)
+    else:
+        return None
 
 # ALBUMS
 # ======
@@ -298,7 +303,9 @@ def albums_get(artist, asc, start, length, collection_ids):
     # Generate information about artist
     result = []
     for a in q_offset.all():
-        result.append(get_album_info(a, collection_ids))
+        albumInfo = get_album_info(a, collection_ids)
+        if albumInfo != None:
+            result.append(albumInfo)
     return json.dumps(albums_and_row_count_as_json(count, result))
 
 @app.route('/album-info/<int:id>')
@@ -317,8 +324,11 @@ def get_album_info(a, collection_ids=None):
         q_artists = q_artists.filter(SongCollection.songId==Song.id).filter(SongCollection.collectionId.in_(collection_ids))
     # Ask DB
     a_songs = q_songs.distinct().count()
-    a_artists = q_artists.distinct().all()
-    return (a.id, a.name, a_songs, map(lambda artist: artist.id, a_artists))
+    if a_songs != 0:
+        a_artists = q_artists.distinct().all()
+        return (a.id, a.name, a_songs, map(lambda artist: artist.id, a_artists))
+    else:
+        return None
 
 # SONGS
 # =====
@@ -469,3 +479,4 @@ def view_song(song_id):
 
 if __name__ == '__main__':
     app.run()
+
