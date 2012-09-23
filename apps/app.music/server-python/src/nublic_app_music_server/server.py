@@ -225,7 +225,7 @@ def artists_get(asc, start, length, collection_ids):
     # Generate information about artist
     result = []
     for a in q_offset.all():
-        result.append(get_artist_info(a))
+        result.append(get_artist_info(a, collection_ids))
     return json.dumps(artists_and_row_count_as_json(count, result))
 
 @app.route('/artist-info/<int:id>')
@@ -234,9 +234,17 @@ def artist_info(id):
     a = Artist.query.get_or_404(id)
     return json.dumps(artist_as_json(get_artist_info(a)))
 
-def get_artist_info(a):
-    a_songs = Song.query.filter_by(artistId=a.id).count()
-    a_albums = Album.query.filter(Song.albumId==Album.id).filter(Song.artistId==a.id).distinct().count()
+def get_artist_info(a, collection_ids=None):
+    # Create queries
+    q_songs = Song.query.filter_by(artistId=a.id)
+    q_albums = Album.query.filter(Song.albumId==Album.id).filter(Song.artistId==a.id)
+    # Add extra collection constraints
+    if collection_ids:
+        q_songs = q_songs.filter(SongCollection.songId==Song.id).filter(SongCollection.collectionId.in_(collection_ids))
+        q_albums = q_albums.filter(SongCollection.songId==Song.id).filter(SongCollection.collectionId.in_(collection_ids))
+    # Ask DB
+    a_songs = q_songs.distinct().count()
+    a_albums = q_albums.distinct().count()
     return (a.id, a.name, a_songs, a_albums)
 
 # ALBUMS
@@ -290,7 +298,7 @@ def albums_get(artist, asc, start, length, collection_ids):
     # Generate information about artist
     result = []
     for a in q_offset.all():
-        result.append(get_album_info(a))
+        result.append(get_album_info(a, collection_ids))
     return json.dumps(albums_and_row_count_as_json(count, result))
 
 @app.route('/album-info/<int:id>')
@@ -299,9 +307,17 @@ def album_info(id):
     a = Album.query.get_or_404(id)
     return json.dumps(album_as_json(get_album_info(a)))
 
-def get_album_info(a):
-    a_songs = Song.query.filter_by(albumId=a.id).count()
-    a_artists = Artist.query.filter(Song.artistId==Artist.id).filter(Song.albumId==a.id).distinct().all()
+def get_album_info(a, collection_ids=None):
+    # Create queries
+    q_songs = Song.query.filter_by(albumId=a.id)
+    q_artists = Artist.query.filter(Song.artistId==Artist.id).filter(Song.albumId==a.id)
+    # Add extra collection constraints
+    if collection_ids:
+        q_songs = q_songs.filter(SongCollection.songId==Song.id).filter(SongCollection.collectionId.in_(collection_ids))
+        q_artists = q_artists.filter(SongCollection.songId==Song.id).filter(SongCollection.collectionId.in_(collection_ids))
+    # Ask DB
+    a_songs = q_songs.distinct().count()
+    a_artists = q_artists.distinct().all()
     return (a.id, a.name, a_songs, map(lambda artist: artist.id, a_artists))
 
 # SONGS
