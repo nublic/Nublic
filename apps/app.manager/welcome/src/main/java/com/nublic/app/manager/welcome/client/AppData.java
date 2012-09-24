@@ -13,17 +13,17 @@ public class AppData {
 	String defaultName;
 	Map<String, String> localizedNames;
 	String path;
+	String extra;
 	boolean favourite;
 	
-	public AppData(String id, String developer, String defaultName, Map<String, String> localizedNames,
-			String path, boolean favourite) {
+	public AppData(String id, String developer, String defaultName, Map<String, String> localizedNames, String path, String extra) {
 		super();
 		this.id = id;
 		this.developer = developer;
 		this.defaultName = defaultName;
 		this.localizedNames = localizedNames;
 		this.path = path;
-		this.favourite = favourite;
+		this.extra = extra;
 	}
 	
 	public AppData(WebData data) {
@@ -37,8 +37,8 @@ public class AppData {
 			String lang = langs.get(i);
 			this.localizedNames.put(lang, data.getLocalizedName(lang));
 		}
-		this.path = data.getPath();
-		this.favourite = data.isFavourite();
+		this.path = data.getWebPath();
+		this.extra = data.getWebExtra();
 	}
 	
 	public boolean isFavourite() {

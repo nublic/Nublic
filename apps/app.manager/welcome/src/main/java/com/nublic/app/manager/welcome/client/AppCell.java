@@ -24,7 +24,7 @@ public class AppCell extends Composite {
 	interface AppCellUiBinder extends UiBinder<Widget, AppCell> {
 	}
 	
-	public AppCell(String id, String image, String name, String url, boolean favourite) {
+	public AppCell(String id, String image, String name, String url) {
 		initWidget(uiBinder.createAndBindUi(this));
 		this.appId = id;
 		this.image.setUrl(image);

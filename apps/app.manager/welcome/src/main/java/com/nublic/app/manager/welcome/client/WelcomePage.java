@@ -71,7 +71,7 @@ public class WelcomePage extends Composite {
 				AppData app = apps.get(appId);
 				AppCell cell = new AppCell(appId, 
 						LocationUtil.getHostBaseUrl() + "manager/server/app-image/dark/" + appId + "/32",
-						app.getLocalizedName(), LocationUtil.getHostBaseUrl() + appId + "/" + app.getPath(), app.isFavourite());
+						app.getLocalizedName(), LocationUtil.getHostBaseUrl() + appId + "/" + app.getPath());
 				appGrid.add(cell);
 			}
 		}
