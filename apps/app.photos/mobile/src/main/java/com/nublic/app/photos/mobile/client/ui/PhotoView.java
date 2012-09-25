@@ -20,6 +20,7 @@ import com.nublic.app.photos.common.model.CallbackRowCount;
 import com.nublic.app.photos.common.model.CallbackThreePhotos;
 import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.common.model.PhotosModel;
+import com.nublic.app.photos.mobile.client.Resources;
 import com.nublic.util.gwt.LocationUtil;
 
 public class PhotoView extends Page implements SlideProvider {
@@ -60,7 +61,7 @@ public class PhotoView extends Page implements SlideProvider {
 			}
 			@Override
 			public void error() {
-				// nothing	
+				// nothing
 			}
 		});
 	}
@@ -76,7 +77,7 @@ public class PhotoView extends Page implements SlideProvider {
 			// necessary because it will be added to the slide, cannot be null
 			boolean wasNull = imageArray[index] == null;
 			if (wasNull) {
-				imageArray[index] = new Image();
+				imageArray[index] = new Image(Resources.INSTANCE.loading());
 				titlesArray[index] = new String();
 			}
 
@@ -130,7 +131,7 @@ public class PhotoView extends Page implements SlideProvider {
 	private void setArrayImage(final int index, PhotoInfo photo) {
 		if (index < rowCount) {
 			if (imageArray[index] == null) {
-				imageArray[index] = new Image();
+				imageArray[index] = new Image(Resources.INSTANCE.loading());
 				titlesArray[index] = new String();
 			}
 			infoArray[index] = photo;

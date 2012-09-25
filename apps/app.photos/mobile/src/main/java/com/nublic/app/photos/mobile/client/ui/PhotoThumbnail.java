@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.photos.common.model.PhotoInfo;
+import com.nublic.app.photos.mobile.client.Resources;
 import com.nublic.util.gwt.LocationUtil;
 
 public class PhotoThumbnail extends Composite {
@@ -30,14 +31,16 @@ public class PhotoThumbnail extends Composite {
 	}
 	
 	public void load() {
-		// Set image
+		thumbnail.setUrl(Resources.INSTANCE.loading().getSafeUri());
+//		Image temp = new Image();
+//		temp.addLoadHandler(new LoadHandler() {
+//			@Override
+//			public void onLoad(LoadEvent event) {
+//				thumbnail.setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + photo.getId() + ".png"));				
+//			}
+//		});
 		thumbnail.setUrl(LocationUtil.encodeURL(GWT.getHostPageBaseURL() + "server/thumbnail/" + photo.getId() + ".png"));
 
-		// Set up name
-//		fileName.setText(photo.getTitle());
-//		fileName.setTitle(photo.getTitle());
-//		fileThumbnail.setTitle(photo.getTitle());
-		
 		addClickHandler();
 	}
 
