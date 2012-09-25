@@ -9,7 +9,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.gwtmobile.ui.client.widgets.HeaderPanel;
@@ -20,7 +19,6 @@ import com.nublic.app.photos.common.model.CallbackRowCount;
 import com.nublic.app.photos.common.model.CallbackThreePhotos;
 import com.nublic.app.photos.common.model.PhotoInfo;
 import com.nublic.app.photos.common.model.PhotosModel;
-import com.nublic.app.photos.mobile.client.Resources;
 import com.nublic.util.gwt.LocationUtil;
 
 public class PhotoView extends Page implements SlideProvider {
@@ -77,7 +75,7 @@ public class PhotoView extends Page implements SlideProvider {
 			// necessary because it will be added to the slide, cannot be null
 			boolean wasNull = imageArray[index] == null;
 			if (wasNull) {
-				imageArray[index] = new Image(Resources.INSTANCE.loading());
+				imageArray[index] = new Image();
 				titlesArray[index] = new String();
 			}
 
@@ -113,13 +111,14 @@ public class PhotoView extends Page implements SlideProvider {
 	}
 	
 	private void addImageToSlide(Slide slide, final Image image) {
-		VerticalPanel panel = new VerticalPanel();
-		panel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-		panel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		panel.add(image);
-		slide.add(panel);
+//		VerticalPanel panel = new VerticalPanel();
+//		panel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+//		panel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+//		panel.setWidth("100%");
+//		panel.setHeight("100%");
+//		panel.add(image);
+//		slide.add(panel);
+		slide.add(new ImageInSlide(image));
 	}
 
 	private void setImageLimits(Image image) {
@@ -131,7 +130,7 @@ public class PhotoView extends Page implements SlideProvider {
 	private void setArrayImage(final int index, PhotoInfo photo) {
 		if (index < rowCount) {
 			if (imageArray[index] == null) {
-				imageArray[index] = new Image(Resources.INSTANCE.loading());
+				imageArray[index] = new Image();
 				titlesArray[index] = new String();
 			}
 			infoArray[index] = photo;
