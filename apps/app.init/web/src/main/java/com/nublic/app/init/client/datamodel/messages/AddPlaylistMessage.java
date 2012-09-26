@@ -1,17 +1,8 @@
-package com.nublic.app.music.client.datamodel.messages;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.nublic.app.init.client.datamodel.messages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.music.client.Constants;
-import com.nublic.app.music.client.controller.Controller;
-import com.nublic.app.music.client.datamodel.Playlist;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEvent;
-import com.nublic.app.music.client.datamodel.handlers.PlaylistsChangeHandler.PlaylistsChangeEventType;
-import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 //PUT /playlists
@@ -35,14 +26,14 @@ public class AddPlaylistMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
-			String text = response.getText();
-
-			List<Playlist> involvedSet = new ArrayList<Playlist>();
-			Playlist p = new Playlist(text, name);
-			involvedSet.add(p);
-			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
-			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
-			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
+//			String text = response.getText();
+//
+//			List<Playlist> involvedSet = new ArrayList<Playlist>();
+//			Playlist p = new Playlist(text, name);
+//			involvedSet.add(p);
+//			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
+//			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
+//			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
 		} else {
 			onError();
 		}
@@ -50,7 +41,7 @@ public class AddPlaylistMessage extends Message {
 
 	@Override
 	public void onError() {
-		ErrorPopup.showError(Constants.I18N.addPlaylistError());
+//		ErrorPopup.showError(Constants.I18N.addPlaylistError());
 	}
 
 }

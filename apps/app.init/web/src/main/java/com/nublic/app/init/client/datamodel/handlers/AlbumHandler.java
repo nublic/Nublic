@@ -1,10 +1,7 @@
-package com.nublic.app.music.client.datamodel.handlers;
-
-import java.util.List;
+package com.nublic.app.init.client.datamodel.handlers;
 
 import com.google.gwt.event.shared.EventHandler;
-import com.nublic.app.music.client.datamodel.AlbumInfo;
 
 public interface AlbumHandler extends EventHandler {
-	public void onAlbumChange(List<AlbumInfo> answerList);
+//	public void onAlbumChange(List<AlbumInfo> answerList);
 }

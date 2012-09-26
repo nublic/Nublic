@@ -1,4 +1,4 @@
-package com.nublic.app.music.client.datamodel.js;
+package com.nublic.app.init.client.datamodel.js;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.nublic.app.music.client.datamodel;
+package com.nublic.app.init.client.model;
 
 public class Playlist {
 	String id;
