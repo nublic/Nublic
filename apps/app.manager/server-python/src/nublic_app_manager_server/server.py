@@ -5,6 +5,7 @@ import os.path
 import random
 import simplejson as json
 import string
+import pexpect
 
 from nublic.files_and_users import get_all_users, Mirror, WorkFolder, create_mirror, create_work_folder
 from nublic_server.helpers import init_bare_nublic_server, require_user
@@ -192,6 +193,10 @@ def synced_generate_invite(sid):
     else:
         abort(403)
 
+def get_fingerprint():
+    f = open('/var/nublic/cache/fingerprint')
+    return f.read().replace("\n","")
+
 @app.route('/synced-invite/<int:iid>')
 def synced_invite(iid):
     prune_old_upload_keys()
@@ -201,22 +206,25 @@ def synced_invite(iid):
         s = WorkFolder(r_invite['synced_id'])
         user = r_invite['user']
         if s.exists() and s.get_owner().get_username() == user.get_username():
+            fingerprint = get_fingerprint() 
             manager_path, _ = os.path.split(request.url_root[:-1])
             server = os.path.split(manager_path)[0].replace('http://', '')
+            server = server.replace('https://','')
             xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + \
                   "<sparkleshare>\n" + \
                   "  <invite>\n" + \
                   "    <address>ssh://" + user.get_username() + "@" + server + "/</address>\n" + \
                   "    <remote_path>/var/nublic/work-folders/" + str(s.get_id()) + "</remote_path>\n" + \
-                  "    <accept_url>http://" + server + "/manager/server/synced-upload-key/" + str(s.get_id()) + "</accept_url>\n" + \
+                  "    <fingerprint>" + str(fingerprint) + "</fingerprint>\n" + \
+                  "    <accept_url>https://" + server + "/manager/server/synced-upload-key/" + str(iid) + "</accept_url>\n" + \
                   "  </invite>\n" + \
                   "</sparkleshare>"
             return xml
     else:
         abort(403)
 
-@app.route('/synced-upload-key/<int:iid>')
-def synced_upload_key(iid, methods=['POST']):
+@app.route('/synced-upload-key/<int:iid>', methods=['POST'])
+def synced_upload_key(iid):
     prune_old_upload_keys()
     invite = [i for i in current_upload_keys if i['id'] == iid]
     if invite:
