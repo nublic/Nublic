@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to='initapp'>
+  <!-- Inherit the core Web Toolkit stuff.                        -->
+  <inherits name='com.google.gwt.user.User'/>
+  <inherits name='com.google.gwt.http.HTTP'/>
+  <inherits name="com.google.gwt.junit.JUnit"/>
+  
+  <!-- Inherit from the utils library -->
+  <inherits name='com.nublic.util.GwtUtil'/>
+  <inherits name="com.google.common.collect.Collect"/>
+
+  <inherits name='com.nublic.theme.NublicTheme'/>
+
+  <!-- Internationalization										  -->
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <extend-property name="locale" values="en,es"/>
+  <!-- default locale... -->
+  <set-property-fallback name="locale" value="en"/>
+  <set-property name="locale" value="en,es"/>
+  <!-- get locale in runtime -->
+  <set-configuration-property name="locale.useragent" value="Y"/>
+
+  <!-- Specify the app entry point class.                         -->
+  <entry-point class='com.nublic.app.init.client.InitApp'/>
+
+  <!-- Specify the paths for translatable code                    -->
+  <source path='client'/>
+
+</module>
