@@ -6,7 +6,6 @@ Created on 08/09/2011
 '''
 
 # import dbus
-import apps
 import dbus.service
 import os
 import os.path

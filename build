@@ -182,7 +182,8 @@ build_deb_package files_and_users/main/src
 build_deb_package files_and_users/client/src
 #build_deb_package files_and_users/java
 #package_and_install files_and_users/java
-build_deb_package filewatcher/main/src
+build_deb_package filewatcher/internal/src
+build_deb_package filewatcher/previewer/src
 #build_deb_package filewatcher/scala
 #install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
 
@@ -234,6 +235,7 @@ build_deb_package conf/samba
 #build_deb_package conf/tomcat6
 #build_deb_package conf/tomcat7
 #build_deb_package conf/solr
+build_deb_package conf/jetty8
 build_deb_package conf/solr-jetty8
 build_deb_package conf/minidlna
 build_deb_package conf/upstart
