@@ -1,0 +1,6 @@
+setup.py
+nublic_file_watcher/__init__.py
+nublic_file_watcher/dbus_signals.py
+nublic_file_watcher/handler.py
+nublic_file_watcher/manager.py
+nublic_file_watcher/watcher.py

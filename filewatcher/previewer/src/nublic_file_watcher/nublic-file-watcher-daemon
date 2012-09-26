@@ -1,0 +1,28 @@
+#!/usr/bin/python
+
+# Runs in the foreground. It is suited for use with the Upstart manager
+
+# Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
+# Second version from: https://gist.github.com/339430
+#
+# @author: David Navarro Estruch
+# @author: Alejandro Serrano Mena
+# @copyright: 2011 Nublic
+
+import argparse
+import gobject
+from dbus.mainloop.glib import DBusGMainLoop
+
+# from watcher import (
+from nublic_file_watcher.watcher import (
+    start_watching,
+    scan_folder
+    )
+
+SCANNED_FOLDER = '/var/nublic/data'
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()

@@ -9,6 +9,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-browser-server
 Architecture: all
-Depends: python (>= 2.6), python-central, python-support (>= 0.90), libapache2-mod-wsgi, python-nublic, python-nublic-server
+Depends: python (>= 2.6), python-central, python-support (>= 0.90), libapache2-mod-wsgi, python-nublic, python-nublic-server, python-pykka, python-requests, ffmpeg, lame, imagemagick, flvtool2, unoconv, libavcodec-extra-53, djvulibre-bin, libtiff-tools, ghostscript
 Description: The Nublic Browser App Server
- The server serving the information about the files in Nublic.
+ The server serving the information about files in the system.

@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-browser-web
 Architecture: all
-Depends: ${misc:Depends}, tomcat7
+Depends: ${misc:Depends}, apache2
 Description: Nublic Example app - server
  Example app for the Nublic platform - server part

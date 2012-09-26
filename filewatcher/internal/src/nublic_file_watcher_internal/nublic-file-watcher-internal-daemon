@@ -1,0 +1,43 @@
+#!/usr/bin/python
+
+# Runs in the foreground. It is suited for use with the Upstart manager
+
+# Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
+# Second version from: https://gist.github.com/339430
+#
+# @author: David Navarro Estruch
+# @author: Alejandro Serrano Mena
+# @copyright: 2011 Nublic
+
+import argparse
+import gobject
+from dbus.mainloop.glib import DBusGMainLoop
+
+# from watcher import (
+from nublic_file_watcher_internal.watcher import (
+    start_watching,
+    scan_folder
+    )
+
+SCANNED_FOLDER = '/var/nublic/data'
+
+def main():
+    parser = argparse.ArgumentParser(description='Starts and communicates with the Nublic file watcher system.')
+
+    parser.add_argument('--scan', dest='scan', action='store_const',
+                        const=True, default=False,
+                        help='Scan the entire Nublic data folder.')
+    args = parser.parse_args()
+    
+    if args.scan:
+        print("Scanning the entire Nublic data folder...")
+        dbus_loop = DBusGMainLoop(set_as_default=True)
+        scan_folder(SCANNED_FOLDER)
+    else:
+        dbus_loop = DBusGMainLoop(set_as_default=True)
+        start_watching(SCANNED_FOLDER)
+        loop = gobject.MainLoop()
+        loop.run()
+
+if __name__ == '__main__':
+    main()

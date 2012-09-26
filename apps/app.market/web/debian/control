@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-market-web
 Architecture: all
-Depends: ${misc:Depends}, tomcat7
+Depends: ${misc:Depends}, apache2
 Description: Nublic Market app - client
  Nublic Market app - client app

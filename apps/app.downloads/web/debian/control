@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-downloads-web
 Architecture: all
-Depends: ${misc:Depends}, tomcat7
+Depends: ${misc:Depends}, apache2
 Description: Nublic Downloads app - client
  Downloads client for Nublic

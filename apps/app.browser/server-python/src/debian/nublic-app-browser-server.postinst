@@ -1,4 +1,5 @@
 #!/bin/bash
+
 touch /var/lib/nublic/webapps/app.browser/app.browser.wsgi
 service apache2 restart
 

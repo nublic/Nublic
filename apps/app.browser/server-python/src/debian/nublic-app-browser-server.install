@@ -1,1 +1,1 @@
-nublic_app_browser/app.browser.wsgi /var/lib/nublic/webapps/app.browser
+nublic_app_browser_server/app.browser.wsgi /var/lib/nublic/webapps/app.browser

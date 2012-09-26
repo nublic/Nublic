@@ -1,0 +1,3 @@
+jetty-web.xml /usr/share/solr/web/WEB-INF/
+schema.xml /etc/solr/conf
+solrconfig.xml /etc/solr/conf
