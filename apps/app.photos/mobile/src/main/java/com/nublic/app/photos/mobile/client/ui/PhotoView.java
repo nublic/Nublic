@@ -9,7 +9,6 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtmobile.ui.client.page.Page;
 import com.gwtmobile.ui.client.widgets.HeaderPanel;
@@ -60,7 +59,7 @@ public class PhotoView extends Page implements SlideProvider {
 			}
 			@Override
 			public void error() {
-				// nothing	
+				// nothing
 			}
 		});
 	}
@@ -112,13 +111,14 @@ public class PhotoView extends Page implements SlideProvider {
 	}
 	
 	private void addImageToSlide(Slide slide, final Image image) {
-		VerticalPanel panel = new VerticalPanel();
-		panel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
-		panel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
-		panel.setWidth("100%");
-		panel.setHeight("100%");
-		panel.add(image);
-		slide.add(panel);
+//		VerticalPanel panel = new VerticalPanel();
+//		panel.setVerticalAlignment(VerticalPanel.ALIGN_MIDDLE);
+//		panel.setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
+//		panel.setWidth("100%");
+//		panel.setHeight("100%");
+//		panel.add(image);
+//		slide.add(panel);
+		slide.add(new ImageInSlide(image));
 	}
 
 	private void setImageLimits(Image image) {

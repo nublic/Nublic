@@ -3,8 +3,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 		.imagelimits {
-			max-width: 48px;
-			max-height: 36px;
+			max-width: 96px;
+			max-height: 96px;
 			border: 1px solid #AAA;
 		}
 		.thumbborder {
@@ -12,7 +12,18 @@
 			display: inline-table;
 		}
 	</ui:style>
-	<g:VerticalPanel addStyleNames="{style.thumbborder}" width="60px" height="45px" verticalAlignment="middle" horizontalAlignment="center">
-    	<g:Image ui:field="thumbnail" addStyleNames="{style.imagelimits}"/>
-	</g:VerticalPanel>
+	<ui:with type="com.nublic.app.photos.mobile.client.Resources" field="res"/>
+	
+	<g:AbsolutePanel width="115px" height="115px" addStyleNames="{style.thumbborder}">
+		<g:at left="0" right="0" top="0" bottom="0">
+			<g:VerticalPanel width="115px" height="115px" verticalAlignment="middle" horizontalAlignment="center">
+		    	<g:Image ui:field="loading" resource="{res.loading}"/>
+			</g:VerticalPanel>
+		</g:at>
+		<g:at left="0" right="0" top="0" bottom="0">
+			<g:VerticalPanel width="115px" height="115px" verticalAlignment="middle" horizontalAlignment="center">
+		    	<g:Image ui:field="thumbnail" addStyleNames="{style.imagelimits}"/>
+			</g:VerticalPanel>
+		</g:at>
+	</g:AbsolutePanel>
 </ui:UiBinder>
