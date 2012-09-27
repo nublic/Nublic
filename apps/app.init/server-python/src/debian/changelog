@@ -1,5 +1,5 @@
-nublic-app-music-server (0.01) unstable; urgency=low
+nublic-app-init-server (0.01) unstable; urgency=low
 
   * Initial release
 
- -- Nublic Packaging Team <packaging@nublic.com>  Tue, 7 Aug 2012 16:34:00 +0200
+ -- Nublic Packaging Team <packaging@nublic.com>  Thu, 27 Sep 2012 13:05:06 +0200

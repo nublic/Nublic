@@ -1,1 +1,1 @@
-from nublic_app_music_server.server import app as application
+from nublic_app_init_server.server import app as application
