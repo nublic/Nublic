@@ -219,6 +219,10 @@ build_deb_package apps/app.market/daemon/src
 build_deb_package apps/app.market/server-python/src
 build_deb_package apps/app.market/web
 build_deb_package apps/app.market
+# Init App
+build_deb_package apps/app.init/server-python/src
+build_deb_package apps/app.init/web
+build_deb_package apps/app.init
 # Extra configuration packages
 build_deb_package conf/apache
 build_deb_package conf/samba
