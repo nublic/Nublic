@@ -2,18 +2,9 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
-		.leftPanelPadding {
-			padding: 10px 10px 30px 10px;
-		}
-		.leftpadding {
-			padding-left: 10px;
-		}
-		.scroll {
-	        overflow-x: hidden;
-			overflow-y: auto;
-		}
 	</ui:style>
+	
 	<g:HTMLPanel>
-	    
+	    <h1>Holaaa!!</h1>
 	</g:HTMLPanel>
 </ui:UiBinder> 
