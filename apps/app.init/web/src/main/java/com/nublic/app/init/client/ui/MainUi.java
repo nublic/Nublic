@@ -14,6 +14,7 @@ public class MainUi extends Composite {
 
 	@UiField StepPanel stepPanel;
 	@UiField SimplePanel mainContainer;
+	CentralPanel currentPanel;
 	
 	public MainUi() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -21,6 +22,16 @@ public class MainUi extends Composite {
 	
 	public void setStep(Step s) {
 		stepPanel.setStep(s);
-		mainContainer.setWidget(s.getUiWidget());
+		currentPanel = s.getUiWidget();
+		mainContainer.setWidget(currentPanel);
 	}
+
+	public boolean isStepReady(Step targetStep) {
+		return currentPanel.isReady() && currentPanel.getNextAllowed().contains(targetStep);
+	}
+
+	public void showCompleteFirstPopup() {
+		
+	}
+
 }

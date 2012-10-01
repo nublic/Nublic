@@ -9,11 +9,15 @@ import com.nublic.util.messages.ParamsHashMap;
 public class URLController {
 	InitModel model;
 	MainUi ui;
-	Step s;
+	Step step;
 
 	protected URLController(InitModel model, MainUi ui) {
 		this.ui = ui;
 		this.model = model;
+	}
+	
+	public Step getStep() {
+		return step;
 	}
 
 	// +++++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -28,13 +32,12 @@ public class URLController {
 			return;
 		}
 		
-		switch (targetStep) {
-		case USERS:
+		if (ui.isStepReady(targetStep)) {
 			ui.setStep(targetStep);
-			break;
-		default:
-			break;
+		} else {
+			ui.showCompleteFirstPopup();
 		}
+
 //		String playlist = hmap.get(Constants.PARAM_PLAYLIST);
 //		String artist = hmap.get(Constants.PARAM_ARTIST);
 //		String album = hmap.get(Constants.PARAM_ALBUM);

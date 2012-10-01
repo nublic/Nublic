@@ -8,6 +8,6 @@
 	</ui:style>
 	<g:HTMLPanel>
 		<div style="height: 400px;"><h1 style="float: left;">Users administration</h1></div>
-		<div><g:Hyperlink addStyleNames="{style.next}">next step</g:Hyperlink></div>
+		<div><g:Hyperlink addStyleNames="{style.next}" ui:field="nextLink">next step</g:Hyperlink></div>
 	</g:HTMLPanel>
 </ui:UiBinder> 

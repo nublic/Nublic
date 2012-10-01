@@ -8,5 +8,6 @@ public class Constants {
 	
 	public static final String PARAM_PAGE = "Page";
 	public static final String VALUE_USERS = "Users";
+	public static final String VALUE_MASTER_USER = "Password";
 	
 }
