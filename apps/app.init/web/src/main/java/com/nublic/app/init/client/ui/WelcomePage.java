@@ -23,13 +23,8 @@ public class WelcomePage extends CentralPanel {
 	}
 
 	@Override
-	public boolean isReady() {
-		return true;
-	}
-
-	@Override
-	public EnumSet<Step> getNextAllowed() {
-		return EnumSet.of(Step.USERS);
+	public boolean canChangeTo(Step s) {
+		return EnumSet.of(Step.WELCOME, Step.USERS).contains(s);
 	}
 
 }

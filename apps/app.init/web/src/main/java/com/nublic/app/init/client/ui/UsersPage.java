@@ -23,13 +23,8 @@ public class UsersPage extends CentralPanel {
 	}
 
 	@Override
-	public boolean isReady() {
-		return false;
+	public boolean canChangeTo(Step s) {
+		return EnumSet.of(Step.WELCOME, Step.USERS).contains(s) ||
+				(s == Step.MASTER_USER && false);
 	}
-	
-	@Override
-	public EnumSet<Step> getNextAllowed() {
-		return EnumSet.of(Step.WELCOME, Step.MASTER_USER);
-	}
-
 }

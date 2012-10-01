@@ -10,5 +10,7 @@ public interface I18NMessages extends Messages {
 	String masterUserStep();
 	String netConfigStep();
 	String nameStep();
+	
+	String completeFirst();
 //	String nSongs(@PluralCount int n);
 }
