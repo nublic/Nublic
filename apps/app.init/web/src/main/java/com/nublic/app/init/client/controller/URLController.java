@@ -1,12 +1,15 @@
 package com.nublic.app.init.client.controller;
 
+import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.model.InitModel;
+import com.nublic.app.init.client.model.Step;
 import com.nublic.app.init.client.ui.MainUi;
 import com.nublic.util.messages.ParamsHashMap;
 
 public class URLController {
 	InitModel model;
 	MainUi ui;
+	Step s;
 
 	protected URLController(InitModel model, MainUi ui) {
 		this.ui = ui;
@@ -16,7 +19,22 @@ public class URLController {
 	// +++++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
-//		String collection = hmap.get(Constants.PARAM_COLLECTION);
+		String page = hmap.get(Constants.PARAM_PAGE);
+		
+		Step targetStep = Step.parseString(page);
+		
+		if (targetStep == null) {
+			ui.setStep(Step.WELCOME);
+			return;
+		}
+		
+		switch (targetStep) {
+		case USERS:
+			ui.setStep(targetStep);
+			break;
+		default:
+			break;
+		}
 //		String playlist = hmap.get(Constants.PARAM_PLAYLIST);
 //		String artist = hmap.get(Constants.PARAM_ARTIST);
 //		String album = hmap.get(Constants.PARAM_ALBUM);
