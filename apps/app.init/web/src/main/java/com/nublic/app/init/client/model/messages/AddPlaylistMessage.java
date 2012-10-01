@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.datamodel.messages;
+package com.nublic.app.init.client.model.messages;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;

@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.datamodel.js;
+package com.nublic.app.init.client.model.js;
 
 import java.util.ArrayList;
 import java.util.List;
