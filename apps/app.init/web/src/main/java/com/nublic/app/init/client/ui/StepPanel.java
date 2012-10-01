@@ -33,8 +33,10 @@ public class StepPanel extends Composite {
 		container.add(masterWidget);
 		container.add(netWidget);
 		container.add(nameWidget);
+		
+		setStep(Step.FINISHED);
 	}
-	
+
 	public void setStep(Step s) {
 		switch (s) {
 		case WELCOME:

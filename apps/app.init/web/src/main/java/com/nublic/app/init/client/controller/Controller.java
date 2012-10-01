@@ -1,6 +1,7 @@
 package com.nublic.app.init.client.controller;
 
 import com.nublic.app.init.client.model.InitModel;
+import com.nublic.app.init.client.model.Step;
 import com.nublic.app.init.client.ui.MainUi;
 
 public class Controller extends URLController {
@@ -14,5 +15,8 @@ public class Controller extends URLController {
 	
 	private Controller(InitModel model, MainUi ui) {
 		super(model, ui);
+		
+		// get status
+		ui.setStep(Step.WELCOME);
 	}
 }

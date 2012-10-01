@@ -3,9 +3,20 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.app.init.client.ui">
 	<ui:style>
+		.floatright {
+			float: right;
+		}
+		.scroll {
+			overflow-y: auto;
+		}
 	</ui:style>
 	
-	<g:HTMLPanel>
-	    <n:StepPanel/>
+	<g:HTMLPanel addStyleNames="{style.scroll}">
+		<div class="container">
+			<div style="display: table; width: 100%;">
+		    	<n:StepPanel ui:field="stepPanel" addStyleNames="{style.floatright}"/>
+		    </div>
+		    <g:SimplePanel ui:field="mainContainer"/>
+	    </div>
 	</g:HTMLPanel>
 </ui:UiBinder>
