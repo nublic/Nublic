@@ -23,22 +23,22 @@
 				<g:cell width="200px" horizontalAlignment="right">
 					<g:Label addStyleNames="{style.labelmargin}">User name:</g:Label>
 				</g:cell>
-				<g:TextBox/>
+				<g:TextBox ui:field="nameBox"/>
 			</g:HorizontalPanel>
 			<g:HorizontalPanel>
 				<g:cell width="200px" horizontalAlignment="right">
 					<g:Label addStyleNames="{style.labelmargin}">Password:</g:Label>
 				</g:cell>
-				<g:PasswordTextBox/>
+				<g:PasswordTextBox ui:field="passwordBox"/>
 			</g:HorizontalPanel>
 			<g:HorizontalPanel>
 				<g:cell width="200px" horizontalAlignment="right">
 					<g:Label addStyleNames="{style.labelmargin}">Password verification:</g:Label>
 				</g:cell>
-				<g:PasswordTextBox/>
+				<g:PasswordTextBox ui:field="verificationBox"/>
 			</g:HorizontalPanel>
 			
-			<g:Button addStyleNames="{style.floatright}">Create user</g:Button>
+			<g:Button addStyleNames="{style.floatright}" ui:field="createButton">Create user</g:Button>
 		</g:VerticalPanel>
 	</g:HorizontalPanel>
 </ui:UiBinder>
