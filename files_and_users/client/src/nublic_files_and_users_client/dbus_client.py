@@ -41,6 +41,12 @@ def list_users():
         userList.append({ 'id': userS, 'uid': uid, 'shown_name': shown_name })
     return userList
 
+def get_user_uid(username):
+    dbus_loop = DBusGMainLoop()
+    bus = dbus.SystemBus(mainloop = dbus_loop)
+    userService = bus.get_object('com.nublic.users', '/com/nublic/Users')
+    return userService.get_user_uid(username)
+
 def create_mirror(name, owner):
     dbus_loop = DBusGMainLoop()
     bus = dbus.SystemBus(mainloop = dbus_loop)
