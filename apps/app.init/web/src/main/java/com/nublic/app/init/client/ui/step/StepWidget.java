@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.ui;
+package com.nublic.app.init.client.ui.step;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.CssResource;

@@ -5,9 +5,20 @@
 		.next {
 			float: right;
 		}
+		.defaultheight {
+			min-height: 400px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
-		<div style="height: 400px;"><h1 style="float: left;">Users administration</h1></div>
-		<div><g:Hyperlink addStyleNames="{style.next}" ui:field="nextLink">next step</g:Hyperlink></div>
+		<g:HTMLPanel ui:field="centralPanel" addStyleNames="{style.defaultheight}">
+			<div style="width: 100%; display: table;">
+				<h1 style="float: left;">Users administration</h1>
+			</div>
+			<p>Create at least one user to grant secure access to your Nublic device</p>
+		</g:HTMLPanel>
+		<div>
+			<g:InlineHyperlink ui:field="previousLink">previous step</g:InlineHyperlink>
+			<g:InlineHyperlink addStyleNames="{style.next}" ui:field="nextLink">next step</g:InlineHyperlink>
+		</div>
 	</g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

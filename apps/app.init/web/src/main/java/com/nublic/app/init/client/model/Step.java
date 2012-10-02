@@ -52,6 +52,8 @@ public enum Step {
 	public static Step parseString(String s) {
 		if (s == null) {
 			return null;
+		} else if (Constants.VALUE_WELCOME.compareTo(s) == 0) {
+			return WELCOME;
 		} else if (Constants.VALUE_USERS.compareTo(s) == 0) {
 			return USERS;
 		} else if (Constants.VALUE_MASTER_USER.compareTo(s) == 0) {

@@ -4,22 +4,30 @@ import java.util.EnumSet;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.model.Step;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Hyperlink;
 
 public class UsersPage extends CentralPanel {
 	private static UsersPageUiBinder uiBinder = GWT.create(UsersPageUiBinder.class);
 	interface UsersPageUiBinder extends UiBinder<Widget, UsersPage> {}
 
-	@UiField Hyperlink nextLink;
+	@UiField InlineHyperlink previousLink;
+	@UiField InlineHyperlink nextLink;
+	@UiField HTMLPanel centralPanel;
 
 	public UsersPage() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
+		previousLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_WELCOME);
 		nextLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_MASTER_USER);
+		
+		// Get created users from model
+		
+		centralPanel.add(new UserWidget());
 	}
 
 	@Override
