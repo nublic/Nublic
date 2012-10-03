@@ -30,7 +30,7 @@
 				</g:cell>
 				<g:TextBox ui:field="nameBox"/>
 				<g:cell verticalAlignment="middle">
-					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}"/>
+					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}" crossInfo="Wrong user name"/>
 				</g:cell>
 			</g:HorizontalPanel>
 
