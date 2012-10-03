@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
@@ -21,6 +20,9 @@ public class UserWidget extends Composite {
 	@UiField PasswordTextBox passwordBox;
 	@UiField PasswordTextBox verificationBox;
 	@UiField Button createButton;
+	@UiField CheckFeedback nameFeedback;
+	@UiField CheckFeedback passwordFeedback;
+	@UiField CheckFeedback verificationFeedback;
 
 	public UserWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -28,7 +30,15 @@ public class UserWidget extends Composite {
 		nameBox.addKeyUpHandler(new RealChangeHandler(nameBox) {
 			@Override
 			public void onRealChange(String newText) {
-				Window.alert(newText);
+				if (newText.isEmpty()) {
+					nameFeedback.setFeedback(Feedback.NONE);
+				} else if (newText.compareTo("Pabl") == 0) {
+					nameFeedback.setFeedback(Feedback.LOADING);
+				} else if (newText.compareTo("Pablo") == 0) {
+					nameFeedback.setFeedback(Feedback.CHECK);
+				} else {
+					nameFeedback.setFeedback(Feedback.CROSS);
+				}
 			}
 		});
 	}

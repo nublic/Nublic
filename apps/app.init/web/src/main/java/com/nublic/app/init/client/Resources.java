@@ -24,4 +24,13 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/person.png")
 	ImageResource person();
+	
+	@Source("images/check.png")
+	ImageResource check();
+	
+	@Source("images/cross.png")
+	ImageResource cross();
+	
+	@Source("images/loading.gif")
+	ImageResource loading();
 }
