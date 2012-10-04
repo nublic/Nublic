@@ -35,21 +35,25 @@ public class CheckFeedback extends Composite {
 	public void setCheckInfo(String s) {
 		checkText = s;
 		checkInfo.getElement().setInnerText(checkText);
+		checkInfo.setVisible(state == Feedback.CHECK && !checkText.isEmpty());
 	}
 	
 	public void setCrossInfo(String s) {
 		crossText = s;
 		crossInfo.getElement().setInnerText(crossText);
+		crossInfo.setVisible(state == Feedback.CROSS && !crossText.isEmpty());
 	}
 	
 	public void setLoadingInfo(String s) {
 		loadingText = s;
 		loadingInfo.getElement().setInnerText(loadingText);
+		loadingInfo.setVisible(state == Feedback.LOADING && !loadingText.isEmpty());
 	}
 	
 	public void setNoneInfo(String s) {
 		noneText = s;
 		noneInfo.getElement().setInnerText(noneText);
+		noneInfo.setVisible(state == Feedback.NONE && !noneText.isEmpty());
 	}
 	
 	public void setFeedback(Feedback f) {
