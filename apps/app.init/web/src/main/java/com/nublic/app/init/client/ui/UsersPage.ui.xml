@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.init.client.ui">
 	<ui:style>
 		.next {
 			float: right;
@@ -10,11 +11,13 @@
 		}
 	</ui:style>
 	<g:HTMLPanel>
-		<g:HTMLPanel ui:field="centralPanel" addStyleNames="{style.defaultheight}">
+		<g:HTMLPanel addStyleNames="{style.defaultheight}">
 			<div style="width: 100%; display: table;">
 				<h1 style="float: left;">Users administration</h1>
 			</div>
 			<p>Create at least one user to grant secure access to your Nublic device</p>
+			<g:HTMLPanel ui:field="centralPanel"/>
+			<n:UserWidget/>
 		</g:HTMLPanel>
 		<div>
 			<g:InlineHyperlink ui:field="previousLink">previous step</g:InlineHyperlink>

@@ -13,6 +13,7 @@ public class AddUserMessage extends Message {
 	
 	public AddUserMessage(String name, String password, AddUserHandler auh) {
 		this.name = name;
+		this.password = password;
 		this.auh = auh;
 	}
 	
@@ -34,7 +35,7 @@ public class AddUserMessage extends Message {
 //			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
 //			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
 //			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
-			auh.onUserAdded();
+			auh.onUserAdded(name);
 		} else {
 			onError();
 		}
@@ -43,7 +44,7 @@ public class AddUserMessage extends Message {
 	@Override
 	public void onError() {
 //		ErrorPopup.showError(Constants.I18N.addPlaylistError());
-		auh.onUserAdded();
+		auh.onUserAdded(name);
 	}
 
 }

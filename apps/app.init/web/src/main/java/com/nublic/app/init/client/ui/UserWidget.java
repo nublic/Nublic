@@ -122,12 +122,22 @@ public class UserWidget extends Composite {
 		if (nameFeedback.isChecked() && passwordFeedback.isChecked() && verificationFeedback.isChecked()) {
 			Controller.INSTANCE.getModel().addUser(nameBox.getText(), passwordBox.getText(), new AddUserHandler() {
 				@Override
-				public void onUserAdded() {
-					// Change widget to be static feedback
+				public void onUserAdded(String name) {
+					Controller.INSTANCE.getUi().addCompletedUser(name);
+					emptyBoxes();
 				}
 			});
 		} else {
 			ErrorPopup.showError(Constants.I18N.allFieldsError());
 		}
+	}
+
+	public void emptyBoxes() {
+		nameBox.setText("");
+		passwordBox.setText("");
+		verificationBox.setText("");
+		nameFeedback.setFeedback(Feedback.NONE);
+		passwordFeedback.setFeedback(Feedback.NONE);
+		verificationFeedback.setFeedback(Feedback.NONE);
 	}
 }

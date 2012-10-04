@@ -27,7 +27,11 @@ public class UsersPage extends CentralPanel {
 		
 		// Get created users from model
 		
-		centralPanel.add(new UserWidget());
+
+	}
+	
+	public void addCompletedUser(String name) {
+		centralPanel.add(new CompletedUserWidget(name));
 	}
 
 	@Override
@@ -35,4 +39,5 @@ public class UsersPage extends CentralPanel {
 		return EnumSet.of(Step.WELCOME, Step.USERS).contains(s) ||
 				(s == Step.MASTER_USER && false);
 	}
+
 }
