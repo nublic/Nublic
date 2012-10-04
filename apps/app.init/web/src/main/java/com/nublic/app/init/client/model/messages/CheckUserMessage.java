@@ -3,24 +3,22 @@ package com.nublic.app.init.client.model.messages;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
+import com.nublic.app.init.client.model.handlers.CheckUserHandler;
 import com.nublic.util.messages.Message;
 
-//PUT /playlists
-//* Add a playlist to the system
-//* :name -> name that the user gave
-//* Return: the new id of the playlist
-public class AddPlaylistMessage extends Message {
+public class CheckUserMessage extends Message {
 	String name;
+	CheckUserHandler cuh;
 	
-	public AddPlaylistMessage(String name) {
+	public CheckUserMessage(String name, CheckUserHandler cuh) {
 		this.name = name;
+		this.cuh = cuh;
 	}
 	
 	@Override
 	public String getURL() {
-		addParam("name", name);
-		addParam("songs", "");
-		return URL.encode(GWT.getHostPageBaseURL() + "server/playlists");
+		//addParam("name", name);
+		return URL.encode(GWT.getHostPageBaseURL() + "server/checkuser/" + name);
 	}
 
 	@Override
@@ -34,6 +32,7 @@ public class AddPlaylistMessage extends Message {
 //			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
 //			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
 //			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
+			cuh.onUserChecked(name, true);
 		} else {
 			onError();
 		}
@@ -42,6 +41,7 @@ public class AddPlaylistMessage extends Message {
 	@Override
 	public void onError() {
 //		ErrorPopup.showError(Constants.I18N.addPlaylistError());
+		cuh.onUserChecked(name, true);
 	}
 
 }

@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.init.client.controller.Controller;
+import com.nublic.app.init.client.model.handlers.CheckUserHandler;
 
 public class UserWidget extends Composite {
 	private static UserWidgetUiBinder uiBinder = GWT.create(UserWidgetUiBinder.class);
@@ -23,6 +25,7 @@ public class UserWidget extends Composite {
 	@UiField CheckFeedback nameFeedback;
 	@UiField CheckFeedback passwordFeedback;
 	@UiField CheckFeedback verificationFeedback;
+	public final MyCheckUserHandler userChecker = new MyCheckUserHandler();
 
 	public UserWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -32,15 +35,27 @@ public class UserWidget extends Composite {
 			public void onRealChange(String newText) {
 				if (newText.isEmpty()) {
 					nameFeedback.setFeedback(Feedback.NONE);
-				} else if (newText.compareTo("Pabl") == 0) {
+				} else {
 					nameFeedback.setFeedback(Feedback.LOADING);
-				} else if (newText.compareTo("Pablo") == 0) {
+					Controller.INSTANCE.getModel().checkUserAvailability(newText, userChecker);
+				}
+			}
+		});
+	}
+	
+	class MyCheckUserHandler implements CheckUserHandler {
+		@Override
+		public void onUserChecked(String userName, boolean available) {
+			if (userName.compareTo(nameBox.getText()) == 0) {
+				// Current name in box has been checked
+				if (available) {
 					nameFeedback.setFeedback(Feedback.CHECK);
 				} else {
 					nameFeedback.setFeedback(Feedback.CROSS);
 				}
 			}
-		});
+			// else ignore
+		}
 	}
 	
 	abstract class RealChangeHandler implements KeyUpHandler {

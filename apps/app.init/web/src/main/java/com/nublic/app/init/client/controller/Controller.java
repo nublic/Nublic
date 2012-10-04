@@ -19,4 +19,12 @@ public class Controller extends URLController {
 		// get status
 		ui.setStep(Step.WELCOME);
 	}
+	
+	public InitModel getModel() {
+		return model;
+	}
+	
+	public MainUi getUi() {
+		return ui;
+	}
 }
