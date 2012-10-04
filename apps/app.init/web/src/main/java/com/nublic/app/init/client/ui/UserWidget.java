@@ -13,7 +13,11 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.controller.Controller;
+import com.nublic.app.init.client.model.handlers.AddUserHandler;
 import com.nublic.app.init.client.model.handlers.CheckUserHandler;
+import com.nublic.util.error.ErrorPopup;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 
 public class UserWidget extends Composite {
 	private static UserWidgetUiBinder uiBinder = GWT.create(UserWidgetUiBinder.class);
@@ -113,4 +117,17 @@ public class UserWidget extends Composite {
 		}
 	}
 
+	@UiHandler("createButton")
+	void onCreateButtonClick(ClickEvent event) {
+		if (nameFeedback.isChecked() && passwordFeedback.isChecked() && verificationFeedback.isChecked()) {
+			Controller.INSTANCE.getModel().addUser(nameBox.getText(), passwordBox.getText(), new AddUserHandler() {
+				@Override
+				public void onUserAdded() {
+					// Change widget to be static feedback
+				}
+			});
+		} else {
+			ErrorPopup.showError(Constants.I18N.allFieldsError());
+		}
+	}
 }

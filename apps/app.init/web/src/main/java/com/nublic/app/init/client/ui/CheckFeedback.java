@@ -23,6 +23,8 @@ public class CheckFeedback extends Composite {
 	String crossText = "";
 	String loadingText = "";
 	String noneText = "";
+	
+	Feedback state;
 
 	public CheckFeedback() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -51,6 +53,8 @@ public class CheckFeedback extends Composite {
 	}
 	
 	public void setFeedback(Feedback f) {
+		state = f;
+		
 		check.setVisible(f == Feedback.CHECK);
 		cross.setVisible(f == Feedback.CROSS);
 		loading.setVisible(f == Feedback.LOADING);
@@ -59,6 +63,14 @@ public class CheckFeedback extends Composite {
 		crossInfo.setVisible(f == Feedback.CROSS && !crossText.isEmpty());
 		loadingInfo.setVisible(f == Feedback.LOADING && !loadingText.isEmpty());
 		noneInfo.setVisible(f == Feedback.NONE && !noneText.isEmpty());
+	}
+	
+	public Feedback getState() {
+		return state;
+	}
+	
+	public boolean isChecked() {
+		return state == Feedback.CHECK;
 	}
 
 }

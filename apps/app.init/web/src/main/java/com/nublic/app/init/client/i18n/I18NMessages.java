@@ -15,5 +15,6 @@ public interface I18NMessages extends Messages {
 	String userNameNotAvailable();
 	String shortPassword();
 	String noCoincidentPassword();
+	String allFieldsError();
 //	String nSongs(@PluralCount int n);
 }
