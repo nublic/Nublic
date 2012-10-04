@@ -5,6 +5,7 @@
 		.marginleft {
 			margin-left: 10px;
 			margin-bottom: 0px;
+			max-width: 320px;
 		}
 	</ui:style>
 	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>

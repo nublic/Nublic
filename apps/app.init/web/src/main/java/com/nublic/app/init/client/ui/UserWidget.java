@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.controller.Controller;
 import com.nublic.app.init.client.model.handlers.CheckUserHandler;
 
@@ -41,6 +42,40 @@ public class UserWidget extends Composite {
 				}
 			}
 		});
+		
+		passwordBox.addKeyUpHandler(new RealChangeHandler(passwordBox) {
+			@Override
+			public void onRealChange(String newText) {
+				if (newText.isEmpty()) {
+					passwordFeedback.setFeedback(Feedback.NONE);
+				} else if (newText.length() < Constants.MIN_PASSWORD_LENGTH) {
+					passwordFeedback.setFeedback(Feedback.CROSS);
+				} else {
+					passwordFeedback.setFeedback(Feedback.CHECK);
+				}
+				verificatePassword();
+			}
+		});
+		
+		verificationBox.addKeyUpHandler(new RealChangeHandler(verificationBox) {
+			@Override
+			public void onRealChange(String newText) {
+				verificatePassword();
+			}
+		});
+	}
+	
+	public void verificatePassword() {
+		String verificationString = verificationBox.getText();
+		if (verificationString.isEmpty()) {
+			verificationFeedback.setFeedback(Feedback.NONE);
+		} else {
+			if (verificationString.compareTo(passwordBox.getText()) == 0) {
+				verificationFeedback.setFeedback(Feedback.CHECK);
+			} else {
+				verificationFeedback.setFeedback(Feedback.CROSS);
+			}
+		}
 	}
 	
 	class MyCheckUserHandler implements CheckUserHandler {

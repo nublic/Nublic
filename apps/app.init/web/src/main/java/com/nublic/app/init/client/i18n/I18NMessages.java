@@ -12,5 +12,8 @@ public interface I18NMessages extends Messages {
 	String nameStep();
 	
 	String completeFirst();
+	String userNameNotAvailable();
+	String shortPassword();
+	String noCoincidentPassword();
 //	String nSongs(@PluralCount int n);
 }

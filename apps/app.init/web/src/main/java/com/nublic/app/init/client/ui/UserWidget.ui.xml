@@ -18,6 +18,7 @@
 			margin-top: -7px;
 		}
 	</ui:style>
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
 	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
 
 	<g:HorizontalPanel addStyleNames="{style.wholemargin}">
@@ -30,7 +31,7 @@
 				</g:cell>
 				<g:TextBox ui:field="nameBox"/>
 				<g:cell verticalAlignment="middle">
-					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}" crossInfo="Wrong user name"/>
+					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/>
 				</g:cell>
 			</g:HorizontalPanel>
 
@@ -40,7 +41,7 @@
 				</g:cell>
 				<g:PasswordTextBox ui:field="passwordBox"/>
 				<g:cell verticalAlignment="middle">
-					<n:CheckFeedback ui:field="passwordFeedback" addStyleNames="{style.checkmargin}"/>
+					<n:CheckFeedback ui:field="passwordFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.shortPassword}"/>
 				</g:cell>
 			</g:HorizontalPanel>
 
@@ -50,7 +51,7 @@
 				</g:cell>
 				<g:PasswordTextBox ui:field="verificationBox"/>
 				<g:cell verticalAlignment="middle">
-					<n:CheckFeedback ui:field="verificationFeedback" addStyleNames="{style.checkmargin}"/>
+					<n:CheckFeedback ui:field="verificationFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.noCoincidentPassword}"/>
 				</g:cell>
 			</g:HorizontalPanel>
 
