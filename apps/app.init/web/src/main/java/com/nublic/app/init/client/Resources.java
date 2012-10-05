@@ -36,4 +36,7 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/loading.gif")
 	ImageResource loading();
+	
+	@Source("images/attention.png")
+	ImageResource attention();
 }

@@ -5,9 +5,51 @@
 		.next {
 			float: right;
 		}
+		.heightminimum {
+			min-height: 400px;
+		}
+		.topmargin {
+			margin-top: 15px;
+		}
+		.littletopmargin {
+			margin-top: 5px;
+		}
+		.attentionmessage {
+			margin-left: 15px;
+		}
+		.attentionmessage p {
+			font-size: 110%;
+			margin-bottom: 0px;
+		}
+		.passwordbox {
+			font-size: 120%;
+			font-weight: bold;
+			padding: 10px 30px 10px 30px;
+		}
 	</ui:style>
+	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
+	
 	<g:HTMLPanel>
-		<div style="height: 400px;"><h1 style="float: left;">Administration password</h1></div>
+		<g:HTMLPanel addStyleNames="{style.heightminimum}">
+			<div style="width: 100%; display: table;">
+				<h1 style="float: left;">Administration password</h1>
+			</div>
+			<g:HorizontalPanel addStyleNames="{style.topmargin}" verticalAlignment="middle" width="100%">
+				<g:cell width="50px">
+					<g:Image resource="{res.attention}"/>
+				</g:cell>
+				<g:HTMLPanel addStyleNames="{style.attentionmessage}">
+					<ui:safehtml from="{msg.attentionCopyPassword}"/>
+				</g:HTMLPanel>
+			</g:HorizontalPanel>
+			<g:HorizontalPanel horizontalAlignment="center" width="100%" addStyleNames="{style.topmargin}">
+				<g:VerticalPanel>
+					<g:Label text="{msg.password}"/>
+					<g:HTMLPanel ui:field="passwordPanel" addStyleNames="alert alert-info {style.littletopmargin} {style.passwordbox}"/>
+				</g:VerticalPanel>
+			</g:HorizontalPanel>
+		</g:HTMLPanel>
 		<div>
 			<g:InlineHyperlink ui:field="previousLink">previous step</g:InlineHyperlink>
 			<g:InlineHyperlink ui:field="nextLink" addStyleNames="{style.next}">next step</g:InlineHyperlink>

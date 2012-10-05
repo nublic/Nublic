@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
@@ -17,12 +18,20 @@ public class MasterPage extends CentralPanel {
 
 	@UiField InlineHyperlink previousLink;
 	@UiField InlineHyperlink nextLink;
+	@UiField HTMLPanel passwordPanel;
 
 	public MasterPage() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		previousLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_USERS);
 		nextLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_NET_CONFIG);
+		
+		// get password from server
+		setPassword("ThisIsAPasswordExample0123456789");
+	}
+	
+	public void setPassword(String s) {
+		passwordPanel.getElement().setInnerText(s);
 	}
 
 	@Override
