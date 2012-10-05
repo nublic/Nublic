@@ -1,5 +1,6 @@
 package com.nublic.app.init.client.model;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ImageResource;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.Resources;
@@ -9,33 +10,58 @@ import com.nublic.app.init.client.ui.users.UsersPage;
 import com.nublic.app.init.client.ui.welcome.WelcomePage;
 
 public enum Step {
+//	WELCOME("",
+//			null,
+//			new WelcomePage()),
+//	USERS(Constants.I18N.userStep(),
+//			Resources.INSTANCE.users(),
+//			new UsersPage()),
+//	MASTER_USER(Constants.I18N.masterUserStep(),
+//			Resources.INSTANCE.master(),
+//			new MasterPage()),
+//	NET_CONFIG(Constants.I18N.netConfigStep(),
+//			Resources.INSTANCE.network(),
+//			new WelcomePage()),
+//	NAME(Constants.I18N.nameStep(),
+//			Resources.INSTANCE.name(),
+//			new WelcomePage()),
+//	FINISHED("",
+//			null,
+//			new WelcomePage());
 	WELCOME("",
 			null,
-			new WelcomePage()),
+			WelcomePage.class),
 	USERS(Constants.I18N.userStep(),
 			Resources.INSTANCE.users(),
-			new UsersPage()),
+			UsersPage.class),
 	MASTER_USER(Constants.I18N.masterUserStep(),
 			Resources.INSTANCE.master(),
-			new MasterPage()),
+			MasterPage.class),
 	NET_CONFIG(Constants.I18N.netConfigStep(),
 			Resources.INSTANCE.network(),
-			new WelcomePage()),
+			WelcomePage.class),
 	NAME(Constants.I18N.nameStep(),
 			Resources.INSTANCE.name(),
-			new WelcomePage()),
+			WelcomePage.class),
 	FINISHED("",
 			null,
-			new WelcomePage());
+			WelcomePage.class);
 	
 	String name;
 	ImageResource image;
-	CentralPanel uiWidget;
+	Class<? extends CentralPanel> widgetClass;
+	CentralPanel uiWidget = null;
 	
 	private Step(String name, ImageResource image, CentralPanel uiWidget) {
 		this.name = name;
 		this.image = image;
 		this.uiWidget = uiWidget;
+	}
+	
+	private Step(String name, ImageResource image, Class<? extends CentralPanel> widgetClass) {
+		this.name = name;
+		this.image = image;
+		this.widgetClass = widgetClass;
 	}
 	
 	public String getName() {
@@ -47,6 +73,13 @@ public enum Step {
 	}
 
 	public CentralPanel getUiWidget() {
+		if (uiWidget == null) {
+			try {
+				uiWidget = GWT.create(widgetClass);
+			} catch (Exception e) {
+				// nothing
+			}
+		}
 		return uiWidget;
 	}
 	

@@ -22,6 +22,15 @@ public class MainUi extends Composite {
 	@UiField SimplePanel mainContainer;
 	CentralPanel currentPanel;
 	
+	public static MainUi INSTANCE;
+	
+	public static MainUi create() {
+		if (INSTANCE == null) {
+			INSTANCE = new MainUi();
+		}
+		return INSTANCE;
+	}
+	
 	public MainUi() {
 		initWidget(uiBinder.createAndBindUi(this));
 	}

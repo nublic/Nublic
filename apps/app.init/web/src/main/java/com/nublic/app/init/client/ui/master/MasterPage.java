@@ -9,7 +9,9 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
+import com.nublic.app.init.client.model.InitModel;
 import com.nublic.app.init.client.model.Step;
+import com.nublic.app.init.client.model.handlers.PasswordHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
 
 public class MasterPage extends CentralPanel {
@@ -27,7 +29,12 @@ public class MasterPage extends CentralPanel {
 		nextLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_NET_CONFIG);
 		
 		// get password from server
-		setPassword("ThisIsAPasswordExample0123456789");
+		InitModel.INSTANCE.getMasterPassword(new PasswordHandler() {
+			@Override
+			public void onPasswordFetch(String password) {
+				setPassword(password);
+			}
+		});
 	}
 	
 	public void setPassword(String s) {
