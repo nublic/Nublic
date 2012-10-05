@@ -13,6 +13,7 @@ import com.nublic.app.init.client.model.InitModel;
 import com.nublic.app.init.client.model.Step;
 import com.nublic.app.init.client.model.handlers.PasswordHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
+import com.google.gwt.user.client.ui.CheckBox;
 
 public class MasterPage extends CentralPanel {
 	private static MasterPageUiBinder uiBinder = GWT.create(MasterPageUiBinder.class);
@@ -21,6 +22,7 @@ public class MasterPage extends CentralPanel {
 	@UiField InlineHyperlink previousLink;
 	@UiField InlineHyperlink nextLink;
 	@UiField HTMLPanel passwordPanel;
+	@UiField CheckBox confirmCheckbox;
 
 	public MasterPage() {
 		initWidget(uiBinder.createAndBindUi(this));
@@ -44,7 +46,7 @@ public class MasterPage extends CentralPanel {
 	@Override
 	public boolean canChangeTo(Step s) {
 		return EnumSet.of(Step.WELCOME, Step.USERS, Step.MASTER_USER).contains(s) ||
-				(s == Step.NET_CONFIG && false);
+				(s == Step.NET_CONFIG && confirmCheckbox.getValue());
 	}
 
 }

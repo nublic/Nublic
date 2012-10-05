@@ -43,12 +43,16 @@
 					<ui:safehtml from="{msg.attentionCopyPassword}"/>
 				</g:HTMLPanel>
 			</g:HorizontalPanel>
-			<g:HorizontalPanel horizontalAlignment="center" width="100%" addStyleNames="{style.topmargin}">
+			<g:VerticalPanel horizontalAlignment="center" width="100%" addStyleNames="{style.topmargin}">
 				<g:VerticalPanel>
 					<g:Label text="{msg.password}"/>
 					<g:HTMLPanel ui:field="passwordPanel" addStyleNames="alert alert-info {style.littletopmargin} {style.passwordbox}"/>
 				</g:VerticalPanel>
-			</g:HorizontalPanel>
+				<g:HorizontalPanel verticalAlignment="middle" addStyleNames="{style.topmargin}">
+					<g:CheckBox ui:field="confirmCheckbox"/>
+					<g:Label text="{msg.iHaveCopiedIt}" addStyleNames="{style.attentionmessage}"/>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
 		</g:HTMLPanel>
 		<div>
 			<g:InlineHyperlink ui:field="previousLink">previous step</g:InlineHyperlink>
