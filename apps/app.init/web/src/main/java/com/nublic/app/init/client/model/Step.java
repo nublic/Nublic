@@ -4,8 +4,9 @@ import com.google.gwt.resources.client.ImageResource;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.Resources;
 import com.nublic.app.init.client.ui.CentralPanel;
-import com.nublic.app.init.client.ui.UsersPage;
-import com.nublic.app.init.client.ui.WelcomePage;
+import com.nublic.app.init.client.ui.master.MasterPage;
+import com.nublic.app.init.client.ui.users.UsersPage;
+import com.nublic.app.init.client.ui.welcome.WelcomePage;
 
 public enum Step {
 	WELCOME("",
@@ -16,7 +17,7 @@ public enum Step {
 			new UsersPage()),
 	MASTER_USER(Constants.I18N.masterUserStep(),
 			Resources.INSTANCE.master(),
-			new WelcomePage()),
+			new MasterPage()),
 	NET_CONFIG(Constants.I18N.netConfigStep(),
 			Resources.INSTANCE.network(),
 			new WelcomePage()),
@@ -58,6 +59,8 @@ public enum Step {
 			return USERS;
 		} else if (Constants.VALUE_MASTER_USER.compareTo(s) == 0) {
 			return MASTER_USER;
+		} else if (Constants.VALUE_NET_CONFIG.compareTo(s) == 0) {
+			return NET_CONFIG;
 		}
 		return null;
 	}

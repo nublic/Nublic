@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.ui;
+package com.nublic.app.init.client.ui.welcome;
 
 import java.util.EnumSet;
 
@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.model.Step;
+import com.nublic.app.init.client.ui.CentralPanel;
 
 public class WelcomePage extends CentralPanel {
 	private static WelcomePageUiBinder uiBinder = GWT.create(WelcomePageUiBinder.class);

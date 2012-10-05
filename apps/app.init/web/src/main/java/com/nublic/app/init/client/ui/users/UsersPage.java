@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.ui;
+package com.nublic.app.init.client.ui.users;
 
 import java.util.EnumSet;
 
@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.model.Step;
+import com.nublic.app.init.client.ui.CentralPanel;
 import com.google.gwt.uibinder.client.UiField;
 
 public class UsersPage extends CentralPanel {
@@ -37,7 +38,7 @@ public class UsersPage extends CentralPanel {
 	@Override
 	public boolean canChangeTo(Step s) {
 		return EnumSet.of(Step.WELCOME, Step.USERS).contains(s) ||
-				(s == Step.MASTER_USER && false);
+				(s == Step.MASTER_USER && centralPanel.getWidgetCount() != 0);
 	}
 
 }

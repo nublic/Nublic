@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.ui;
+package com.nublic.app.init.client.ui.users;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -15,6 +15,8 @@ import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.controller.Controller;
 import com.nublic.app.init.client.model.handlers.AddUserHandler;
 import com.nublic.app.init.client.model.handlers.CheckUserHandler;
+import com.nublic.app.init.client.ui.CheckFeedback;
+import com.nublic.app.init.client.ui.Feedback;
 import com.nublic.util.error.ErrorPopup;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.event.dom.client.ClickEvent;

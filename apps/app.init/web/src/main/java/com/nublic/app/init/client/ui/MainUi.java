@@ -11,6 +11,7 @@ import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.controller.Controller;
 import com.nublic.app.init.client.model.Step;
 import com.nublic.app.init.client.ui.step.StepPanel;
+import com.nublic.app.init.client.ui.users.UsersPage;
 import com.nublic.util.error.ErrorPopup;
 
 public class MainUi extends Composite {
