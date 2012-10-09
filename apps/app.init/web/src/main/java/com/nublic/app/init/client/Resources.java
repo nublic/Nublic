@@ -39,4 +39,10 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/attention.png")
 	ImageResource attention();
+	
+	@Source("images/info.png")
+	ImageResource info();
+	
+	@Source("images/link.png")
+	ImageResource link();
 }

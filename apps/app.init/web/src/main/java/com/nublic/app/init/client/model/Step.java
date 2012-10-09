@@ -6,6 +6,8 @@ import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.Resources;
 import com.nublic.app.init.client.ui.CentralPanel;
 import com.nublic.app.init.client.ui.master.MasterPage;
+import com.nublic.app.init.client.ui.name.NamePage;
+import com.nublic.app.init.client.ui.network.NetworkPage;
 import com.nublic.app.init.client.ui.users.UsersPage;
 import com.nublic.app.init.client.ui.welcome.WelcomePage;
 
@@ -21,10 +23,10 @@ public enum Step {
 //			new MasterPage()),
 //	NET_CONFIG(Constants.I18N.netConfigStep(),
 //			Resources.INSTANCE.network(),
-//			new WelcomePage()),
+//			new NetworkPage()),
 //	NAME(Constants.I18N.nameStep(),
 //			Resources.INSTANCE.name(),
-//			new WelcomePage()),
+//			new NamePage()),
 //	FINISHED("",
 //			null,
 //			new WelcomePage());
@@ -39,10 +41,10 @@ public enum Step {
 			MasterPage.class),
 	NET_CONFIG(Constants.I18N.netConfigStep(),
 			Resources.INSTANCE.network(),
-			WelcomePage.class),
+			NetworkPage.class),
 	NAME(Constants.I18N.nameStep(),
 			Resources.INSTANCE.name(),
-			WelcomePage.class),
+			NamePage.class),
 	FINISHED("",
 			null,
 			WelcomePage.class);
@@ -94,6 +96,10 @@ public enum Step {
 			return MASTER_USER;
 		} else if (Constants.VALUE_NET_CONFIG.compareTo(s) == 0) {
 			return NET_CONFIG;
+		} else if (Constants.VALUE_NAME.compareTo(s) == 0) {
+			return NAME;
+		} else if (Constants.VALUE_FINISHED.compareTo(s) == 0) {
+			return FINISHED;
 		}
 		return null;
 	}

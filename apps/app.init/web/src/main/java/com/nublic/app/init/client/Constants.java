@@ -11,7 +11,11 @@ public class Constants {
 	public static final String VALUE_USERS = "Users";
 	public static final String VALUE_MASTER_USER = "Password";
 	public static final String VALUE_NET_CONFIG = "Network";
+	public static final String VALUE_NAME = "Name";
+	public static final String VALUE_FINISHED = "Finished";
 
 	public static final int MIN_PASSWORD_LENGTH = 5;
+
+
 	
 }

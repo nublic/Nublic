@@ -21,5 +21,7 @@ public interface I18NMessages extends Messages {
 	SafeHtml attentionCopyPassword();
 	String password();
 	String iHaveCopiedIt();
+	
+	SafeHtml infoNublicName();
 //	String nSongs(@PluralCount int n);
 }

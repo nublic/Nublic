@@ -27,8 +27,6 @@ public class UsersPage extends CentralPanel {
 		nextLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_MASTER_USER);
 		
 		// Get created users from model
-		
-
 	}
 	
 	public void addCompletedUser(String name) {
