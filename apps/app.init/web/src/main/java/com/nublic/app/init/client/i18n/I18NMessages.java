@@ -23,5 +23,7 @@ public interface I18NMessages extends Messages {
 	String iHaveCopiedIt();
 	
 	SafeHtml infoNublicName();
+	String nublicName();
+	String invalidNublicName();
 //	String nSongs(@PluralCount int n);
 }

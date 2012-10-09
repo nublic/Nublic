@@ -1,13 +1,12 @@
 package com.nublic.app.init.client.ui.users;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -18,9 +17,8 @@ import com.nublic.app.init.client.model.handlers.CheckUserHandler;
 import com.nublic.app.init.client.ui.CheckFeedback;
 import com.nublic.app.init.client.ui.Feedback;
 import com.nublic.app.init.client.ui.MainUi;
+import com.nublic.app.init.client.ui.RealChangeHandler;
 import com.nublic.util.error.ErrorPopup;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 
 public class UserWidget extends Composite {
 	private static UserWidgetUiBinder uiBinder = GWT.create(UserWidgetUiBinder.class);
@@ -100,26 +98,6 @@ public class UserWidget extends Composite {
 		}
 	}
 	
-	abstract class RealChangeHandler implements KeyUpHandler {
-		HasText source;
-		String lastString = "";
-		
-		public RealChangeHandler(HasText source) {
-			this.source = source;
-		}
-		
-		public abstract void onRealChange(String newText);
-		
-		@Override
-		public void onKeyUp(KeyUpEvent event) {
-			String text = source.getText();
-			if (text.compareTo(lastString) != 0) {
-				lastString = text;
-				onRealChange(text);
-			}
-		}
-	}
-
 	@UiHandler("createButton")
 	void onCreateButtonClick(ClickEvent event) {
 		if (nameFeedback.isChecked() && passwordFeedback.isChecked() && verificationFeedback.isChecked()) {
