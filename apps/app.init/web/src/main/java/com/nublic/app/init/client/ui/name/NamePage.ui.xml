@@ -3,9 +3,6 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.app.init.client.ui">
 	<ui:style>
-		.next {
-			float: right;
-		}
 		.defaultheight {
 			min-height: 400px;
 		}
@@ -29,10 +26,6 @@
 		.pseudocentermargin {
 			margin-left: 190px;
 		}
-		/*.feedbacklink {
-			font-size: 110%;
-			color: #035577;
-		}*/
 		.feedbackbox {
 			font-size: 120%;
 			font-weight: bold;
@@ -73,10 +66,6 @@
 				</g:HorizontalPanel>
 			</g:VerticalPanel>
 
-<!-- 			<g:HorizontalPanel ui:field="feedbackPanel" verticalAlignment="middle" addStyleNames="{style.topmargin} {style.pseudocentermargin}"> -->
-<!-- 				<g:Image resource="{res.link}"/> -->
-<!-- 				<g:Label ui:field="feedbackLink" addStyleNames="{style.message} {style.feedbacklink}"/> -->
-<!-- 			</g:HorizontalPanel> -->
 			<g:VerticalPanel ui:field="feedbackPanel" width="100%" horizontalAlignment="center" addStyleNames="{style.topmargin}">
 				<g:HTMLPanel addStyleNames="alert alert-info {style.feedbackbox} {style.topmargin}">
 					<g:Image resource="{res.link}" addStyleNames="{style.inline}"/>
@@ -85,9 +74,6 @@
 				<g:Label addStyleNames="{style.grey}" text="(this URL will start to work everywhere some moments after clicking on 'next step')"/>
 			</g:VerticalPanel>
 		</g:HTMLPanel>
-		<div>
-			<g:InlineHyperlink ui:field="previousLink">previous step</g:InlineHyperlink>
-			<g:InlineHyperlink addStyleNames="{style.next}" ui:field="nextLink">next step</g:InlineHyperlink>
-		</div>
+		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>
 </ui:UiBinder>

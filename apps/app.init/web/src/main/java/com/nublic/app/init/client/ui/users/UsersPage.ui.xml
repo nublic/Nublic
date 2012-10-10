@@ -1,11 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:com.nublic.app.init.client.ui.users">
+	xmlns:n="urn:import:com.nublic.app.init.client.ui"
+	xmlns:u="urn:import:com.nublic.app.init.client.ui.users">
 	<ui:style>
-		.next {
-			float: right;
-		}
 		.defaultheight {
 			min-height: 400px;
 		}
@@ -17,11 +15,8 @@
 			</div>
 			<p>Create at least one user to grant secure access to your Nublic device</p>
 			<g:HTMLPanel ui:field="centralPanel"/>
-			<n:UserWidget/>
+			<u:UserWidget/>
 		</g:HTMLPanel>
-		<div>
-			<g:InlineHyperlink ui:field="previousLink">previous step</g:InlineHyperlink>
-			<g:InlineHyperlink addStyleNames="{style.next}" ui:field="nextLink">next step</g:InlineHyperlink>
-		</div>
+		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>
 </ui:UiBinder>

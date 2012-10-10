@@ -12,6 +12,9 @@ public interface I18NMessages extends Messages {
 	String netConfigStep();
 	String nameStep();
 	
+	String previousStep();
+	String nextStep();
+	
 	String completeFirst();
 	String userNameNotAvailable();
 	String shortPassword();

@@ -5,7 +5,6 @@ import java.util.EnumSet;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.InlineHyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -17,14 +16,14 @@ import com.nublic.app.init.client.model.handlers.CheckNublicNameHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
 import com.nublic.app.init.client.ui.CheckFeedback;
 import com.nublic.app.init.client.ui.Feedback;
+import com.nublic.app.init.client.ui.FooterPagination;
 import com.nublic.app.init.client.ui.RealChangeHandler;
 
 public class NamePage extends CentralPanel {
 	private static NamePageUiBinder uiBinder = GWT.create(NamePageUiBinder.class);
 	interface NamePageUiBinder extends UiBinder<Widget, NamePage> { }
 
-	@UiField InlineHyperlink previousLink;
-	@UiField InlineHyperlink nextLink;
+	@UiField FooterPagination footer;
 	@UiField TextBox nameBox;
 	@UiField CheckFeedback nameFeedback;
 	@UiField Label feedbackLink;
@@ -34,8 +33,8 @@ public class NamePage extends CentralPanel {
 	public NamePage() {
 		initWidget(uiBinder.createAndBindUi(this));
 
-		previousLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_NET_CONFIG);
-		nextLink.setTargetHistoryToken(Constants.PARAM_PAGE + "=" + Constants.VALUE_FINISHED);
+		footer.setLinks(Constants.PARAM_PAGE + "=" + Constants.VALUE_NET_CONFIG,
+				Constants.PARAM_PAGE + "=" + Constants.VALUE_FINISHED);
 
 		feedbackPanel.setVisible(false);
 		nameBox.addKeyUpHandler(new RealChangeHandler(nameBox) {
@@ -44,9 +43,11 @@ public class NamePage extends CentralPanel {
 				if (newText.isEmpty()) {
 					nameFeedback.setFeedback(Feedback.NONE);
 					feedbackPanel.setVisible(false);
+					footer.unhighlightNext();
 				} else {
 					nameFeedback.setFeedback(Feedback.LOADING);
 					feedbackPanel.setVisible(false);
+					footer.unhighlightNext();
 					InitModel.INSTANCE.checkNublicNameAvailability(newText, nublicNameChecker);
 				}
 			}
@@ -62,9 +63,11 @@ public class NamePage extends CentralPanel {
 					nameFeedback.setFeedback(Feedback.CHECK);
 					feedbackLink.setText(nublicName + ".nublic.me");
 					feedbackPanel.setVisible(true);
+					footer.highlightNext();
 				} else {
 					nameFeedback.setFeedback(Feedback.CROSS);
 					feedbackPanel.setVisible(false);
+					footer.unhighlightNext();
 				}
 			}
 			// else ignore

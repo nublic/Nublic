@@ -1,0 +1,19 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style type='com.nublic.app.init.client.ui.FooterPagination.FooterStyle'>
+
+	</ui:style>
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
+
+	<g:HTMLPanel>
+		<ul class="pager">
+			<li class="previous">
+				<g:InlineHyperlink ui:field="previousLink" text="{msg.previousStep}"/>
+			</li>
+			<li class="next">
+				<g:InlineHyperlink ui:field="nextLink" text="{msg.nextStep}"/>
+			</li>
+		</ul>
+	</g:HTMLPanel>
+</ui:UiBinder>
