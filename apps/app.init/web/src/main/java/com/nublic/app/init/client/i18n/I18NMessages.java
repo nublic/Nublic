@@ -32,5 +32,9 @@ public interface I18NMessages extends Messages {
 	SafeHtml infoNublicName();
 	String nublicName();
 	String invalidNublicName();
+	
+	String finishedTitle();
+	String finishedText();
+	String whatsNext();
 //	String nSongs(@PluralCount int n);
 }

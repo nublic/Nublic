@@ -31,6 +31,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/check.png")
 	ImageResource check();
 	
+	@Source("images/checkbig.png")
+	ImageResource checkbig();
+	
 	@Source("images/cross.png")
 	ImageResource cross();
 	
