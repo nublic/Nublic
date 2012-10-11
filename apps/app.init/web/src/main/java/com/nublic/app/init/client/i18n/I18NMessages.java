@@ -14,6 +14,10 @@ public interface I18NMessages extends Messages {
 	
 	String previousStep();
 	String nextStep();
+
+	String welcomeTitle();
+	String welcomeText();
+	String welcomeInfo();
 	
 	String completeFirst();
 	String userNameNotAvailable();

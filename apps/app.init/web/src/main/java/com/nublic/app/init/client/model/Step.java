@@ -5,6 +5,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.Resources;
 import com.nublic.app.init.client.ui.CentralPanel;
+import com.nublic.app.init.client.ui.finished.FinishedPage;
 import com.nublic.app.init.client.ui.master.MasterPage;
 import com.nublic.app.init.client.ui.name.NamePage;
 import com.nublic.app.init.client.ui.network.NetworkPage;
@@ -29,7 +30,7 @@ public enum Step {
 //			new NamePage()),
 //	FINISHED("",
 //			null,
-//			new WelcomePage());
+//			new FinishedPage());
 	WELCOME("",
 			null,
 			WelcomePage.class),
@@ -47,7 +48,7 @@ public enum Step {
 			NamePage.class),
 	FINISHED("",
 			null,
-			WelcomePage.class);
+			FinishedPage.class);
 	
 	String name;
 	ImageResource image;

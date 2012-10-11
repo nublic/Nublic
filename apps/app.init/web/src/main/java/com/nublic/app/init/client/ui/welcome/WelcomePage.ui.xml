@@ -3,13 +3,42 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.app.init.client.ui">
 	<ui:style>
-
+		.defaultheight {
+			min-height: 400px;
+		}
+		.topmargin {
+			margin-top: 40px;
+		}
+		.bigger {
+			font-size: 110%;
+			line-height: 20px;
+		}
+		.infobox {
+			font-size: 110%;
+			padding: 10px 30px 10px 30px;
+			display: inline-block;
+		}
 	</ui:style>
+	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
 
 	<g:HTMLPanel>
-		<div style="height: 400px;">
-			<h1 style="float: left;">Welcome to Nublic</h1>
-		</div>
+		<g:HTMLPanel addStyleNames="{style.defaultheight}">
+			<div style="width: 100%; display: table;">
+				<h1 style="float: left;"><ui:text from="{msg.welcomeTitle}"/></h1>
+			</div>
+			<g:VerticalPanel width="100%" horizontalAlignment="center">
+				<g:HorizontalPanel addStyleNames="{style.topmargin}" verticalAlignment="middle" width="100%">
+					<g:cell width="150px">
+						<g:Image resource="{res.config}"/>
+					</g:cell>
+					<g:Label addStyleNames="{style.bigger}" text="{msg.welcomeText}"/>
+				</g:HorizontalPanel>
+				<g:HTMLPanel addStyleNames="alert alert-info {style.topmargin} {style.infobox}">
+					<g:Label text="{msg.welcomeInfo}"/>
+				</g:HTMLPanel>
+			</g:VerticalPanel>
+		</g:HTMLPanel>
 
 		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>
