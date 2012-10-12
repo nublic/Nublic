@@ -15,9 +15,8 @@ public class InitApp implements EntryPoint, ValueChangeHandler<String> {
 	MainUi ui;
 
 	public void onModuleLoad() {
-		model = new InitModel();
-		ui = new MainUi();
-
+		model = InitModel.create();
+		ui = MainUi.create();
 		Controller.create(model, ui);
 		
 		RootLayoutPanel rp = RootLayoutPanel.get();

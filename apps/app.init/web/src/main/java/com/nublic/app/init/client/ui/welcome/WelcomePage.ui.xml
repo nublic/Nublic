@@ -1,0 +1,16 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.init.client.ui">
+	<ui:style>
+
+	</ui:style>
+
+	<g:HTMLPanel>
+		<div style="height: 400px;">
+			<h1 style="float: left;">Welcome to Nublic</h1>
+		</div>
+
+		<n:FooterPagination ui:field="footer"/>
+	</g:HTMLPanel>
+</ui:UiBinder>

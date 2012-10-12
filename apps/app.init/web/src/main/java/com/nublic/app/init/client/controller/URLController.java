@@ -1,58 +1,43 @@
 package com.nublic.app.init.client.controller;
 
+import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.model.InitModel;
+import com.nublic.app.init.client.model.Step;
 import com.nublic.app.init.client.ui.MainUi;
 import com.nublic.util.messages.ParamsHashMap;
 
 public class URLController {
 	InitModel model;
 	MainUi ui;
+	Step currentStep = null;
 
 	protected URLController(InitModel model, MainUi ui) {
 		this.ui = ui;
 		this.model = model;
 	}
+	
+	public Step getStep() {
+		return currentStep;
+	}
 
 	// +++++ Handle history state change ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 	// When URL changes this method is called
 	public void changeState(ParamsHashMap hmap) {
-//		String collection = hmap.get(Constants.PARAM_COLLECTION);
-//		String playlist = hmap.get(Constants.PARAM_PLAYLIST);
-//		String artist = hmap.get(Constants.PARAM_ARTIST);
-//		String album = hmap.get(Constants.PARAM_ALBUM);
-//		String view = hmap.get(Constants.PARAM_VIEW);
-//		ViewKind newViewKind = ViewKind.parse(view);
-//
-//		if (newViewKind != null) {
-//			viewKind = newViewKind;
-//		}
-//
-//		if (playlist != null) {
-//			model.askForPlaylistSongs(playlist, new MyPlaylistHandler(playlist), true);
-//		} else {
-//			if (viewKind == ViewKind.SONGS || album != null) {
-//				model.askForSongs(album, artist, collection, new MySongHandler(album, artist, collection), true);
-//			} else if (viewKind == ViewKind.ALBUMS || artist != null) {
-//				model.askForAlbums(artist, collection, new MyAlbumHandler(artist, collection), true);
-//			} else {
-//				model.askForArtists(collection, new MyArtistHandler(collection), true);
-//			}
-//		}
+		String page = hmap.get(Constants.PARAM_PAGE);
+		
+		Step targetStep = Step.parseString(page);
+		
+		if (targetStep == null) {
+			ui.setStep(Step.WELCOME);
+			currentStep = Step.WELCOME;
+			return;
+		}
+		
+		if (ui.canChangeTo(targetStep)) {
+			ui.setStep(targetStep);
+			currentStep = targetStep;
+		} else {
+			ui.showCompleteFirstPopup();
+		}
 	}
-	
-	// Song
-//	class MySongHandler implements SongHandler {
-//		String albumId;
-//		String collectionId;
-//		String artistId;
-//		public MySongHandler(String albumId, String artistId, String collection) {
-//			this.albumId = albumId;
-//			this.collectionId = collection;
-//			this.artistId = artistId;
-//		}
-//		@Override
-//		public void onSongsChange(int total, int from, int to, List<SongInfo> answerList) {
-//			ui.showSongList(total, from, to, answerList, albumId, artistId, collectionId);
-//		}
-//	}
 }

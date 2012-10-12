@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $1 = "remove" ]
+then
+    nublic-resource-setup uninstall nublic_app_init db
+fi
+
+#DEBHELPER#
