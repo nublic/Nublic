@@ -3,6 +3,7 @@ import os
 import stat
 import os.path
 import shutil
+from nublic_server.places import get_mime_type
 
 def copy(src, dst, uid):
     tryRead(src,uid)
@@ -16,19 +17,47 @@ def mkdir(path, uid = -1, gid = -1):
     os.mkdir(path)
     os.chown(path, uid, gid)
 
+def get_folders(depth, path, uid):
+    if not permissionRead(path, uid):
+        return []
+    subfolders = []
+    if depth != 0:
+        for folder in [os.path.join(path, f) for f in os.listdir(path)]:
+            if os.path.isdir(folder) and permissionRead(folder, uid):
+                subfolders = subfolders + get_folders(depth-1, folder, uid)
+    name = os.path.basename(path)
+    return [{'name' : name, "subfolders": subfolders, \
+             "writable" : permissionWrite(path, uid) }]
+
+def get_file_info(path, uid):
+    info = {}
+    info['name'] = os.path.basename(path)
+    if os.path.isdir(path):
+        info['mime'] = 'application/x-directory'
+    else:
+        info['mime'] = get_mime_type(path)
+    info['writable'] = permissionWrite(path, uid)
+    # @todo
+    info['view'] = "" # TODO
+    return info
+
 def permissionRead(path, uid, f_stat = None):
     if not os.path.exists(path):
         return False
-    if not f_stat:
+    if f_stat == None:
         f_stat = os.stat(path)
-    return (f_stat.st_uid == uid) and bool(f_stat.st_mode & stat.S_IRUSR)
+    user_check = (f_stat.st_uid == uid) and bool(f_stat.st_mode & stat.S_IRUSR)
+    group_check = bool(f_stat.st_mode & stat.S_IRGRP)
+    return user_check or group_check
 
 def permissionWrite(path, uid, f_stat = None):
     if not os.path.exists(path):
         return False
     if f_stat == None:
         f_stat = os.stat(path)
-    return (f_stat.st_uid == uid) and bool(f_stat.st_mode & stat.S_IWUSR)
+    user_check = (f_stat.st_uid == uid) and bool(f_stat.st_mode & stat.S_IWUSR)
+    group_check = bool(f_stat.st_mode & stat.S_IWGRP)
+    return user_check or group_check 
 
 def tryWriteRecursive(path, uid):
     if not os.path.exists(path):

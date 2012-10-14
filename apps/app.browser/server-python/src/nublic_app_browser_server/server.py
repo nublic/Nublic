@@ -8,15 +8,18 @@ import traceback
 import string
 import pexpect
 
-from nublic_server.helpers import init_bare_nublic_server, require_user
+from nublic_server.helpers import init_bare_nublic_server, require_uid
 from nublic_server.files import tryRead, permissionRead, permissionWrite,\
-    PermissionError, makedirs, tryWrite, tryWriteRecursive
+    PermissionError, makedirs, tryWrite, tryWriteRecursive, get_file_info,\
+    get_folders
 from nublic_server import files, places
 from string import split
 import shutil
 from nublic_files_and_users_client.dbus_client import list_mirrors,\
     list_synced_folders
 from nublic_server.places import get_mime_type
+from flask.helpers import send_from_directory
+import hashlib
 
 # Init app
 app = Flask(__name__)
@@ -35,23 +38,11 @@ def devices():
       device       ::= { "id": $id, "kind": kind, "name": $name, "owner": true | false }
       kind         ::= "mirror" | "synced" | "media"
     '''
-    user = require_user().get_user_uid()
+    uid = require_uid()
     mirrors = list_mirrors()
-    devices = map(mirrors, lambda s: s.update({'kind':'mirror'}))
     synced = list_synced_folders()
-    devices.append(map(synced, lambda s: s.update({'kind':'synced'})))
-    return json.dumps(devices)
+    return json.dumps(mirrors + synced)
 
-def get_folders(depth, path, user):
-    subfolders = []
-    if depth != 0:
-        for folder in os.listdir(path):
-            if os.path.isdir(folder) and permissionRead(folder, user):
-                subfolders = subfolders + get_folders(depth-1, folder, user)
-    name = os.path.basename(path)
-    return {'name' : name, "subfolders": subfolders, \
-             "writable" : permissionWrite(path, user) }
-    
 @app.route('/folders/<int:depth>/<path>')
 def folders(depth, path):
     '''
@@ -65,41 +56,29 @@ def folders(depth, path):
     '''
     if depth <= 0:
         abort(400)
-    uid = require_user().get_user_id()
+    uid = require_uid()
     pathAbsolute = os.path.join(DATA_ROOT, path)
-    if ((not os.path.isdir(pathAbsolute)) or (not permissionRead(pathAbsolute, uid))):
+    if not os.path.isdir(pathAbsolute):
         abort(404)
-    return get_folders(depth, pathAbsolute, uid)
-
-
-
-def get_file_info(path, uid):
-    info = []
-    info['name'] = os.path.basename(path)
-    if os.path.isdir(path):
-        info['mime'] = 'application/x-directory'
-    else:
-        info['mime'] = get_mime_type(path)
-    info['writable'] = permissionWrite(path, uid)
-    # @todo
-    info['view'] = "" # TODO
-    pass
+    return json.dumps(get_folders(depth, pathAbsolute, uid))
 
 
 @app.route('/files/<path>')
 def files_path(path):
-    uid = require_user().get_user_uid
-    internalPath = DATA_ROOT + path
+    uid = require_uid()
+    pathAbsolute = os.path.join(DATA_ROOT, path)
     try:
-        if not os.path.exists(internalPath):
+        if not os.path.exists(pathAbsolute):
             abort(404)
         else:
-            tryRead(internalPath, uid)
-            dirs = os.listdir(internalPath)
-            info = map(dirs, lambda p: get_file_info(p, uid))
+            app.logger.error('Getting files from %s', pathAbsolute)
+            tryRead(pathAbsolute, uid)
+            dirs = os.listdir(pathAbsolute)
+            app.logger.error('Getting files: %s', str(dirs))
+            infos = map(lambda p: get_file_info(os.path.join(pathAbsolute,p), uid), dirs)
     except PermissionError:
         abort(401)
-    return json.dumps(info)
+    return json.dumps(infos)
     
 '''
 /files/:path
@@ -138,6 +117,7 @@ def generic_thumbnail(mime):
 
 @app.route('/zip/<path>')
 def zip_path():
+    #hashlib.sha1()
     # @todo
     pass
 
@@ -158,8 +138,15 @@ POST /zip-set
 
 @app.route('/raw/<file>')
 def raw():
-    # @todo
-    pass
+    uid = require_uid()
+    path = request.form.get('file')
+    internal_path = os.path.join(DATA_ROOT, path)
+    try:
+        tryWrite(internal_path, uid)
+        return send_file(internal_path)
+    except PermissionError:
+        abort(401)
+
 
 '''
 /raw/:file
@@ -188,7 +175,7 @@ def rename():
             * :from -> file to change the name
             * :to -> new name of the file
     '''
-    user = require_user().get_user_uid()
+    user = require_uid()
     pathFrom = os.path.join(DATA_ROOT, request.form.get('from'))
     pathTo = os.path.join(DATA_ROOT, request.form.get('to'))
     if not os.path.exists(pathFrom):
@@ -207,7 +194,7 @@ def move():
     '''
     from_array = split(request.form.get('from'),':')
     internalTo = os.path.join(DATA_ROOT, request.form.get('to'))
-    uid = require_user().get_user_id()
+    uid = require_uid()
     try:
         for from_path in from_array:
             internalFrom = os.path.join(DATA_ROOT, from_path)
@@ -226,7 +213,7 @@ def copy():
     '''
     from_array = split(request.form.get('from'),':')
     internalTo = os.path.join(DATA_ROOT, request.form.get('to'))
-    uid = require_user().get_user_id()
+    uid = require_uid()
     try:
         for from_path in from_array:
             internalFrom = os.path.join(DATA_ROOT, from_path)
@@ -242,7 +229,7 @@ def delete():
         * :files -> files to delete
     '''
     raw_files = split(request.form.get('files'),':')
-    uid = require_user().get_user_id()
+    uid = require_uid()
     try:
         for raw_file in raw_files:
             internal_path = os.path.join(DATA_ROOT, raw_file)
@@ -258,7 +245,7 @@ def delete():
     return 'ok'
 
 @app.route('/changes/<date>/<path>')
-def changes():
+def changes(date, path):
     # @todo:  
     pass
 
@@ -281,7 +268,7 @@ def new_folder():
         * Returns: nothing, or error 500 if something erroneous happens
         It only creates ONE LEVEL NEW FOLDERS
     '''
-    uid = require_user().get_user_uid()
+    uid = require_uid()
     path = os.path.join(DATA_ROOT, request.form.get('path'),\
                          request.form.get('name'))
     try:

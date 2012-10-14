@@ -7,7 +7,7 @@ import logging
 from nublic.files_and_users import User
 from nublic.filewatcher import init_socket_watcher
 from nublic.resource import App
-
+from nublic_files_and_users_client.dbus_client import get_user_uid
 
 class RequestWithDelete(Request):
     @property
@@ -43,7 +43,7 @@ def init_bare_nublic_server(app, log_file):
     handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s '
         '[in %(pathname)s:%(lineno)d]'
-    ))
+            ))
     app.logger.addHandler(handler)
 
 def split_reasonable(s, separator):
@@ -57,4 +57,8 @@ def require_user():
     user = User(auth.username)
     if not user.exists():
         abort(401)
-    return user
+    return auth.username
+
+def require_uid():
+    user = require_user()
+    return get_user_uid(user)

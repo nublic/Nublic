@@ -73,7 +73,7 @@ def list_mirrors():
         mid = int(midS)
         name = mirrorService.get_mirror_name(mid, dbus_interface='com.nublic.files')
         owner = mirrorService.get_mirror_owner(mid, dbus_interface='com.nublic.files')
-        mirrorList.append({ 'id': mid, 'name': name, 'owner': owner })
+        mirrorList.append({ 'id': mid, 'name': name, 'owner': owner, 'kind' : 'mirror' })
     return mirrorList
 
 def create_synced_folder(name, owner):
@@ -102,5 +102,5 @@ def list_synced_folders():
         mid = int(midS)
         name = mirrorService.get_synced_folder_name(mid, dbus_interface='com.nublic.files')
         owner = mirrorService.get_synced_folder_owner(mid, dbus_interface='com.nublic.files')
-        mirrorList.append({ 'id': mid, 'name': name, 'owner': owner })
+        mirrorList.append({ 'id': mid, 'name': name, 'owner': owner, 'kind' : 'synced' })
     return mirrorList

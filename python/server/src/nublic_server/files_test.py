@@ -4,7 +4,7 @@ import os
 import tempfile
 import shutil
 import stat
-from nublic_server.files import PermissionError
+from nublic_server.files import PermissionError, get_folders
 
 
 class FileOwnTests(unittest.TestCase):
@@ -68,12 +68,19 @@ class FileOwnTests(unittest.TestCase):
                          stat.S_IMODE(result_st.st_mode), \
                          "Permissions are not the same on copied file")
         
+class FileDirectoryTests(unittest.TestCase):
+    def setUp(self):
+        self.uid = os.getuid()
+        self.dirWrite = tempfile.mkdtemp()
+        self.dirRead = tempfile.mkdtemp(dir = self.dirWrite)
+        self.fileWrite = tempfile.NamedTemporaryFile(dir = self.dirWrite)
+        self.fileWrite.file.write("Probando1")
+        self.fileWrite.file.flush()
     
+    def tearDown(self):
+        shutil.rmtree(self.dirWrite, ignore_errors = True)
 
+    def testGetFolders(self):
+        folders = get_folders(3, self.dirWrite, self.uid)
+        print(str(folders))
         
-#def permissionRead(path, uid, f_stat = None):
-#def permissionWrite(path, uid, f_stat = None):
-#def tryWrite(path, uid, f_stat = None):
-#def tryRead(path, uid, f_stat = None):
-#class PermissionError(Exception):
-#def makedirs(path, mode = 0777, uid = -1, gid = -1):
