@@ -18,5 +18,4 @@ public class FinishedPage extends CentralPanel {
 	public boolean canChangeTo(Step s) {
 		return s == Step.FINISHED;
 	}
-
 }
