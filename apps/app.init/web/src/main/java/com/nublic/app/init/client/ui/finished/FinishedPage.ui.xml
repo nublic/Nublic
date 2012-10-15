@@ -40,6 +40,10 @@
 			background-image: linear-gradient(top, #ffffff, #c8e2ed) !important;
 			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#c8e2ed', GradientType=0) !important;
 		}
+		.linkbox:hover h3 {
+  			color: #034966;
+  			text-decoration: none !important;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
 	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
@@ -58,13 +62,15 @@
 				</g:HorizontalPanel>
 				
 				<g:HTMLPanel>
-					<h3>What's next?</h3>
+					<h3><ui:text from="{msg.whatsNext}"/></h3>
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel addStyleNames="{style.mainbox} {style.linkbox}">
 					<a>
 						<div>
-							<h3><ui:text from="{msg.whatsNext}"/></h3>
+							<div style="margin-top: 10px;">
+	          					<h3><ui:text from="{msg.howSynchronize}"/></h3>
+	        				</div>
 							<g:Image resource="{res.person}"/>
 						</div>
 					</a>

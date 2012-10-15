@@ -36,5 +36,6 @@ public interface I18NMessages extends Messages {
 	String finishedTitle();
 	String finishedText();
 	String whatsNext();
+	String howSynchronize();
 //	String nSongs(@PluralCount int n);
 }
