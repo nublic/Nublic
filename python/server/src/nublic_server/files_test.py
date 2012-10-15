@@ -35,9 +35,9 @@ class FileOwnTests(unittest.TestCase):
             self.fail("Permission should be denied") 
 
     def testTryWrite(self):
-        files.tryWrite(self.fileWrite.name, self.uid)
+        files.try_write(self.fileWrite.name, self.uid)
         try:
-            files.tryWrite(self.fileRead.name, self.uid)
+            files.try_write(self.fileRead.name, self.uid)
         except PermissionError as e:
             self.assertEqual(e.operation, "Write", \
                              "Check for write does not work on Read file") 
@@ -45,10 +45,10 @@ class FileOwnTests(unittest.TestCase):
             self.fail("No exception sent when trying to write")
     
     def testTryRead(self):
-        files.tryRead(self.fileWrite.name, self.uid)
-        files.tryRead(self.fileRead.name, self.uid)
+        files.try_read(self.fileWrite.name, self.uid)
+        files.try_read(self.fileRead.name, self.uid)
         try:
-            files.tryRead(self.fileRead.name + self.fileWrite.name, self.uid)
+            files.try_read(self.fileRead.name + self.fileWrite.name, self.uid)
         except PermissionError as e:
             self.assertEqual(e.operation, "Read", \
                     "Check for read does not work on non existing file") 
@@ -82,5 +82,6 @@ class FileDirectoryTests(unittest.TestCase):
 
     def testGetFolders(self):
         folders = get_folders(3, self.dirWrite, self.uid)
-        print(str(folders))
+        
+        #print(str(folders))
         

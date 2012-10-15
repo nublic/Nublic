@@ -1,47 +1,68 @@
-import errno
-import os
+
+
 import stat
 import os.path
 import shutil
 from nublic_server.places import get_mime_type
+from hashlib import sha1
+
+CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
 
 def copy(src, dst, uid):
-    tryRead(src,uid)
-    tryWrite(dst,uid)
+    try_read(src, uid)
+    try_write(dst, uid)
     shutil.copy(src, dst)
-    os.chown(os.path.join(dst,os.path.basename(src)), uid, -1)
+    os.chown(os.path.join(dst, os.path.basename(src)), uid, -1)
     return dst
 
 def mkdir(path, uid = -1, gid = -1):
-    tryWrite(os.path.dirname(path), uid)
+    ''' Version of mkdir that creates a directory in the name of uid and gid.
+    It checks permission of uid user before with try_write'''
+    try_write(os.path.dirname(path), uid)
     os.mkdir(path)
     os.chown(path, uid, gid)
 
 def get_folders(depth, path, uid):
-    if not permissionRead(path, uid):
+    ''' Get the all the subfolders of the given folder up to some depth.
+    Minimum depth is 1'''
+    if not permission_read(path, uid):
         return []
     subfolders = []
-    if depth != 0:
+    if depth > 0:
         for folder in [os.path.join(path, f) for f in os.listdir(path)]:
-            if os.path.isdir(folder) and permissionRead(folder, uid):
-                subfolders = subfolders + get_folders(depth-1, folder, uid)
-    name = os.path.basename(path)
-    return [{'name' : name, "subfolders": subfolders, \
-             "writable" : permissionWrite(path, uid) }]
+            if os.path.isdir(folder) and permission_read(folder, uid):
+                name = os.path.basename(folder)
+                subfolders = subfolders + [{'name' : name,  
+                            "subfolders": get_folders(depth-1, folder, uid), \
+                            "writable" : permission_write(folder, uid) }]
+    return subfolders 
 
 def get_file_info(path, uid):
+    ''' Gets some information about the given file in a dictionary. The fields
+    are 'name', 'writable', 'last_update', 'size', 'hast_thumb', 'mime' and 
+    'view' '''
     info = {}
     info['name'] = os.path.basename(path)
+    info['writable'] = permission_write(path, uid)
+    file_stat = os.stat(path)
+    info['last_update'] = file_stat.st_mtime
+    info['size'] = file_stat.st_size
+    info['has_thumb'] = os.path.exists(os.path.join(get_cache_folder(path), \
+                                                     "thumbnail.png"))
     if os.path.isdir(path):
         info['mime'] = 'application/x-directory'
     else:
         info['mime'] = get_mime_type(path)
-    info['writable'] = permissionWrite(path, uid)
-    # @todo
-    info['view'] = "" # TODO
+    info['view'] = "" # @todo
     return info
 
-def permissionRead(path, uid, f_stat = None):
+def get_cache_folder(path):
+    ''' Returns the full internal cache path for a file '''
+    return os.path.join(CACHE_ROOT_DIR, sha1(path))
+
+def permission_read(path, uid, f_stat = None):
+    ''' Returns true if the user has permission to read or 
+    groups have permission to read'''
     if not os.path.exists(path):
         return False
     if f_stat == None:
@@ -50,7 +71,9 @@ def permissionRead(path, uid, f_stat = None):
     group_check = bool(f_stat.st_mode & stat.S_IRGRP)
     return user_check or group_check
 
-def permissionWrite(path, uid, f_stat = None):
+def permission_write(path, uid, f_stat = None):
+    ''' Returns true if the user has permission to write or 
+    groups have permission to write'''
     if not os.path.exists(path):
         return False
     if f_stat == None:
@@ -59,20 +82,26 @@ def permissionWrite(path, uid, f_stat = None):
     group_check = bool(f_stat.st_mode & stat.S_IWGRP)
     return user_check or group_check 
 
-def tryWriteRecursive(path, uid):
+def try_write_recursive(path, uid):
+    ''' Throws PermissionError if ANY file under the file
+    given does not have permission to be written'''
     if not os.path.exists(path):
         raise PermissionError(uid, path, "Read")
     if os.path.isdir(path):
-        map(os.listdir(path), lambda s: tryWriteRecursive(s, uid))
+        [try_write_recursive(s, uid) for s in os.listdir(path)]
     else:
-        tryWrite(path, uid)
+        try_write(path, uid)
 
-def tryWrite(path, uid, f_stat = None):
-    if not permissionWrite(path, uid, f_stat):
+def try_write(path, uid, f_stat = None):
+    ''' Throws PermissionError if the file
+    given does not have permission to be written'''
+    if not permission_write(path, uid, f_stat):
         raise PermissionError(uid, path, "Write")
 
-def tryRead(path, uid, f_stat = None):
-    if not permissionRead(path, uid, f_stat):
+def try_read(path, uid, f_stat = None):
+    ''' Throws PermissionError if the file
+    given does not have permission to be read'''
+    if not permission_read(path, uid, f_stat):
         raise PermissionError(uid, path, "Read")
     
 
@@ -84,34 +113,9 @@ class PermissionError(Exception):
         self.uid = uid
         self.path = path
         self.operation = operation
+        super(PermissionError, self).__init__()
+        
     def __str__(self):
         return "Permission error for %i accesing %s trying to %s" % \
             (self.uid, self.path, self.operation)
-
-def makedirs(path, mode = 0777, uid = -1, gid = -1):
-    ''' Like os.makedirs(path[, mode]) but accepts two extra parameters for
-    uid and gid.
-    
-    Recursive directory creation function. Like mkdir(), but makes all intermediate-level directories needed to contain the leaf directory. Raises an error exception if the leaf directory already exists or cannot be created. The default mode is 0777 (octal). On some systems, mode is ignored. Where it is used, the current umask value is first masked out.
-
-    Note makedirs() will become confused if the path elements to create include os.pardir.
-    New in version 1.5.2.
-
-    Changed in version 2.3: This function now handles UNC paths correctly.
-    '''
-    head, tail = path.split(path)
-    if not tail:
-        head, tail = path.split(head)
-    if head and tail and not path.exists(head):
-        try:
-            makedirs(head, mode, uid, gid)
-        except OSError, e:
-            # be happy if someone already created the path
-            if e.errno != errno.EEXIST:
-                raise
-        if tail == os.path.curdir:           # xxx/newdir/. exists if xxx/newdir exists
-            return
-    tryWrite(path, uid)
-    os.mkdir(path, mode)
-    os.chown(path, uid, gid)
     

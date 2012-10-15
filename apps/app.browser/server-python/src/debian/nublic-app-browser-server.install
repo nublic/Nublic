@@ -1,1 +1,2 @@
 nublic_app_browser_server/app.browser.wsgi /var/lib/nublic/webapps/app.browser
+generic-thumbnails /var/lib/nublic/apache2/apps/browser
