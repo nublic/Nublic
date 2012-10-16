@@ -37,25 +37,17 @@
 		}
 	</ui:style>
 
-<!-- 	<g:HTMLPanel addStyleNames="{style.mainbox} {style.linkbox} {style.marginright}"> -->
-<!-- 		<a> -->
-<!-- 			<div> -->
-<!-- 				<div style="margin-top: 10px;"> -->
-<!-- 		        	<h3><ui:text from="{msg.howSynchronize}"/></h3> -->
-<!-- 		        </div> -->
-<!-- 				<g:Image resource="{res.person}"/> -->
-<!-- 			</div> -->
-<!-- 		</a> -->
-<!-- 	</g:HTMLPanel> -->
 	<g:HTMLPanel addStyleNames="{style.mainbox} {style.linkbox}">
 		<a>
 			<div>
-				<div style="margin-top: 10px;">
-		        	<h3><g:Label ui:field="title"/></h3>
+				<div style="margin-top: 15px;">
+		        	<h4><g:Label ui:field="title"/></h4>
 		        </div>
-				<g:Image ui:field="image"/>
+		        <div style="margin-top: 15px;">
+					<g:Image ui:field="image"/>
+				</div>
 			</div>
 		</a>
 	</g:HTMLPanel>
 
-</ui:UiBinder> 
+</ui:UiBinder>

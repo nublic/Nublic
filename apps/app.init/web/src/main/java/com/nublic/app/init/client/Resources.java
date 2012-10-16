@@ -51,4 +51,13 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/config.png")
 	ImageResource config();
+	
+	@Source("images/sparkleshare.png")
+	ImageResource sparkleshare();
+	
+	@Source("images/logo.png")
+	ImageResource logo();
+	
+	@Source("images/multimedia.png")
+	ImageResource multimedia();
 }

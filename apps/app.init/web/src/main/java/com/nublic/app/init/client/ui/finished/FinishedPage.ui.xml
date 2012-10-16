@@ -42,9 +42,9 @@
 				</g:HTMLPanel>
 				
 				<g:HTMLPanel addStyleNames="{style.topmargin}">
-					<n:LinkBox addStyleNames="{style.marginright} {style.floatleft}" title="{msg.howSynchronize}" image="{res.person}"/>
-		        	<n:LinkBox addStyleNames="{style.marginright} {style.floatleft}" title="asd" image="{res.person}"/>
-		        	<n:LinkBox addStyleNames="{style.floatleft}" title="dsf" image="{res.person}"/>
+					<n:LinkBox addStyleNames="{style.marginright} {style.floatleft}" title="{msg.howSynchronize}" image="{res.sparkleshare}"/>
+		        	<n:LinkBox addStyleNames="{style.marginright} {style.floatleft}" title="{msg.access}" image="{res.logo}"/>
+		        	<n:LinkBox addStyleNames="{style.floatleft}" title="{msg.homeConnect}" image="{res.multimedia}"/>
 				</g:HTMLPanel>
 
 			</g:VerticalPanel>

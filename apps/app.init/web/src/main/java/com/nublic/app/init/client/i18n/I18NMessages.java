@@ -37,5 +37,7 @@ public interface I18NMessages extends Messages {
 	String finishedText();
 	String whatsNext();
 	String howSynchronize();
+	String homeConnect();
+	String access();
 //	String nSongs(@PluralCount int n);
 }
