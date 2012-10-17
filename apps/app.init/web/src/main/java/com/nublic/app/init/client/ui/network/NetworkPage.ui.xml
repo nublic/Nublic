@@ -9,53 +9,80 @@
 		.topmargin {
 			margin-top: 15px;
 		}
+		.accordion {
+			background-color: #FFF;
+			margin-top: 15px;
+		}
+		.accordion a {
+			line-height: 20px;
+		}
+		.floatright {
+			float: right;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.defaultheight}">
 			<div style="width: 100%; display: table;">
 				<h1 style="float: left;">Network configuration</h1>
 			</div>
-			<g:HorizontalPanel width="100%" verticalAlignment="middle" addStyleNames="{style.topmargin}">
-				<g:cell >
-					<g:Label>There are some network configurations that we have to set in order to make you able to access your device from everywhere.</g:Label>
-				</g:cell>
-				<g:cell>
-					<g:Button>Automatic configuration</g:Button>
-				</g:cell>
-			</g:HorizontalPanel>
 
+			<g:Label addStyleNames="{style.topmargin}">There are some network configurations that we have to set in order to make you able to access your device from everywhere.</g:Label>
 
-			<div class="accordion" id="accordion2">
-				<div class="accordion-group">
+			<div class="accordion" id="accordion1">
+				<div class="accordion-group {style.accordion}">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
-							href="#collapseOne">
-							Collapsible Group Item #1
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne">
+							Inner Nublic network interface configuration.
 						</a>
 					</div>
-					<div id="collapseOne" class="accordion-body collapse in">
+					<div id="collapseOne" class="accordion-body collapse"> <!-- "in" to show it open -->
 						<div class="accordion-inner">
-							Anim pariatur cliche...
+							<g:HorizontalPanel width="100%">
+								<g:RadioButton name="innerconf" text="DHCP"/>
+								<g:RadioButton name="innerconf" text="Manual"/>
+							</g:HorizontalPanel>
 						</div>
 					</div>
 				</div>
-				<div class="accordion-group">
+			</div>
+
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group {style.accordion}">
 					<div class="accordion-heading">
-						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
-							href="#collapseTwo">
-							Collapsible Group Item #2
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+							Secure outside access to Nublic internet services.
 						</a>
 					</div>
 					<div id="collapseTwo" class="accordion-body collapse">
 						<div class="accordion-inner">
-							Anim pariatur cliche...
+							Forward HTTP port (80)<br/>
+							Forward HTTPS port (443)<br/>
+							Forward FTP ports (20-21)
 						</div>
 					</div>
 				</div>
 			</div>
 			
-			
+			<div class="accordion" id="accordion3">
+				<div class="accordion-group {style.accordion}">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
+							Avilability of URL use in and outside home.
+						</a>
+					</div>
+					<div id="collapseThree" class="accordion-body collapse">
+						<div class="accordion-inner">
+							Check if DNS calls from inside home are available
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div style="width: 100%; height: 45px;">
+				<g:Button addStyleNames="{style.floatright} btn btn-primary">Automatic configuration</g:Button>
+			</div>
+
 		</g:HTMLPanel>
 		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>
-</ui:UiBinder> 
+</ui:UiBinder>
