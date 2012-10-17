@@ -6,12 +6,55 @@
 		.defaultheight {
 			min-height: 400px;
 		}
+		.topmargin {
+			margin-top: 15px;
+		}
 	</ui:style>
 	<g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.defaultheight}">
 			<div style="width: 100%; display: table;">
 				<h1 style="float: left;">Network configuration</h1>
 			</div>
+			<g:HorizontalPanel width="100%" verticalAlignment="middle" addStyleNames="{style.topmargin}">
+				<g:cell >
+					<g:Label>There are some network configurations that we have to set in order to make you able to access your device from everywhere.</g:Label>
+				</g:cell>
+				<g:cell>
+					<g:Button>Automatic configuration</g:Button>
+				</g:cell>
+			</g:HorizontalPanel>
+
+
+			<div class="accordion" id="accordion2">
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+							href="#collapseOne">
+							Collapsible Group Item #1
+						</a>
+					</div>
+					<div id="collapseOne" class="accordion-body collapse in">
+						<div class="accordion-inner">
+							Anim pariatur cliche...
+						</div>
+					</div>
+				</div>
+				<div class="accordion-group">
+					<div class="accordion-heading">
+						<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2"
+							href="#collapseTwo">
+							Collapsible Group Item #2
+						</a>
+					</div>
+					<div id="collapseTwo" class="accordion-body collapse">
+						<div class="accordion-inner">
+							Anim pariatur cliche...
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
 		</g:HTMLPanel>
 		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>
