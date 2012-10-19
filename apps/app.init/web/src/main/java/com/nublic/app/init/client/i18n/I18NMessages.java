@@ -14,6 +14,7 @@ public interface I18NMessages extends Messages {
 	String nameIt();
 
 	// Common stuff
+	String title();
 	String previousStep();
 	String nextStep();
 	String completeFirst();
