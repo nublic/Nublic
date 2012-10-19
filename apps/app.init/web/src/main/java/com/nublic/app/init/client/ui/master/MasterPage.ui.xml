@@ -31,7 +31,7 @@
 	<g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.heightminimum}">
 			<div style="width: 100%; display: table;">
-				<h1 style="float: left;">Administration password</h1>
+				<h1 style="float: left;"><ui:text from="{msg.masterPassword}"/></h1>
 			</div>
 			<g:HorizontalPanel addStyleNames="{style.topmargin}" verticalAlignment="middle" width="100%">
 				<g:cell width="50px">

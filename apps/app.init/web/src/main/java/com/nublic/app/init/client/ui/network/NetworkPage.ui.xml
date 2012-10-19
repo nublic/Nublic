@@ -21,22 +21,25 @@
 			float: right;
 		}
 	</ui:style>
+	
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
+	
 	<g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.defaultheight}">
 			<div style="width: 100%; display: table;">
-				<h1 style="float: left;">Network configuration</h1>
+				<h1 style="float: left;"><ui:text from="{msg.networkConfiguration}"/></h1>
 			</div>
 
-			<g:Label addStyleNames="{style.topmargin}">There are some network configurations that we have to set in order to make you able to access your device from everywhere.</g:Label>
+			<g:Label addStyleNames="{style.topmargin}" text="{msg.networkText}"/>
 
-			<a:AccordionWidget text="Inner Nublic network interface configuration">
+			<a:AccordionWidget text="{msg.innerConfig}">
 				<g:HorizontalPanel width="100%">
 					<g:RadioButton name="innerconf" text="DHCP"/>
 					<g:RadioButton name="innerconf" text="Manual"/>
 				</g:HorizontalPanel>
 			</a:AccordionWidget>
 			
-			<a:AccordionWidget text="Secure outside access to Nublic internet services">
+			<a:AccordionWidget text="{msg.outsideAccess}">
 				<g:HTMLPanel>
 					Forward HTTP port (80)<br/>
 					Forward HTTPS port (443)<br/>
@@ -44,14 +47,14 @@
 				</g:HTMLPanel>
 			</a:AccordionWidget>
 			
-			<a:AccordionWidget text="Avilability of URL use in and outside home">
+			<a:AccordionWidget text="{msg.urlAvailability}">
 				<g:HTMLPanel>
 					Check if DNS calls from inside home are available
 				</g:HTMLPanel>
 			</a:AccordionWidget>
 
 			<div style="width: 100%; height: 45px;">
-				<g:Button addStyleNames="{style.floatright} btn btn-primary">Automatic configuration</g:Button>
+				<g:Button addStyleNames="{style.floatright} btn btn-primary" text="{msg.autoConfig}"/>
 			</div>
 
 		</g:HTMLPanel>
