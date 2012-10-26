@@ -17,19 +17,12 @@ init_nublic_server(app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_
                    db, 'photos', [lambda w: PhotoProcessor.start(app.logger, w)])
 app.logger.error('Starting photos app')
 
-@app.route('/albums', methods=['GET', 'PUT', 'DELETE'])
-def albums():
-    if request.method == 'GET':
-        return albums_get()
-    elif request.method == 'PUT':
-        return albums_put()
-    elif request.method == 'DELETE':
-        return albums_delete()
-
+@app.route('/albums', methods=['GET'])
 def albums_get():
     albums = Album.query.order_by(func.lower(Album.name)).all()
     return json.dumps(albums, default=album_as_json)
 
+@app.route('/albums', methods=['PUT'])
 def albums_put():
     name = request.form.get('name', None)
     new_album = Album(name)
@@ -37,6 +30,7 @@ def albums_put():
     db.session.commit()
     return str(new_album.id)
 
+@app.route('/albums', methods=['DELETE'])
 def albums_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
@@ -82,13 +76,14 @@ def one_album_delete(album_id):
     db.session.commit()
     return 'ok'
 
-@app.route('/photos')
+@app.route('/photos/')
 def photos():
     return photos_get('title', 'asc', 0, 20, [])
     
-@app.route('/photos/')
-def photos_():
-    return photos_get('title', 'asc', 0, 20, [])
+# If a route has a trailing / then both with and without will work!
+#@app.route('/photos')
+#def photos_():
+#    return photos_get('title', 'asc', 0, 20, [])
     
 @app.route('/photos/<order>/<asc>/<int:start>/<int:length>')
 def photos_without_albums(order, asc, start, length):

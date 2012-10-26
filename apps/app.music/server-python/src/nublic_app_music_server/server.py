@@ -25,19 +25,12 @@ app.logger.error('Starting music app')
 # COLLECTIONS HANDLING
 # ====================
 
-@app.route('/collections', methods=['GET', 'PUT', 'DELETE'])
-def collections():
-    if request.method == 'GET':
-        return collections_get()
-    elif request.method == 'PUT':
-        return collections_put()
-    elif request.method == 'DELETE':
-        return collections_delete()
-
+@app.route('/collections', methods=['GET'])
 def collections_get():
     colls = Collection.query.order_by(func.lower(Collection.name)).all()
     return json.dumps(colls, default=collection_or_playlist_as_json)
 
+@app.route('/collections', methods=['PUT'])
 def collections_put():
     name = request.form.get('name', None)
     new_coll = Collection(name)
@@ -45,6 +38,7 @@ def collections_put():
     db.session.commit()
     return str(new_coll.id)
 
+@app.route('/collections', methods=['DELETE'])
 def collections_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
@@ -55,15 +49,9 @@ def collections_delete():
         db.session.commit()
     return 'ok'
 
-@app.route('/collection/<int:collection_id>', methods=['PUT', 'DELETE'])
-def collection(collection_id):
-    collection = Collection.query.get_or_404(collection_id)
-    if request.method == 'PUT':
-        return one_collection_put(collection_id)
-    elif request.method == 'DELETE':
-        return one_collection_delete(collection_id)
-
+@app.route('/collection/<int:collection_id>', methods=['PUT'])
 def one_collection_put(collection_id):
+    collection = Collection.query.get_or_404(collection_id)
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
@@ -76,7 +64,9 @@ def one_collection_put(collection_id):
             db.session.commit()
     return 'ok'
 
+@app.route('/collection/<int:collection_id>', methods=['DELETE'])
 def one_collection_delete(collection_id):
+    collection = Collection.query.get_or_404(collection_id)
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
@@ -87,19 +77,12 @@ def one_collection_delete(collection_id):
 # PLAYLISTS HANDLING
 # ==================
 
-@app.route('/playlists', methods=['GET', 'PUT', 'DELETE'])
-def playlists():
-    if request.method == 'GET':
-        return playlists_get()
-    elif request.method == 'PUT':
-        return playlists_put()
-    elif request.method == 'DELETE':
-        return playlists_delete()
-
+@app.route('/playlists', methods=['GET'])
 def playlists_get():
     ps = Playlist.query.order_by(func.lower(Playlist.name)).all()
     return json.dumps(ps, default=collection_or_playlist_as_json)
 
+@app.route('/playlists', methods=['PUT'])
 def playlists_put():
     name = request.form.get('name', None)
     new_ps = Playlist(name)
@@ -108,6 +91,7 @@ def playlists_put():
     one_playlist_put(new_ps.id)
     return str(new_ps.id)
 
+@app.route('/playlists', methods=['DELETE'])
 def playlists_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
@@ -118,15 +102,9 @@ def playlists_delete():
         db.session.commit()
     return 'ok'
 
-@app.route('/playlist/<int:playlist_id>', methods=['PUT', 'DELETE'])
-def playlist(playlist_id):
-    ps = Playlist.query.get_or_404(playlist_id)
-    if request.method == 'PUT':
-        return one_playlist_put(playlist_id)
-    elif request.method == 'DELETE':
-        return one_playlist_delete(playlist_id)
-
+@app.route('/playlist/<int:playlist_id>', methods=['PUT'])
 def one_playlist_put(playlist_id):
+    ps = Playlist.query.get_or_404(playlist_id)
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     ps_count = SongPlaylist.query.filter_by(playlistId=playlist_id).count()
@@ -139,7 +117,9 @@ def one_playlist_put(playlist_id):
     db.session.commit()
     return 'ok'
 
+@app.route('/playlist/<int:playlist_id>', methods=['DELETE'])
 def one_playlist_delete(playlist_id):
+    ps = Playlist.query.get_or_404(playlist_id)
     position = int(request.form.get('position'))
     relation = SongPlaylist.query.filter_by(playlistId=playlist_id, position=position).first()
     relation.delete()
