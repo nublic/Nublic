@@ -1,7 +1,3 @@
-import sys, errno
-import os
-import stat
-import os.path
 from flask import Request, request, abort
 import logging
 from nublic.files_and_users import User
@@ -37,6 +33,7 @@ def init_nublic_server(app, log_file, resource_app, db, filewatcher_app_name, pr
     init_socket_watcher(filewatcher_app_name, processors, app.logger)
     
 def init_bare_nublic_server(app, log_file):
+    ''' Inits a nublic server without database support '''
     app.request_class = RequestWithDelete
     # Set up logging handlers
     handler = logging.FileHandler(log_file)
@@ -46,13 +43,15 @@ def init_bare_nublic_server(app, log_file):
             ))
     app.logger.addHandler(handler)
 
-def split_reasonable(s, separator):
-    if s == None:
+def split_reasonable(string, separator):
+    '''It improves split with a [] instead of none and removes empty strings'''
+    if string == None:
         return []
     else:
-        return filter(lambda st: st != '', s.split(separator))
+        return filter(lambda st: st != '', string.split(separator))
 
 def require_user():
+    ''' Check the authorization and return the username '''
     auth = request.authorization
     user = User(auth.username)
     if not user.exists():
@@ -60,5 +59,6 @@ def require_user():
     return auth.username
 
 def require_uid():
+    ''' Check the authorization and return the uid of the user '''
     user = require_user()
     return get_user_uid(user)

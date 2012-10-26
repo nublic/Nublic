@@ -4,11 +4,14 @@ import stat
 import os.path
 import shutil
 from nublic_server.places import get_mime_type
-from hashlib import sha1
+from hashlib import sha1 # pylint: disable=E0611
 
 CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
 
 def copy(src, dst, uid):
+    ''' copy file if you have permission or group permission allows you
+        throw a PermissionError exception
+    '''
     try_read(src, uid)
     try_write(dst, uid)
     shutil.copy(src, dst)
