@@ -5,7 +5,7 @@ import simplejson as json
 from sqlalchemy.sql.expression import func
 
 #from nublic.files_and_users import User
-from nublic_server.helpers import init_nublic_server, split_reasonable, require_user
+from nublic_server.helpers import init_nublic_server, split_reasonable
 from nublic_server.places import get_cache_folder
 
 from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist, \
@@ -27,7 +27,6 @@ app.logger.error('Starting music app')
 
 @app.route('/collections', methods=['GET', 'PUT', 'DELETE'])
 def collections():
-    require_user()
     if request.method == 'GET':
         return collections_get()
     elif request.method == 'PUT':
@@ -58,7 +57,6 @@ def collections_delete():
 
 @app.route('/collection/<int:collection_id>', methods=['PUT', 'DELETE'])
 def collection(collection_id):
-    require_user()
     collection = Collection.query.get_or_404(collection_id)
     if request.method == 'PUT':
         return one_collection_put(collection_id)
@@ -91,7 +89,6 @@ def one_collection_delete(collection_id):
 
 @app.route('/playlists', methods=['GET', 'PUT', 'DELETE'])
 def playlists():
-    require_user()
     if request.method == 'GET':
         return playlists_get()
     elif request.method == 'PUT':
@@ -123,7 +120,6 @@ def playlists_delete():
 
 @app.route('/playlist/<int:playlist_id>', methods=['PUT', 'DELETE'])
 def playlist(playlist_id):
-    require_user()
     ps = Playlist.query.get_or_404(playlist_id)
     if request.method == 'PUT':
         return one_playlist_put(playlist_id)
@@ -156,7 +152,6 @@ def one_playlist_delete(playlist_id):
 
 @app.route('/playlist/order/<int:playlist_id>', methods=['POST'])
 def playlist_order(playlist_id):
-    require_user()
     ps = Playlist.query.get_or_404(playlist_id)
     from_ = int(request.form.get('from'))
     to_ = int(request.form.get('to'))
@@ -187,22 +182,18 @@ def playlist_order(playlist_id):
 
 @app.route('/artists')
 def artists():
-    require_user()
     return artists_get('asc', 0, 20, [])
     
 @app.route('/artists/<asc>/<int:start>/<int:length>')
 def artists_(asc, start, length):
-    require_user()
     return artists_get(asc, start, length, [])
 
 @app.route('/artists/<asc>/<int:start>/<int:length>/')
 def artists__(asc, start, length):
-    require_user()
     return artists_get(asc, start, length, [])
 
 @app.route('/artists/<asc>/<int:start>/<int:length>/<path:collection_ids>')
 def artists_with_colls(asc, start, length, collection_ids):
-    require_user()
     ids = split_reasonable(collection_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
     return artists_get(asc, start, length, ids_as_ints)
@@ -232,7 +223,6 @@ def artists_get(asc, start, length, collection_ids):
 
 @app.route('/artist-info/<int:id>')
 def artist_info(id):
-    require_user()
     a = Artist.query.get_or_404(id)
     return json.dumps(artist_as_json(get_artist_info(a)))
 
@@ -259,27 +249,22 @@ ALL_OF_SOMETHING = 'all'
 
 @app.route('/albums')
 def albums():
-    require_user()
     return albums_get(ALL_OF_SOMETHING, 'asc', 0, 20, [])
 
 @app.route('/albums/<artist_id>')
 def albums_artist(artist_id):
-    require_user()
     return albums_get(artist_id, 'asc', 0, 20, [])
 
 @app.route('/albums/<artist_id>/')
 def albums_artist_(artist_id):
-    require_user()
     return albums_get(artist_id, 'asc', 0, 20, [])
 
 @app.route('/albums/<artist_id>/<asc>/<int:start>/<int:length>/')
 def albums_without_colls(artist_id, asc, start, length):
-    require_user()
     return albums_get(artist_id, asc, start, length, [])
 
 @app.route('/albums/<artist_id>/<asc>/<int:start>/<int:length>/<path:collection_ids>')
 def albums_with_colls(artist_id, asc, start, length, collection_ids):
-    require_user()
     ids = split_reasonable(collection_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
     return albums_get(artist_id, asc, start, length, ids_as_ints)
@@ -310,7 +295,6 @@ def albums_get(artist, asc, start, length, collection_ids):
 
 @app.route('/album-info/<int:id>')
 def album_info(id):
-    require_user()
     a = Album.query.get_or_404(id)
     return json.dumps(album_as_json(get_album_info(a)))
 
@@ -335,37 +319,30 @@ def get_album_info(a, collection_ids=None):
 
 @app.route('/songs')
 def songs():
-    require_user()
     return songs_get(ALL_OF_SOMETHING, ALL_OF_SOMETHING, 'alpha', 'asc', 0, 20, [])
 
 @app.route('/songs/<artist_id>')
 def songs_artist(artist_id):
-    require_user()
     return songs_get(artist_id, ALL_OF_SOMETHING, 'alpha', 'asc', 0, 20, [])
 
 @app.route('/songs/<artist_id>/<album_id>')
 def songs_artist_album(artist_id, album_id):
-    require_user()
     return songs_get(artist_id, album_id, 'alpha', 'asc', 0, 20, [])
 
 @app.route('/songs/<artist_id>/<album_id>/')
 def songs_artist_album_(artist_id, album_id):
-    require_user()
     return songs_get(artist_id, album_id, 'alpha', 'asc', 0, 20, [])
 
 @app.route('/songs/<artist_id>/<album_id>/<order>/<asc>/<int:start>/<int:length>')
 def songs_almost_all(artist_id, album_id, order, asc, start, length):
-    require_user()
     return songs_get(artist_id, album_id, order, asc, start, length, [])
 
 @app.route('/songs/<artist_id>/<album_id>/<order>/<asc>/<int:start>/<int:length>/')
 def songs_almost_all_(artist_id, album_id, order, asc, start, length):
-    require_user()
     return songs_get(artist_id, album_id, order, asc, start, length, [])
 
 @app.route('/songs/<artist_id>/<album_id>/<order>/<asc>/<int:start>/<int:length>/<path:collection_ids>')
 def songs_with_collections(artist_id, album_id, order, asc, start, length, collection_ids):
-    require_user()
     ids = split_reasonable(collection_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
     return songs_get(artist_id, album_id, order, asc, start, length, ids_as_ints)
@@ -403,13 +380,11 @@ def songs_get(artist_id, album_id, order, asc, start, length, collections):
 
 @app.route('/song-info/<int:song_id>')
 def song_info(song_id):
-    require_user()
     song = Song.query.get_or_404(song_id)
     return json.dumps(song_as_json(song))
 
 @app.route('/playlist/<int:ps_id>/<order>/<asc>/<int:start>/<int:length>')
 def playlist_songs(ps_id, order, asc, start, length):
-    require_user()
     # Get order
     if asc == 'asc':
         asc_desc = lambda x: x
@@ -440,7 +415,6 @@ def playlist_songs(ps_id, order, asc, start, length):
 
 @app.route('/artist-art/<int:artist_id>.png')
 def artist_art(artist_id):
-    require_user()
     path = os.path.join(get_artist_folder(artist_id), THUMBNAIL_FILENAME)
     if os.path.exists(path):
         return send_file(path)
@@ -449,7 +423,6 @@ def artist_art(artist_id):
 
 @app.route('/album-art/<int:album_id>.png')
 def album_art(album_id):
-    require_user()
     path = os.path.join(get_album_folder(album_id), THUMBNAIL_FILENAME)
     if os.path.exists(path):
         return send_file(path)
@@ -461,13 +434,11 @@ def album_art(album_id):
 
 @app.route('/raw/<int:song_id>.mp3')
 def raw_song(song_id):
-    require_user()
     song = Song.query.get_or_404(song_id)
     return send_file(song.file)
 
 @app.route('/view/<int:song_id>.mp3')
 def view_song(song_id):
-    require_user()
     app.logger.error('Getting song %i', song_id)
     song = Song.query.get_or_404(song_id)
     mp3_file = os.path.join(get_cache_folder(song.file), 'audio.mp3')
