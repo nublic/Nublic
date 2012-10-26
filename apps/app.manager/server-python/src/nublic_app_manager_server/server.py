@@ -23,21 +23,20 @@ def load_apps():
     for f in os.listdir(APP_INFO_ROOT):
         if f.endswith('.json'):
             fp = open(os.path.join(APP_INFO_ROOT, f))
-            app = json.load(fp)
+            app_data = json.load(fp)
             fp.close()
-            apps[app['id']] = app
+            apps[app_data['id']] = app_data
     return apps
 
 @app.route('/apps')
 def apps():
-    require_user()
     apps = load_apps()
     return_apps = []
     for app_id in apps:
-        app = apps[app_id]
-        if 'web' in app:
-            return_app = { 'id': app['id'], 'name': app['name'],
-                           'developer': app['developer'], 'web': app['web'] }
+        current_app = apps[app_id]
+        if 'web' in current_app:
+            return_app = { 'id': current_app['id'], 'name': current_app['name'],
+                           'developer': current_app['developer'], 'web': current_app['web'] }
             return_apps.append(return_app)
     return json.dumps(return_apps)
 
