@@ -42,7 +42,6 @@ def apps():
 
 @app.route('/app-image/<style>/<app_id>/<size>')
 def app_image(style, app_id, size):
-    require_user()
     apps = load_apps()
     if app_id in apps:
         app = apps[app_id]
@@ -58,7 +57,6 @@ def app_image(style, app_id, size):
 
 @app.route('/users')
 def users():
-    require_user()
     return_users = []
     for user in get_all_users():
         return_user = { 'username': user.get_username(),
