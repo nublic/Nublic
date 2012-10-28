@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Callback examples &mdash; python-rpcbd v0.5 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.5',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="python-rpcbd v0.5 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to rpcbd’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to rpcbd’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">python-rpcbd v0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="callback-examples">
+<h1>Callback examples<a class="headerlink" href="#callback-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="simple-server-with-callbacks">
+<h2>Simple server with callbacks<a class="headerlink" href="#simple-server-with-callbacks" title="Permalink to this headline">¶</a></h2>
+<p>A server that supports the (optional) use of callbacks is given below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rpcbd</span> <span class="kn">import</span> <span class="n">Handler</span><span class="p">,</span> <span class="n">ThreadedTCPJsonRpcPeer</span><span class="p">,</span> <span class="n">JSONRPC_V2</span><span class="p">,</span> <span class="n">willnotblock</span><span class="p">,</span> <span class="n">mayblock</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+
+<span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="nd">@willnotblock</span>
+    <span class="k">def</span> <span class="nf">echo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="nd">@mayblock</span>
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number</span><span class="p">,</span> <span class="n">callback_name</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;Num is too low&#39;</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">callback_name</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">notification</span><span class="p">(</span><span class="n">callback_name</span><span class="p">)(</span><span class="s">&#39;Counted to </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39;Counted to </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">num</span>
+    <span class="nd">@willnotblock</span>
+    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="n">peer</span> <span class="o">=</span> <span class="n">ThreadedTCPJsonRpcPeer</span><span class="p">(</span><span class="n">JSONRPC_V2</span><span class="p">,</span> <span class="n">default_handler</span> <span class="o">=</span> <span class="n">Example</span><span class="p">)</span>
+    <span class="n">peer</span><span class="o">.</span><span class="n">listen_tcp</span><span class="p">(</span><span class="n">port</span> <span class="o">=</span> <span class="mi">9999</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;*** Got keyboard interrupt - shutting down ***&#39;</span>
+        <span class="n">peer</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Done!&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="client-with-implicit-callback-conversion">
+<h2>Client with implicit callback conversion<a class="headerlink" href="#client-with-implicit-callback-conversion" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rpcbd</span> <span class="kn">import</span> <span class="n">ThreadedTCPJsonRpcPeer</span><span class="p">,</span> <span class="n">JSONRPC_V2</span>
+
+<span class="k">def</span> <span class="nf">progress_callback</span><span class="p">(</span><span class="n">info</span><span class="p">):</span>
+    <span class="k">print</span> <span class="s">&#39;Running callback in </span><span class="si">%s</span><span class="s">. Got: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">info</span><span class="p">)</span>
+
+<span class="n">peer</span> <span class="o">=</span> <span class="n">ThreadedTCPJsonRpcPeer</span><span class="p">(</span><span class="n">JSONRPC_V2</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">peer</span><span class="o">.</span><span class="n">connect_tcp</span><span class="p">(</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">9999</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">progress_callback</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">result</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;Got data: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">data</span>
+<span class="n">peer</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The output from the client is:</p>
+<div class="highlight-python"><pre>Running callback in MainThread. Got: Counted to 1
+Running callback in MainThread. Got: Counted to 2
+Running callback in MainThread. Got: Counted to 3
+Running callback in MainThread. Got: Counted to 4
+Running callback in MainThread. Got: Counted to 5
+Counted to 5
+Got data: Hello World!</pre>
+</div>
+<p>Note that when using implicit callback conversion, the callback is run within the same thread as the caller,
+and the calllback method is only available to the given connection whilst the initial method call
+is in progress.</p>
+<p>The rpc calls (as seen from the client&#8217;s perspective) are:</p>
+<div class="highlight-python"><pre>Created connection with id: 137898796
+--&gt; 137898796: {"jsonrpc": "2.0", "method": "count", "params": [5, "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a"], "id": 1}
+&lt;-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 1"]}
+&lt;-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 2"]}
+&lt;-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 3"]}
+&lt;-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 4"]}
+&lt;-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 5"]}
+&lt;-- 137898796: {"jsonrpc": "2.0", "result": "Counted to 5", "id": 1}
+--&gt; 137898796: {"jsonrpc": "2.0", "method": "echo", "params": ["Hello World!"], "id": 2}
+&lt;-- 137898796: {"jsonrpc": "2.0", "result": "Hello World!", "id": 2}
+Closed connection with id: 137898796</pre>
+</div>
+<p>Also note that this is done over a single tcp/ip connection. The connection is not closed until explicitly closed, either by
+the client or the server.</p>
+</div>
+<div class="section" id="client-with-explicit-callback-passed">
+<h2>Client with explicit callback passed<a class="headerlink" href="#client-with-explicit-callback-passed" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rpcbd</span> <span class="kn">import</span> <span class="n">ThreadedTCPJsonRpcPeer</span><span class="p">,</span> <span class="n">JSONRPC_V2</span><span class="p">,</span> <span class="n">Handler</span>
+
+<span class="k">class</span> <span class="nc">ClientExample</span><span class="p">(</span><span class="n">Handler</span><span class="p">):</span>
+    <span class="n">assume_methods_block</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">def</span> <span class="nf">progress_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&#39;Running callback in </span><span class="si">%s</span><span class="s">. Got: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">currentThread</span><span class="p">()</span><span class="o">.</span><span class="n">getName</span><span class="p">(),</span> <span class="n">info</span><span class="p">)</span>
+
+<span class="n">peer</span> <span class="o">=</span> <span class="n">ThreadedTCPJsonRpcPeer</span><span class="p">(</span><span class="n">JSONRPC_V2</span><span class="p">,</span> <span class="n">default_handler</span> <span class="o">=</span> <span class="n">ClientExample</span><span class="p">)</span>
+<span class="n">connection</span> <span class="o">=</span> <span class="n">peer</span><span class="o">.</span><span class="n">connect_tcp</span><span class="p">(</span><span class="s">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">9999</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="s">&#39;progress_callback&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">result</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
+<span class="k">print</span> <span class="s">&#39;Got data: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">data</span>
+<span class="n">peer</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This time the callbacks are <em>not</em> run within the same thread. They are either run in the thread handling the given connection,
+or (as in the case above since we have said the method may block) in the worker pool.</p>
+<p>Example output from the client given below:</p>
+<div class="highlight-python"><pre>Running callback in Thread-1. Got: Counted to 1
+Running callback in Thread-2. Got: Counted to 2
+Running callback in Thread-3. Got: Counted to 3
+Running callback in Thread-4. Got: Counted to 4
+Running callback in Thread-5. Got: Counted to 5
+Counted to 5
+Got data: Hello World!</pre>
+</div>
+<p>The rpc calls are slightly different too:</p>
+<div class="highlight-python"><pre>Created connection with id: 3078489324
+--&gt; 3078489324: {"jsonrpc": "2.0", "method": "count", "params": [5, "progress_callback"], "id": 1}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 1"]}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 2"]}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 3"]}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 4"]}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 5"]}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "result": "Counted to 5", "id": 1}
+--&gt; 3078489324: {"jsonrpc": "2.0", "method": "echo", "params": ["Hello World!"], "id": 2}
+&lt;-- 3078489324: {"jsonrpc": "2.0", "result": "Hello World!", "id": 2}
+Closed connection with id: 3078489324</pre>
+</div>
+<p>Note that in this case, the &#8216;progress_callback&#8217; method on the client could be called by the &#8216;server&#8217; <em>at any time</em>,
+not just between the initial call to &#8216;count&#8217; and the final result.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Callback examples</a><ul>
+<li><a class="reference internal" href="#simple-server-with-callbacks">Simple server with callbacks</a></li>
+<li><a class="reference internal" href="#client-with-implicit-callback-conversion">Client with implicit callback conversion</a></li>
+<li><a class="reference internal" href="#client-with-explicit-callback-passed">Client with explicit callback passed</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to rpcbd&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/callback_examples.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to rpcbd’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">python-rpcbd v0.5 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Rasjid Wilcox.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.3.
+    </div>
+  </body>
+</html>

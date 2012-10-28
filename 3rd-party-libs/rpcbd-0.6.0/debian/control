@@ -1,0 +1,12 @@
+Source: python-rpcbd
+Maintainer: Nublic Packaging Team <packaging@nublic.com>
+Section: python
+Priority: optional
+Build-Depends: python-all (>= 2.5), debhelper (>= 7)
+Standards-Version: 3.9.1
+
+Package: python-rpcbd
+Architecture: all
+Depends: ${misc:Depends}, ${python:Depends}
+Description: Python interface to Solr
+

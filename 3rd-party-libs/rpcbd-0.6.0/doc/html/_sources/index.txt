@@ -1,0 +1,101 @@
+Welcome to rpcbd's documentation!
+=====================================
+
+Contents:
+
+.. toctree::
+   :maxdepth: 1
+   
+   self
+   callback_examples  
+
+`rpcbd` --- A bi-directional JsonRpc implementation
+-------------------------------------------------------
+
+
+`rpcbd` aims to be:
+
+* Fully bi-directional (symmetric).  Requests and responses can be sent either direction across the connection.
+* Fully asynchronous. Requests and responses can be sent and arrive at any time. One can send multiple requests
+  without waiting for responses.
+* Threadsafe. Requests can be sent across a single connection from any thread.
+* Simple to use. The API is designed to be simple to use, without loss of flexability or power.
+* Portable. It aims to run anywhere Python runs, including Jython and IronPython.
+
+
+Simple server
+-------------
+
+A simple jsonrpc (version 2.0) echo server, running over tcp, is set up as follows::
+
+    from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
+  
+    class Example(Handler):
+        assume_methods_block = False
+        def echo(self, data):
+            return data
+
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = Example)
+    peer.listen_tcp(port = 9999)
+
+Note that the last statement returns immediately, since the peer in run in a background thread.
+So the above will run well in at a python shell prompt, but has no way to exit cleanly if 
+run as a stand-alone program.
+
+To exit, type::
+
+    peer.shutdown()
+    
+A complete stand-alone version is::
+
+    from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
+    from time import sleep
+    import logging # so we can see what is happening
+    import signal  # so keyboard interupt goes to main thread
+
+    class Example(Handler):
+        assume_methods_block = False
+        def echo(self, data):
+            return data
+                        
+    if __name__=='__main__':
+        logging.basicConfig(level = logging.INFO)
+        peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = Example)
+        peer.listen_tcp(port = 9999)
+        try:
+            while True:
+                sleep(1)
+        except KeyboardInterrupt:
+            print '*** Got keyboard interrupt - shutting down ***'
+            peer.shutdown()
+        print 'Done!'
+
+
+
+Simple Client
+-------------
+
+The following import will get you everything you need to write a simple client::
+
+    from rpcbd import ThreadedTCPJsonRpcPeer, JSONRPC_V2
+
+One uses it as follows::
+
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2)
+    connection = peer.connect_tcp('127.0.0.1', 9999)
+    data = connection.request.echo('Hello World!')
+    print 'Got data: %s' % data
+    
+And finish as before with::
+    
+    peer.shutdown()
+
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

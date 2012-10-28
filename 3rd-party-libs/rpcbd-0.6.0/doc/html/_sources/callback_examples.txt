@@ -1,0 +1,145 @@
+Callback examples
+=================
+
+Simple server with callbacks
+----------------------------
+
+A server that supports the (optional) use of callbacks is given below::
+
+    from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2, willnotblock, mayblock
+    from time import sleep
+    import logging
+    import signal
+
+    class Example(Handler):
+        @willnotblock
+        def echo(self, data):
+            return data
+        @mayblock
+        def count(self, number, callback_name = None):
+            num = int(number)
+            if num <= 0:
+                return 'Num is too low'
+            for x in range(num):
+                if callback_name:
+                    self.connection.notification(callback_name)('Counted to %s' % str(x + 1))
+                sleep(1)
+            return 'Counted to %s' % num
+        @willnotblock
+        def divide(self, x, y):
+            return x / y
+            
+    if __name__=='__main__':
+        logging.basicConfig(level = logging.INFO)
+        peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = Example)
+        peer.listen_tcp(port = 9999)
+        try:
+            while True:
+                sleep(1)
+        except KeyboardInterrupt:
+            print '*** Got keyboard interrupt - shutting down ***'
+            peer.shutdown()
+        print 'Done!'
+
+            
+Client with implicit callback conversion
+----------------------------------------
+
+::
+
+    from rpcbd import ThreadedTCPJsonRpcPeer, JSONRPC_V2
+    
+    def progress_callback(info):
+        print 'Running callback in %s. Got: %s' % (threading.currentThread().getName(), info)
+
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2)
+    connection = peer.connect_tcp('127.0.0.1', port = 9999)
+    result = connection.request.count(5, progress_callback)
+    print result
+    data = connection.request.echo('Hello World!')
+    print 'Got data: %s' % data
+    peer.shutdown()
+
+The output from the client is::
+
+    Running callback in MainThread. Got: Counted to 1
+    Running callback in MainThread. Got: Counted to 2
+    Running callback in MainThread. Got: Counted to 3
+    Running callback in MainThread. Got: Counted to 4
+    Running callback in MainThread. Got: Counted to 5
+    Counted to 5
+    Got data: Hello World!
+
+Note that when using implicit callback conversion, the callback is run within the same thread as the caller,
+and the calllback method is only available to the given connection whilst the initial method call
+is in progress.
+
+The rpc calls (as seen from the client's perspective) are::
+
+    Created connection with id: 137898796
+    --> 137898796: {"jsonrpc": "2.0", "method": "count", "params": [5, "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a"], "id": 1}
+    <-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 1"]}
+    <-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 2"]}
+    <-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 3"]}
+    <-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 4"]}
+    <-- 137898796: {"jsonrpc": "2.0", "method": "rpc.callback.ca4e6704-091e-4fdb-ba4a-a7b830733b3a", "params": ["Counted to 5"]}
+    <-- 137898796: {"jsonrpc": "2.0", "result": "Counted to 5", "id": 1}
+    --> 137898796: {"jsonrpc": "2.0", "method": "echo", "params": ["Hello World!"], "id": 2}
+    <-- 137898796: {"jsonrpc": "2.0", "result": "Hello World!", "id": 2}
+    Closed connection with id: 137898796
+    
+Also note that this is done over a single tcp/ip connection. The connection is not closed until explicitly closed, either by
+the client or the server.
+
+
+Client with explicit callback passed
+------------------------------------
+
+::
+
+    from rpcbd import ThreadedTCPJsonRpcPeer, JSONRPC_V2, Handler
+
+    class ClientExample(Handler):   
+        assume_methods_block = True
+        def progress_callback(self, info):
+            print 'Running callback in %s. Got: %s' % (threading.currentThread().getName(), info)
+
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = ClientExample)
+    connection = peer.connect_tcp('127.0.0.1', port = 9999)
+    result = connection.request.count(5, 'progress_callback')
+    print result
+    data = connection.request.echo('Hello World!')
+    print 'Got data: %s' % data
+    peer.shutdown()
+    
+This time the callbacks are *not* run within the same thread. They are either run in the thread handling the given connection,
+or (as in the case above since we have said the method may block) in the worker pool.
+
+Example output from the client given below::
+
+    Running callback in Thread-1. Got: Counted to 1
+    Running callback in Thread-2. Got: Counted to 2
+    Running callback in Thread-3. Got: Counted to 3
+    Running callback in Thread-4. Got: Counted to 4
+    Running callback in Thread-5. Got: Counted to 5
+    Counted to 5
+    Got data: Hello World!
+
+The rpc calls are slightly different too::
+
+    Created connection with id: 3078489324
+    --> 3078489324: {"jsonrpc": "2.0", "method": "count", "params": [5, "progress_callback"], "id": 1}
+    <-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 1"]}
+    <-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 2"]}
+    <-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 3"]}
+    <-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 4"]}
+    <-- 3078489324: {"jsonrpc": "2.0", "method": "progress_callback", "params": ["Counted to 5"]}
+    <-- 3078489324: {"jsonrpc": "2.0", "result": "Counted to 5", "id": 1}
+    --> 3078489324: {"jsonrpc": "2.0", "method": "echo", "params": ["Hello World!"], "id": 2}
+    <-- 3078489324: {"jsonrpc": "2.0", "result": "Hello World!", "id": 2}
+    Closed connection with id: 3078489324
+
+Note that in this case, the 'progress_callback' method on the client could be called by the 'server' *at any time*,
+not just between the initial call to 'count' and the final result.
+
+

@@ -1,0 +1,65 @@
+### {"jsonrpc": "2.0", "method": "ping", "id": 1}
+
+'''Simple test peer'''
+
+from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
+from time import sleep
+import threading
+
+# used for the test case
+    
+class Example(Handler):
+    assume_methods_block = True
+    def echo(self, data):
+        return data
+    def count_cb(self, info):
+        print info
+    def count(self, number):
+        num = int(number)
+        if num <= 0:
+            return 'Num is too low'
+        for x in range(num):
+            print 'Count to %s' % x
+            self.connection.notification('count_cb')('Got to %s' % x)
+            sleep(1)
+        return 'Counted to %s' % num
+    def divide(self, x, y):
+        return x / y
+        
+
+# set up peer
+peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2)
+d = peer.create_standard_dispatcher()
+d.add_handler_class(Example)
+grp = peer.create_connection_group('Example grp')
+grp.add_dispatcher(d)
+peer.default_incoming_connection_group = grp
+peer.default_outgoing_connection_group = grp
+
+# peer.listen_tcp(9999)
+c = peer.connect_tcp('127.0.0.1', 9999)
+c.request.echo('hello')
+
+def inline_cb(info):
+    print 'Got inline callback: %s' % info
+    print 'Thread is: %s' % threading.currentThread().getName()
+    print '----'
+
+def result_handler(result):
+    print 'The result was:', result
+
+c.request.count(10, inline_cb)
+
+p = c.create_async_proxy(result_handler = result_handler)
+p.echo('hello')
+p.count(10, inline_cb)
+
+c.request.divide(10, 2)
+c.request('echo')(data = 'hello')
+
+b = c.create_batchedcalls_proxy()
+b.request.count(2)
+b.request.echo('foo')
+b.request.echo('bar')
+b.send()
+
