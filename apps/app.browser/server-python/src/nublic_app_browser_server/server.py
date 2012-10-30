@@ -1,7 +1,9 @@
 
-from flask import Flask, request, abort, send_file
 import os.path
 import simplejson as json
+import shutil
+from flask import Flask, request, abort, send_file
+from flask.helpers import send_from_directory
 
 from nublic_server.helpers import init_bare_nublic_server, require_uid, \
     require_user
@@ -9,10 +11,8 @@ from nublic_server.files import try_read, permission_write, \
     PermissionError, try_write, try_write_recursive, get_file_info, \
     get_folders
 from nublic_server import files
-import shutil
 from nublic_files_and_users_client.dbus_client import list_mirrors, \
     list_synced_folders
-from flask.helpers import send_from_directory
 
 # Init app
 app = Flask(__name__)
@@ -23,13 +23,15 @@ app.logger.error('Starting browser app')
 DATA_ROOT = '/var/nublic/data/'
 GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails'
 
+
 @app.route('/devices')
 def devices():
     '''
     /devices
     * Returns:
       return_value ::= [ device ]
-      device       ::= { "id": $id, "kind": kind, "name": $name, "owner": true | false }
+      device       ::= { "id": $id, "kind": kind, "name": $name,
+                          "owner": true | false }
       kind         ::= "mirror" | "synced" | "media"
     '''
     user = require_user()
@@ -37,6 +39,7 @@ def devices():
     synced = list_synced_folders()
     devs = [dev.__setitem__(dev['owner'] == user) for dev in mirrors + synced]
     return json.dumps(devs)
+
 
 @app.route('/folders/<int:depth>/<path:path>')
 def folders(depth, path):
@@ -47,7 +50,8 @@ def folders(depth, path):
     * Returns:
       return_value ::= [ folder ]
                      |   null  # if the path does not exist
-      folder       ::= { "name": $name, "subfolders": [ folder ], "writable": $can_write }
+      folder       ::= { "name": $name, "subfolders": [ folder ],
+                                      "writable": $can_write }
     '''
     if depth <= 0:
         abort(400)
@@ -57,6 +61,7 @@ def folders(depth, path):
         abort(404)
     return json.dumps(get_folders(depth, path_absolute, uid))
 
+
 @app.route('/files/<path:path>')
 def files_path(path):
     '''
@@ -65,11 +70,15 @@ def files_path(path):
     * Returns:
       return_value ::= [ file ]
                      |   null  # if the path does not exist
-      file         ::= { "name": $name, "writable": $can_write, "last_update": $time, "size": $size, "thumb": $has_thumb, "mime": $mime_type, "view": $view }
-                   -> we know it's a directory if mime == "application/x-directory"
-                   -> view indicates which preview you have for the item: now pdf, png, mp3, flv
-                      -> if "null", there is no preview available
-                   -> Size in bytes
+      file         ::= { "name": $name, "writable": $can_write,
+                         "last_update": $time, "size": $size,
+                         "thumb": $has_thumb, "mime": $mime_type,
+                         "view": $view }
+            -> we know it's a directory if mime == "application/x-directory"
+            -> view indicates which preview you have for the item:
+                -> now pdf, png, mp3, flv
+                -> if "null", there is no preview available
+                -> Size in bytes
     '''
     uid = require_uid()
     path_absolute = os.path.join(DATA_ROOT, path)
@@ -86,7 +95,6 @@ def files_path(path):
     except PermissionError:
         abort(401)
     return json.dumps(infos)
-    
 
 
 @app.route('/thumbnail/<path:file>')
@@ -96,8 +104,8 @@ def thumbnail():
     * :file -> File to show the thumbnail (Nublic path)
     * Returns: the raw image data
       -> only try to get things with thumbnail
-    '''    
-    # @todo
+    '''
+    # @todo: thumbnail
     pass
 
 
@@ -108,14 +116,15 @@ def generic_thumbnail(mime):
     * :id -> Identifier of mime type
     * Returns: generic image for that mime type
     '''
-    mapping = {"application/x-directory": "folder.png", 
+    mapping = {"application/x-directory": "folder.png",
                }
-    # @todo
+    # @todo: Solve in a general way
     try:
         thumb = mapping[mime]
     except KeyError:
         thumb = "file.png"
     return send_from_directory(GENERIC_THUMB_PATH, thumb)
+
 
 @app.route('/zip/<path:path>')
 def zip_path():
@@ -125,7 +134,7 @@ def zip_path():
     * Returns: the data of the zip
     '''
     #hashlib.sha1()
-    # @todo
+    # @todo: zip_path
     pass
 
 
@@ -136,8 +145,9 @@ def zip_set():
     * :files -> set of files separated by :
     * Returns: the data as zip
     '''
-    # @todo
+    # @todo: zip_set
     pass
+
 
 @app.route('/raw/<path:file>')
 def raw():
@@ -155,6 +165,7 @@ def raw():
     except PermissionError:
         abort(401)
 
+
 @app.route('/view/<path:file>.<type>')
 def view():
     '''
@@ -165,7 +176,7 @@ def view():
       - 403 if a folder is requested
       - 404 if there is no such view for that file
     '''
-    # @todo
+    # @todo: view
     pass
 
 
@@ -186,6 +197,7 @@ def rename():
     # Rename does not need to change the user
     os.rename(path_from, path_to)
 
+
 @app.route('/move', methods=['POST'])
 def move():
     ''' Handle this petition:
@@ -205,11 +217,12 @@ def move():
         abort(401)
     return 'ok'
 
+
 @app.route('/copy', methods=['POST'])
 def copy():
     ''' Handle this petition:
          POST /copy
-        * :files -> files to move or copy separated by : 
+        * :files -> files to move or copy separated by :
         * :target -> folder to put the files
     '''
     from_array = request.form.get('from').split(':')
@@ -222,6 +235,7 @@ def copy():
     except PermissionError:
         abort(401)
     return 'ok'
+
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -241,9 +255,10 @@ def delete():
             #os.remove(internal_path)
     except PermissionError:
         abort(401)
-    except: # Catch a possible rmtree Exception
+    except:  # Catch a possible rmtree Exception
         abort(500)
     return 'ok'
+
 
 @app.route('/changes/<date>/<path>')
 def changes(date, path):
@@ -253,10 +268,10 @@ def changes(date, path):
     * :path -> path we are looking at to see changes
     * Returns:
       return_value ::= { "new_files": [ file, file, ... ]  // files as above
-                       , "deleted_files": [ filename, filename, ... ]  // just strings
+                       , "deleted_files": [ filename, ... ]  // just strings
                        }
     '''
-    # @todo:
+    # @todo: changes
     pass
 
 
@@ -278,18 +293,19 @@ def new_folder():
     except PermissionError:
         abort(500)
 
+
 @app.route('/upload', methods=['POST'])
 def upload():
     '''
     POST /upload
     * :name -> name of the new file
     * :path -> folder where it will be uploaded
-    * :contents -> POST argument with the file contents (in multipart/form-data format)
+    * :contents -> POST argument with the file contents
+                    (in multipart/form-data format)
     * Returns: nothing, or error 500 if something erroneous happens
     '''
-    # @todo Upload
+    # @todo: Upload
     pass
-
 
 
 @app.route('/about')
