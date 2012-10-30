@@ -7,11 +7,12 @@ from model import *
 
 MIRROR_ROOT = '/var/nublic/data/mirrors/'
 
-class MirrorDBus(dbus.service.Object):
+class MirrorDBus(dbus.service.Object, initialize_dbus=True):
     def __init__(self, user_dbus, loop = None):
         self.user_dbus = user_dbus
-        bus_name = dbus.service.BusName('com.nublic.files', bus=dbus.SystemBus())
-        dbus.service.Object.__init__(self, bus_name, '/com/nublic/Mirrors')
+        if initialize_dbus:
+            bus_name = dbus.service.BusName('com.nublic.files', bus=dbus.SystemBus())
+            dbus.service.Object.__init__(self, bus_name, '/com/nublic/Mirrors')
     
     @dbus.service.signal(dbus_interface='com.nublic.files', signature='iss')
     def mirror_created(self, mid, name, owner):

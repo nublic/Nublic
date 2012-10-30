@@ -13,6 +13,7 @@ import dbus.exceptions
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
+from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from elixir import metadata, setup_all
 import dbus
 import time
@@ -45,10 +46,15 @@ def do_main_program():
     __check_nublic_resource_is_on(dbus_loop)
     metadata.bind = __get_bind_uri(dbus_loop)
     setup_all(create_tables = True)
+
+    # Initialize JSON-RPC
+    logging.basicConfig(level = logging.WARNING)
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcNotification)
+    peer.listen_tcp(port = 5441)
+
+    # Initialize D-Bus
     dbus_value = DBusValue(loop = dbus_loop)
-    
     loop = gobject.MainLoop()
-    
     gobject.threads_init()
     loop.run()
     
@@ -71,3 +77,9 @@ class DBusValue(dbus.service.Object):
     @dbus.service.method('com.nublic.notification', in_signature = 'ssss', out_signature='s')
     def new_message(self, app, user, level, text):
         return str(notification.new_message(app, user, level, text))
+
+class JsonRpcNotification(Handler):
+    assume_methods_block=False
+    def new_message(self, app, user, level, text):
+        return str(notification.new_message(app, user, level, text))
+        

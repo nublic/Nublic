@@ -1,33 +1,39 @@
-
 import os
 import string
 
 from ..dbus_in_other_thread import call_expecting_return, call_without_return
+from ..rpcbd_client import rpcbd_call_return, rpcbd_call
 import mirror
 import work_folder
 
 DATA_ROOT = "/var/nublic/data"
 
-def _call_user_method_return(m):
-    return call_expecting_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
+def _call_user_method_return(m, use_dbus=False):
+    if use_dbus:
+        return call_expecting_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
+    else:
+        return rpcbd_call_return(5440, m)
 
 def _call_user_method(m):
-    return call_without_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
+    if use_dbus:
+        return call_without_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
+    else:
+        return rpcbd_call(5440, m)
 
-def get_all_users():
-    notSplitted = _call_user_method_return(lambda i: i.get_all_users())
+def get_all_users(use_dbus=False):
+    notSplitted = _call_user_method_return(lambda i: i.get_all_users(), use_dbus)
     if notSplitted == '':
         return []
     # Take elements apart
     splitted = string.split(notSplitted, ':')
     userList = []
     for username in splitted:
-        userList.append(User(username))
+        userList.append(User(username, use_dbus))
     return userList
 
-def get_file_owner(path):
+def get_file_owner(path, use_dbus=False):
     owner_uid = os.stat(path).st_uid
-    for u in get_all_users():
+    for u in get_all_users(use_dbus):
         if u.get_id() == owner_uid:
             return u
     return None
@@ -37,37 +43,38 @@ def is_file_shared(path):
     return (mode & 0040 != 0) or (mode & 0004 != 0)
 
 class User:
-    def __init__(self, username):
+    def __init__(self, username, use_dbus):
         self._username = username
         self._uid = None
         self._readable_paths = [DATA_ROOT]
         self._writable_paths = [DATA_ROOT + '/nublic-only']
+        self.use_dbus = use_dbus
         
     def exists(self):
-        return _call_user_method_return(lambda i: i.user_exists(self._username))
+        return _call_user_method_return(lambda i: i.user_exists(self._username), self.use_dbus)
     
     def create(self, password, shown_name):
-        return _call_user_method_return(lambda i: i.user_create(self._username, password, shown_name))
+        return _call_user_method_return(lambda i: i.user_create(self._username, password, shown_name), self.use_dbus)
     
     def delete(self):
-        return _call_user_method_return(lambda i: i.delete_user(self._username))
+        return _call_user_method_return(lambda i: i.delete_user(self._username), self.use_dbus)
     
     def get_username(self):
         return self._username
     
     def get_id(self):
         if self._uid == None:
-            self._uid = _call_user_method_return(lambda i: i.get_user_uid(self._username))
+            self._uid = _call_user_method_return(lambda i: i.get_user_uid(self._username), self.use_dbus)
         return self._uid
     
     def get_shown_name(self):
-        return _call_user_method_return(lambda i: i.get_user_shown_name(self._username))
+        return _call_user_method_return(lambda i: i.get_user_shown_name(self._username), self.use_dbus)
     
     def change_shown_name(self, shown_name):
-        _call_user_method(lambda i: i.change_user_shown_name(self._username, shown_name))
+        _call_user_method(lambda i: i.change_user_shown_name(self._username, shown_name), self.use_dbus)
     
     def change_password(self, old, new):
-        _call_user_method(lambda i: i.change_user_password(self._username, old, new))
+        _call_user_method(lambda i: i.change_user_password(self._username, old, new), self.use_dbus)
     
     def is_owner(self, path):
         owner_uid = os.stat(path).st_uid
@@ -77,7 +84,7 @@ class User:
         if not path.startswith(DATA_ROOT + '/'):
             raise ValueError('You are not allowed to change that path\'s owner')
         path_to_send = path.replace(DATA_ROOT, '', 1)
-        _call_user_method(lambda i: i.assign_file(self._username, path_to_send, touch_after))
+        _call_user_method(lambda i: i.assign_file(self._username, path_to_send, touch_after), self.use_dbus)
     
     def _check_permissions(self, path, allowed_paths, group_bits, others_bits):
         # Check if it is in a allowed path
@@ -101,14 +108,14 @@ class User:
         return filter(lambda m: self.is_owner(m.get_path()), mirror.get_all_mirrors())
     
     def get_owned_work_folders(self):
-        return filter(lambda m: self.is_owner(m.get_path()), work_folder.get_all_work_folders())
+        return filter(lambda m: self.is_owner(m.get_path()), work_folder.get_all_work_folders(self.use_dbus))
     
     def get_accessible_mirrors(self):
-        return filter(lambda m: self.can_read(m.get_path()), mirror.get_all_mirrors())
+        return filter(lambda m: self.can_read(m.get_path()), mirror.get_all_mirrors(self.use_dbus))
     
     def get_accessible_work_folders(self):
-        return filter(lambda m: self.can_read(m.get_path()), work_folder.get_all_work_folders())
+        return filter(lambda m: self.can_read(m.get_path()), work_folder.get_all_work_folders(self.use_dbus))
     
     def add_public_key(self, key):
-        _call_user_method(lambda i: i.add_public_key(self._username, key))
+        _call_user_method(lambda i: i.add_public_key(self._username, key), self.use_dbus)
     

@@ -11,10 +11,11 @@ SYNCED_REPO_ROOT = '/var/nublic/work-folders'
 SYNCED_ROOT = '/var/nublic/data/work-folders'
 
 class SyncedFolderDBus(dbus.service.Object):
-    def __init__(self, user_dbus, loop = None):
+    def __init__(self, user_dbus, loop = None, initialize_dbus=True):
         self.user_dbus = user_dbus
-        bus_name = dbus.service.BusName('com.nublic.files', bus=dbus.SystemBus())
-        dbus.service.Object.__init__(self, bus_name, '/com/nublic/SyncedFolders')
+        if initialize_dbus:
+            bus_name = dbus.service.BusName('com.nublic.files', bus=dbus.SystemBus())
+            dbus.service.Object.__init__(self, bus_name, '/com/nublic/SyncedFolders')
     
     @dbus.service.signal(dbus_interface='com.nublic.files', signature='iss')
     def synced_folder_created(self, mid, name, owner):
