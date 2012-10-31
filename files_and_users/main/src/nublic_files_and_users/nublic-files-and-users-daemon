@@ -6,6 +6,7 @@ from nublic_files_and_users.user import *
 from nublic_files_and_users.mirror import *
 from nublic_files_and_users.synced_folder import *
 
+from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from dbus.mainloop.glib import DBusGMainLoop
 # from gobject import MainLoop, threads_init
 
@@ -38,7 +39,85 @@ def __check_nublic_resource_is_on(dbus_loop):
             time.sleep(2)
             waited = waited + 1
 
+userJson = UserDBus(None, False)
+mirrorJson = MirrorDBus(userJson, None, False)
+syncedJson = SyncedFolderDBus(userJson, None, False)
+
+class JsonRpcFilesAndUsers(Handler):
+    assume_methods_block=False
+
+    def user_exists(self, username):
+        return userJson.user_exists(username)
+
+    def get_all_users(self):
+        return userJson.get_all_users()
+
+    def get_user_uid(self, username):
+        return userJson.get_user_uid(username)
+
+    def create_user(self, username_, password_, name_):
+        return userJson.create_user(username_, password_, name_)
+
+    def change_user_password(self, username_, old_password_, new_password_):
+        return userJson.change_user_password(username_, old_password_, new_password_)
+
+    def get_user_shown_name(self, username_):
+        return userJson.get_user_shown_name(username_)
+
+    def change_user_shown_name(self, username_, name_):
+        return userJson.change_user_shown_name(username_, name_)
+
+    def delete_user(self, username_):
+        return userJson.delete_user(username_)
+
+    def assign_file(self, username_, path_, touch_after):
+        return userJson.assign_file(username_, path_, touch_after)
+
+    def add_public_key(self, username_, key):
+        return userJson.add_public_key(username_, key)
+
+    def get_all_mirrors(self):
+        return mirrorJson.get_all_mirrors()
+
+    def get_mirror_name(self, mid):
+        return mirrorJson.get_mirror_name(mid)
+
+    def get_mirror_owner(self, mid):
+        return mirrorJson.get_mirror_owner(mid)
+
+    def create_mirror(self, name, owner):
+        return mirrorJson.create_mirror(name, owner)
+
+    def change_mirror_name(self, mid, new_name):
+        return mirrorJson.change_mirror_name(mid, new_name)
+
+    def delete_mirror(self, mid, remove_in_fs):
+        return mirrorJson.delete_mirror(mid, remove_in_fs)
+
+    def get_all_synced_folders(self):
+        return syncedJson.get_all_synced_folders()
+
+    def get_synced_folder_name(self, mid):
+        return syncedJson.get_synced_folder_name(mid)
+    
+    def get_synced_folder_owner(self, mid):
+        return syncedJson.get_synced_folder_owner(mid)
+
+    def create_synced_folder(self, name, owner):
+        return syncedJson.create_synced_folder(name, owner)
+
+    def change_synced_folder_name(self, mid, new_name):
+        return syncedJson.change_synced_folder_name(mid, new_name)
+
+    def delete_synced_folder(self, mid, remove_in_fs):
+        return syncedJson.delete_synced_folder(mid, remove_in_fs)
+
 if __name__ == '__main__':
+    # Initialize JSON-RPC
+    logging.basicConfig(level = logging.WARNING)
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcFilesAndUsers)
+    peer.listen_tcp(port = 5439)
+    
     # Initialize D-Bus loop
     dbus_loop = DBusGMainLoop(set_as_default=True)
     __check_nublic_resource_is_on(dbus_loop)

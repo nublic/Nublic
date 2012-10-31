@@ -18,9 +18,10 @@ USER_SEPARATOR = ':'
 DATA_ROOT = "/var/nublic/data"
 
 class UserDBus(dbus.service.Object):
-    def __init__(self, loop = None):
-        bus_name = dbus.service.BusName('com.nublic.users', bus=dbus.SystemBus())
-        dbus.service.Object.__init__(self, bus_name, '/com/nublic/Users')
+    def __init__(self, loop = None, initialize_dbus=True):
+        if initialize_dbus:
+            bus_name = dbus.service.BusName('com.nublic.users', bus=dbus.SystemBus())
+            dbus.service.Object.__init__(self, bus_name, '/com/nublic/Users')
     
     @dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
     def user_created(self, username, name):

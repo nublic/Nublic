@@ -3,6 +3,7 @@ import apt.progress.base
 import dbus.service
 import sys
 from threading import (Lock)
+from rpcbd import Handler
 
 class AcquireProgress(apt.progress.base.AcquireProgress):
     def __init__(self):
@@ -28,10 +29,12 @@ class InstallProgress(apt.progress.base.InstallProgress):
     def has_any_error_ocurred(self):
         return self.some_error
 
-class Apt(dbus.service.Object):
+class Apt(dbus.service.Object, Handler):
     '''
     Small APT daemon for Nublic use
     '''
+    assume_methods_block=False
+    
     def __init__(self, loop = None):
         bus_name = dbus.service.BusName('com.nublic.apt', bus=dbus.SystemBus())
         dbus.service.Object.__init__(self, bus_name, '/com/nublic/Apt')
