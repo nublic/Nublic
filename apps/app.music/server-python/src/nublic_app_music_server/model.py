@@ -1,5 +1,5 @@
 from unidecode import unidecode
-from nublic_server.sqlalchemyext import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 # Create database to base the model
 db = SQLAlchemy()
