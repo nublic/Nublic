@@ -95,6 +95,17 @@ def try_write_recursive(path, uid):
     else:
         try_write(path, uid)
 
+def try_read_recursive(path, uid):
+    ''' Throws PermissionError if ANY file under the file
+    given does not have permission to be written'''
+    if not os.path.exists(path):
+        raise PermissionError(uid, path, "Read")
+    if os.path.isdir(path):
+        [try_read_recursive(s, uid) for s in os.listdir(path)]
+    else:
+        try_read(path, uid)
+
+
 def try_write(path, uid, f_stat = None):
     ''' Throws PermissionError if the file
     given does not have permission to be written'''
@@ -106,7 +117,7 @@ def try_read(path, uid, f_stat = None):
     given does not have permission to be read'''
     if not permission_read(path, uid, f_stat):
         raise PermissionError(uid, path, "Read")
-    
+
 
 class PermissionError(Exception):
     '''
