@@ -9,10 +9,12 @@ from nublic_server.helpers import init_bare_nublic_server, require_uid, \
     require_user
 from nublic_server.files import try_read, permission_write, \
     PermissionError, try_write, try_write_recursive, get_file_info, \
-    get_folders
+    get_folders, try_read_recursive
 from nublic_server import files
 from nublic_files_and_users_client.dbus_client import list_mirrors, \
     list_synced_folders
+from tempfile import NamedTemporaryFile
+from zipfile import ZipFile
 
 
 # Init app
@@ -106,7 +108,7 @@ def thumbnail():
     * Returns: the raw image data
       -> only try to get things with thumbnail
     '''
-    # @todo: thumbnail
+    # @todo: thumbnail DEPENDS ON PROCESSOR
     pass
 
 
@@ -187,16 +189,43 @@ def generic_thumbnail(mime):
     return send_from_directory(GENERIC_THUMB_PATH, thumb)
 
 
+def prepare_zip_file():
+    ''' Create a zip file that will be deleted when garbage collected '''
+    tmp = NamedTemporaryFile(mode='w+b', suffix='.zip')
+    zip_file = ZipFile(tmp, 'w', allowZip64=True)
+    return zip_file
+
+
+def add_file_zip(zip_file, absolute, base):
+    ''' Zip a file or folder recursively with relative paths to base'''
+    if os.path.isdir(absolute):
+        files = os.listdir(absolute)
+        for f in files:
+            f_absolute = os.path.join(absolute, f)
+            add_file_zip(zip_file, f_absolute, base)
+    else:
+        arcname = os.path.relpath(absolute, base)
+        zip_file.write(absolute, arcname)
+    return zip_file
+
+
 @app.route('/zip/<path:path>')
-def zip_path():
+def zip_path(path):
     '''
     /zip/:path
     * :path -> folder you want to get as compressed file
     * Returns: the data of the zip
     '''
-    #hashlib.sha1()
-    # @todo: zip_path
-    pass
+    uid = require_uid()
+    internal_path = os.path.join(DATA_ROOT, path)
+    try:
+        try_read_recursive(internal_path, uid)
+        zip_file = prepare_zip_file()
+        add_file_zip(zip_file, internal_path, os.path.dirname(internal_path))
+        zip_file.close()
+        return send_file(zip_file.fp)
+    except PermissionError:
+        abort(401)
 
 
 @app.route('/zip-set', methods=['POST'])
@@ -206,8 +235,18 @@ def zip_set():
     * :files -> set of files separated by :
     * Returns: the data as zip
     '''
-    # @todo: zip_set
-    pass
+    uid = require_uid()
+    files = request.form.get('files').split(':')
+    try:
+        zip_file = prepare_zip_file()
+        for file_zip in files:
+            abs_file = os.path.join(DATA_ROOT, file_zip)
+            try_read(abs_file, uid)
+            add_file_zip(zip_file, abs_file, os.path.dirname(abs_file))
+        zip_file.close()
+        return send_file(zip_file.fp)
+    except PermissionError:
+        abort(401)
 
 
 @app.route('/raw/<path:file>')
@@ -237,7 +276,7 @@ def view():
       - 403 if a folder is requested
       - 404 if there is no such view for that file
     '''
-    # @todo: view
+    # @todo: view DEPENDS ON PROCESSORS
     pass
 
 
@@ -332,7 +371,7 @@ def changes(date, path):
                        , "deleted_files": [ filename, ... ]  // just strings
                        }
     '''
-    # @todo: changes
+    # @todo: changes DEPENDS ON PROCESSOR
     pass
 
 
