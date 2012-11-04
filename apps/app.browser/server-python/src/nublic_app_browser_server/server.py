@@ -15,6 +15,7 @@ from nublic_files_and_users_client.dbus_client import list_mirrors, \
     list_synced_folders
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
+from werkzeug.utils import secure_filename
 
 
 # Init app
@@ -23,7 +24,7 @@ app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-browser.python.log')
 app.logger.error('Starting browser app')
 
-DATA_ROOT = '/var/nublic/data/'
+DATA_ROOT = '/var/nublic/data/'  # It MUST end with '/' for security reasons
 GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails'
 
 
@@ -204,8 +205,8 @@ def add_file_zip(zip_file, absolute, base):
             f_absolute = os.path.join(absolute, f)
             add_file_zip(zip_file, f_absolute, base)
     else:
-        arcname = os.path.relpath(absolute, base)
-        zip_file.write(absolute, arcname)
+        archive_name = os.path.relpath(absolute, base)
+        zip_file.write(absolute, archive_name)
     return zip_file
 
 
@@ -394,6 +395,14 @@ def new_folder():
         abort(500)
 
 
+def stay_in_directory(path_check, path_base):
+    ''' Check if the join stays in the directory (security reasons)
+        reference: http://stackoverflow.com/a/2664652/1729524
+    '''
+    full = os.path.abspath(os.path.join(path_base, path_check))
+    return full[:len(path_base)] == path_base
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     '''
@@ -404,8 +413,21 @@ def upload():
                     (in multipart/form-data format)
     * Returns: nothing, or error 500 if something erroneous happens
     '''
-    # @todo: Upload
-    pass
+    uid = require_uid()
+    file_request = request.files['contents']
+    try:
+        if file_request:  # All extensions are allowed
+            filename = secure_filename(request.form.get('name'))
+            path = request.form.get('path')
+            abs_path = os.path.join(DATA_ROOT, path)
+            if stay_in_directory(path, DATA_ROOT):
+                try_write(abs_path, uid)  # Check permission write in directory
+                file.save(os.path.join(abs_path, filename))
+            else:
+                abort(401)
+            return 'ok'
+    except PermissionError:
+        abort(401)
 
 
 @app.route('/about')
