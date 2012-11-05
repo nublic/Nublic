@@ -61,7 +61,7 @@ def get_file_info(path, uid):
 
 def get_cache_folder(path):
     ''' Returns the full internal cache path for a file '''
-    return os.path.join(CACHE_ROOT_DIR, sha1(path))
+    return os.path.join(CACHE_ROOT_DIR, str(sha1(path)))
 
 def permission_read(path, uid, f_stat = None):
     ''' Returns true if the user has permission to read or 
