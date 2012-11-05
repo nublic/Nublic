@@ -423,7 +423,7 @@ def upload():
             abs_path = os.path.join(DATA_ROOT, path)
             if stay_in_directory(path, DATA_ROOT):
                 try_write(abs_path, uid)  # Check permission write in directory
-                file.save(os.path.join(abs_path, filename))
+                file_request.save(os.path.join(abs_path, filename))
             else:
                 abort(401)
             return 'ok'
