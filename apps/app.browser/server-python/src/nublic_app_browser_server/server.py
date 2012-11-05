@@ -41,7 +41,8 @@ def devices():
     user = require_user()
     mirrors = list_mirrors()
     synced = list_synced_folders()
-    devs = [dev.__setitem__(dev['owner'] == user) for dev in mirrors + synced]
+    devs = [dev.__setitem__(dev['owner'] == user.username)\
+                 for dev in mirrors + synced]
     return json.dumps(devs)
 
 
