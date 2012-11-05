@@ -63,10 +63,10 @@ def require_user():
     user = User(auth.username)
     if not user.exists():
         abort(401)
-    return auth.username
+    return user
 
 
 def require_uid():
     ''' Check the authorization and return the uid of the user '''
     user = require_user()
-    return get_user_uid(user)
+    return get_user_uid(user.get_username())
