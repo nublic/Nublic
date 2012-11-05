@@ -251,19 +251,18 @@ def zip_set():
         abort(401)
 
 
-@app.route('/raw/<path:file>')
-def raw():
+@app.route('/raw/<path:file_raw>')
+def raw(file_raw):
     '''
     /raw/:file
     * :file -> File to get raw contents (Nublic path)
     * Returns: raw data for the file
     '''
     uid = require_uid()
-    path = request.form.get('file')
-    internal_path = os.path.join(DATA_ROOT, path)
+    internal_path = os.path.join(DATA_ROOT, file_raw)
     try:
         try_write(internal_path, uid)
-        return send_file(internal_path)
+        return send_file(internal_path, as_attachment=True)
     except PermissionError:
         abort(401)
 
