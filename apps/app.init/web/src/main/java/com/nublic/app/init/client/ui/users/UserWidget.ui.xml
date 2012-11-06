@@ -27,7 +27,7 @@
 		<g:VerticalPanel>
 			<g:HorizontalPanel>
 				<g:cell width="200px" horizontalAlignment="right">
-					<g:Label addStyleNames="{style.labelmargin}">User name:</g:Label>
+					<g:Label addStyleNames="{style.labelmargin}" text="{msg.userName}"/>
 				</g:cell>
 				<g:TextBox ui:field="nameBox"/>
 				<g:cell verticalAlignment="middle">
@@ -37,7 +37,7 @@
 
 			<g:HorizontalPanel>
 				<g:cell width="200px" horizontalAlignment="right">
-					<g:Label addStyleNames="{style.labelmargin}">Password:</g:Label>
+					<g:Label addStyleNames="{style.labelmargin}" text="{msg.password}"/>
 				</g:cell>
 				<g:PasswordTextBox ui:field="passwordBox"/>
 				<g:cell verticalAlignment="middle">
@@ -47,7 +47,7 @@
 
 			<g:HorizontalPanel>
 				<g:cell width="200px" horizontalAlignment="right">
-					<g:Label addStyleNames="{style.labelmargin}">Password verification:</g:Label>
+					<g:Label addStyleNames="{style.labelmargin}" text="{msg.passwordVerification}"/>
 				</g:cell>
 				<g:PasswordTextBox ui:field="verificationBox"/>
 				<g:cell verticalAlignment="middle">
@@ -57,7 +57,7 @@
 
 			<g:HorizontalPanel>
 				<g:cell width="420px">
-					<g:Button addStyleNames="{style.floatright}" ui:field="createButton">Create user</g:Button>
+					<g:Button addStyleNames="{style.floatright}" ui:field="createButton" text="{msg.createUser}"/>
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>

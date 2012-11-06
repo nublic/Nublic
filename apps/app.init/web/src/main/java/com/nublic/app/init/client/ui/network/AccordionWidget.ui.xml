@@ -1,0 +1,38 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.init.client.ui">
+	<ui:style>
+		.accordion {
+			background-color: #FFF;
+			margin-top: 15px;
+		}
+		.accordion a {
+			line-height: 20px;
+		}
+		.leftmargin {
+			margin-left: 15px;
+		}
+	</ui:style>
+	
+	<ui:with type="com.nublic.app.init.client.ui.network.IdGenerator" field="idGenerator"/>
+
+	<g:HTMLPanel>
+		<div class="accordion" id="{idGenerator.topId}">
+			<div class="accordion-group {style.accordion}">
+				<div class="accordion-heading">
+					<a class="accordion-toggle" data-toggle="collapse" data-parent="#{idGenerator.topId}" href="#{idGenerator.innerId}">
+						<g:HorizontalPanel verticalAlignment="middle">
+							<g:Label ui:field="title"/>
+							<n:CheckFeedback ui:field="feedback" addStyleNames="{style.leftmargin}"/>
+						</g:HorizontalPanel>
+					</a>
+				</div>
+				<div id="{idGenerator.innerId}" class="accordion-body collapse"> <!-- "in" to show it open -->
+					<g:HTMLPanel ui:field="container" addStyleNames="accordion-inner"/>
+				</div>
+			</div>
+		</div>
+	</g:HTMLPanel>
+
+</ui:UiBinder> 

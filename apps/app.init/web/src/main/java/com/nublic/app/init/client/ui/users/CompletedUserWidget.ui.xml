@@ -16,14 +16,15 @@
 		}
 	</ui:style>
 	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
 	
 	<g:HorizontalPanel addStyleNames="{style.margintop}" verticalAlignment="ALIGN_MIDDLE">
 		<g:Image resource="{res.personsmall}"/>
 		<g:VerticalPanel addStyleNames="{style.margins}">
-			<g:Label addStyleNames="{style.pretitle}" text="User name:"/>
+			<g:Label addStyleNames="{style.pretitle}" text="{msg.userName}"/>
 			<g:HTMLPanel><h3><g:Label ui:field="nameLabel"/></h3></g:HTMLPanel>
 		</g:VerticalPanel>
-		<n:CheckFeedback ui:field="checkFeedback" checkInfo="User properly created" feedback="CHECK"/>
+		<n:CheckFeedback ui:field="checkFeedback" checkInfo="{msg.userCreated}" feedback="CHECK"/>
 		
 	</g:HorizontalPanel>
 </ui:UiBinder>

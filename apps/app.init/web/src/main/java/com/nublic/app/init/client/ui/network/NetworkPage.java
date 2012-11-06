@@ -22,6 +22,7 @@ public class NetworkPage extends CentralPanel {
 		
 		footer.setLinks(Constants.PARAM_PAGE + "=" + Constants.VALUE_MASTER_USER,
 				Constants.PARAM_PAGE + "=" + Constants.VALUE_NAME);
+
 	}
 
 	@Override

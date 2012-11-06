@@ -77,7 +77,7 @@ public class NamePage extends CentralPanel {
 	@Override
 	public boolean canChangeTo(Step s) {
 		return EnumSet.of(Step.WELCOME, Step.USERS, Step.MASTER_USER, Step.NET_CONFIG, Step.NAME).contains(s) ||
-				(s == Step.FINISHED && false);
+				(s == Step.FINISHED && nameFeedback.isChecked());
 	}
 
 }

@@ -1,0 +1,53 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.mainbox {
+			background-color: #ffffff;
+			border: solid 1px #CCC;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			border-radius: 10px;
+			-webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
+			-moz-box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
+			box-shadow: 0 3px 5px rgba(0, 0, 0, .2);
+		}
+		.linkbox {
+			width: 280px;
+			height: 175px;
+			text-align: center;
+		}
+		.linkbox:hover {
+			cursor: pointer;
+			cursor: hand;
+			background-image: -moz-linear-gradient(top, #ffffff, #c8e2ed) !important;
+			background-image: -ms-linear-gradient(top, #ffffff, #c8e2ed) !important;
+			background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#c8e2ed)) !important;
+			background-image: -webkit-linear-gradient(top, #ffffff, #c8e2ed) !important;
+			background-image: -o-linear-gradient(top, #ffffff, #c8e2ed) !important;
+			background-image: linear-gradient(top, #ffffff, #c8e2ed) !important;
+			filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#c8e2ed', GradientType=0) !important;
+		}
+		.linkbox:hover h3 {
+  			color: #034966;
+		}
+		.linkbox a:hover {
+			color: #034966;
+  			text-decoration: none;
+		}
+	</ui:style>
+
+	<g:HTMLPanel addStyleNames="{style.mainbox} {style.linkbox}">
+		<a>
+			<div>
+				<div style="margin-top: 15px;">
+		        	<h4><g:Label ui:field="title"/></h4>
+		        </div>
+		        <div style="margin-top: 15px;">
+					<g:Image ui:field="image"/>
+				</div>
+			</div>
+		</a>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

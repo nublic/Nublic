@@ -7,6 +7,7 @@
 			float: right;
 		}
 		.scroll {
+			background-color: #F2F6F8;
 			overflow-y: auto;
 		}
 	</ui:style>

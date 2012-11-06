@@ -46,7 +46,7 @@
 	<g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.defaultheight}">
 			<div style="width: 100%; display: table;">
-				<h1 style="float: left;">Name your Nublic</h1>
+				<h1 style="float: left;"><ui:text from="{msg.nameIt}"/></h1>
 			</div>
 
 			<g:HorizontalPanel addStyleNames="{style.topmargin}" verticalAlignment="middle" width="100%">
@@ -71,7 +71,7 @@
 					<g:Image resource="{res.link}" addStyleNames="{style.inline}"/>
 					<g:Label ui:field="feedbackLink" addStyleNames="{style.message} {style.inline}"/>
 				</g:HTMLPanel>
-				<g:Label addStyleNames="{style.grey}" text="(this URL will start to work everywhere some moments after clicking on 'next step')"/>
+				<g:Label addStyleNames="{style.grey}" text="{msg.nameText}"/>
 			</g:VerticalPanel>
 		</g:HTMLPanel>
 		<n:FooterPagination ui:field="footer"/>

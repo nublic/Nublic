@@ -8,12 +8,14 @@
 			min-height: 400px;
 		}
 	</ui:style>
+	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
+	
 	<g:HTMLPanel>
 		<g:HTMLPanel addStyleNames="{style.defaultheight}">
 			<div style="width: 100%; display: table;">
-				<h1 style="float: left;">Users administration</h1>
+				<h1 style="float: left;"><ui:text from="{msg.users}"/></h1>
 			</div>
-			<p>Create at least one user to grant secure access to your Nublic device</p>
+			<p><ui:text from="{msg.usersText}"/></p>
 			<g:HTMLPanel ui:field="centralPanel"/>
 			<u:UserWidget/>
 		</g:HTMLPanel>

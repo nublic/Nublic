@@ -31,6 +31,9 @@ public interface Resources extends ClientBundle {
 	@Source("images/check.png")
 	ImageResource check();
 	
+	@Source("images/checkbig.png")
+	ImageResource checkbig();
+	
 	@Source("images/cross.png")
 	ImageResource cross();
 	
@@ -45,4 +48,16 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/link.png")
 	ImageResource link();
+	
+	@Source("images/config.png")
+	ImageResource config();
+	
+	@Source("images/sparkleshare.png")
+	ImageResource sparkleshare();
+	
+	@Source("images/logo.png")
+	ImageResource logo();
+	
+	@Source("images/multimedia.png")
+	ImageResource multimedia();
 }
