@@ -198,14 +198,16 @@ def prepare_zip_file():
     return zip_file
 
 
-def add_file_zip(zip_file, absolute, base):
+def add_file_zip(zip_file, absolute, base, uid):
     ''' Zip a file or folder recursively with relative paths to base'''
     if os.path.isdir(absolute):
         files = os.listdir(absolute)
         for f in files:
             f_absolute = os.path.join(absolute, f)
-            add_file_zip(zip_file, f_absolute, base)
+            try_read(f_absolute, uid)
+            add_file_zip(zip_file, f_absolute, base, uid)
     else:
+        try_read(absolute, uid)
         archive_name = os.path.relpath(absolute, base)
         zip_file.write(absolute, archive_name)
     return zip_file
@@ -221,11 +223,12 @@ def zip_path(path):
     uid = require_uid()
     internal_path = os.path.join(DATA_ROOT, path)
     try:
-        try_read_recursive(internal_path, uid)
+        #try_read_recursive(internal_path, uid)
         zip_file = prepare_zip_file()
-        add_file_zip(zip_file, internal_path, os.path.dirname(internal_path))
+        add_file_zip(zip_file, internal_path, \
+                     os.path.dirname(internal_path), uid)
         zip_file.close()
-        return send_file(zip_file.fp)
+        return send_file(zip_file.filename)
     except PermissionError:
         abort(401)
 
@@ -243,8 +246,8 @@ def zip_set():
         zip_file = prepare_zip_file()
         for file_zip in files:
             abs_file = os.path.join(DATA_ROOT, file_zip)
-            try_read(abs_file, uid)
-            add_file_zip(zip_file, abs_file, os.path.dirname(abs_file))
+            add_file_zip(zip_file, abs_file, \
+                         os.path.dirname(abs_file), uid)
         zip_file.close()
         return send_file(zip_file.fp)
     except PermissionError:
@@ -306,8 +309,8 @@ def move():
         * :files -> files to move
         * :target -> folder to put the files
     '''
-    from_array = request.form.get('from').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('to'))
+    from_array = request.form.get('files').split(':')
+    internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
     uid = require_uid()
     try:
         for from_path in from_array:
@@ -326,8 +329,8 @@ def copy():
         * :files -> files to move or copy separated by :
         * :target -> folder to put the files
     '''
-    from_array = request.form.get('from').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('to'))
+    from_array = request.form.get('files').split(':')
+    internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
     uid = require_uid()
     try:
         for from_path in from_array:
