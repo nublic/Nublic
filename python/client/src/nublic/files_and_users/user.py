@@ -5,6 +5,7 @@ from ..dbus_in_other_thread import call_expecting_return, call_without_return
 from ..rpcbd_client import rpcbd_call_return, rpcbd_call
 import mirror
 import work_folder
+from nublic_server.files import PermissionError
 
 DATA_ROOT = "/var/nublic/data"
 
@@ -97,6 +98,8 @@ class User:
         filtered = filter(lambda p: path.startswith(p + '/') or path == p, allowed_paths)
         if not filtered:
             return False
+        if not os.path.exists(path):
+            return False
         # If it is the owner, it can do whathever it wants
         if self.is_owner(path):
             return True
@@ -109,6 +112,18 @@ class User:
 
     def can_write(self, path):
         return self._check_permissions(path, self._writable_paths, 0020, 0002)
+
+    def try_write(self, path):
+        ''' Throws PermissionError if the file
+        given does not have permission to be written'''
+        if not self.can_write(path):
+            raise PermissionError(self.get_username(), path, "Write")
+
+    def try_read(self, path):
+        ''' Throws PermissionError if the file
+        given does not have permission to be read'''
+        if not self.can_read(path):
+            raise PermissionError(self.get_username(), path, "Read")
 
     def get_owned_mirrors(self):
         return filter(lambda m: self.is_owner(m.get_path()), mirror.get_all_mirrors())
