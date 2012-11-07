@@ -69,4 +69,4 @@ def require_user():
 def require_uid():
     ''' Check the authorization and return the uid of the user '''
     user = require_user()
-    return get_user_uid(user.get_username())
+    return user.get_user_uid()
