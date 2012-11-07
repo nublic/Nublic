@@ -7,7 +7,7 @@ from flask.helpers import send_from_directory
 
 from nublic_server.helpers import init_bare_nublic_server, require_uid, \
     require_user
-from nublic_server.files import try_read, permission_write, \
+from nublic_server.files import try_read, \
     PermissionError, try_write, try_write_recursive, get_file_info, \
     get_folders, try_read_recursive
 from nublic_server import files
@@ -291,12 +291,12 @@ def rename():
             * :from -> file to change the name
             * :to -> new name of the file
     '''
-    user = require_uid()
+    user = require_user()
     path_from = os.path.join(DATA_ROOT, request.form.get('from'))
     path_to = os.path.join(DATA_ROOT, request.form.get('to'))
     if not os.path.exists(path_from):
         abort(404)
-    if not permission_write(path_from, user):
+    if not user.can_write(path_from):
         abort(401)
     # Rename does not need to change the user
     os.rename(path_from, path_to)
@@ -311,11 +311,11 @@ def move():
     '''
     from_array = request.form.get('files').split(':')
     internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
-    uid = require_uid()
+    user = require_user()
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path)
-            try_write(internal_to, uid)
+            user.try_write(internal_to)
             shutil.move(internal_from, internal_to)
     except PermissionError:
         abort(401)
@@ -331,11 +331,11 @@ def copy():
     '''
     from_array = request.form.get('files').split(':')
     internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
-    uid = require_uid()
+    user = require_user()
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path)
-            files.copy(internal_from, internal_to, uid)
+            files.copy(internal_from, internal_to, user)
     except PermissionError:
         abort(401)
     return 'ok'
@@ -416,7 +416,7 @@ def upload():
                     (in multipart/form-data format)
     * Returns: nothing, or error 500 if something erroneous happens
     '''
-    uid = require_uid()
+    user = require_user()
     file_request = request.files['contents']
     try:
         if file_request:  # All extensions are allowed
@@ -424,7 +424,7 @@ def upload():
             path = request.form.get('path')
             abs_path = os.path.join(DATA_ROOT, path)
             if stay_in_directory(path, DATA_ROOT):
-                try_write(abs_path, uid)  # Check permission write in directory
+                user.try_write(abs_path)  # Check permission write in directory
                 file_request.save(os.path.join(abs_path, filename))
             else:
                 abort(401)
