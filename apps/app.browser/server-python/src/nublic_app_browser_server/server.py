@@ -1,18 +1,22 @@
 
-from flask import Flask, request, abort, send_file
 import os.path
 import simplejson as json
+import shutil
+from flask import Flask, request, abort, send_file
+from flask.helpers import send_from_directory
 
 from nublic_server.helpers import init_bare_nublic_server, require_uid, \
     require_user
 from nublic_server.files import try_read, permission_write, \
     PermissionError, try_write, try_write_recursive, get_file_info, \
-    get_folders
+    get_folders, try_read_recursive
 from nublic_server import files
-import shutil
 from nublic_files_and_users_client.dbus_client import list_mirrors, \
     list_synced_folders
-from flask.helpers import send_from_directory
+from tempfile import NamedTemporaryFile
+from zipfile import ZipFile
+from werkzeug.utils import secure_filename
+
 
 # Init app
 app = Flask(__name__)
@@ -20,8 +24,9 @@ app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-browser.python.log')
 app.logger.error('Starting browser app')
 
-DATA_ROOT = '/var/nublic/data/'
+DATA_ROOT = '/var/nublic/data/'  # It MUST end with '/' for security reasons
 GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails'
+
 
 @app.route('/devices')
 def devices():
@@ -29,14 +34,17 @@ def devices():
     /devices
     * Returns:
       return_value ::= [ device ]
-      device       ::= { "id": $id, "kind": kind, "name": $name, "owner": true | false }
+      device       ::= { "id": $id, "kind": kind, "name": $name,
+                          "owner": true | false }
       kind         ::= "mirror" | "synced" | "media"
     '''
     user = require_user()
     mirrors = list_mirrors()
     synced = list_synced_folders()
-    devs = [dev.__setitem__(dev['owner'] == user) for dev in mirrors + synced]
+    devs = [dev.__setitem__(dev['owner'] == user.username)\
+                 for dev in mirrors + synced]
     return json.dumps(devs)
+
 
 @app.route('/folders/<int:depth>/<path:path>')
 def folders(depth, path):
@@ -47,7 +55,8 @@ def folders(depth, path):
     * Returns:
       return_value ::= [ folder ]
                      |   null  # if the path does not exist
-      folder       ::= { "name": $name, "subfolders": [ folder ], "writable": $can_write }
+      folder       ::= { "name": $name, "subfolders": [ folder ],
+                                      "writable": $can_write }
     '''
     if depth <= 0:
         abort(400)
@@ -57,6 +66,7 @@ def folders(depth, path):
         abort(404)
     return json.dumps(get_folders(depth, path_absolute, uid))
 
+
 @app.route('/files/<path:path>')
 def files_path(path):
     '''
@@ -65,11 +75,15 @@ def files_path(path):
     * Returns:
       return_value ::= [ file ]
                      |   null  # if the path does not exist
-      file         ::= { "name": $name, "writable": $can_write, "last_update": $time, "size": $size, "thumb": $has_thumb, "mime": $mime_type, "view": $view }
-                   -> we know it's a directory if mime == "application/x-directory"
-                   -> view indicates which preview you have for the item: now pdf, png, mp3, flv
-                      -> if "null", there is no preview available
-                   -> Size in bytes
+      file         ::= { "name": $name, "writable": $can_write,
+                         "last_update": $time, "size": $size,
+                         "thumb": $has_thumb, "mime": $mime_type,
+                         "view": $view }
+            -> we know it's a directory if mime == "application/x-directory"
+            -> view indicates which preview you have for the item:
+                -> now pdf, png, mp3, flv
+                -> if "null", there is no preview available
+                -> Size in bytes
     '''
     uid = require_uid()
     path_absolute = os.path.join(DATA_ROOT, path)
@@ -86,7 +100,6 @@ def files_path(path):
     except PermissionError:
         abort(401)
     return json.dumps(infos)
-    
 
 
 @app.route('/thumbnail/<path:file>')
@@ -96,8 +109,8 @@ def thumbnail():
     * :file -> File to show the thumbnail (Nublic path)
     * Returns: the raw image data
       -> only try to get things with thumbnail
-    '''    
-    # @todo
+    '''
+    # @todo: thumbnail DEPENDS ON PROCESSOR
     pass
 
 
@@ -108,25 +121,116 @@ def generic_thumbnail(mime):
     * :id -> Identifier of mime type
     * Returns: generic image for that mime type
     '''
-    mapping = {"application/x-directory": "folder.png", 
-               }
-    # @todo
+    directory_mapping = {'image': "folder.png",
+                         'mimes': ["application/x-directory"]}
+    images_mapping = {'image': "image.png",
+                      'mimes': ["image/bmp", "image/gif", "image/png",
+                                "image/jpg", "image/jpeg", "image/pjpeg",
+                                "image/svg", "image/x-icon", "image/x-pict",
+                                "image/x-pcx", "image/pict",
+                                "image/x-portable-bitmap", "image/tiff",
+                                "image/x-tiff", "image/x-xbitmap",
+                                "image/x-xbm", "image/xbm", "application/wmf",
+                                "application/x-wmf", "image/wmf",
+                                "image/x-wmf", "image/x-ms-bmp"
+                                ]
+                      }
+    audio_mapping = {'image': "audio.mp3",
+                     'mimes': [
+                        '''Obtained looking at:
+                        - List of files supported by ffmpeg: `ffmpeg -formats`
+                        - Information about file extensions: http://filext.com/
+                        '''
+                                # AAC
+                                "audio/aac", "audio/x-aac",
+                                # AC3
+                                "audio/ac3",
+                                # AIFF
+                                "audio/aiff", "audio/x-aiff", "sound/aiff",
+                                "audio/x-pn-aiff",
+                                # ASF
+                                "audio/asf",
+                                # MIDI
+                                "audio/mid", "audio/x-midi",
+                                # AU
+                                "audio/basic", "audio/x-basic", "audio/au",
+                                "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
+                                # PCM
+                                "application/x-pcm",
+                                # MP4
+                                "audio/mp4",
+                                # MP3
+                                "audio/mpeg", "audio/x-mpeg", "audio/mp3",
+                                "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
+                                "audio/mpg", "audio/x-mpg",
+                                "audio/x-mpegaudio",
+                                # WAV
+                                "audio/wav", "audio/x-wav", "audio/wave",
+                                "audio/x-pn-wav",
+                                # OGG
+                                "audio/ogg", "application/ogg", "audio/x-ogg",
+                                "application/x-ogg",
+                                # FLAC
+                                "audio/flac",
+                                # WMA
+                                "audio/x-ms-wma",
+                                # Various
+                                "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
+                                "audio/x-gsm", "audio/snd"
+                               ]
+                     }
+    mappings = [directory_mapping, images_mapping, audio_mapping]
+    # @todo: Non Djvu or similar supported. It needs refactoring to filewatcher
     try:
-        thumb = mapping[mime]
+        for mapping in mappings:
+            if mime in mapping['mimes']:
+                thumb = mapping['image']
+                return send_from_directory(GENERIC_THUMB_PATH, thumb)
     except KeyError:
         thumb = "file.png"
     return send_from_directory(GENERIC_THUMB_PATH, thumb)
 
+
+def prepare_zip_file():
+    ''' Create a zip file that will be deleted when garbage collected '''
+    tmp = NamedTemporaryFile(mode='w+b', suffix='.zip')
+    zip_file = ZipFile(tmp, 'w', allowZip64=True)
+    return zip_file
+
+
+def add_file_zip(zip_file, absolute, base, uid):
+    ''' Zip a file or folder recursively with relative paths to base'''
+    if os.path.isdir(absolute):
+        files = os.listdir(absolute)
+        for f in files:
+            f_absolute = os.path.join(absolute, f)
+            try_read(f_absolute, uid)
+            add_file_zip(zip_file, f_absolute, base, uid)
+    else:
+        try_read(absolute, uid)
+        archive_name = os.path.relpath(absolute, base)
+        zip_file.write(absolute, archive_name)
+    return zip_file
+
+
 @app.route('/zip/<path:path>')
-def zip_path():
+def zip_path(path):
     '''
     /zip/:path
     * :path -> folder you want to get as compressed file
     * Returns: the data of the zip
     '''
-    #hashlib.sha1()
-    # @todo
-    pass
+    uid = require_uid()
+    internal_path = os.path.join(DATA_ROOT, path)
+    try:
+        #try_read_recursive(internal_path, uid)
+        zip_file = prepare_zip_file()
+        add_file_zip(zip_file, internal_path, \
+                     os.path.dirname(internal_path), uid)
+        zip_file.close()
+        return send_file(zip_file.filename)
+    except PermissionError:
+        abort(401)
 
 
 @app.route('/zip-set', methods=['POST'])
@@ -136,24 +240,35 @@ def zip_set():
     * :files -> set of files separated by :
     * Returns: the data as zip
     '''
-    # @todo
-    pass
+    uid = require_uid()
+    files = request.form.get('files').split(':')
+    try:
+        zip_file = prepare_zip_file()
+        for file_zip in files:
+            abs_file = os.path.join(DATA_ROOT, file_zip)
+            add_file_zip(zip_file, abs_file, \
+                         os.path.dirname(abs_file), uid)
+        zip_file.close()
+        return send_file(zip_file.fp)
+    except PermissionError:
+        abort(401)
 
-@app.route('/raw/<path:file>')
-def raw():
+
+@app.route('/raw/<path:file_raw>')
+def raw(file_raw):
     '''
     /raw/:file
     * :file -> File to get raw contents (Nublic path)
     * Returns: raw data for the file
     '''
     uid = require_uid()
-    path = request.form.get('file')
-    internal_path = os.path.join(DATA_ROOT, path)
+    internal_path = os.path.join(DATA_ROOT, file_raw)
     try:
         try_write(internal_path, uid)
-        return send_file(internal_path)
+        return send_file(internal_path, as_attachment=True)
     except PermissionError:
         abort(401)
+
 
 @app.route('/view/<path:file>.<type>')
 def view():
@@ -165,7 +280,7 @@ def view():
       - 403 if a folder is requested
       - 404 if there is no such view for that file
     '''
-    # @todo
+    # @todo: view DEPENDS ON PROCESSORS
     pass
 
 
@@ -186,6 +301,7 @@ def rename():
     # Rename does not need to change the user
     os.rename(path_from, path_to)
 
+
 @app.route('/move', methods=['POST'])
 def move():
     ''' Handle this petition:
@@ -193,8 +309,8 @@ def move():
         * :files -> files to move
         * :target -> folder to put the files
     '''
-    from_array = request.form.get('from').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('to'))
+    from_array = request.form.get('files').split(':')
+    internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
     uid = require_uid()
     try:
         for from_path in from_array:
@@ -205,15 +321,16 @@ def move():
         abort(401)
     return 'ok'
 
+
 @app.route('/copy', methods=['POST'])
 def copy():
     ''' Handle this petition:
          POST /copy
-        * :files -> files to move or copy separated by : 
+        * :files -> files to move or copy separated by :
         * :target -> folder to put the files
     '''
-    from_array = request.form.get('from').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('to'))
+    from_array = request.form.get('files').split(':')
+    internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
     uid = require_uid()
     try:
         for from_path in from_array:
@@ -222,6 +339,7 @@ def copy():
     except PermissionError:
         abort(401)
     return 'ok'
+
 
 @app.route('/delete', methods=['POST'])
 def delete():
@@ -241,9 +359,10 @@ def delete():
             #os.remove(internal_path)
     except PermissionError:
         abort(401)
-    except: # Catch a possible rmtree Exception
+    except:  # Catch a possible rmtree Exception
         abort(500)
     return 'ok'
+
 
 @app.route('/changes/<date>/<path>')
 def changes(date, path):
@@ -253,10 +372,10 @@ def changes(date, path):
     * :path -> path we are looking at to see changes
     * Returns:
       return_value ::= { "new_files": [ file, file, ... ]  // files as above
-                       , "deleted_files": [ filename, filename, ... ]  // just strings
+                       , "deleted_files": [ filename, ... ]  // just strings
                        }
     '''
-    # @todo:
+    # @todo: changes DEPENDS ON PROCESSOR
     pass
 
 
@@ -278,18 +397,40 @@ def new_folder():
     except PermissionError:
         abort(500)
 
+
+def stay_in_directory(path_check, path_base):
+    ''' Check if the join stays in the directory (security reasons)
+        reference: http://stackoverflow.com/a/2664652/1729524
+    '''
+    full = os.path.abspath(os.path.join(path_base, path_check))
+    return full[:len(path_base)] == path_base
+
+
 @app.route('/upload', methods=['POST'])
 def upload():
     '''
     POST /upload
     * :name -> name of the new file
     * :path -> folder where it will be uploaded
-    * :contents -> POST argument with the file contents (in multipart/form-data format)
+    * :contents -> POST argument with the file contents
+                    (in multipart/form-data format)
     * Returns: nothing, or error 500 if something erroneous happens
     '''
-    # @todo Upload
-    pass
-
+    uid = require_uid()
+    file_request = request.files['contents']
+    try:
+        if file_request:  # All extensions are allowed
+            filename = secure_filename(request.form.get('name'))
+            path = request.form.get('path')
+            abs_path = os.path.join(DATA_ROOT, path)
+            if stay_in_directory(path, DATA_ROOT):
+                try_write(abs_path, uid)  # Check permission write in directory
+                file_request.save(os.path.join(abs_path, filename))
+            else:
+                abort(401)
+            return 'ok'
+    except PermissionError:
+        abort(401)
 
 
 @app.route('/about')

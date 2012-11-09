@@ -23,27 +23,25 @@ def load_apps():
     for f in os.listdir(APP_INFO_ROOT):
         if f.endswith('.json'):
             fp = open(os.path.join(APP_INFO_ROOT, f))
-            app = json.load(fp)
+            app_data = json.load(fp)
             fp.close()
-            apps[app['id']] = app
+            apps[app_data['id']] = app_data
     return apps
 
 @app.route('/apps')
 def apps():
-    require_user()
     apps = load_apps()
     return_apps = []
     for app_id in apps:
-        app = apps[app_id]
-        if 'web' in app:
-            return_app = { 'id': app['id'], 'name': app['name'],
-                           'developer': app['developer'], 'web': app['web'] }
+        current_app = apps[app_id]
+        if 'web' in current_app:
+            return_app = { 'id': current_app['id'], 'name': current_app['name'],
+                           'developer': current_app['developer'], 'web': current_app['web'] }
             return_apps.append(return_app)
     return json.dumps(return_apps)
 
 @app.route('/app-image/<style>/<app_id>/<size>')
 def app_image(style, app_id, size):
-    require_user()
     apps = load_apps()
     if app_id in apps:
         app = apps[app_id]
@@ -59,7 +57,6 @@ def app_image(style, app_id, size):
 
 @app.route('/users')
 def users():
-    require_user()
     return_users = []
     for user in get_all_users():
         return_user = { 'username': user.get_username(),
@@ -73,49 +70,56 @@ def user_name():
     user = require_user()
     return user.get_shown_name()
 
-@app.route('/user-info', methods=['GET', 'PUT'])
-def user_info():
+@app.route('/user-info', methods=['GET'])
+def user_info_get():
     user = require_user()
-    if request.method == 'GET':
-        return json.dumps({ 'username': user.get_username(),
+    return json.dumps({ 'username': user.get_username(),
                             'uid': user.get_id(),
                             'name': user.get_shown_name() })
-    elif request.method == 'PUT':
-        name = request.form.get('name', None)
-        if name != None:
-            user.change_shown_name(name)
-            return 'ok'
-        else:
-            abort(500)
 
-@app.route('/mirrors', methods=['GET', 'PUT', 'DELETE'])
-def mirrors():
+@app.route('/user-info', methods=['PUT'])
+def user_info_put():
+    user = require_user()
+    name = request.form.get('name', None)
+    if name != None:
+        user.change_shown_name(name)
+        return 'ok'
+    else:
+        abort(400)
+
+@app.route('/mirrors', methods=['GET'])
+def mirrors_get():
     user = require_user()
     # Get mirrors information
-    if request.method == 'GET':
-        return_mirrors = []
-        for mirror in user.get_owned_mirrors():
-            return_mirror = { 'id': mirror.get_id(), 'name': mirror.get_name() }
-            return_mirrors.append(return_mirror)
-        return_mirrors.sort(key=lambda m: m['name'])
-        return json.dumps(return_mirrors)
+    return_mirrors = []
+    for mirror in user.get_owned_mirrors():
+        return_mirror = { 'id': mirror.get_id(), 'name': mirror.get_name() }
+        return_mirrors.append(return_mirror)
+    return_mirrors.sort(key=lambda m: m['name'])
+    return json.dumps(return_mirrors)
+
+@app.route('/mirrors', methods=['PUT'])
+def mirrors_put():
+    user = require_user()
     # Create a new mirror
-    elif request.method == 'PUT':
-        name = request.form.get('name', None)
-        if name != None:
-            mirror = create_mirror(name, user.get_username())
-            return str(mirror.get_id())
-        else:
-            abort(500)
+    name = request.form.get('name', None)
+    if name != None:
+        mirror = create_mirror(name, user.get_username())
+        return str(mirror.get_id())
+    else:
+        abort(400)
+
+@app.route('/mirrors', methods=['DELETE'])
+def mirrors_delete():
+    user = require_user()
     # Delete a mirror
-    elif request.method == 'DELETE':
-        mid = int(request.form.get('id'))
-        m = Mirror(mid)
-        if m.exists() and m.get_owner().get_username() == user.get_username():
-            m.delete(False)
-            abort(200)
-        else:
-            abort(403)
+    mid = int(request.form.get('id'))
+    m = Mirror(mid)
+    if m.exists() and m.get_owner().get_username() == user.get_username():
+        m.delete(False)
+        abort(200)
+    else:
+        abort(403)
 
 @app.route('/mirror-name', methods=['PUT'])
 def mirror_name():
@@ -130,34 +134,38 @@ def mirror_name():
     else:
         abort(403)
 
-@app.route('/synceds', methods=['GET', 'PUT', 'DELETE'])
-def synceds():
+@app.route('/synceds', methods=['GET'])
+def synceds_get():
     user = require_user()
     # Get mirrors information
-    if request.method == 'GET':
-        return_synceds = []
-        for synced in user.get_owned_work_folders():
-            return_synced = { 'id': synced.get_id(), 'name': synced.get_name() }
-            return_synceds.append(return_synced)
-        return_synceds.sort(key=lambda m: m['name'])
-        return json.dumps(return_synceds)
+    return_synceds = []
+    for synced in user.get_owned_work_folders():
+        return_synced = { 'id': synced.get_id(), 'name': synced.get_name() }
+        return_synceds.append(return_synced)
+    return_synceds.sort(key=lambda m: m['name'])
+    return json.dumps(return_synceds)
+
+@app.route('/synceds', methods=['PUT'])
+def synceds_put():
+    user = require_user()
     # Create a new mirror
-    elif request.method == 'PUT':
-        name = request.form.get('name', None)
-        if name != None:
-            synced = create_work_folder(name, user.get_username())
-            return str(synced.get_id())
-        else:
-            abort(500)
+    name = request.form.get('name', None)
+    if name != None:
+        synced = create_work_folder(name, user.get_username())
+        return str(synced.get_id())
+    else:
+        abort(400)
+
+@app.route('/synceds', methods=['DELETE'])
+def synceds_delete():
     # Delete a mirror
-    elif request.method == 'DELETE':
-        sid = int(request.form.get('id'))
-        s = WorkFolder(sid)
-        if s.exists() and s.get_owner().get_username() == user.get_username():
-            s.delete(False)
-            abort(200)
-        else:
-            abort(403)
+    sid = int(request.form.get('id'))
+    s = WorkFolder(sid)
+    if s.exists() and s.get_owner().get_username() == user.get_username():
+        s.delete(False)
+        abort(200)
+    else:
+        abort(403)
 
 @app.route('/synced-name', methods=['PUT'])
 def synced_name():

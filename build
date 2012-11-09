@@ -168,6 +168,7 @@ copy_and_touch 3rd-party-libs/tomcat7
 copy_and_touch 3rd-party-libs/lucene-solr
 build_deb_package 3rd-party-libs/pykka
 build_deb_package 3rd-party-libs/rpcbd-0.6.0
+build_deb_package 3rd-party-libs/flask-sqlalchemy
 # build_deb_package 3rd-party-libs/guava
 # bst-player fork
 package_and_install_dev_mode player

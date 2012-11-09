@@ -28,12 +28,12 @@ class SongInfo:
     
     def clean(self):
         title = self.title
-        match = re.match(r'(?i)track (\d+)', title)
-        if match != None:
-            track_no = int(match.group(1))
-            return SongInfo(None, self.artist, self.album, self.length, self.year, track_no, self.disc_no)
-        else:
-            return self.clone()
+        if isinstance(title, basestring):
+            match = re.match(r'(?i)track (\d+)', title)
+            if match != None:
+                track_no = int(match.group(1))
+                return SongInfo(None, self.artist, self.album, self.length, self.year, track_no, self.disc_no)
+        return self.clone()
 
 def get_song_info(file_, context, logger = None):
     if logger != None:

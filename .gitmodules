@@ -16,3 +16,6 @@
 [submodule "3rd-party-libs/pyechonest"]
 	path = 3rd-party-libs/pyechonest
 	url = https://github.com/echonest/pyechonest
+[submodule "3rd-party-libs/flask-sqlalchemy"]
+	path = 3rd-party-libs/flask-sqlalchemy
+	url = git@github.com:davisein/flask-sqlalchemy.git

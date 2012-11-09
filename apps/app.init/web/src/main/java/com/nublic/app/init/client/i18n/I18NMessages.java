@@ -7,26 +7,58 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 @DefaultLocale("en")
 public interface I18NMessages extends Messages {
 
-	String userStep();
-	String masterUserStep();
-	String netConfigStep();
-	String nameStep();
-	
+	// Step header
+	String users();
+	String masterPassword();
+	String networkConfiguration();
+	String nameIt();
+
+	// Common stuff
+	String title();
 	String previousStep();
 	String nextStep();
-	
 	String completeFirst();
+
+	// Welcome
+	String welcomeTitle();
+	String welcomeText();
+	String welcomeInfo();
+
+	// Users
+	String usersText();
+	String userName();
+	String password();
+	String passwordVerification();
+	String createUser();
 	String userNameNotAvailable();
 	String shortPassword();
 	String noCoincidentPassword();
 	String allFieldsError();
-	
+	String userCreated();
+
+	// Master
 	SafeHtml attentionCopyPassword();
-	String password();
 	String iHaveCopiedIt();
-	
+
+	// Network
+	String networkText();
+	String innerConfig();
+	String outsideAccess();
+	String urlAvailability();
+	String autoConfig();
+
+	// Name
 	SafeHtml infoNublicName();
 	String nublicName();
 	String invalidNublicName();
+	String nameText();
+
+	// Finished
+	String finishedTitle();
+	String finishedText();
+	String whatsNext();
+	String howSynchronize();
+	String homeConnect();
+	String access();
 //	String nSongs(@PluralCount int n);
 }

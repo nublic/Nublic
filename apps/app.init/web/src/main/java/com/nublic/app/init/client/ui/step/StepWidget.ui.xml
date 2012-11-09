@@ -4,6 +4,8 @@
 	<ui:style type='com.nublic.app.init.client.ui.step.StepWidget.StepStyle'>
 		.common {
 			margin: 8px;
+			font-size: 13px;
+			line-height: 14px;
 		}
 		.crumb {
 			width: 100%;
