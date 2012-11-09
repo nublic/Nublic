@@ -5,11 +5,9 @@ import shutil
 from flask import Flask, request, abort, send_file
 from flask.helpers import send_from_directory
 
-from nublic_server.helpers import init_bare_nublic_server, require_uid, \
+from nublic_server.helpers import init_bare_nublic_server, \
     require_user
-from nublic_server.files import try_read, \
-    PermissionError, try_write, try_write_recursive, get_file_info, \
-    get_folders, try_read_recursive
+from nublic_server.files import PermissionError, get_file_info, get_folders
 from nublic_server import files
 from nublic_files_and_users_client.dbus_client import list_mirrors, \
     list_synced_folders
@@ -60,11 +58,11 @@ def folders(depth, path):
     '''
     if depth <= 0:
         abort(400)
-    uid = require_uid()
+    user = require_user()
     path_absolute = os.path.join(DATA_ROOT, path)
     if not os.path.isdir(path_absolute):
         abort(404)
-    return json.dumps(get_folders(depth, path_absolute, uid))
+    return json.dumps(get_folders(depth, path_absolute, user))
 
 
 @app.route('/files/<path:path>')
@@ -85,17 +83,17 @@ def files_path(path):
                 -> if "null", there is no preview available
                 -> Size in bytes
     '''
-    uid = require_uid()
+    user = require_user()
     path_absolute = os.path.join(DATA_ROOT, path)
     try:
         if not os.path.exists(path_absolute):
             abort(404)
         else:
             app.logger.error('Getting files from %s', path_absolute)
-            try_read(path_absolute, uid)
+            user.try_read(path_absolute)
             dirs = os.listdir(path_absolute)
             app.logger.error('Getting files: %s', str(dirs))
-            infos = [get_file_info(os.path.join(path_absolute, p), uid) \
+            infos = [get_file_info(os.path.join(path_absolute, p), user) \
                       for p in dirs]
     except PermissionError:
         abort(401)
@@ -198,16 +196,16 @@ def prepare_zip_file():
     return zip_file
 
 
-def add_file_zip(zip_file, absolute, base, uid):
+def add_file_zip(zip_file, absolute, base, user):
     ''' Zip a file or folder recursively with relative paths to base'''
     if os.path.isdir(absolute):
         files = os.listdir(absolute)
         for f in files:
             f_absolute = os.path.join(absolute, f)
-            try_read(f_absolute, uid)
-            add_file_zip(zip_file, f_absolute, base, uid)
+            user.try_read(f_absolute)
+            add_file_zip(zip_file, f_absolute, base, user)
     else:
-        try_read(absolute, uid)
+        user.try_read(absolute)
         archive_name = os.path.relpath(absolute, base)
         zip_file.write(absolute, archive_name)
     return zip_file
@@ -220,13 +218,12 @@ def zip_path(path):
     * :path -> folder you want to get as compressed file
     * Returns: the data of the zip
     '''
-    uid = require_uid()
+    user = require_user()
     internal_path = os.path.join(DATA_ROOT, path)
     try:
-        #try_read_recursive(internal_path, uid)
         zip_file = prepare_zip_file()
         add_file_zip(zip_file, internal_path, \
-                     os.path.dirname(internal_path), uid)
+                     os.path.dirname(internal_path), user)
         zip_file.close()
         return send_file(zip_file.filename)
     except PermissionError:
@@ -240,14 +237,14 @@ def zip_set():
     * :files -> set of files separated by :
     * Returns: the data as zip
     '''
-    uid = require_uid()
+    user = require_user()
     files = request.form.get('files').split(':')
     try:
         zip_file = prepare_zip_file()
         for file_zip in files:
             abs_file = os.path.join(DATA_ROOT, file_zip)
             add_file_zip(zip_file, abs_file, \
-                         os.path.dirname(abs_file), uid)
+                         os.path.dirname(abs_file), user)
         zip_file.close()
         return send_file(zip_file.fp)
     except PermissionError:
@@ -261,10 +258,10 @@ def raw(file_raw):
     * :file -> File to get raw contents (Nublic path)
     * Returns: raw data for the file
     '''
-    uid = require_uid()
+    user = require_user()
     internal_path = os.path.join(DATA_ROOT, file_raw)
     try:
-        try_write(internal_path, uid)
+        user.try_write(internal_path)
         return send_file(internal_path, as_attachment=True)
     except PermissionError:
         abort(401)
@@ -348,11 +345,11 @@ def delete():
         * :files -> files to delete
     '''
     raw_files = request.form.get('files').split(':')
-    uid = require_uid()
+    user = require_user()
     try:
         for raw_file in raw_files:
             internal_path = os.path.join(DATA_ROOT, raw_file)
-            try_write_recursive(internal_path, uid)
+            user.try_write_recursive(internal_path)
             #if os.path.isdir(internal_path):
             shutil.rmtree(internal_path)
             #else:
@@ -388,11 +385,11 @@ def new_folder():
         * Returns: nothing, or error 500 if something erroneous happens
         It only creates ONE LEVEL NEW FOLDERS
     '''
-    uid = require_uid()
+    user = require_user()
     path = os.path.join(DATA_ROOT, request.form.get('path'), \
                          request.form.get('name'))
     try:
-        files.mkdir(path, uid)
+        files.mkdir(path, user)
         return 'ok'
     except PermissionError:
         abort(500)
