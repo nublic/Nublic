@@ -155,7 +155,7 @@ create_repo() {
     cd "${INITIAL_DIR}"
 }
 
-git submodule update --init --merge
+Xgit submodule update --init --merge
 initialize
 # Libraries
 cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
@@ -167,6 +167,7 @@ copy_and_touch 3rd-party-libs/python-fstab
 copy_and_touch 3rd-party-libs/tomcat7
 copy_and_touch 3rd-party-libs/lucene-solr
 build_deb_package 3rd-party-libs/pykka
+build_deb_package 3rd-party-libs/rpcbd-0.6.0
 # build_deb_package 3rd-party-libs/guava
 # bst-player fork
 package_and_install_dev_mode player

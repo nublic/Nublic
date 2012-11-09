@@ -43,7 +43,7 @@ def is_file_shared(path):
     return (mode & 0040 != 0) or (mode & 0004 != 0)
 
 class User:
-    def __init__(self, username, use_dbus):
+    def __init__(self, username, use_dbus=False):
         self._username = username
         self._uid = None
         self._readable_paths = [DATA_ROOT]
