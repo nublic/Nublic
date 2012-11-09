@@ -13,6 +13,7 @@ import dbus.exceptions
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
+import logging
 from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from elixir import metadata, setup_all
 import dbus

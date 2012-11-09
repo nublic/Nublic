@@ -6,6 +6,7 @@ from nublic_files_and_users.user import *
 from nublic_files_and_users.mirror import *
 from nublic_files_and_users.synced_folder import *
 
+import logging
 from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from dbus.mainloop.glib import DBusGMainLoop
 # from gobject import MainLoop, threads_init
@@ -13,6 +14,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 import dbus
 import gobject
 import time
+import sys
 
 NOTIFICATION_LEVEL_LOG = 'LOG'
 NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
@@ -113,22 +115,27 @@ class JsonRpcFilesAndUsers(Handler):
         return syncedJson.delete_synced_folder(mid, remove_in_fs)
 
 if __name__ == '__main__':
-    # Initialize JSON-RPC
-    logging.basicConfig(level = logging.WARNING)
-    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcFilesAndUsers)
-    peer.listen_tcp(port = 5439)
-    
-    # Initialize D-Bus loop
-    dbus_loop = DBusGMainLoop(set_as_default=True)
     __check_nublic_resource_is_on(dbus_loop)
     # Initialize connection to database
     metadata.bind = __get_bind_uri(dbus_loop)
     setup_all(create_tables=True)
+    sys.stderr.write("database set up\n")
+    
+    # Initialize JSON-RPC
+    logging.basicConfig(level = logging.WARNING)
+    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcFilesAndUsers)
+    peer.listen_tcp(port = 5440)
+    sys.stderr.write("Initialized files and users tcp\n")
+    
+    # Initialize D-Bus loop
+    dbus_loop = DBusGMainLoop(set_as_default=True)
     # Initialize D-Bus objects
     user = UserDBus(dbus_loop)
     mirror = MirrorDBus(user, dbus_loop)
     synced = SyncedFolderDBus(user, dbus_loop)
+    sys.stderr.write("Initialized D-Bus\n")
     # Start GObject loop
+    sys.stderr.write("Going into loop\n")
     loop = gobject.MainLoop()
     gobject.threads_init()
     loop.run()

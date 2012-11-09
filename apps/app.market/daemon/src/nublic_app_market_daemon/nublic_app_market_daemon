@@ -3,6 +3,7 @@
 from nublic_app_market_daemon.apt_daemon import *
 from dbus.mainloop.glib import DBusGMainLoop
 
+import logging
 from rpcbd import ThreadedTCPJsonRpcPeer, JSONRPC_V2
 import dbus
 import gobject
