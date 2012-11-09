@@ -125,6 +125,26 @@ class User:
         if not self.can_read(path):
             raise PermissionError(self.get_username(), path, "Read")
 
+    def try_write_recursive(self, path):
+        ''' Throws PermissionError if ANY file under the file
+        given does not have permission to be written'''
+        if not os.path.exists(path):
+            raise PermissionError(self.get_username(), path, "Read")
+        if os.path.isdir(path):
+            [self.try_write_recursive(s) for s in os.listdir(path)]
+        else:
+            self.try_write(path)
+
+    def try_read_recursive(self, path, uid):
+        ''' Throws PermissionError if ANY file under the file
+        given does not have permission to be written'''
+        if not os.path.exists(path):
+            raise PermissionError(self.get_username(), path, "Read")
+        if os.path.isdir(path):
+            [self.try_read_recursive(s) for s in os.listdir(path)]
+        else:
+            self.try_read(path)
+
     def get_owned_mirrors(self):
         return filter(lambda m: self.is_owner(m.get_path()), mirror.get_all_mirrors())
 
