@@ -135,6 +135,7 @@ build_submodule_lib() {
     ${DEBUILD} clean
     cd ..
     mv *.deb *.build *.changes *.dsc *.tar.gz "${TARGET_DIR}"
+    rm -rf "$1"/debian
     cd "${INITIAL_DIR}"
 }
 
