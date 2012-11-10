@@ -14,6 +14,9 @@ from nublic_files_and_users_client.dbus_client import list_mirrors, \
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from werkzeug.utils import secure_filename
+from nublic_server.places import get_cache_folder
+from fnmatch import fnmatch
+import re
 
 
 # Init app
@@ -101,16 +104,81 @@ def files_path(path):
 
 
 @app.route('/thumbnail/<path:file>')
-def thumbnail():
+def thumbnail(path):
     '''
     /thumbnail/:file
     * :file -> File to show the thumbnail (Nublic path)
     * Returns: the raw image data
       -> only try to get things with thumbnail
     '''
-    # @todo: thumbnail DEPENDS ON PROCESSOR
-    pass
+    user = require_user()
+    path_absolute = os.path.join(DATA_ROOT, path)
+    if user.can_read(path_absolute):
+        return os.path.join(get_cache_folder(path_absolute), "thumbnail.png")
+    else:
+        abort(404)
 
+directory_mapping = {'image': 'folder.png',
+                     'preview': '',
+                     'mimes': ["application/x-directory"]}
+images_mapping = {'image': 'image.png',
+                  'preview': 'image.png',
+                  'mimes': ["image/bmp", "image/gif", "image/png",
+                            "image/jpg", "image/jpeg", "image/pjpeg",
+                            "image/svg", "image/x-icon", "image/x-pict",
+                            "image/x-pcx", "image/pict",
+                            "image/x-portable-bitmap", "image/tiff",
+                            "image/x-tiff", "image/x-xbitmap",
+                            "image/x-xbm", "image/xbm", "application/wmf",
+                            "application/x-wmf", "image/wmf",
+                            "image/x-wmf", "image/x-ms-bmp"
+                            ]
+                  }
+audio_mapping = {'image': "audio.mp3",
+                 'preview': 'audio.mp3',
+                 'mimes': [
+                    '''Obtained looking at:
+                    - List of files supported by ffmpeg: `ffmpeg -formats`
+                    - Information about file extensions: http://filext.com/
+                    '''
+                            # AAC
+                            "audio/aac", "audio/x-aac",
+                            # AC3
+                            "audio/ac3",
+                            # AIFF
+                            "audio/aiff", "audio/x-aiff", "sound/aiff",
+                            "audio/x-pn-aiff",
+                            # ASF
+                            "audio/asf",
+                            # MIDI
+                            "audio/mid", "audio/x-midi",
+                            # AU
+                            "audio/basic", "audio/x-basic", "audio/au",
+                            "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
+                            # PCM
+                            "application/x-pcm",
+                            # MP4
+                            "audio/mp4",
+                            # MP3
+                            "audio/mpeg", "audio/x-mpeg", "audio/mp3",
+                            "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
+                            "audio/mpg", "audio/x-mpg",
+                            "audio/x-mpegaudio",
+                            # WAV
+                            "audio/wav", "audio/x-wav", "audio/wave",
+                            "audio/x-pn-wav",
+                            # OGG
+                            "audio/ogg", "application/ogg", "audio/x-ogg",
+                            "application/x-ogg",
+                            # FLAC
+                            "audio/flac",
+                            # WMA
+                            "audio/x-ms-wma",
+                            # Various
+                            "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
+                            "audio/x-gsm", "audio/snd"
+                           ]
+                 }
 
 @app.route('/generic-thumbnail/<path:mime>')
 def generic_thumbnail(mime):
@@ -119,64 +187,6 @@ def generic_thumbnail(mime):
     * :id -> Identifier of mime type
     * Returns: generic image for that mime type
     '''
-    directory_mapping = {'image': "folder.png",
-                         'mimes': ["application/x-directory"]}
-    images_mapping = {'image': "image.png",
-                      'mimes': ["image/bmp", "image/gif", "image/png",
-                                "image/jpg", "image/jpeg", "image/pjpeg",
-                                "image/svg", "image/x-icon", "image/x-pict",
-                                "image/x-pcx", "image/pict",
-                                "image/x-portable-bitmap", "image/tiff",
-                                "image/x-tiff", "image/x-xbitmap",
-                                "image/x-xbm", "image/xbm", "application/wmf",
-                                "application/x-wmf", "image/wmf",
-                                "image/x-wmf", "image/x-ms-bmp"
-                                ]
-                      }
-    audio_mapping = {'image': "audio.mp3",
-                     'mimes': [
-                        '''Obtained looking at:
-                        - List of files supported by ffmpeg: `ffmpeg -formats`
-                        - Information about file extensions: http://filext.com/
-                        '''
-                                # AAC
-                                "audio/aac", "audio/x-aac",
-                                # AC3
-                                "audio/ac3",
-                                # AIFF
-                                "audio/aiff", "audio/x-aiff", "sound/aiff",
-                                "audio/x-pn-aiff",
-                                # ASF
-                                "audio/asf",
-                                # MIDI
-                                "audio/mid", "audio/x-midi",
-                                # AU
-                                "audio/basic", "audio/x-basic", "audio/au",
-                                "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
-                                # PCM
-                                "application/x-pcm",
-                                # MP4
-                                "audio/mp4",
-                                # MP3
-                                "audio/mpeg", "audio/x-mpeg", "audio/mp3",
-                                "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
-                                "audio/mpg", "audio/x-mpg",
-                                "audio/x-mpegaudio",
-                                # WAV
-                                "audio/wav", "audio/x-wav", "audio/wave",
-                                "audio/x-pn-wav",
-                                # OGG
-                                "audio/ogg", "application/ogg", "audio/x-ogg",
-                                "application/x-ogg",
-                                # FLAC
-                                "audio/flac",
-                                # WMA
-                                "audio/x-ms-wma",
-                                # Various
-                                "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
-                                "audio/x-gsm", "audio/snd"
-                               ]
-                     }
     mappings = [directory_mapping, images_mapping, audio_mapping]
     # @todo: Non Djvu or similar supported. It needs refactoring to filewatcher
     try:
@@ -267,8 +277,8 @@ def raw(file_raw):
         abort(401)
 
 
-@app.route('/view/<path:file>.<type>')
-def view():
+@app.route('/view/<path:file_path>.<extension>')
+def view(file_path, extension):
     '''
     /view/:file.:type
     * :type -> Kind of view to get (pdf, png, mp3, flv)
@@ -277,8 +287,13 @@ def view():
       - 403 if a folder is requested
       - 404 if there is no such view for that file
     '''
-    # @todo: view DEPENDS ON PROCESSORS
-    pass
+    if not re.match('\w+', extension):
+        abort(401)
+    internal_path = os.path.join(DATA_ROOT, file_path)
+    for f in os.listdir(internal_path):
+        if fnmatch(f, 'view.' + extension):  # @todo Possible security error
+            return send_file(os.path.join(internal_path, f))
+    abort(404)
 
 
 @app.route('/rename', methods=['POST'])

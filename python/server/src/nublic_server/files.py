@@ -1,12 +1,12 @@
 
 
-import stat
 import os.path
 import shutil
 from nublic_server.places import get_mime_type
-from hashlib import sha1 # pylint: disable=E0611
+from hashlib import sha1  # pylint: disable=E0611
 
 CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
+
 
 def copy(src, dst, user):
     ''' copy file if you have permission or group permission allows you
@@ -18,12 +18,14 @@ def copy(src, dst, user):
     user.assign_file(os.path.join(dst, os.path.basename(src)))
     return dst
 
+
 def mkdir(path, user):
     ''' Version of mkdir that creates a directory in the name of user.
     It checks permission of user before with try_write'''
     user.try_write(os.path.dirname(path))
     os.mkdir(path)
     user.assign_file(path)
+
 
 def get_folders(depth, path, user):
     ''' Get the all the subfolders of the given folder up to some depth.
@@ -40,9 +42,10 @@ def get_folders(depth, path, user):
                             "writable": user.can_write(folder)}]
     return subfolders
 
+
 def get_file_info(path, user):
     ''' Gets some information about the given file in a dictionary. The fields
-    are 'name', 'writable', 'last_update', 'size', 'hast_thumb', 'mime' and 
+    are 'name', 'writable', 'last_update', 'size', 'hast_thumb', 'mime' and
     'view' '''
     info = {}
     info['name'] = os.path.basename(path)
@@ -56,12 +59,8 @@ def get_file_info(path, user):
         info['mime'] = 'application/x-directory'
     else:
         info['mime'] = get_mime_type(path)
-    info['view'] = "" # @todo
+    info['view'] = ""  # @todo
     return info
-
-def get_cache_folder(path):
-    ''' Returns the full internal cache path for a file '''
-    return os.path.join(CACHE_ROOT_DIR, str(sha1(path)))
 
 
 class PermissionError(Exception):
@@ -73,8 +72,7 @@ class PermissionError(Exception):
         self.path = path
         self.operation = operation
         super(PermissionError, self).__init__()
-        
+
     def __str__(self):
         return "Permission error for %i accesing %s trying to %s" % \
             (self.username, self.path, self.operation)
-    
