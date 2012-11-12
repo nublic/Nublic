@@ -38,7 +38,7 @@ public class InitModel {
 	
 	public void addUser(String name, String password, AddUserHandler auh) {
 		AddUserMessage aum = new AddUserMessage(name, password, auh);
-		SequenceHelper.sendJustOne(aum, RequestBuilder.POST);
+		SequenceHelper.sendJustOne(aum, RequestBuilder.PUT);
 	}
 	
 	public void getMasterPassword(PasswordHandler ph) {
