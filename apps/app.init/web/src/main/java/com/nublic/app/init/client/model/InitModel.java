@@ -5,10 +5,12 @@ import com.nublic.app.init.client.model.handlers.AddUserHandler;
 import com.nublic.app.init.client.model.handlers.CheckNublicNameHandler;
 import com.nublic.app.init.client.model.handlers.CheckUserHandler;
 import com.nublic.app.init.client.model.handlers.PasswordHandler;
+import com.nublic.app.init.client.model.handlers.UserListHandler;
 import com.nublic.app.init.client.model.messages.AddUserMessage;
 import com.nublic.app.init.client.model.messages.CheckNublicNameMessage;
 import com.nublic.app.init.client.model.messages.CheckUserMessage;
 import com.nublic.app.init.client.model.messages.PasswordMessage;
+import com.nublic.app.init.client.model.messages.UserListMessage;
 import com.nublic.util.messages.SequenceHelper;
 
 public class InitModel {
@@ -29,6 +31,11 @@ public class InitModel {
 	private void sendInitialMessages() {
 //		TagsMessage tm = new TagsMessage();
 //		SequenceHelper.sendJustOne(tm, RequestBuilder.GET);
+	}
+	
+	public void getUserList(UserListHandler ulh) {
+		UserListMessage ulm = new UserListMessage(ulh);
+		SequenceHelper.sendJustOne(ulm, RequestBuilder.GET);
 	}
 	
 	public void checkUserAvailability(String name, CheckUserHandler cuh) {

@@ -47,7 +47,7 @@ class User:
         return _call_user_method_return(lambda i: i.user_exists(self._username))
     
     def create(self, password, shown_name):
-        return _call_user_method_return(lambda i: i.user_create(self._username, password, shown_name))
+        return _call_user_method_return(lambda i: i.create_user(self._username, password, shown_name))
     
     def delete(self):
         return _call_user_method_return(lambda i: i.delete_user(self._username))

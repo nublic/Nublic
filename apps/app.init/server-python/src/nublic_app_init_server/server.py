@@ -24,6 +24,42 @@ app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-init.python.log')
 app.logger.error('Starting init app')
 
+@app.route('/checkuser/<name>')
+def check_user(name):
+    if User(name).exists():
+        return 'exists'
+    else:
+        return 'ok'
+
+@app.route('/adduser/', methods=['PUT'])
+def add_user():
+    name = request.form.get('name', None)
+    password = request.form.get('password', None)
+    newuser = User(name)
+    if not newuser.exists():
+        newuser.create(password, name)
+        return 'ok'
+    else:
+        return 'exists'
+
+@app.route('/userlist/')
+def get_user_list():
+    return json.dumps(get_all_users(), default=user_as_json)
+
+def user_as_json(c):
+    return { 'username': c.get_username(),
+             'shownname': c.get_shown_name() }
+
+@app.route('/password/')
+def master_password():
+    return 'ThisIsAPasswordExample2'
+
+if __name__ == '__main__':
+    app.run()
+
+
+
+
 # COLLECTIONS HANDLING
 # ====================
 
@@ -482,31 +518,3 @@ app.logger.error('Starting init app')
 #    else:
 #        abort(404)
 #
-#if __name__ == '__main__':
-#    app.run()
-
-
-@app.route('/checkuser/<name>')
-def check_user(name):
-    if User(name).exists():
-        return 'exists'
-    else:
-        return 'ok'
-
-@app.route('/adduser/', methods=['PUT'])
-def add_user():
-    name = request.form.get('name', None)
-    password = request.form.get('password', None)
-    newuser = User(name)
-    if not newuser.exists():
-        newuser.create(password, name)
-        return 'ok'
-    else:
-        return 'exists'
-
-@app.route('/password/')
-def master_password():
-    return 'ThisIsAPasswordExample2'
-
-if __name__ == '__main__':
-    app.run()
