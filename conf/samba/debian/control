@@ -9,6 +9,6 @@ Homepage: http://nublic.com
 Package: nublic-samba-config
 Architecture: all
 Depends: ${misc:Depends}, samba
-Replaces: samba
+Replaces: samba, samba-common
 Description: Nublic Samba configuration files
  Nublic Samba configuration files

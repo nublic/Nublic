@@ -4,7 +4,7 @@ import simplejson as json
 from sqlalchemy.sql.expression import func
 
 from nublic.files_and_users import User
-from nublic_server.helpers import init_nublic_server, split_reasonable, require_user
+from nublic_server.helpers import init_nublic_server, split_reasonable
 from nublic_server.places import get_cache_folder
 
 from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, photos_and_row_count_as_json
@@ -17,20 +17,12 @@ init_nublic_server(app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_
                    db, 'photos', [lambda w: PhotoProcessor.start(app.logger, w)])
 app.logger.error('Starting photos app')
 
-@app.route('/albums', methods=['GET', 'PUT', 'DELETE'])
-def albums():
-    require_user()
-    if request.method == 'GET':
-        return albums_get()
-    elif request.method == 'PUT':
-        return albums_put()
-    elif request.method == 'DELETE':
-        return albums_delete()
-
+@app.route('/albums', methods=['GET'])
 def albums_get():
     albums = Album.query.order_by(func.lower(Album.name)).all()
     return json.dumps(albums, default=album_as_json)
 
+@app.route('/albums', methods=['PUT'])
 def albums_put():
     name = request.form.get('name', None)
     new_album = Album(name)
@@ -38,6 +30,7 @@ def albums_put():
     db.session.commit()
     return str(new_album.id)
 
+@app.route('/albums', methods=['DELETE'])
 def albums_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
@@ -50,13 +43,11 @@ def albums_delete():
 
 @app.route('/albums/<int:photo_id>')
 def photo_album(photo_id):
-    require_user()
     albums = Album.query.join(PhotoAlbum).filter_by(photoId=photo_id).order_by(func.lower(Album.name)).all()
     return json.dumps(albums, default=album_as_json)
 
 @app.route('/album/<int:album_id>', methods=['PUT', 'DELETE'])
 def album(album_id):
-    require_user()
     album = Album.query.filter_by(id=album_id).first()
     if album == None:
         abort(404)
@@ -85,29 +76,25 @@ def one_album_delete(album_id):
     db.session.commit()
     return 'ok'
 
-@app.route('/photos')
+@app.route('/photos/')
 def photos():
-    require_user()
     return photos_get('title', 'asc', 0, 20, [])
     
-@app.route('/photos/')
-def photos_():
-    require_user()
-    return photos_get('title', 'asc', 0, 20, [])
+# If a route has a trailing / then both with and without will work!
+#@app.route('/photos')
+#def photos_():
+#    return photos_get('title', 'asc', 0, 20, [])
     
 @app.route('/photos/<order>/<asc>/<int:start>/<int:length>')
 def photos_without_albums(order, asc, start, length):
-    require_user()
     return photos_get(order, asc, start, length, [])
 
 @app.route('/photos/<order>/<asc>/<int:start>/<int:length>/')
 def photos_without_albums_(order, asc, start, length):
-    require_user()
     return photos_get(order, asc, start, length, [])
 
 @app.route('/photos/<order>/<asc>/<int:start>/<int:length>/<path:album_ids>')
 def photos_with_albums(order, asc, start, length, album_ids):
-    require_user()
     ids = split_reasonable(album_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
     return photos_get(order, asc, start, length, ids_as_ints)
@@ -133,13 +120,11 @@ def photos_get(order, asc, start, length, album_ids):
 
 @app.route('/photo-info/<int:photo_id>')
 def photo_info(photo_id):
-    require_user()
     photo = Photo.query.get_or_404(photo_id)
     return json.dumps(photo, default=photo_as_json)
 
 @app.route('/photo-title/<int:photo_id>', methods=['POST'])
 def photo_title(photo_id):
-    require_user()
     photo = Photo.query.get_or_404(photo_id)
     photo.title = request.form['title']
     db.session.commit()
@@ -147,7 +132,6 @@ def photo_title(photo_id):
 
 @app.route('/raw/<int:photo_id>')
 def photo_raw(photo_id):
-    require_user()
     photo = Photo.query.get_or_404(photo_id)
     return send_file(photo.file)
 
@@ -156,19 +140,16 @@ IMAGE_FILENAME = 'image.png'
 
 @app.route('/view/<int:photo_id>.png')
 def photo_view(photo_id):
-    require_user()
     photo = Photo.query.get_or_404(photo_id)
     return send_file(get_cache_folder(photo.file) + '/' + IMAGE_FILENAME)
 
 @app.route('/thumbnail/<int:photo_id>.png')
 def photo_thumbnail(photo_id):
-    require_user()
     photo = Photo.query.get_or_404(photo_id)
     return send_file(get_cache_folder(photo.file) + '/' + THUMBNAIL_FILENAME)
 
 @app.route('/random/<time>/<int:album_id>.png')
 def random_album_thumbnail(time, album_id):
-    require_user()
     number_photos = PhotoAlbum.query.filter_by(albumId=album_id).count()
     if number_photos > 0:
         n = random.randint(0, number_photos - 1)
