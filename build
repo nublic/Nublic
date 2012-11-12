@@ -135,6 +135,7 @@ build_submodule_lib() {
     ${DEBUILD} clean
     cd ..
     mv *.deb *.build *.changes *.dsc *.tar.gz "${TARGET_DIR}"
+    rm -rf "$1"/debian
     cd "${INITIAL_DIR}"
 }
 
@@ -195,14 +196,17 @@ do_build() {
             # Third-party libraries
             cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
             build_submodule_lib echoprint-codegen
+            rm ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/echoprint-codegen ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/src/libcodegen.so.4.1.1
             build_submodule_lib sunburnt
             build_submodule_lib pyechonest
+            rm -r ${INITIAL_DIR}/3rd-party-libs/pyechonest/pyechonest.egg-info/
             copy_and_touch 3rd-party-libs/aria2
             copy_and_touch 3rd-party-libs/python-fstab
             copy_and_touch 3rd-party-libs/tomcat7
             copy_and_touch 3rd-party-libs/lucene-solr
             build_deb_package 3rd-party-libs/pykka
             build_deb_package 3rd-party-libs/rpcbd-0.6.0
+            rm -r ${INITIAL_DIR}/3rd-party-libs/rpcbd-0.6.0/rpcbd.egg-info/
             build_deb_package 3rd-party-libs/flask-sqlalchemy
             # build_deb_package 3rd-party-libs/guava
         fi

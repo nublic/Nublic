@@ -5,17 +5,18 @@ import shutil
 from flask import Flask, request, abort, send_file
 from flask.helpers import send_from_directory
 
-from nublic_server.helpers import init_bare_nublic_server, require_uid, \
+from nublic_server.helpers import init_bare_nublic_server, \
     require_user
-from nublic_server.files import try_read, permission_write, \
-    PermissionError, try_write, try_write_recursive, get_file_info, \
-    get_folders, try_read_recursive
+from nublic_server.files import PermissionError, get_file_info, get_folders
 from nublic_server import files
 from nublic_files_and_users_client.dbus_client import list_mirrors, \
     list_synced_folders
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from werkzeug.utils import secure_filename
+from nublic_server.places import get_cache_folder
+from fnmatch import fnmatch
+import re
 
 
 # Init app
@@ -60,11 +61,11 @@ def folders(depth, path):
     '''
     if depth <= 0:
         abort(400)
-    uid = require_uid()
+    user = require_user()
     path_absolute = os.path.join(DATA_ROOT, path)
     if not os.path.isdir(path_absolute):
         abort(404)
-    return json.dumps(get_folders(depth, path_absolute, uid))
+    return json.dumps(get_folders(depth, path_absolute, user))
 
 
 @app.route('/files/<path:path>')
@@ -85,17 +86,17 @@ def files_path(path):
                 -> if "null", there is no preview available
                 -> Size in bytes
     '''
-    uid = require_uid()
+    user = require_user()
     path_absolute = os.path.join(DATA_ROOT, path)
     try:
         if not os.path.exists(path_absolute):
             abort(404)
         else:
             app.logger.error('Getting files from %s', path_absolute)
-            try_read(path_absolute, uid)
+            user.try_read(path_absolute)
             dirs = os.listdir(path_absolute)
             app.logger.error('Getting files: %s', str(dirs))
-            infos = [get_file_info(os.path.join(path_absolute, p), uid) \
+            infos = [get_file_info(os.path.join(path_absolute, p), user) \
                       for p in dirs]
     except PermissionError:
         abort(401)
@@ -103,16 +104,81 @@ def files_path(path):
 
 
 @app.route('/thumbnail/<path:file>')
-def thumbnail():
+def thumbnail(path):
     '''
     /thumbnail/:file
     * :file -> File to show the thumbnail (Nublic path)
     * Returns: the raw image data
       -> only try to get things with thumbnail
     '''
-    # @todo: thumbnail DEPENDS ON PROCESSOR
-    pass
+    user = require_user()
+    path_absolute = os.path.join(DATA_ROOT, path)
+    if user.can_read(path_absolute):
+        return os.path.join(get_cache_folder(path_absolute), "thumbnail.png")
+    else:
+        abort(404)
 
+directory_mapping = {'image': 'folder.png',
+                     'preview': '',
+                     'mimes': ["application/x-directory"]}
+images_mapping = {'image': 'image.png',
+                  'preview': 'image.png',
+                  'mimes': ["image/bmp", "image/gif", "image/png",
+                            "image/jpg", "image/jpeg", "image/pjpeg",
+                            "image/svg", "image/x-icon", "image/x-pict",
+                            "image/x-pcx", "image/pict",
+                            "image/x-portable-bitmap", "image/tiff",
+                            "image/x-tiff", "image/x-xbitmap",
+                            "image/x-xbm", "image/xbm", "application/wmf",
+                            "application/x-wmf", "image/wmf",
+                            "image/x-wmf", "image/x-ms-bmp"
+                            ]
+                  }
+audio_mapping = {'image': "audio.mp3",
+                 'preview': 'audio.mp3',
+                 'mimes': [
+                    '''Obtained looking at:
+                    - List of files supported by ffmpeg: `ffmpeg -formats`
+                    - Information about file extensions: http://filext.com/
+                    '''
+                            # AAC
+                            "audio/aac", "audio/x-aac",
+                            # AC3
+                            "audio/ac3",
+                            # AIFF
+                            "audio/aiff", "audio/x-aiff", "sound/aiff",
+                            "audio/x-pn-aiff",
+                            # ASF
+                            "audio/asf",
+                            # MIDI
+                            "audio/mid", "audio/x-midi",
+                            # AU
+                            "audio/basic", "audio/x-basic", "audio/au",
+                            "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
+                            # PCM
+                            "application/x-pcm",
+                            # MP4
+                            "audio/mp4",
+                            # MP3
+                            "audio/mpeg", "audio/x-mpeg", "audio/mp3",
+                            "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
+                            "audio/mpg", "audio/x-mpg",
+                            "audio/x-mpegaudio",
+                            # WAV
+                            "audio/wav", "audio/x-wav", "audio/wave",
+                            "audio/x-pn-wav",
+                            # OGG
+                            "audio/ogg", "application/ogg", "audio/x-ogg",
+                            "application/x-ogg",
+                            # FLAC
+                            "audio/flac",
+                            # WMA
+                            "audio/x-ms-wma",
+                            # Various
+                            "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
+                            "audio/x-gsm", "audio/snd"
+                           ]
+                 }
 
 @app.route('/generic-thumbnail/<path:mime>')
 def generic_thumbnail(mime):
@@ -121,64 +187,6 @@ def generic_thumbnail(mime):
     * :id -> Identifier of mime type
     * Returns: generic image for that mime type
     '''
-    directory_mapping = {'image': "folder.png",
-                         'mimes': ["application/x-directory"]}
-    images_mapping = {'image': "image.png",
-                      'mimes': ["image/bmp", "image/gif", "image/png",
-                                "image/jpg", "image/jpeg", "image/pjpeg",
-                                "image/svg", "image/x-icon", "image/x-pict",
-                                "image/x-pcx", "image/pict",
-                                "image/x-portable-bitmap", "image/tiff",
-                                "image/x-tiff", "image/x-xbitmap",
-                                "image/x-xbm", "image/xbm", "application/wmf",
-                                "application/x-wmf", "image/wmf",
-                                "image/x-wmf", "image/x-ms-bmp"
-                                ]
-                      }
-    audio_mapping = {'image': "audio.mp3",
-                     'mimes': [
-                        '''Obtained looking at:
-                        - List of files supported by ffmpeg: `ffmpeg -formats`
-                        - Information about file extensions: http://filext.com/
-                        '''
-                                # AAC
-                                "audio/aac", "audio/x-aac",
-                                # AC3
-                                "audio/ac3",
-                                # AIFF
-                                "audio/aiff", "audio/x-aiff", "sound/aiff",
-                                "audio/x-pn-aiff",
-                                # ASF
-                                "audio/asf",
-                                # MIDI
-                                "audio/mid", "audio/x-midi",
-                                # AU
-                                "audio/basic", "audio/x-basic", "audio/au",
-                                "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
-                                # PCM
-                                "application/x-pcm",
-                                # MP4
-                                "audio/mp4",
-                                # MP3
-                                "audio/mpeg", "audio/x-mpeg", "audio/mp3",
-                                "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
-                                "audio/mpg", "audio/x-mpg",
-                                "audio/x-mpegaudio",
-                                # WAV
-                                "audio/wav", "audio/x-wav", "audio/wave",
-                                "audio/x-pn-wav",
-                                # OGG
-                                "audio/ogg", "application/ogg", "audio/x-ogg",
-                                "application/x-ogg",
-                                # FLAC
-                                "audio/flac",
-                                # WMA
-                                "audio/x-ms-wma",
-                                # Various
-                                "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
-                                "audio/x-gsm", "audio/snd"
-                               ]
-                     }
     mappings = [directory_mapping, images_mapping, audio_mapping]
     # @todo: Non Djvu or similar supported. It needs refactoring to filewatcher
     try:
@@ -198,16 +206,16 @@ def prepare_zip_file():
     return zip_file
 
 
-def add_file_zip(zip_file, absolute, base, uid):
+def add_file_zip(zip_file, absolute, base, user):
     ''' Zip a file or folder recursively with relative paths to base'''
     if os.path.isdir(absolute):
         files = os.listdir(absolute)
         for f in files:
             f_absolute = os.path.join(absolute, f)
-            try_read(f_absolute, uid)
-            add_file_zip(zip_file, f_absolute, base, uid)
+            user.try_read(f_absolute)
+            add_file_zip(zip_file, f_absolute, base, user)
     else:
-        try_read(absolute, uid)
+        user.try_read(absolute)
         archive_name = os.path.relpath(absolute, base)
         zip_file.write(absolute, archive_name)
     return zip_file
@@ -220,13 +228,12 @@ def zip_path(path):
     * :path -> folder you want to get as compressed file
     * Returns: the data of the zip
     '''
-    uid = require_uid()
+    user = require_user()
     internal_path = os.path.join(DATA_ROOT, path)
     try:
-        #try_read_recursive(internal_path, uid)
         zip_file = prepare_zip_file()
         add_file_zip(zip_file, internal_path, \
-                     os.path.dirname(internal_path), uid)
+                     os.path.dirname(internal_path), user)
         zip_file.close()
         return send_file(zip_file.filename)
     except PermissionError:
@@ -240,14 +247,14 @@ def zip_set():
     * :files -> set of files separated by :
     * Returns: the data as zip
     '''
-    uid = require_uid()
+    user = require_user()
     files = request.form.get('files').split(':')
     try:
         zip_file = prepare_zip_file()
         for file_zip in files:
             abs_file = os.path.join(DATA_ROOT, file_zip)
             add_file_zip(zip_file, abs_file, \
-                         os.path.dirname(abs_file), uid)
+                         os.path.dirname(abs_file), user)
         zip_file.close()
         return send_file(zip_file.fp)
     except PermissionError:
@@ -261,17 +268,17 @@ def raw(file_raw):
     * :file -> File to get raw contents (Nublic path)
     * Returns: raw data for the file
     '''
-    uid = require_uid()
+    user = require_user()
     internal_path = os.path.join(DATA_ROOT, file_raw)
     try:
-        try_write(internal_path, uid)
+        user.try_write(internal_path)
         return send_file(internal_path, as_attachment=True)
     except PermissionError:
         abort(401)
 
 
-@app.route('/view/<path:file>.<type>')
-def view():
+@app.route('/view/<path:file_path>.<extension>')
+def view(file_path, extension):
     '''
     /view/:file.:type
     * :type -> Kind of view to get (pdf, png, mp3, flv)
@@ -280,8 +287,13 @@ def view():
       - 403 if a folder is requested
       - 404 if there is no such view for that file
     '''
-    # @todo: view DEPENDS ON PROCESSORS
-    pass
+    if not re.match('\w+', extension):
+        abort(401)
+    internal_path = os.path.join(DATA_ROOT, file_path)
+    for f in os.listdir(internal_path):
+        if fnmatch(f, 'view.' + extension):  # @todo Possible security error
+            return send_file(os.path.join(internal_path, f))
+    abort(404)
 
 
 @app.route('/rename', methods=['POST'])
@@ -291,12 +303,12 @@ def rename():
             * :from -> file to change the name
             * :to -> new name of the file
     '''
-    user = require_uid()
+    user = require_user()
     path_from = os.path.join(DATA_ROOT, request.form.get('from'))
     path_to = os.path.join(DATA_ROOT, request.form.get('to'))
     if not os.path.exists(path_from):
         abort(404)
-    if not permission_write(path_from, user):
+    if not user.can_write(path_from):
         abort(401)
     # Rename does not need to change the user
     os.rename(path_from, path_to)
@@ -311,11 +323,11 @@ def move():
     '''
     from_array = request.form.get('files').split(':')
     internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
-    uid = require_uid()
+    user = require_user()
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path)
-            try_write(internal_to, uid)
+            user.try_write(internal_to)
             shutil.move(internal_from, internal_to)
     except PermissionError:
         abort(401)
@@ -331,11 +343,11 @@ def copy():
     '''
     from_array = request.form.get('files').split(':')
     internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
-    uid = require_uid()
+    user = require_user()
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path)
-            files.copy(internal_from, internal_to, uid)
+            files.copy(internal_from, internal_to, user)
     except PermissionError:
         abort(401)
     return 'ok'
@@ -348,11 +360,11 @@ def delete():
         * :files -> files to delete
     '''
     raw_files = request.form.get('files').split(':')
-    uid = require_uid()
+    user = require_user()
     try:
         for raw_file in raw_files:
             internal_path = os.path.join(DATA_ROOT, raw_file)
-            try_write_recursive(internal_path, uid)
+            user.try_write_recursive(internal_path)
             #if os.path.isdir(internal_path):
             shutil.rmtree(internal_path)
             #else:
@@ -388,11 +400,11 @@ def new_folder():
         * Returns: nothing, or error 500 if something erroneous happens
         It only creates ONE LEVEL NEW FOLDERS
     '''
-    uid = require_uid()
+    user = require_user()
     path = os.path.join(DATA_ROOT, request.form.get('path'), \
                          request.form.get('name'))
     try:
-        files.mkdir(path, uid)
+        files.mkdir(path, user)
         return 'ok'
     except PermissionError:
         abort(500)
@@ -416,7 +428,7 @@ def upload():
                     (in multipart/form-data format)
     * Returns: nothing, or error 500 if something erroneous happens
     '''
-    uid = require_uid()
+    user = require_user()
     file_request = request.files['contents']
     try:
         if file_request:  # All extensions are allowed
@@ -424,7 +436,7 @@ def upload():
             path = request.form.get('path')
             abs_path = os.path.join(DATA_ROOT, path)
             if stay_in_directory(path, DATA_ROOT):
-                try_write(abs_path, uid)  # Check permission write in directory
+                user.try_write(abs_path)  # Check permission write in directory
                 file_request.save(os.path.join(abs_path, filename))
             else:
                 abort(401)
