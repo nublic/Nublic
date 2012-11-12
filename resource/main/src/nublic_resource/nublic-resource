@@ -14,11 +14,8 @@ logging.basicConfig(stream=sys.stderr)
 #logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG) # TODO DEACTIVATE
 logging.getLogger('sqlalchemy.engine').setLevel(logging.CRITICAL) # TODO ACTIVATE
 
-
 from optparse import OptionParser
-
-import dbus
-
+from nublic.resource import *
 
 def main():
     usage = "usage: \n" + \
@@ -35,14 +32,10 @@ def main():
         key_subkey = args[2]
         key, separator, subkey = key_subkey.partition("/")
         
-        bus = dbus.SystemBus()
-        valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource/'+app+'/'+ key)
-        value = valueService.get_dbus_method("value", 'com.nublic.resource.value')
-        
         if separator != "/": # Doesn't have a subkey value
-            print value('None')
+            print App(app).get(key).value('None')
         else:
-            print value(subkey)
+            print App(app).get(key).value(subkey)
     else:
         parser.error("Invalid order")
 

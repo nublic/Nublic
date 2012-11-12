@@ -17,25 +17,25 @@ APACHE_PASSWD_FILE = "/var/nublic/secure/.htpasswd" # for debugging purposes
 USER_SEPARATOR = ':'
 DATA_ROOT = "/var/nublic/data"
 
-class UserDBus(dbus.service.Object):
+class UserDBus(): #(dbus.service.Object):
     def __init__(self, loop = None, initialize_dbus=True):
         if initialize_dbus:
             bus_name = dbus.service.BusName('com.nublic.users', bus=dbus.SystemBus())
             dbus.service.Object.__init__(self, bus_name, '/com/nublic/Users')
     
-    @dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
+    #@dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
     def user_created(self, username, name):
         print "User %s created" % username
     
-    @dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
+    #@dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
     def user_deleted(self, username, name):
         print "User %s deleted" % username
     
-    @dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
+    #@dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
     def user_shown_name_changed(self, username, name):
         print "User %s changed shown name to %s" % (username, name)
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'b')
+    #@dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'b')
     def user_exists(self, username):
         try:
             spwd.getspnam(from_utf8(username))
@@ -43,7 +43,7 @@ class UserDBus(dbus.service.Object):
         except KeyError:
             return False
     
-    @dbus.service.method('com.nublic.users', in_signature = '', out_signature = 's')
+    #@dbus.service.method('com.nublic.users', in_signature = '', out_signature = 's')
     def get_all_users(self):
         ''' Gets all users separated by :'''
         r = ""
@@ -53,12 +53,12 @@ class UserDBus(dbus.service.Object):
             r = r + u.username
         return r
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'i')
+    #@dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'i')
     def get_user_uid(self, username):
         user = pwd.getpwnam(from_utf8(username))
         return user[2] # Corresponds to uid
     
-    @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
+    #@dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def create_user(self, username_, password_, name_):
         # Convert to utf-8
         username = from_utf8(username_)
@@ -114,7 +114,7 @@ class UserDBus(dbus.service.Object):
         with file(fname, 'a'):
             os.utime(fname, times)
     
-    @dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
+    #@dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def change_user_password(self, username_, old_password_, new_password_):
         # Convert to utf-8
         username = from_utf8(username_)
@@ -147,7 +147,7 @@ class UserDBus(dbus.service.Object):
         htpasswd_child.sendline(new_password)
         print("Changed in htpasswd")
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 's')
+    #@dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 's')
     def get_user_shown_name(self, username_):
         # Convert to utf-8
         sys.stderr.write('Starting to get user shown name for ' + username_ + '\n')
@@ -160,7 +160,7 @@ class UserDBus(dbus.service.Object):
         user = User.get_by(username=username)
         return user.name
     
-    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
+    #@dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
     def change_user_shown_name(self, username_, name_):
         # Convert to utf-8
         username = from_utf8(username_)
@@ -176,7 +176,7 @@ class UserDBus(dbus.service.Object):
         # notify
         self.user_shown_name_changed(username, name)
     
-    @dbus.service.method('com.nublic.users', in_signature = 's', out_signature = '')
+    #@dbus.service.method('com.nublic.users', in_signature = 's', out_signature = '')
     def delete_user(self, username_):
         # Convert to utf-8
         username = from_utf8(username_)
@@ -204,7 +204,7 @@ class UserDBus(dbus.service.Object):
         nublic = grp.getgrnam('nublic')
         return nublic.gr_gid
     
-    @dbus.service.method('com.nublic.users', in_signature = 'ssb', out_signature = '')
+    #@dbus.service.method('com.nublic.users', in_signature = 'ssb', out_signature = '')
     def assign_file(self, username_, path_, touch_after):
         # Convert to utf-8
         username = from_utf8(username_)
@@ -224,7 +224,7 @@ class UserDBus(dbus.service.Object):
         if (touch_after):
             pexpect.run('sudo -u ' + username + ' touch "' + real_path + '"')
     
-    @dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
+    #@dbus.service.method('com.nublic.users', in_signature = 'ss', out_signature = '')
     def add_public_key(self, username_, key):
         # Convert to utf-8
         username = from_utf8(username_)

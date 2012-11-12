@@ -9,68 +9,69 @@ Created on 10/08/2010
 '''
 import os
 import sys
-import dbus
-import dbus.service
-import gobject
-from dbus.mainloop.glib import DBusGMainLoop
-from nublic_resource.select_provider import get_provider 
-from nublic_resource.provider import get_all_apps
+# import dbus
+# import dbus.service
+# import gobject
+# from dbus.mainloop.glib import DBusGMainLoop
+# from nublic_resource.select_provider import get_provider 
+# from nublic_resource.provider import get_all_apps
 
 from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from time import sleep
 import logging
+import signal
 
-class DBusResourceValue(dbus.service.Object):
-    _base_object_path = '/com/nublic/resource'
+# class DBusResourceValue(dbus.service.Object):
+#     _base_object_path = '/com/nublic/resource'
     
-    def __init__(self, app_name, key, loop = None):
-        bus_path = 'com.nublic.resource'
-        self.app = app_name
-        self.key = key
-        provider = get_provider(app_name, key)
-        self.provider = provider
-        self.object_path = self._base_object_path + '/' + app_name + '/' + key
+#     def __init__(self, app_name, key, loop = None):
+#         bus_path = 'com.nublic.resource'
+#         self.app = app_name
+#         self.key = key
+#         provider = get_provider(app_name, key)
+#         self.provider = provider
+#         self.object_path = self._base_object_path + '/' + app_name + '/' + key
         
-        # Init DBus object
-        bus_name = dbus.service.BusName(bus_path, 
-                                        dbus.SystemBus(mainloop = loop))
-        dbus.service.Object.__init__(self, bus_name, self.object_path)
+#         # Init DBus object
+#         bus_name = dbus.service.BusName(bus_path, 
+#                                         dbus.SystemBus(mainloop = loop))
+#         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-    @dbus.service.method('com.nublic.resource.value', 
-                         in_signature='s', out_signature='s')
-    def value(self, subkey):
-        return self.provider.value(self.app, self.key, subkey)
+#     @dbus.service.method('com.nublic.resource.value', 
+#                          in_signature='s', out_signature='s')
+#     def value(self, subkey):
+#         return self.provider.value(self.app, self.key, subkey)
 
-class DBusResourceManager(dbus.service.Object):
-    _object_path = '/com/nublic/resource'
+# class DBusResourceManager(dbus.service.Object):
+#     _object_path = '/com/nublic/resource'
     
-    def __init__(self, resourceValues, loop = None):
-        self.resourceValues = resourceValues
-        self.loop = loop
-        bus_path = 'com.nublic.resource'
-        # Init DBus object
-        bus_name = dbus.service.BusName(bus_path, 
-                                        dbus.SystemBus(mainloop = loop))
-        dbus.service.Object.__init__(self, bus_name, self._object_path)
+#     def __init__(self, resourceValues, loop = None):
+#         self.resourceValues = resourceValues
+#         self.loop = loop
+#         bus_path = 'com.nublic.resource'
+#         # Init DBus object
+#         bus_name = dbus.service.BusName(bus_path, 
+#                                         dbus.SystemBus(mainloop = loop))
+#         dbus.service.Object.__init__(self, bus_name, self._object_path)
 
-    @dbus.service.method('com.nublic.resource.manager', 
-                         in_signature='ss')
-    def load(self, app, key):
-        a = app + ""
-        k = key + ""
-        if not self.resourceValues.has_key(a):
-            self.resourceValues[a] = dict()
-        self.resourceValues[a][k] = DBusResourceValue(a, k, self.loop)
+#     @dbus.service.method('com.nublic.resource.manager', 
+#                          in_signature='ss')
+#     def load(self, app, key):
+#         a = app + ""
+#         k = key + ""
+#         if not self.resourceValues.has_key(a):
+#             self.resourceValues[a] = dict()
+#         self.resourceValues[a][k] = DBusResourceValue(a, k, self.loop)
 
-    @dbus.service.method('com.nublic.resource.manager', 
-                         in_signature='ss')
-    def unload(self, app, key):
-        a = app + ""
-        k = key + ""
-        if not self.resourceValues.has_key(a):
-            self.resourceValues[a] = dict()
-        self.resourceValues[a][k].remove_from_connection()
-        del self.resourceValues[a][k]
+#     @dbus.service.method('com.nublic.resource.manager', 
+#                          in_signature='ss')
+#     def unload(self, app, key):
+#         a = app + ""
+#         k = key + ""
+#         if not self.resourceValues.has_key(a):
+#             self.resourceValues[a] = dict()
+#         self.resourceValues[a][k].remove_from_connection()
+#         del self.resourceValues[a][k]
 
 class JsonRpcResource(Handler):
     assume_methods_block = False
@@ -78,7 +79,7 @@ class JsonRpcResource(Handler):
         try:
             return get_provider(app_name, key).value(app_name, key, subkey)
         except:
-            return None
+            return None 
 
 if __name__ == '__main__':
     if not os.geteuid() == 0:
@@ -88,19 +89,27 @@ if __name__ == '__main__':
     logging.basicConfig(level = logging.WARNING)
     peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcResource)
     peer.listen_tcp(port = 5439)
+    sys.stderr.write("Resource daemon listening")
+
+    try:
+        while True:
+            sleep(1)
+    except KeyboardInterrupt:
+        peer.shutdown()
+    sys.stderr.write("Resource daemon shutdown")
 
     # Initialize D-Bus
-    dbus_loop = DBusGMainLoop(set_as_default=True)
-    apps = get_all_apps()
-    dbus_objects = dict()
-    for a in apps:
-        if not dbus_objects.has_key(a.name):
-            dbus_objects[a.name] = dict()
-        for k in a.keys:
-            if not dbus_objects[a.name].has_key(k.name):
-                dbus_objects[a.name][k.name] = dict()
-            dbus_objects[a.name][k.name] = DBusResourceValue(a.name,k.name, dbus_loop)
-    dbusManager = DBusResourceManager(dbus_objects, dbus_loop)
-    loop = gobject.MainLoop()
-    gobject.threads_init()
-    loop.run()
+    #dbus_loop = DBusGMainLoop(set_as_default=True)
+    #apps = get_all_apps()
+    #dbus_objects = dict()
+    #for a in apps:
+    #    if not dbus_objects.has_key(a.name):
+    #        dbus_objects[a.name] = dict()
+    #    for k in a.keys:
+    #        if not dbus_objects[a.name].has_key(k.name):
+    #            dbus_objects[a.name][k.name] = dict()
+    #        dbus_objects[a.name][k.name] = DBusResourceValue(a.name,k.name, dbus_loop)
+    #dbusManager = DBusResourceManager(dbus_objects, dbus_loop)
+    #loop = gobject.MainLoop()
+    #gobject.threads_init()
+    #loop.run()

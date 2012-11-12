@@ -220,7 +220,7 @@ do_build() {
             build_deb_package notification/main/src
             build_deb_package files_and_users/main/src
             build_deb_package files_and_users/client/src
-            build_deb_package filewatcher/main/src
+            build_deb_package filewatcher/internal/src
             build_deb_package python/client/src
             build_deb_package python/server/src
         fi

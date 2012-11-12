@@ -15,7 +15,8 @@ logging.getLogger('sqlalchemy.engine').setLevel(logging.CRITICAL) # TODO ACTIVAT
 
 from optparse import OptionParser
 
-from nublic_notification.dbus_client import Notification
+# from nublic_notification.dbus_client import Notification
+from nublic.notification import *
 
 
 def main():
@@ -30,27 +31,27 @@ def main():
     if len(args) != 3:
         parser.error('Invalid number of parameters. For example nublic-notify appCommandLine" Some thing happened" notice')
     else:
-        notification = Notification()
-        notification.app = args[0]
-        notification.text = args[1]
-        notification.level = args[2]
+        app = args[0]
+        text = args[1]
+        level = args[2]
         if options.user != None:
-            notification.user = options.user
+            user = option.user
         else:
-            notification.user = ""
-        
-        notification.actions = []
+            user = ""
+
+        # Actions are not implemented yet
+        actions = []
         if options.action:
             for a in options.action:
-                notification.actions.append(a[0], a[1])
+                actions.append(a[0], a[1])
         
-        # @todo: Stocks are not fully implemented yet
+        # Stocks are not implemented yet
         stocks = []
         if options.stock:
             for s in options.stock:
-                stocks.append(s[0], s[1]) 
+                stocks.append(s[0], s[1])
 
-        return notification.send()
+        return send_notification(app, user, level, text)
         
 if __name__ == '__main__':
     main()

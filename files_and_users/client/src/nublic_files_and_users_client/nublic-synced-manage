@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
-from nublic_files_and_users_client.dbus_client import *
-from nublic_files_and_users_client.utf8 import *
+#from nublic_files_and_users_client.dbus_client import *
+#from nublic_files_and_users_client.utf8 import *
 import sys
+
+from nublic.files_and_users.work_folder import *
 
 if __name__ == '__main__':
     # Add a synced folder
@@ -11,17 +13,17 @@ if __name__ == '__main__':
         name = sys.stdin.readline().strip()
         sys.stdout.write("Owner: ")
         owner = sys.stdin.readline().strip()
-        mid = create_synced_folder(to_utf8(name), to_utf8(owner))
-        sys.stdout.write("Synced folder created with id ")
+        mid = create_work_folder(to_utf8(name), to_utf8(owner))
+        sys.stdout.write("Work folder created with id ")
         sys.stdout.write(str(mid))
         sys.stdout.write("\n")
     # Delete a synced folder
     elif sys.argv[1] == 'delete':
         mid = sys.argv[2]
-        delete_synced_folder(int(mid))
-        sys.stdout.write("Synced folder deleted\n")
+        WorkFolder(int(mid)).delete(False)
+        sys.stdout.write("Work folder deleted\n")
     # List symced folders
     elif sys.argv[1] == 'list':
-        for mirror in list_synced_folders():
-            sys.stdout.write(str(mirror))
+        for wf in get_all_work_folders():
+            sys.stdout.write(str(wf))
             sys.stdout.write("\n")
