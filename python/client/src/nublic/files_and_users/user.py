@@ -59,6 +59,7 @@ class User:
 
     def as_map(self):
         return { 'username' : self.get_username()
+               , 'exists'   : self.exists()
                , 'uid'      : self.get_id()
                , 'shown'    : self.get_shown_name()
                }
