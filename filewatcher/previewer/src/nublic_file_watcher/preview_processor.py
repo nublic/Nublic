@@ -23,9 +23,9 @@ class Element:
             # First we compare the type of changes
             # (small time changes are better)
             if self.is_short_kind() and not other.is_short_kind():
-                return true
+                return True
             elif other.is_short_kind() and not self.is_short_kind():
-                return false
+                return False
             # Second we compare the size of files
             return self.info.size() <= other.info.size()
 
