@@ -9,20 +9,30 @@
 # @author: Alejandro Serrano Mena
 # @copyright: 2011 Nublic
 
-import argparse
-#import gobject
-#from dbus.mainloop.glib import DBusGMainLoop
 
-# from watcher import (
-from nublic_file_watcher.watcher import (
-    start_watching,
-    scan_folder
-    )
+from nublic_file_watcher.preview_queue import CentralQueue
+from nublic_file_watcher.preview_processor import Element
+from nublic.filewatcher import Processor, init_watcher
 
-SCANNED_FOLDER = '/var/nublic/data'
+from time import sleep
+import logging
+import signal
 
-def main():
-    pass
+class MainProcessor(Processor):
+    def __init__(self, watcher, logger):
+        Processor.__init__(self, "previewer", watcher, False)
+        self.central_queue = CentralQueue.start({})
+
+    def process(self, change):
+        self.central_queue.tell(('_watcher', Element(change)))
 
 if __name__ == '__main__':
-    main()
+    logging.basicConfig(level = logging.WARNING)
+    init_watcher("previewer",[MainProcessor.start()])
+
+    try:
+        while True:
+            sleep(1)
+    except KeyboardInterrupt:
+        peer.shutdown()
+    sys.stderr.write("Resource daemon shutdown\n")

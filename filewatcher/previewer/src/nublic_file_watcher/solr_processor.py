@@ -4,7 +4,8 @@ import magic
 import os
 import os.path
 from sunburnt import SolrInterface
-from nublic.filewatcher import FileChange, Processor
+from preview_processor import PreviewProcessor
+from file_info import FileInfo
 
 def to_utf8(self, string):
     return unicode(string, 'utf-8')
@@ -12,46 +13,12 @@ def to_utf8(self, string):
 def from_utf8(self, string):
     return string.encode('utf-8')
 
-class FileInfo:
+class SolrFileInfo:
     def __init__(self, props, interface):
         self.props = props
-        self.Magic = magic.open(magic.MAGIC_MIME_TYPE)
-        self.Magic.load()
+        self.info = FileInfo(from_utf8(self.props['path']))
         self.interface = interface
-    
-    def compute_mime_type(self):
-        path = from_utf8(self.props['path'])
-        mime = Magic.file(path)
-        extension = os.path.splitext(path)[1].lower()
-        if mime == "application/zip": # for Office XML docs
-            if extension == ".docx":
-                mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            elif extension == ".xlsx":
-                mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            elif extension == ".pptx":
-                mime = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-        elif mime == "application/vnd.ms-office": # for Office non-XML docs
-            if extension == ".doc":
-                mime = "application/msword"
-            elif extension == ".xls":
-                mime = "application/msexcel"
-            elif extension == ".ppt":
-                mime = "application/mspowerpoint"
-        elif mime == "application/x-staroffice" or mime == "application/soffice" or mime == "application/x-soffice":
-            if extension == ".sdw":
-                mime = "application/vnd.stardivision.writer"
-            elif extension == ".sdc":
-                mime = "application/vnd.stardivision.calc"
-            elif extension == ".sdd":
-                mime = "application/vnd.stardivision.impress"
-            elif extension == ".sda":
-                mime = "application/vnd.stardivision.draw"
-        elif mime == "application/octet-stream":
-            if extension == ".mp3":
-                mime = "audio/mpeg"
-        # In any other case
-        return mime
-    
+
     def set_new_pathname(self, new_pathname):
         self.props['path'] = to_utf8(new_pathname)
         self.props['filename'] = to_utf8(os.path.basename(new_pathname))
@@ -65,9 +32,9 @@ class FileInfo:
     def save(self, should_recreate_mime):
         self.props['updatedAt'] = datetime.datetime.now()
         path = from_utf8(self.props['path'])
-        self.props['size'] = os.path.getsize(path)
+        self.props['size'] = self.info.size()
         if should_recreate_mime:
-            self.props['mime'] = self.compute_mime_type()
+            self.props['mime'] = self.info.mime_type()
         # Save in Solr
         self.interface.add(self.props)
         self.interface.commit()
@@ -79,11 +46,12 @@ class FileInfo:
 
 SOLR_URL = "http://localhost:8080/solr"
 
-class SolrProcessor(Processor):
-    def __init__(self, logger, watcher):
-        Processor.__init__(self, 'solr', watcher, False, logger)
+class SolrProcessor(PreviewProcessor):
+    def __init__(self):
         self._solr_interface = None
-        logger.error('Solr processor initialised')
+
+    def get_id(self):
+        return 'solr'
     
     def get_solr_interface(self):
         if self._solr_interface == None:
@@ -98,7 +66,7 @@ class SolrProcessor(Processor):
     def retrieve_doc(self, pathname):
         results = self.get_solr_interface().query(path=to_utf8(pathname)).execute()
         if len(results) > 0:
-            return FileInfo(results[0], self.get_solr_interface())
+            return SolrFileInfo(results[0], self.get_solr_interface())
         else:
             return None
 
@@ -107,7 +75,7 @@ class SolrProcessor(Processor):
         for result in results:
             if from_utf8(result['path']).startswith(path + '/'):
                 # So the folder name does not appear in the middle
-                yield FileInfo(result, self.get_solr_interface())
+                yield SolrFileInfo(result, self.get_solr_interface())
 
     def new_doc(self, pathname, isdir):
         document = { 'isFile': True
@@ -116,13 +84,14 @@ class SolrProcessor(Processor):
                    , 'filename': to_utf8(os.path.basename(pathname))
                    , 'createdAt': datetime.datetime.now()
                    }
-        return FileInfo(document, self.get_solr_interface())
+        return SolrFileInfo(document, self.get_solr_interface())
 
     def delete_all_documents(self):
         self.get_solr_interface().delete_all()
         self.get_solr_interface().commit()
 
-    def process(self, change):
+    def process(self, element):
+        change = element.get_change()
         if change.kind == FileChange.CREATED:
             self.process_updated_file(change.filename, change.is_dir, True)
         elif change.kind == FileChange.MODIFIED:
