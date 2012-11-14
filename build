@@ -211,7 +211,8 @@ do_build() {
             rm -r ${INITIAL_DIR}/3rd-party-libs/pyechonest/pyechonest.egg-info/
             copy_and_touch 3rd-party-libs/aria2
             copy_and_touch 3rd-party-libs/python-fstab
-            copy_and_touch 3rd-party-libs/tomcat7
+            # copy_and_touch 3rd-party-libs/tomcat7
+            copy_and_touch 3rd-party-libs/jetty8
             copy_and_touch 3rd-party-libs/lucene-solr
             build_deb_package 3rd-party-libs/pykka
             build_deb_package 3rd-party-libs/rpcbd-0.6.0
@@ -240,13 +241,13 @@ do_build() {
         
         if in_list $thing "all base base_java"
         then
-            build_deb_package resource/java
+            build_gwt_package resource/java
             package_and_install resource/java
-            build_deb_package notification/java
+            build_gwt_package notification/java
             package_and_install notification/java
-            build_deb_package files_and_users/java
+            build_gwt_package files_and_users/java
             package_and_install files_and_users/java
-            build_deb_package filewatcher/scala
+            build_gwt_package filewatcher/scala
             install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
         fi
         
@@ -379,9 +380,11 @@ do_build() {
         then
             build_deb_package conf/apache
             build_deb_package conf/samba
-            build_deb_package conf/solr
-            build_deb_package conf/tomcat6
-            build_deb_package conf/tomcat7
+            build_deb_package conf/jetty8
+            build_deb_package conf/solr-jetty8
+            #build_deb_package conf/solr
+            #build_deb_package conf/tomcat6
+            #build_deb_package conf/tomcat7
             build_deb_package conf/minidlna
             build_deb_package conf/upstart
             build_deb_package conf/lshell
