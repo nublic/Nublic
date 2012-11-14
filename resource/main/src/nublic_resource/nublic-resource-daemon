@@ -13,8 +13,8 @@ import sys
 # import dbus.service
 # import gobject
 # from dbus.mainloop.glib import DBusGMainLoop
-# from nublic_resource.select_provider import get_provider 
-# from nublic_resource.provider import get_all_apps
+from nublic_resource.select_provider import get_provider 
+from nublic_resource.provider import get_all_apps
 
 from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from time import sleep
@@ -89,14 +89,14 @@ if __name__ == '__main__':
     logging.basicConfig(level = logging.WARNING)
     peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcResource)
     peer.listen_tcp(port = 5439)
-    sys.stderr.write("Resource daemon listening")
+    sys.stderr.write("Resource daemon listening\n")
 
     try:
         while True:
             sleep(1)
     except KeyboardInterrupt:
         peer.shutdown()
-    sys.stderr.write("Resource daemon shutdown")
+    sys.stderr.write("Resource daemon shutdown\n")
 
     # Initialize D-Bus
     #dbus_loop = DBusGMainLoop(set_as_default=True)

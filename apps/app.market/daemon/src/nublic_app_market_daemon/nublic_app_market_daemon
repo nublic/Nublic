@@ -9,7 +9,7 @@ from rpcbd import ThreadedTCPJsonRpcPeer, JSONRPC_V2
 import gobject
 import time
 import sys
-from time import sleeep
+from time import sleep
 import signal
 
 if __name__ == '__main__':

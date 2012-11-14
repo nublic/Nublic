@@ -6,7 +6,7 @@ Created on 06/09/2011
 @copyright: 2011 Nublic
 '''
 
-import gobject
+#import gobject
 import os
 import pyinotify
 # from dbus_signals import DbusSignaler
@@ -61,7 +61,7 @@ def start_watching(folder):
     except KeyboardInterrupt:
         rt.stop()
         peer.shutdown()
-    sys.stderr.write("Filewatcher daemon shutdown")
+    sys.stderr.write("Filewatcher daemon shutdown\n")
 
 def quick_check():
     notifier.process_events()

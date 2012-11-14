@@ -6,7 +6,7 @@ Created on 18/07/2011
 @author: David Navarro Estruch
 @copyright: 2011 Nublic
 '''
-import gtk
+#import gtk
 import dbus
 #import dbus.service
 #import dbus.exceptions
@@ -48,20 +48,20 @@ def do_main_program():
     __check_nublic_resource_is_on()
     metadata.bind = __get_bind_uri()
     setup_all(create_tables = True)
-    sys.stderr.write("Notification daemon database setup")
+    sys.stderr.write("Notification daemon database setup\n")
 
     # Initialize JSON-RPC
     logging.basicConfig(level = logging.WARNING)
     peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcNotification)
     peer.listen_tcp(port = 5441)
-    sys.stderr.write("Notification daemon listening")
+    sys.stderr.write("Notification daemon listening\n")
 
     try:
         while True:
             sleep(1)
     except KeyboardInterrupt:
         peer.shutdown()
-    sys.stderr.write("Notification daemon shutdown")
+    sys.stderr.write("Notification daemon shutdown\n")
 
     # Initialize D-Bus
     #dbus_value = DBusValue(loop = dbus_loop)

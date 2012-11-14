@@ -132,7 +132,7 @@ if __name__ == '__main__':
             sleep(1)
     except KeyboardInterrupt:
         peer.shutdown()
-    sys.stderr.write("Files and users daemon shutdown")
+    sys.stderr.write("Files and users daemon shutdown\n")
     
     # Initialize D-Bus loop
     #dbus_loop = DBusGMainLoop(set_as_default=True)
