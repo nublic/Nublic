@@ -6,7 +6,7 @@ Created on 08/09/2011
 '''
 
 # import dbus
-import dbus.service
+# import dbus.service
 import os
 import os.path
 import simplejson
@@ -18,14 +18,14 @@ def to_utf8(string):
 def from_utf8(string):
     return string.encode('utf-8')
 
-class DbusSignaler(dbus.service.Object):
+class DbusSignaler(): #dbus.service.Object):
     '''
-    Sends signals via D-Bus
+    Sends signals
     '''
     def __init__(self):
         # Initialize D-Bus
-        bus_name = dbus.service.BusName('com.nublic.filewatcher', bus=dbus.SystemBus())
-        dbus.service.Object.__init__(self, bus_name, '/com/nublic/filewatcher/Filewatcher')
+        #bus_name = dbus.service.BusName('com.nublic.filewatcher', bus=dbus.SystemBus())
+        #dbus.service.Object.__init__(self, bus_name, '/com/nublic/filewatcher/Filewatcher')
         # Initialize sockets
         self.sockets = []
     
@@ -35,7 +35,7 @@ class DbusSignaler(dbus.service.Object):
     def raise_event(self, ty, pathname, src_pathname, isdir):
         self.file_changed(ty, pathname, src_pathname, isdir)
     
-    @dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
+    #@dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir):
         o = { 'ty': unicode(ty), 'pathname': unicode(pathname.decode('utf-8')), \
               'src_pathname': unicode(src_pathname.decode('utf-8')), \

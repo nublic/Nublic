@@ -57,11 +57,18 @@ class User:
         self._writable_paths = [os.path.join(DATA_ROOT, 'nublic-only')]
         self.use_dbus = use_dbus
 
+    def as_map(self):
+        return { 'username' : self.get_username()
+               , 'exists'   : self.exists()
+               , 'uid'      : self.get_id()
+               , 'shown'    : self.get_shown_name()
+               }
+
     def exists(self):
         return _call_user_method_return(lambda i: i.user_exists(self._username), self.use_dbus)
 
     def create(self, password, shown_name):
-        return _call_user_method_return(lambda i: i.user_create(self._username, password, shown_name), self.use_dbus)
+        return _call_user_method_return(lambda i: i.create_user(self._username, password, shown_name), self.use_dbus)
 
     def delete(self):
         return _call_user_method_return(lambda i: i.delete_user(self._username), self.use_dbus)

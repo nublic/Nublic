@@ -1,13 +1,17 @@
 package com.nublic.app.init.client.ui.users;
 
 import java.util.EnumSet;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
+import com.nublic.app.init.client.model.InitModel;
 import com.nublic.app.init.client.model.Step;
+import com.nublic.app.init.client.model.User;
+import com.nublic.app.init.client.model.handlers.UserListHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
 import com.nublic.app.init.client.ui.FooterPagination;
 import com.google.gwt.uibinder.client.UiField;
@@ -26,6 +30,14 @@ public class UsersPage extends CentralPanel {
 				Constants.PARAM_PAGE + "=" + Constants.VALUE_MASTER_USER);
 		
 		// Get created users from model
+		InitModel.INSTANCE.getUserList(new UserListHandler() {
+			@Override
+			public void onUserList(List<User> userList) {
+				for (User u : userList) {
+					addCompletedUser(u.getUserName());
+				}
+			}
+		});
 	}
 	
 	public void addCompletedUser(String name) {

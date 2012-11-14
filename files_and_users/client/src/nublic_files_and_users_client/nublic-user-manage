@@ -1,8 +1,11 @@
 #!/usr/bin/python
 
-from nublic_files_and_users_client.dbus_client import *
-from nublic_files_and_users_client.utf8 import *
+#from nublic_files_and_users_client.dbus_client import *
+#from nublic_files_and_users_client.utf8 import *
 import sys
+import simplejson as json
+
+from nublic.files_and_users.user import *
 
 if __name__ == '__main__':
     # Add an user
@@ -15,24 +18,24 @@ if __name__ == '__main__':
         sys.stdout.write("Rewrite password: ")
         password2 = sys.stdin.readline().strip()
         if password1 == password2:
-            create_user(to_utf8(user), to_utf8(name), to_utf8(password1))
+            User(to_utf8(user)).create(to_utf8(password1), to_utf8(name))
             sys.stdout.write("User created\n")
         else:
             sys.stdout.write("Passwords do not match\n")
     # Delete an user
     elif sys.argv[1] == 'delete':
         user = sys.argv[2]
-        delete_user(to_utf8(user))
+        User(to_utf8(user)).delete()
         sys.stdout.write("User deleted\n")
     # Change user name
     elif sys.argv[1] == 'name':
         user = sys.argv[2]
         sys.stdout.write("Name to be shown: ")
         name = sys.stdin.readline().strip()
-        change_user_name(to_utf8(user), to_utf8(name))
+        User(to_utf8(user)).change_shown_name(to_utf8(name))
     # List registered users
     elif sys.argv[1] == 'list':
-        for u in list_users():
-            sys.stdout.write(str(u))
+        for u in get_all_users():
+            sys.stdout.write(json.dumps(u.as_map()))
             sys.stdout.write("\n")
 

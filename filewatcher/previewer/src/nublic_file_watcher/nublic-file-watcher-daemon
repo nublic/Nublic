@@ -10,8 +10,8 @@
 # @copyright: 2011 Nublic
 
 import argparse
-import gobject
-from dbus.mainloop.glib import DBusGMainLoop
+#import gobject
+#from dbus.mainloop.glib import DBusGMainLoop
 
 # from watcher import (
 from nublic_file_watcher.watcher import (

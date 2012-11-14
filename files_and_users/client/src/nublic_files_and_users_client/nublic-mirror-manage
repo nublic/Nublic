@@ -1,8 +1,10 @@
 #!/usr/bin/python
 
-from nublic_files_and_users_client.dbus_client import *
-from nublic_files_and_users_client.utf8 import *
+#from nublic_files_and_users_client.dbus_client import *
+#from nublic_files_and_users_client.utf8 import *
 import sys
+
+from nublic.files_and_users.mirror import *
 
 if __name__ == '__main__':
     # Add a mirror
@@ -18,10 +20,10 @@ if __name__ == '__main__':
     # Delete a mirror
     elif sys.argv[1] == 'delete':
         mid = sys.argv[2]
-        delete_mirror(int(mid))
+        Mirror(int(mid)).delete()
         sys.stdout.write("Mirror deleted\n")
     # List mirror
     elif sys.argv[1] == 'list':
-        for mirror in list_mirrors():
-            sys.stdout.write(str(mirror))
+        for mirror in get_all_mirrors():
+            sys.stdout.write(json.dumps(mirror.as_map()))
             sys.stdout.write("\n")

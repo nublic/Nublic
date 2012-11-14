@@ -1,25 +1,35 @@
 #!/usr/bin/python
 
 from nublic_app_market_daemon.apt_daemon import *
-from dbus.mainloop.glib import DBusGMainLoop
+# from dbus.mainloop.glib import DBusGMainLoop
 
 import logging
 from rpcbd import ThreadedTCPJsonRpcPeer, JSONRPC_V2
-import dbus
+#import dbus
 import gobject
 import time
+import sys
+from time import sleep
+import signal
 
 if __name__ == '__main__':
     # Initialize JSON-RPC
     logging.basicConfig(level = logging.WARNING)
     peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = Apt)
     peer.listen_tcp(port = 5442)
+
+    try:
+        while True:
+            sleep(1)
+    except KeyboardInterrupt:
+        peer.shutdown()
+    sys.stderr.write("Market daemon shutdown")
     
     # Initialize D-Bus loop
-    dbus_loop = DBusGMainLoop(set_as_default=True)
+    #dbus_loop = DBusGMainLoop(set_as_default=True)
     # Initialize D-Bus objects
-    apt = Apt(dbus_loop)
+    #apt = Apt(dbus_loop)
     # Start GObject loop
-    loop = gobject.MainLoop()
-    gobject.threads_init()
-    loop.run()
+    #loop = gobject.MainLoop()
+    #gobject.threads_init()
+    #loop.run()
