@@ -3,6 +3,7 @@
 #from nublic_files_and_users_client.dbus_client import *
 #from nublic_files_and_users_client.utf8 import *
 import sys
+import simplejson as json
 
 from nublic.files_and_users.work_folder import *
 
@@ -25,5 +26,5 @@ if __name__ == '__main__':
     # List symced folders
     elif sys.argv[1] == 'list':
         for wf in get_all_work_folders():
-            sys.stdout.write(str(wf))
+            sys.stdout.write(json.dumps(wf.as_map()))
             sys.stdout.write("\n")

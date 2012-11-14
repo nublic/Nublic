@@ -81,6 +81,9 @@ class JsonRpcFilesAndUsers(Handler):
     def get_all_mirrors(self):
         return mirrorJson.get_all_mirrors()
 
+    def mirror_exists(self, mid):
+        return mirrorJson.mirror_exists(mid)
+
     def get_mirror_name(self, mid):
         return mirrorJson.get_mirror_name(mid)
 
@@ -98,6 +101,9 @@ class JsonRpcFilesAndUsers(Handler):
 
     def get_all_synced_folders(self):
         return syncedJson.get_all_synced_folders()
+
+    def synced_folder_exists(self, mid):
+        return syncedJson.synced_folder_exists(mid)
 
     def get_synced_folder_name(self, mid):
         return syncedJson.get_synced_folder_name(mid)

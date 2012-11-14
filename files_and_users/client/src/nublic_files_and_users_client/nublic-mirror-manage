@@ -25,5 +25,5 @@ if __name__ == '__main__':
     # List mirror
     elif sys.argv[1] == 'list':
         for mirror in get_all_mirrors():
-            sys.stdout.write(str(mirror))
+            sys.stdout.write(json.dumps(mirror.as_map()))
             sys.stdout.write("\n")

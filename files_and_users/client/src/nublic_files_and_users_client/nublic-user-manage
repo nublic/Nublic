@@ -3,6 +3,7 @@
 #from nublic_files_and_users_client.dbus_client import *
 #from nublic_files_and_users_client.utf8 import *
 import sys
+import simplejson as json
 
 from nublic.files_and_users.user import *
 
@@ -35,6 +36,6 @@ if __name__ == '__main__':
     # List registered users
     elif sys.argv[1] == 'list':
         for u in get_all_users():
-            sys.stdout.write(str(u))
+            sys.stdout.write(json.dumps(u.as_map()))
             sys.stdout.write("\n")
 

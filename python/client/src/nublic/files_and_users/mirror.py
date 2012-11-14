@@ -41,6 +41,13 @@ class Mirror:
     def __init__(self, mid, use_dbus=False):
         self._id = mid
         self.use_dbus = use_dbus
+
+    def as_map(self):
+        return { 'id'     : self.get_id()
+               , 'exists' : self.exists()
+               , 'name'   : self.get_name()
+               , 'owner'  : self.get_owner().as_map()
+               }
     
     def exists(self):
         return _call_mirror_method_return(lambda i: i.mirror_exists(self._id), self.use_dbus)
