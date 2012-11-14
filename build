@@ -85,15 +85,24 @@ package_and_install_dev_mode() {
     cd "${INITIAL_DIR}"
 }
 
-build_deb_package() {  # $1 = directory, $2 = "gather_dependencies" -> try to gather dependencies
+build_gwt_package() {
     echo
-    echo "BUILDING .DEB FOR " $1
+    echo "BUILDING GWT PACKAGE " $1
     cd "$1"
     # Try to run Maven clean
     if [ ${SHOULD_CLEAN_MAVEN} -eq 1 ]
     then
         ${MAVEN} clean
     fi
+    cd "${INITIAL_DIR}"
+    # Now build the package
+    build_deb_package $*
+}
+
+build_deb_package() {  # $1 = directory, $2 = "gather_dependencies" -> try to gather dependencies
+    echo
+    echo "BUILDING .DEB FOR " $1
+    cd "$1"
     # Add changelog entry
     dch -p -v ${DEBREVISION} Building on `date`
     ${DEBUILD} -i -us -uc -b
@@ -255,9 +264,9 @@ do_build() {
         
         if in_list $thing "all gwt app_manager app_manager_gwt"
         then
-            build_deb_package apps/app.manager/web
-            build_deb_package apps/app.manager/welcome
-            build_deb_package apps/app.manager/settings
+            build_gwt_package apps/app.manager/web
+            build_gwt_package apps/app.manager/welcome
+            build_gwt_package apps/app.manager/settings
         fi
         
         if in_list $thing "all app_manager"
@@ -273,7 +282,7 @@ do_build() {
             
         if in_list $thing "all gwt app_browser app_browser_gwt"
         then
-            build_deb_package apps/app.browser/web
+            build_gwt_package apps/app.browser/web
         fi
          
         if in_list $thing "all app_browser"
@@ -290,7 +299,7 @@ do_build() {
         
         if in_list $thing "all gwt app_music app_music_gwt"
         then
-            build_deb_package apps/app.music/web
+            build_gwt_package apps/app.music/web
         fi
         
         if in_list $thing "all app_music"
@@ -307,8 +316,8 @@ do_build() {
         if in_list $thing "all gwt app_photos app_photos_gwt"
         then
             package_and_install apps/app.photos/common
-            build_deb_package apps/app.photos/web
-            build_deb_package apps/app.photos/mobile
+            build_gwt_package apps/app.photos/web
+            build_gwt_package apps/app.photos/mobile
         fi
         
         if in_list $thing "all app_photos"
@@ -324,7 +333,7 @@ do_build() {
         
         if in_list $thing "all gwt app_downloads app_downloads_gwt"
         then
-            build_deb_package apps/app.downloads/web
+            build_gwt_package apps/app.downloads/web
         fi
         
         if in_list $thing "all app_downloads"
@@ -341,7 +350,7 @@ do_build() {
         
         if in_list $thing "all gwt app_market app_market_gwt"
         then
-            build_deb_package apps/app.market/web
+            build_gwt_package apps/app.market/web
         fi
             
         if in_list $thing "all app_market"
@@ -357,7 +366,7 @@ do_build() {
         
         if in_list $thing "all gwt app_init app_init_gwt"
         then
-            build_deb_package apps/app.init/web
+            build_gwt_package apps/app.init/web
         fi
         
         if in_list $thing "all app_init"
