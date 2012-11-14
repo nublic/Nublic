@@ -1,0 +1,6 @@
+This is old code and it's here only for historical purposes.
+The functionality has been split in two packages:
+- internal is the actual package hearing for inotify events,
+  and communicating them via a custom socket interface,
+- previewer is the package devoted to handling the creation
+  of indexes and previews for Nublic applications.
