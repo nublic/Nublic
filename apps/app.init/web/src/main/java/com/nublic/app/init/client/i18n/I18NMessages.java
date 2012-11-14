@@ -35,6 +35,7 @@ public interface I18NMessages extends Messages {
 	String noCoincidentPassword();
 	String allFieldsError();
 	String userCreated();
+	String couldNotCreateUser();
 
 	// Master
 	SafeHtml attentionCopyPassword();
