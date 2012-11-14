@@ -130,9 +130,9 @@ build_submodule_lib() {
     echo
     echo "BUILDING EXTERNAL LIBRARY " $1
     cd 3rd-party-libs
-    rm -rf "$1"/debian
-    mkdir "$1"/debian
-    cp -R "$1-debian"/* "$1"/debian
+    rm -rf "$1/debian"
+    mkdir "$1/debian"
+    cp -R "$1-debian"/* "$1/debian"
     cd "$1"
     ${DEBUILD} -i -us -uc -b
     exit=$?
@@ -144,7 +144,7 @@ build_submodule_lib() {
     ${DEBUILD} clean
     cd ..
     mv *.deb *.build *.changes *.dsc *.tar.gz "${TARGET_DIR}"
-    rm -rf "$1"/debian
+    rm -rf "$1/debian"
     cd "${INITIAL_DIR}"
 }
 
