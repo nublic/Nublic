@@ -33,6 +33,7 @@ public class UserWidget extends Composite {
 	@UiField CheckFeedback systemNameFeedback;
 	@UiField CheckFeedback passwordFeedback;
 	@UiField CheckFeedback verificationFeedback;
+	boolean hasTriedCustomName = false;
 	public final MyCheckUserHandler userChecker = new MyCheckUserHandler();
 
 	public UserWidget() {
@@ -44,7 +45,22 @@ public class UserWidget extends Composite {
 				if (newText.isEmpty()) {
 					nameFeedback.setFeedback(Feedback.NONE);
 				} else {
-					nameFeedback.setFeedback(Feedback.LOADING);
+					nameFeedback.setFeedback(Feedback.CHECK);
+				}
+				if (!hasTriedCustomName) {
+					updateSystemName(newText);
+				}
+			}
+		});
+		
+		systemNameBox.addKeyUpHandler(new RealChangeHandler(systemNameBox) {
+			@Override
+			public void onRealChange(String newText) {
+				hasTriedCustomName = true;
+				if (newText.isEmpty()) {
+					systemNameFeedback.setFeedback(Feedback.NONE);
+				} else {
+					systemNameFeedback.setFeedback(Feedback.LOADING);
 					InitModel.INSTANCE.checkUserAvailability(newText, userChecker);
 				}
 			}
@@ -88,12 +104,12 @@ public class UserWidget extends Composite {
 	class MyCheckUserHandler implements CheckUserHandler {
 		@Override
 		public void onUserChecked(String userName, boolean available) {
-			if (userName.compareTo(nameBox.getText()) == 0) {
+			if (userName.compareTo(systemNameBox.getText()) == 0) {
 				// Current name in box has been checked
 				if (available) {
-					nameFeedback.setFeedback(Feedback.CHECK);
+					systemNameFeedback.setFeedback(Feedback.CHECK);
 				} else {
-					nameFeedback.setFeedback(Feedback.CROSS);
+					systemNameFeedback.setFeedback(Feedback.CROSS);
 				}
 			}
 			// else ignore
@@ -102,7 +118,10 @@ public class UserWidget extends Composite {
 	
 	@UiHandler("createButton")
 	void onCreateButtonClick(ClickEvent event) {
-		if (nameFeedback.isChecked() && passwordFeedback.isChecked() && verificationFeedback.isChecked()) {
+		if (nameFeedback.isChecked() &&
+				systemNameFeedback.isChecked() &&
+				passwordFeedback.isChecked() &&
+				verificationFeedback.isChecked()) {
 			InitModel.INSTANCE.addUser(nameBox.getText(), passwordBox.getText(), new AddUserHandler() {
 				@Override
 				public void onUserAdded(String name) {
@@ -114,13 +133,28 @@ public class UserWidget extends Composite {
 			ErrorPopup.showError(Constants.I18N.allFieldsError());
 		}
 	}
+	
+	
+	public void updateSystemName(String realName) {
+		String userName = InitModel.getSystemName(realName);
+		systemNameBox.setText(userName);
+		if (userName.isEmpty()) {
+			systemNameFeedback.setFeedback(Feedback.NONE);
+		} else {
+			systemNameFeedback.setFeedback(Feedback.LOADING);
+			InitModel.INSTANCE.checkUserAvailability(userName, userChecker);
+		}
+	}
 
 	public void emptyBoxes() {
 		nameBox.setText("");
+		systemNameBox.setText("");
 		passwordBox.setText("");
 		verificationBox.setText("");
 		nameFeedback.setFeedback(Feedback.NONE);
+		systemNameFeedback.setFeedback(Feedback.NONE);
 		passwordFeedback.setFeedback(Feedback.NONE);
 		verificationFeedback.setFeedback(Feedback.NONE);
+		hasTriedCustomName = false;
 	}
 }
