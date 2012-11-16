@@ -25,10 +25,12 @@ public class UserWidget extends Composite {
 	interface UserWidgetUiBinder extends UiBinder<Widget, UserWidget> {}
 
 	@UiField TextBox nameBox;
+	@UiField TextBox systemNameBox;
 	@UiField PasswordTextBox passwordBox;
 	@UiField PasswordTextBox verificationBox;
 	@UiField Button createButton;
 	@UiField CheckFeedback nameFeedback;
+	@UiField CheckFeedback systemNameFeedback;
 	@UiField CheckFeedback passwordFeedback;
 	@UiField CheckFeedback verificationFeedback;
 	public final MyCheckUserHandler userChecker = new MyCheckUserHandler();

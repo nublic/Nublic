@@ -27,6 +27,9 @@ public interface I18NMessages extends Messages {
 	// Users
 	String usersText();
 	String userName();
+	String userNameHelp();
+	String systemUserName();
+	String systemUserNameHelp();
 	String password();
 	String passwordVerification();
 	String createUser();
