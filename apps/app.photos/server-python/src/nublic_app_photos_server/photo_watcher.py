@@ -11,7 +11,7 @@ from model import db, Photo, Album, PhotoAlbum, get_or_create_album
 # Set up processors
 class PhotoProcessor(Processor):
     def __init__(self, logger, watcher):
-        Processor.__init__(self, 'photo', watcher, False, logger)
+        super(PhotoProcessor, self).__init__('photo', watcher, False, logger)
         logger.error('Photo processor initialised')
 
     def process(self, change):

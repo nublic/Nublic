@@ -22,6 +22,7 @@ class Processor(ThreadingActor):
         :param throwException: whether to throw an exception or log errors
         :type throwException: boolean
         '''
+	super(Processor, self).__init__()
         self._name = name
         self._watcher = watcher
         self._throwException = throwException

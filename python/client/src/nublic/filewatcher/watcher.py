@@ -82,6 +82,7 @@ class FileWatcherActor(ThreadingActor):
     '''
     
     def __init__(self, app_name, processors, logger):
+	super(FileWatcherActor, self).__init__()
         self._app_name = app_name
         self._logger = logger
         self._messageId = 0
