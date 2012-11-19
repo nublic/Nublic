@@ -2,7 +2,7 @@
 
 import os.path
 import shutil
-from nublic_server.places import get_mime_type
+from nublic_server.places import get_mime_type, get_cache_folder
 from hashlib import sha1  # pylint: disable=E0611
 
 CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
