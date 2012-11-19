@@ -119,8 +119,8 @@ class PostgresqlDB(DatabaseStored):
                                     self.__root_user, self.__root_password)
         # Create database cannot be executed as a transaction block so we 
         # should change the isolation level to create a database
-        metadata.bind.engine.connect().\
-            connection.connection.set_isolation_level(0)
+        connection = metadata.bind.engine.connect()
+        conection.connection.connection.set_isolation_level(0)
         
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data()
@@ -143,6 +143,8 @@ class PostgresqlDB(DatabaseStored):
         text(sql_create_user, metadata.bind).execute(user=user_name, password=password)
         text(sql_create_database, metadata.bind).execute(database=database_name)
         #text(sql_revoke_permissions, metadata.bind).execute(user = user_name)
+	connection.close()
+        metadata.bind.engine.dispose()
         # Restores the old database
         metadata.bind = bind
         return database_name, user_name, password
@@ -152,8 +154,8 @@ class PostgresqlDB(DatabaseStored):
         # Creates a connection with permission to create users and databases
         metadata.bind = self.__generate_connection_uri(
                                         self.__root_user, self.__root_password)
-        metadata.bind.engine.connect().\
-            connection.connection.set_isolation_level(0)
+        connection = metadata.bind.engine.connect()
+        conection.connection.connection.set_isolation_level(0)
         
         # Generate data and queries
         sql_delete_database = "DROP DATABASE " + database_name + ";"
@@ -161,6 +163,8 @@ class PostgresqlDB(DatabaseStored):
         # Perform the queries
         text(sql_delete_database, metadata.bind).execute(database=database_name)
         text(sql_delete_user, metadata.bind).execute(user=user_name)
+	connection.close()
+        metadata.bind.engine.dispose()
         # Restores the old database_name
         metadata.bind = bind
 

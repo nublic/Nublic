@@ -78,8 +78,9 @@ class JsonRpcResource(Handler):
     def value(self, app_name, key, subkey):
         try:
             return get_provider(app_name, key).value(app_name, key, subkey)
-        except:
-            return None 
+        except BaseException as e:
+            logging.error("Detected exception %s", str(e))
+            return None
 
 if __name__ == '__main__':
     if not os.geteuid() == 0:
