@@ -9,8 +9,8 @@ from nublic_server.helpers import init_bare_nublic_server, \
     require_user
 from nublic_server.files import PermissionError, get_file_info, get_folders
 from nublic_server import files
-from nublic_files_and_users_client.dbus_client import list_mirrors, \
-    list_synced_folders
+from nublic.files_and_users.mirror import get_all_mirrors
+from nublic.files_and_users.work_folder import get_all_work_folders
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from werkzeug.utils import secure_filename
@@ -40,10 +40,9 @@ def devices():
       kind         ::= "mirror" | "synced" | "media"
     '''
     user = require_user()
-    mirrors = list_mirrors()
-    synced = list_synced_folders()
-    devs = [dev.__setitem__(dev['owner'] == user.username)\
-                 for dev in mirrors + synced]
+    mirrors = get_all_mirrors()
+    work_folders = get_all_work_folders()
+    devs = [dev.as_map() for dev in mirrors + work_folders]
     return json.dumps(devs)
 
 
@@ -180,6 +179,7 @@ audio_mapping = {'image': "audio.mp3",
                            ]
                  }
 
+
 @app.route('/generic-thumbnail/<path:mime>')
 def generic_thumbnail(mime):
     '''
@@ -188,7 +188,7 @@ def generic_thumbnail(mime):
     * Returns: generic image for that mime type
     '''
     mappings = [directory_mapping, images_mapping, audio_mapping]
-    # @todo: Non Djvu or similar supported. It needs refactoring to filewatcher
+    # @TODO: Non Djvu or similar supported. It needs refactoring to filewatcher
     try:
         for mapping in mappings:
             if mime in mapping['mimes']:
