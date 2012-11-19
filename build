@@ -280,7 +280,7 @@ do_build() {
         # Browser App
         if in_list $thing "all server app_browser app_browser_server"
         then
-            build_deb_package apps/app.browser/server
+            build_deb_package apps/app.browser/server-python/src
         fi
             
         if in_list $thing "all gwt app_browser app_browser_gwt"
