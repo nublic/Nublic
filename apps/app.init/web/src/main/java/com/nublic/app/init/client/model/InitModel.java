@@ -36,8 +36,8 @@ public class InitModel {
 	
 	public static String getSystemName(String realName) {	
 		String temp = realName.toLowerCase()
-				.replaceAll("[^a-zA-Z0-9_]", "")
-				.replaceAll("^[0-9]*","");
+				.replaceAll("[^a-zA-Z0-9_\\-]", "")
+				.replaceAll("^[0-9\\-_]*","");
 		return temp.substring(0,
 				temp.length() > Constants.MAX_USERNAME_LENGTH ? Constants.MAX_USERNAME_LENGTH : temp.length());
 
@@ -48,6 +48,10 @@ public class InitModel {
 //		System.out.println(realName.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase().replaceAll("[^a-zA-Z0-9_]", ""));
 //		return realName.replaceAll("\\p{InCombiningDiacriticalMarks}+", "").toLowerCase().replaceAll("[^a-zA-Z0-9_]", "");
 //		return Normalizer.normalize(realName, Form.NFKD).replaceAll("[^a-zA-Z0-9_]", "");
+	}
+	
+	public static boolean checkValidName(String newText) {
+		return newText.matches("[a-zA-Z_][a-zA-Z0-9_\\-]*") && newText.length() < Constants.MAX_USERNAME_LENGTH;
 	}
 	
 	public void getUserList(UserListHandler ulh) {

@@ -34,6 +34,7 @@ public interface I18NMessages extends Messages {
 	String passwordVerification();
 	String createUser();
 	String userNameNotAvailable();
+	String userNameInvalid();
 	String shortPassword();
 	String noCoincidentPassword();
 	String allFieldsError();

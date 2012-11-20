@@ -60,8 +60,13 @@ public class UserWidget extends Composite {
 				if (newText.isEmpty()) {
 					systemNameFeedback.setFeedback(Feedback.NONE);
 				} else {
-					systemNameFeedback.setFeedback(Feedback.LOADING);
-					InitModel.INSTANCE.checkUserAvailability(newText, userChecker);
+					if (InitModel.checkValidName(newText)) {
+						systemNameFeedback.setFeedback(Feedback.LOADING);
+						InitModel.INSTANCE.checkUserAvailability(newText, userChecker);
+					} else {
+						systemNameFeedback.setCrossInfo(Constants.I18N.userNameInvalid());
+						systemNameFeedback.setFeedback(Feedback.CROSS);
+					}
 				}
 			}
 		});
@@ -109,6 +114,7 @@ public class UserWidget extends Composite {
 				if (available) {
 					systemNameFeedback.setFeedback(Feedback.CHECK);
 				} else {
+					systemNameFeedback.setCrossInfo(Constants.I18N.userNameNotAvailable());
 					systemNameFeedback.setFeedback(Feedback.CROSS);
 				}
 			}
