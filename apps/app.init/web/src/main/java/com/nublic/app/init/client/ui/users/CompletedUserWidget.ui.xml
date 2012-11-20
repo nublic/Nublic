@@ -7,7 +7,7 @@
 			margin-left: 15px;
 			margin-right: 15px;
 		}
-		.pretitle {
+		.posttitle {
 			opacity: 0.6;
 			filter: alpha(opacity=60); /* For IE8 and earlier */
 		}
@@ -21,8 +21,8 @@
 	<g:HorizontalPanel addStyleNames="{style.margintop}" verticalAlignment="ALIGN_MIDDLE">
 		<g:Image resource="{res.personsmall}"/>
 		<g:VerticalPanel addStyleNames="{style.margins}">
-			<g:Label addStyleNames="{style.pretitle}" text="{msg.userName}"/>
-			<g:HTMLPanel><h3><g:Label ui:field="nameLabel"/></h3></g:HTMLPanel>
+			<g:HTMLPanel><h3><g:Label ui:field="shownNameLabel"/></h3></g:HTMLPanel>
+			<g:Label ui:field="systemNameLabel" addStyleNames="{style.posttitle}"/>
 		</g:VerticalPanel>
 		<n:CheckFeedback ui:field="checkFeedback" checkInfo="{msg.userCreated}" feedback="CHECK"/>
 		

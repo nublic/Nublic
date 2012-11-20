@@ -60,8 +60,8 @@ public class InitModel {
 		SequenceHelper.sendJustOne(cum, RequestBuilder.GET);
 	}
 	
-	public void addUser(String name, String password, AddUserHandler auh) {
-		AddUserMessage aum = new AddUserMessage(name, password, auh);
+	public void addUser(String systemName, String shownName, String password, AddUserHandler auh) {
+		AddUserMessage aum = new AddUserMessage(systemName, shownName, password, auh);
 		SequenceHelper.sendJustOne(aum, RequestBuilder.PUT);
 	}
 	

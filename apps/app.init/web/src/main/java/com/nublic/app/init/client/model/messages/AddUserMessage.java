@@ -9,12 +9,14 @@ import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.Message;
 
 public class AddUserMessage extends Message {
-	String name;
+	String systemName;
+	String shownName;
 	String password;
 	AddUserHandler auh;
 	
-	public AddUserMessage(String name, String password, AddUserHandler auh) {
-		this.name = name;
+	public AddUserMessage(String systemname, String shownName, String password, AddUserHandler auh) {
+		this.systemName = systemname;
+		this.shownName = shownName;
 		this.password = password;
 		this.auh = auh;
 	}
@@ -22,7 +24,8 @@ public class AddUserMessage extends Message {
 	@Override
 	public String getURL() {
 		addParam("password", password);
-		addParam("name", name);
+		addParam("systemname", systemName);
+		addParam("shownname", shownName);
 		return URL.encode(GWT.getHostPageBaseURL() + "server/adduser/");
 	}
 
@@ -34,7 +37,7 @@ public class AddUserMessage extends Message {
 			if (text.compareTo(Constants.EXISTS) == 0) {
 				onError();
 			} else {
-				auh.onUserAdded(name);
+				auh.onUserAdded(systemName, shownName);
 			}
 			
 		} else {

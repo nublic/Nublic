@@ -34,15 +34,15 @@ public class UsersPage extends CentralPanel {
 			@Override
 			public void onUserList(List<User> userList) {
 				for (User u : userList) {
-					addCompletedUser(u.getUserName());
+					addCompletedUser(u.getUserName(), u.getShownName());
 				}
 			}
 		});
 	}
 	
-	public void addCompletedUser(String name) {
+	public void addCompletedUser(String systemName, String shownName) {
 		footer.highlightNext();
-		centralPanel.add(new CompletedUserWidget(name));
+		centralPanel.add(new CompletedUserWidget(systemName, shownName));
 	}
 
 	@Override

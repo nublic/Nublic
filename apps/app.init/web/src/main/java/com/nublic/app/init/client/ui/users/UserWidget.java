@@ -122,10 +122,13 @@ public class UserWidget extends Composite {
 				systemNameFeedback.isChecked() &&
 				passwordFeedback.isChecked() &&
 				verificationFeedback.isChecked()) {
-			InitModel.INSTANCE.addUser(nameBox.getText(), passwordBox.getText(), new AddUserHandler() {
+			InitModel.INSTANCE.addUser(systemNameBox.getText(),
+					nameBox.getText(),
+					passwordBox.getText(),
+					new AddUserHandler() {
 				@Override
-				public void onUserAdded(String name) {
-					MainUi.INSTANCE.addCompletedUser(name);
+				public void onUserAdded(String systemName, String shownName) {
+					MainUi.INSTANCE.addCompletedUser(systemName, shownName);
 					emptyBoxes();
 				}
 			});

@@ -4,13 +4,12 @@ import os.path
 import simplejson as json
 from sqlalchemy.sql.expression import func
 
+import requests
+
 #from nublic.files_and_users import User
 from nublic_server.helpers import split_reasonable, require_user,\
     init_bare_nublic_server
-
-
 from nublic_server.places import get_cache_folder
-
 from nublic.files_and_users.user import *
 
 #from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist, \
@@ -33,11 +32,12 @@ def check_user(name):
 
 @app.route('/adduser/', methods=['PUT'])
 def add_user():
-    name = request.form.get('name', None)
+    systemname = request.form.get('systemname', None)
+    shownname = request.form.get('shownname', None)
     password = request.form.get('password', None)
-    newuser = User(name)
+    newuser = User(systemname)
     if not newuser.exists():
-        newuser.create(password, name)
+        newuser.create(password, shownname)
         return 'ok'
     else:
         return 'exists'
@@ -53,6 +53,16 @@ def user_as_json(c):
 @app.route('/password/')
 def master_password():
     return 'ThisIsAPasswordExample2'
+
+@app.route('/checknublicname/<name>')
+def check_name(name):
+    # change to nublic url, encode <name>
+    r = requests.get('http://127.0.0.1/' + name)
+    # or return it directly...
+    if not r.text == 'ok':
+        return 'exists'
+    else:
+        return 'ok'
 
 if __name__ == '__main__':
     app.run()
