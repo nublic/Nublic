@@ -30,6 +30,9 @@
 		.bottommargin {
 			margin-bottom: 8px;
 		}
+		.faketextmargin {
+			margin-bottom: 9px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
 	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
@@ -68,7 +71,7 @@
 				<g:cell width="160px" horizontalAlignment="right">
 					<g:Label addStyleNames="{style.primarylabel}" text="{msg.password}"/>
 				</g:cell>
-				<g:PasswordTextBox ui:field="passwordBox" addStyleNames="{style.input}"/>
+				<g:PasswordTextBox ui:field="passwordBox" addStyleNames="{style.input} {style.faketextmargin}"/>
 				<g:cell verticalAlignment="middle">
 					<n:CheckFeedback ui:field="passwordFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.shortPassword}"/>
 				</g:cell>
@@ -78,7 +81,7 @@
 				<g:cell width="160px" horizontalAlignment="right">
 					<g:Label addStyleNames="{style.primarylabel}" text="{msg.passwordVerification}"/>
 				</g:cell>
-				<g:PasswordTextBox ui:field="verificationBox" addStyleNames="{style.input}"/>
+				<g:PasswordTextBox ui:field="verificationBox" addStyleNames="{style.input} {style.faketextmargin}"/>
 				<g:cell verticalAlignment="middle">
 					<n:CheckFeedback ui:field="verificationFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.noCoincidentPassword}"/>
 				</g:cell>
