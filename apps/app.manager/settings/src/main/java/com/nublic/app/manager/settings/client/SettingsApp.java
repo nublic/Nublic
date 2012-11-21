@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
  */
 public class SettingsApp implements EntryPoint {
 
-	SettingsPage theUi;
+	MainUi theUi;
 	
 	/**
 	 * This is the entry point method.
@@ -22,7 +22,7 @@ public class SettingsApp implements EntryPoint {
 	}
 	
 	public void initUi() {
-		theUi = new SettingsPage();
+		theUi = new MainUi();
 		RootLayoutPanel rp = RootLayoutPanel.get();
 	    rp.add(theUi);
 	}	
