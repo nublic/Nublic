@@ -10,12 +10,22 @@ public class MainUi extends Composite {
 	private static MainUiUiBinder uiBinder = GWT.create(MainUiUiBinder.class);
 	interface MainUiUiBinder extends UiBinder<Widget, MainUi> {	}
 
+	public static MainUi INSTANCE = null;
 	@UiField NavPanel navPanel;
+	
+	public static MainUi create() {
+		if (INSTANCE == null) {
+			INSTANCE = new MainUi();
+		}
+		return INSTANCE;
+	}
 	
 	public MainUi() {
 		initWidget(uiBinder.createAndBindUi(this));
-
-		navPanel.select(Category.WORK_FOLDERS);
+	}
+	
+	public void selectCategory(Category c) {
+		navPanel.select(c);
 	}
 
 }

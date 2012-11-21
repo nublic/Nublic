@@ -17,4 +17,8 @@ public class NavLink extends InlineHyperlink {
 	private Element getLiElement() {
 		return getElement().getParentElement();
 	}
+	
+	public void setTarget(Category c) {
+		super.setTargetHistoryToken(Constants.PARAM_CATEGORY + "=" + c.toString());
+	}
 }

@@ -18,6 +18,13 @@ public class NavPanel extends Composite {
 
 	public NavPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		// TODO: set a category to NavLink to avoid these two list
+		personal.setTarget(Category.PERSONAL);
+		workFolders.setTarget(Category.WORK_FOLDERS);
+		privacy.setTarget(Category.PRIVACY);
+		system.setTarget(Category.SYSTEM);
+		users.setTarget(Category.USERS);
 	}
 
 	public void select(Category c) {
