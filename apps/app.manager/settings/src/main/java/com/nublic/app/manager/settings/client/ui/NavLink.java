@@ -1,7 +1,9 @@
-package com.nublic.app.manager.settings.client;
+package com.nublic.app.manager.settings.client.ui;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.InlineHyperlink;
+import com.nublic.app.manager.settings.client.Category;
+import com.nublic.app.manager.settings.client.Constants;
 
 public class NavLink extends InlineHyperlink {
 

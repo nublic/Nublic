@@ -7,6 +7,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
+import com.nublic.app.manager.settings.client.ui.MainUi;
 import com.nublic.util.messages.ParamsHashMap;
 
 /**
@@ -21,8 +22,9 @@ public class SettingsApp implements EntryPoint, ValueChangeHandler<String> {
 	 */
 	public void onModuleLoad() {
 		Document.get().setTitle(Constants.I18N.title());
-		initUi();
 		Controller.create();
+		Model.create();
+		initUi();
 		Window.enableScrolling(false);
 	
 		String startingToken = History.getToken();

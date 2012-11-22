@@ -1,35 +1,27 @@
 package com.nublic.app.manager.settings.client;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.manager.settings.client.comm.NublicUser;
+import com.nublic.app.manager.settings.client.comm.JSUser;
+import com.nublic.app.manager.settings.client.comm.User;
+import com.nublic.app.manager.settings.client.comm.UserMessageCallback;
 import com.nublic.util.gwt.LocationUtil;
 import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
-import com.nublic.util.widgets.EditableLabel;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
 
-public class UserSettingsTab extends Composite {
-
-	private static UserSettingsTabUiBinder uiBinder = GWT.create(UserSettingsTabUiBinder.class);
-
-	interface UserSettingsTabUiBinder extends UiBinder<Widget, UserSettingsTab> {
-	}
+public class Model {
 	
-	@UiField EditableLabel name;
-	@UiField Label username;
+	public static Model INSTANCE;
+	
+	public static Model create() {
+		if (INSTANCE == null) {
+			INSTANCE = new Model();
+		}
+		return INSTANCE;
+	}
 
-	public UserSettingsTab() {
-		initWidget(uiBinder.createAndBindUi(this));
-		
+	public void getUserInfo(final UserMessageCallback umc) {
 		SequenceHelper.sendJustOne(new Message() {
 			@Override
 			public String getURL() {
@@ -40,9 +32,8 @@ public class UserSettingsTab extends Composite {
 				if (response.getStatusCode() == Response.SC_OK) {
 					// When the call is successful
 					String text = response.getText();
-					NublicUser userInfo = JsonUtils.safeEval(text);
-					name.setText(userInfo.getShownName());
-					username.setText(userInfo.getUserName());
+					JSUser jsUser = JsonUtils.safeEval(text);
+					umc.onUserMessage(new User(jsUser));
 				}
 			}
 			@Override
@@ -50,10 +41,10 @@ public class UserSettingsTab extends Composite {
 				// Do nothing
 			}
 		}, RequestBuilder.GET);
+		
 	}
 
-	@UiHandler("name")
-	void onNameValueChange(ValueChangeEvent<String> event) {
+	public void setUserShownName(String newName) {
 		Message m = new Message() {
 			@Override
 			public String getURL() {
@@ -68,7 +59,8 @@ public class UserSettingsTab extends Composite {
 				// Do nothing
 			}
 		};
-		m.addParam("name", event.getValue());
+		m.addParam("name", newName);
 		SequenceHelper.sendJustOne(m, RequestBuilder.PUT);
 	}
+
 }

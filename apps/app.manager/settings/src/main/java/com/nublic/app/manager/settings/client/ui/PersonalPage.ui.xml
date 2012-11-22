@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.util.widgets">
+	<ui:style>
+		
+	</ui:style>
+	
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
+	
+	<g:HTMLPanel>
+		<n:EditableLabel ui:field="shownName"><ui:text from="{msg.shownName}" /></n:EditableLabel>
+		<g:HorizontalPanel>
+			<g:cell verticalAlignment="ALIGN_MIDDLE">
+				<g:Label ui:field="systemName"><ui:text from="{msg.username}" /></g:Label>
+			</g:cell>
+			<g:Button addStyleNames="info"><ui:text from="{msg.changePassword}" /></g:Button>
+		</g:HorizontalPanel>
+	</g:HTMLPanel>
+</ui:UiBinder>

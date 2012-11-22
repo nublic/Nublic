@@ -1,16 +1,22 @@
 package com.nublic.app.manager.settings.client;
 
+import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.manager.settings.client.ui.PersonalPage;
+
 public enum Category {
-	PERSONAL(Constants.VALUE_PERSONAL),
-	WORK_FOLDERS(Constants.VALUE_WORK_FOLDERS),
-	PRIVACY(Constants.VALUE_PRIVACY),
-	SYSTEM(Constants.VALUE_SYSTEM),
-	USERS(Constants.VALUE_USERS);
+	PERSONAL(Constants.VALUE_PERSONAL, new PersonalPage()),
+	WORK_FOLDERS(Constants.VALUE_WORK_FOLDERS, new HTMLPanel("a")),
+	PRIVACY(Constants.VALUE_PRIVACY, new HTMLPanel("b")),
+	SYSTEM(Constants.VALUE_SYSTEM, new HTMLPanel("c")),
+	USERS(Constants.VALUE_USERS, new HTMLPanel("d"));
 	
 	private String str;
+	private Widget centralWidget;
 	
-	private Category(String s) {
+	private Category(String s, Widget w) {
 		str = s;
+		centralWidget = w;
 	}
 	
 	@Override
@@ -28,5 +34,9 @@ public enum Category {
 			}
 		}
 		return null;
+	}
+
+	public Widget getCentralWidget() {
+		return centralWidget;
 	}
 }

@@ -1,10 +1,11 @@
-package com.nublic.app.manager.settings.client;
+package com.nublic.app.manager.settings.client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.manager.settings.client.Category;
 
 public class NavPanel extends Composite {
 	private static NavPanelUiBinder uiBinder = GWT.create(NavPanelUiBinder.class);
@@ -18,8 +19,7 @@ public class NavPanel extends Composite {
 
 	public NavPanel() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		// TODO: set a category to NavLink to avoid these two list
+
 		personal.setTarget(Category.PERSONAL);
 		workFolders.setTarget(Category.WORK_FOLDERS);
 		privacy.setTarget(Category.PRIVACY);

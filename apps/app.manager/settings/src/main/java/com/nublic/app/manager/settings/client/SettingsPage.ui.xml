@@ -41,7 +41,7 @@
 						height="200px" barHeight="0" barUnit="PX" addStyleNames="{style.tabInner}">
 						<g:tab>
 							<g:header size='0'><ui:text from="{msg.user}" /></g:header>
-							<settings:UserSettingsTab />
+<!-- 							<settings:UserSettingsTab /> -->
 						</g:tab>
 						<g:tab>
 							<g:header size='0'><ui:text from="{msg.workFolders}" /></g:header>

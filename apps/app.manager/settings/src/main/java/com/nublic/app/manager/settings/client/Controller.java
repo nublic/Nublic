@@ -1,5 +1,6 @@
 package com.nublic.app.manager.settings.client;
 
+import com.nublic.app.manager.settings.client.ui.MainUi;
 import com.nublic.util.messages.ParamsHashMap;
 
 public class Controller {

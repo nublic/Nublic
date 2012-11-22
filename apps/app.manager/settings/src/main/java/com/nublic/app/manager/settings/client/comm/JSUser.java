@@ -2,9 +2,9 @@ package com.nublic.app.manager.settings.client.comm;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-public class NublicUser extends JavaScriptObject {
+public class JSUser extends JavaScriptObject {
 
-	protected NublicUser () { }
+	protected JSUser () { }
 	
 	public final native String getShownName() /*-{
 		return this.name;
