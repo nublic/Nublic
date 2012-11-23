@@ -3,18 +3,105 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.util.widgets">
 	<ui:style>
-		
+		.input {
+			margin-bottom: 0px;
+			width: 260px;
+		}
+		.bottommargin {
+			margin-bottom: 8px;
+		}
+		.faketextmargin {
+			margin-bottom: 9px;
+		}
+		.evenmoremargin {
+			margin-bottom: 20px;
+		}
+		.primarylabel {
+			margin-top: 7px;
+			margin-right: 8px;
+		}
+		.checkmargin {
+			margin-left: 10px;
+			margin-top: -7px;
+		}
+		.floatright {
+			float: right;
+		}
+		.passbox {
+			background-color: #F2F6F8;
+			border: solid 1px #CCC;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			border-radius: 10px;
+		}
+		.somepadding {
+			padding: 10px;
+		}
+		.name {
+			width: 252px;
+			font-size: 200%;
+			font-weight: bold;
+			height: 20px;
+			margin-bottom: 8px;
+			margin-top: 10px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
 	
-	<g:HTMLPanel>
-		<n:EditableLabel ui:field="shownName"><ui:text from="{msg.shownName}" /></n:EditableLabel>
-		<g:HorizontalPanel>
-			<g:cell verticalAlignment="ALIGN_MIDDLE">
-				<g:Label ui:field="systemName"><ui:text from="{msg.username}" /></g:Label>
-			</g:cell>
-			<g:Button addStyleNames="info"><ui:text from="{msg.changePassword}" /></g:Button>
+	<g:HTMLPanel addStyleNames="{style.somepadding}">
+		<n:EditableLabel ui:field="shownName" addStyleNames="{style.name}" title="Click to edit">
+			<ui:text from="{msg.shownName}"/>
+		</n:EditableLabel>
+		<g:HorizontalPanel addStyleNames="{style.evenmoremargin}">
+			<g:HTMLPanel><strong style="margin-right: 5px;">System name:</strong></g:HTMLPanel>
+			<g:Label ui:field="systemName"><ui:text from="{msg.username}"/></g:Label>
 		</g:HorizontalPanel>
+		
+		<div class="{style.passbox} {style.somepadding}">
+			<g:VerticalPanel>
+				<g:HTMLPanel>
+					<h4 style="margin-bottom: 15px;">Change password</h4>
+				</g:HTMLPanel>
+				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+					<g:cell width="160px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="Old password"/>
+					</g:cell>
+					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:cell verticalAlignment="middle">
+						<g:Label text="a"/>
+	<!-- 					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/> -->
+					</g:cell>
+				</g:HorizontalPanel>
+				
+				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+					<g:cell width="160px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="New Password"/>
+					</g:cell>
+					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:cell verticalAlignment="middle">
+						<g:Label text="b"/>
+	<!-- 					<n:CheckFeedback ui:field="systemNameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/> -->
+					</g:cell>
+				</g:HorizontalPanel>
+	
+				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+					<g:cell width="160px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="Confirm new Password"/>
+					</g:cell>
+					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:cell verticalAlignment="middle">
+						<g:Label text="b"/>
+	<!-- 					<n:CheckFeedback ui:field="systemNameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/> -->
+					</g:cell>
+				</g:HorizontalPanel>
+				
+				<g:HorizontalPanel>
+					<g:cell width="430px">
+						<g:Button addStyleNames="info {style.floatright}" ui:field="createButton" text="{msg.changePassword}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</div>
 	</g:HTMLPanel>
 </ui:UiBinder>
