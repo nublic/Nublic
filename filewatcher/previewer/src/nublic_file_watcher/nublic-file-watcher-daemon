@@ -28,7 +28,7 @@ class MainProcessor(Processor):
 
 if __name__ == '__main__':
     logging.basicConfig(level = logging.WARNING)
-    init_watcher("previewer",[MainProcessor.start()])
+    init_socket_watcher("previewer",[MainProcessor.start()])
 
     try:
         while True:
