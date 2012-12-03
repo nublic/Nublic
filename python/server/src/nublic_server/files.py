@@ -59,7 +59,11 @@ def get_file_info(path, user):
         info['mime'] = 'application/x-directory'
     else:
         info['mime'] = get_mime_type(path)
-    info['view'] = ""  # @todo
+    views = get_cache_views(path)
+    if views:
+        info['view'] = views[0]  # @TODO Choose the best representative
+    else:
+        info['view'] = ""  # @TODO Leave it empty (better?)
     return info
 
 
