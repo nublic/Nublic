@@ -2,8 +2,9 @@
 
 import os.path
 import shutil
-from nublic_server.places import get_mime_type, get_cache_folder
-from hashlib import sha1  # pylint: disable=E0611
+from nublic_server.places import get_mime_type, get_cache_folder,\
+    get_cache_views
+#from hashlib import sha1  # pylint: disable=E0611
 
 CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
 
@@ -37,9 +38,10 @@ def get_folders(depth, path, user):
         for folder in [os.path.join(path, f) for f in os.listdir(path)]:
             if os.path.isdir(folder) and user.can_read(folder):
                 name = os.path.basename(folder)
-                subfolders = subfolders + [{'name':name,
-                            "subfolders":get_folders(depth - 1, folder, user),\
-                            "writable": user.can_write(folder)}]
+                sfolder = {'name': name,
+                           'subfolders': get_folders(depth - 1, folder, user),
+                           'writable': user.can_write(folder)}
+                subfolders.append(sfolder)
     return subfolders
 
 
@@ -53,8 +55,8 @@ def get_file_info(path, user):
     file_stat = os.stat(path)
     info['last_update'] = file_stat.st_mtime
     info['size'] = file_stat.st_size
-    info['has_thumb'] = os.path.exists(os.path.join(get_cache_folder(path), \
-                                                     "thumbnail.png"))
+    info['has_thumb'] = os.path.exists(os.path.join(get_cache_folder(path),
+                                                    "thumbnail.png"))
     if os.path.isdir(path):
         info['mime'] = 'application/x-directory'
     else:

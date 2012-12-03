@@ -13,9 +13,10 @@ def get_cache_folder(path):
 def get_cache_view(path, extension):
     ''' Returns the absolute path to the extension given'''
     cache_folder = get_cache_folder(path)
-    for f in os.listdir(cache_folder):
-        if fnmatch(f, 'view.' + extension):  # @TODO Possible security error
-            return os.path.join(cache_folder, f)
+    if os.path.isdir(cache_folder):
+        for f in os.listdir(cache_folder):
+            if fnmatch(f, 'view.' + extension):  # @TODO Possible security error
+                return os.path.join(cache_folder, f)
     return None
 
 
