@@ -15,7 +15,7 @@ from change import parse_file_change
 
 def init_watcher(app_name, processors, logger=None):
     # Init process
-    p = subprocess.Popen(["/usr/bin/nublic-file-watcher-client", app_name], 
+    p = subprocess.Popen(["/usr/bin/nublic-file-watcher-client", app_name],
         stdout=subprocess.PIPE, universal_newlines=True)
     atexit.register(lambda: p.kill())
     # Start actor
@@ -34,7 +34,7 @@ class WatcherThread(threading.Thread):
         self._logger = logger
         self._unpickler = Unpickler(p.stdout)
         threading.Thread.__init__(self)
-        
+
     def run(self):
         while True:
             #if self._logger != None:
@@ -60,7 +60,7 @@ class SocketWatcherThread(threading.Thread):
         self._logger = logger
         self._app_name = app_name
         threading.Thread.__init__(self)
-        
+
     def run(self):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(('localhost', 5438))
@@ -80,9 +80,9 @@ class FileWatcherActor(ThreadingActor):
     '''
     Main actor that watches for incoming changes
     '''
-    
+
     def __init__(self, app_name, processors, logger):
-	super(FileWatcherActor, self).__init__()
+        super(FileWatcherActor, self).__init__()
         self._app_name = app_name
         self._logger = logger
         self._messageId = 0
@@ -92,10 +92,10 @@ class FileWatcherActor(ThreadingActor):
             #if self._logger != None:
             #    self._logger.error('Adding a processor')
             self._processors.append(processor(self))
-    
+
     def get_logger(self):
         return self._logger
-    
+
     def on_receive(self, message):
         #self._logger.error('Message received in actor: %s', str(message))
         if message['command'] == 'forward':
