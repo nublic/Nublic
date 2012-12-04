@@ -9,7 +9,7 @@ Homepage: http://nublic.com
 
 Package: nublic-file-watcher
 Architecture: all
-Depends: python (>= 2.6), python-central, python-support (>= 0.90), python-pyinotify (>= 0.9), nublic-upstart, nublic-file-watcher-internal, python-sunburnt, python-nublic, nublic-solr-jetty8-config, nublic-app-photos-server-common
+Depends: python (>= 2.6), python-central, python-support (>= 0.90), python-pyinotify (>= 0.9), nublic-upstart, nublic-file-watcher-internal, python-sunburnt, python-nublic, nublic-solr-jetty8-config, python-videoconverter, nublic-app-photos-server-common
 Description: The Nublic File Watcher system.
  A system providing an easy way to listen to file changes.
  It is intended to be used with Nublic apps.

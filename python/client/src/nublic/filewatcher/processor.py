@@ -10,11 +10,11 @@ class Processor(ThreadingActor):
     '''
     Defines a processor for watcher events
     '''
-    
+
     def __init__(self, name, watcher, throwException, logger = None):
         '''
         Creates a new processor
-        
+
         :param name: the processor id
         :type name: string
         :param watcher: the parent watcher for this processor
@@ -27,26 +27,26 @@ class Processor(ThreadingActor):
         self._watcher = watcher
         self._throwException = throwException
         self._logger = logger
-    
+
     def process(self, change):
         '''
         Processes a change in the file system
-        
+
         :param change: the change to respond to
         :type change: a FileChange instance
         '''
         raise NotImplementedError("Should be implemented in derived classes")
-    
+
     def get_logger(self):
         '''
         Gets the logger object associated to this processor
         '''
         return self._logger
-    
+
     def on_receive(self, message):
         '''
         Callback as an actor
-        
+
         :type message: a ForwardFileChange instance
         '''
         if 'change' in message and 'id' in message:
@@ -64,4 +64,4 @@ class Processor(ThreadingActor):
         else:
             if self._logger != None:
                 self._logger.error('Message without change or id: %s', str(message))
-            
+

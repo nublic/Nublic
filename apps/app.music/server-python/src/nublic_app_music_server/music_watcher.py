@@ -58,7 +58,7 @@ SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff", ".m
 # Set up processors
 class MusicProcessor(Processor):
     def __init__(self, logger, watcher):
-        Processor.__init__(self, 'music', watcher, False, logger)
+        super(MusicProcessor, self).__init__('music', watcher, False, logger)
         logger.error('Music processor initialised')
 
     def process(self, change):

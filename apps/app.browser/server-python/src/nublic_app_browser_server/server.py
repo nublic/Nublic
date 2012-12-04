@@ -290,10 +290,12 @@ def view(file_path, extension):
     if not re.match('\w+', extension):
         abort(401)
     internal_path = os.path.join(DATA_ROOT, file_path)
-    for f in os.listdir(internal_path):
-        if fnmatch(f, 'view.' + extension):  # @todo Possible security error
-            return send_file(os.path.join(internal_path, f))
-    abort(404)
+    cache_path = get_cache_folder(internal_path)
+    view = get_cache_view(internal_path, extension)
+    if view:
+        return send_file(view)
+    else:
+        abort(404)
 
 
 @app.route('/rename', methods=['POST'])

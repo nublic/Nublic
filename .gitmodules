@@ -19,3 +19,6 @@
 [submodule "3rd-party-libs/flask-sqlalchemy"]
 	path = 3rd-party-libs/flask-sqlalchemy
 	url = git@github.com:davisein/flask-sqlalchemy.git
+[submodule "3rd-party-libs/python-video-converter"]
+	path = 3rd-party-libs/python-video-converter
+	url = git@github.com:davisein/python-video-converter.git

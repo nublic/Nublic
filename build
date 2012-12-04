@@ -218,6 +218,7 @@ do_build() {
             build_deb_package 3rd-party-libs/rpcbd-0.6.0
             rm -r ${INITIAL_DIR}/3rd-party-libs/rpcbd-0.6.0/rpcbd.egg-info/
             build_deb_package 3rd-party-libs/flask-sqlalchemy
+            build_deb_package 3rd-party-libs/python-video-converter
             # build_deb_package 3rd-party-libs/guava
         fi
 
