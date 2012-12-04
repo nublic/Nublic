@@ -94,7 +94,7 @@ class User:
         owner_uid = os.stat(path).st_uid
         return self.get_id() == owner_uid
 
-    def assign_file(self, path, touch_after):
+    def assign_file(self, path, touch_after=True):
         if not path.startswith(DATA_ROOT + '/'):
             raise ValueError('You are not allowed to change that path\'s owner')
         path_to_send = path.replace(DATA_ROOT, '', 1)

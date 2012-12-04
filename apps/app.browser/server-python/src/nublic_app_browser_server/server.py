@@ -5,17 +5,16 @@ import shutil
 from flask import Flask, request, abort, send_file
 from flask.helpers import send_from_directory
 
+import nublic_server
 from nublic_server.helpers import init_bare_nublic_server, \
     require_user
 from nublic_server.files import PermissionError, get_file_info, get_folders
-from nublic_server import files
 from nublic.files_and_users.mirror import get_all_mirrors
 from nublic.files_and_users.work_folder import get_all_work_folders
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from werkzeug.utils import secure_filename
-from nublic_server.places import get_cache_folder
-from fnmatch import fnmatch
+from nublic_server.places import get_cache_folder, get_cache_view
 import re
 
 
@@ -39,7 +38,6 @@ def devices():
                           "owner": true | false }
       kind         ::= "mirror" | "synced" | "media"
     '''
-    user = require_user()
     mirrors = get_all_mirrors()
     work_folders = get_all_work_folders()
     devs = [dev.as_map() for dev in mirrors + work_folders]
@@ -95,8 +93,8 @@ def files_path(path):
             user.try_read(path_absolute)
             dirs = os.listdir(path_absolute)
             app.logger.error('Getting files: %s', str(dirs))
-            infos = [get_file_info(os.path.join(path_absolute, p), user) \
-                      for p in dirs]
+            infos = [get_file_info(os.path.join(path_absolute, p), user)
+                     for p in dirs]
     except PermissionError:
         abort(401)
     return json.dumps(infos)
@@ -136,10 +134,11 @@ images_mapping = {'image': 'image.png',
 audio_mapping = {'image': "audio.mp3",
                  'preview': 'audio.mp3',
                  'mimes': [
-                    '''Obtained looking at:
-                    - List of files supported by ffmpeg: `ffmpeg -formats`
-                    - Information about file extensions: http://filext.com/
-                    '''
+                            '''
+                            Obtained looking at:
+                            List of files supported by ffmpeg: `ffmpeg -formats`
+                            Information about file extensions: http://filext.com/
+                            '''
                             # AAC
                             "audio/aac", "audio/x-aac",
                             # AC3
@@ -176,7 +175,7 @@ audio_mapping = {'image': "audio.mp3",
                             # Various
                             "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
                             "audio/x-gsm", "audio/snd"
-                           ]
+                          ]
                  }
 
 
@@ -201,7 +200,7 @@ def generic_thumbnail(mime):
 
 def prepare_zip_file():
     ''' Create a zip file that will be deleted when garbage collected '''
-    tmp = NamedTemporaryFile(mode='w+b', suffix='.zip')
+    tmp = NamedTemporaryFile(mode='w+b', suffix='.zip', delete=False)
     zip_file = ZipFile(tmp, 'w', allowZip64=True)
     return zip_file
 
@@ -232,7 +231,7 @@ def zip_path(path):
     internal_path = os.path.join(DATA_ROOT, path)
     try:
         zip_file = prepare_zip_file()
-        add_file_zip(zip_file, internal_path, \
+        add_file_zip(zip_file, internal_path,
                      os.path.dirname(internal_path), user)
         zip_file.close()
         return send_file(zip_file.filename)
@@ -253,7 +252,7 @@ def zip_set():
         zip_file = prepare_zip_file()
         for file_zip in files:
             abs_file = os.path.join(DATA_ROOT, file_zip)
-            add_file_zip(zip_file, abs_file, \
+            add_file_zip(zip_file, abs_file,
                          os.path.dirname(abs_file), user)
         zip_file.close()
         return send_file(zip_file.fp)
@@ -290,7 +289,6 @@ def view(file_path, extension):
     if not re.match('\w+', extension):
         abort(401)
     internal_path = os.path.join(DATA_ROOT, file_path)
-    cache_path = get_cache_folder(internal_path)
     view = get_cache_view(internal_path, extension)
     if view:
         return send_file(view)
@@ -349,7 +347,7 @@ def copy():
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path)
-            files.copy(internal_from, internal_to, user)
+            nublic_server.files.copy(internal_from, internal_to, user)
     except PermissionError:
         abort(401)
     return 'ok'
@@ -403,10 +401,10 @@ def new_folder():
         It only creates ONE LEVEL NEW FOLDERS
     '''
     user = require_user()
-    path = os.path.join(DATA_ROOT, request.form.get('path'), \
-                         request.form.get('name'))
+    path = os.path.join(DATA_ROOT, request.form.get('path'),
+                        request.form.get('name'))
     try:
-        files.mkdir(path, user)
+        nublic_server.files.mkdir(path, user)
         return 'ok'
     except PermissionError:
         abort(500)

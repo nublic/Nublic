@@ -26,9 +26,10 @@ def get_cache_views(path):
     '''
     cache_folder = get_cache_folder(path)
     views = []
-    for f in os.listdir(cache_folder):
-        if fnmatch(f, 'view.'):  # @TODO Possible security error
-            views.append(f)
+    if os.path.isdir(cache_folder):
+        for f in os.listdir(cache_folder):
+            if fnmatch(f, 'view.'):  # @TODO Possible security error
+                views.append(f)
     return views
 
 
