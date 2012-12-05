@@ -138,7 +138,8 @@ class User:
         if not os.path.exists(path):
             raise PermissionError(self.get_username(), path, "Read")
         if os.path.isdir(path):
-            [self.try_write_recursive(s) for s in os.listdir(path)]
+            [self.try_write_recursive(os.path.join(path, s))
+                    for s in os.listdir(path)]
         else:
             self.try_write(path)
 

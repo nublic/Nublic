@@ -365,13 +365,14 @@ def delete():
         for raw_file in raw_files:
             internal_path = os.path.join(DATA_ROOT, raw_file)
             user.try_write_recursive(internal_path)
-            #if os.path.isdir(internal_path):
-            shutil.rmtree(internal_path)
-            #else:
-            #os.remove(internal_path)
+            if os.path.isdir(internal_path):
+                shutil.rmtree(internal_path)
+            else:
+                os.remove(internal_path)
     except PermissionError:
         abort(401)
-    except:  # Catch a possible rmtree Exception
+    except Exception as e:  # Catch a possible rmtree Exception
+        app.log("Exception on delete file %s", str(e))
         abort(500)
     return 'ok'
 

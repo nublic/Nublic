@@ -15,7 +15,10 @@ def copy(src, dst, user):
     '''
     user.try_read(src)
     user.try_write(dst)
-    shutil.copy(src, dst)
+    if os.path.isdir(src):
+        shutil.copytree(src, dst)
+    else:
+        shutil.copy(src, dst)
     user.assign_file(os.path.join(dst, os.path.basename(src)))
     return dst
 
