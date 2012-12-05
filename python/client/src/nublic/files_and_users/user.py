@@ -17,7 +17,7 @@ def _call_user_method_return(m, use_dbus=False):
         return rpcbd_call_return(5440, m)
 
 
-def _call_user_method(m):
+def _call_user_method(m, use_dbus=False):
     if use_dbus:
         return call_without_return('com.nublic.users', '/com/nublic/Users', 'com.nublic.users', m)
     else:
