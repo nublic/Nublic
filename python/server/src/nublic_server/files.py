@@ -1,5 +1,5 @@
 
-
+import os
 import os.path
 import shutil
 from nublic_server.places import get_mime_type, get_cache_folder,\
@@ -9,6 +9,15 @@ from nublic_server.places import get_mime_type, get_cache_folder,\
 CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
 
 
+def _get_last_dir_name(src):
+    """ Gets the last dir name, similar than basename but for directories"""
+    if src[-1:] == '/':
+        last = src.split(os.sep)[-2]  # @TODO Handling scaping, etc
+    else:
+        last = src.split(os.sep)[-1]
+    return last
+
+
 def copy(src, dst, user):
     ''' copy file if you have permission or group permission allows you
         throw a PermissionError exception
@@ -16,7 +25,7 @@ def copy(src, dst, user):
     user.try_read(src)
     user.try_write(dst)
     if os.path.isdir(src):
-        shutil.copytree(src, dst)
+        shutil.copytree(src, os.path.join(dst, _get_last_dir_name(src)))
     else:
         shutil.copy(src, dst)
     user.assign_file(os.path.join(dst, os.path.basename(src)))
