@@ -1,0 +1,6 @@
+#!/bin/bash
+
+nublic-resource-setup install nublic_app_photos db postgresql-db
+service nublic-file-watcher restart
+
+#DEBHELPER#

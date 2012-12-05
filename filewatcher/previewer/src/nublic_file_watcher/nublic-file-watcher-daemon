@@ -14,6 +14,8 @@ from nublic_file_watcher.preview_queue import CentralQueue
 from nublic_file_watcher.preview_processor import Element
 from nublic.filewatcher import Processor, init_watcher
 
+from photo_processor import PhotoProcessor
+
 from time import sleep
 import logging
 import signal
@@ -21,14 +23,14 @@ import signal
 class MainProcessor(Processor):
     def __init__(self, watcher, logger):
         Processor.__init__(self, "previewer", watcher, False)
-        self.central_queue = CentralQueue.start({})
+        self.central_queue = CentralQueue.start([PhotoProcessor()])
 
     def process(self, change):
         self.central_queue.tell(('_watcher', Element(change)))
 
 if __name__ == '__main__':
     logging.basicConfig(level = logging.WARNING)
-    init_watcher("previewer",[MainProcessor.start()])
+    init_socket_watcher("previewer",[MainProcessor.start()])
 
     try:
         while True:

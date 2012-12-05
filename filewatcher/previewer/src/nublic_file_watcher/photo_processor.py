@@ -3,23 +3,38 @@ import EXIF
 import os
 import os.path
 
-from nublic.filewatcher import FileChange, Processor
+from flask import Flask
+from nublic.resource import App
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
-from model import db, Photo, Album, PhotoAlbum, get_or_create_album
+from nublic_app_photos_server_common.model import db, Photo, Album, PhotoAlbum, get_or_create_album
 
 # Set up processors
-class PhotoProcessor(Processor):
-    def __init__(self, logger, watcher):
-        super(PhotoProcessor, self).__init__('photo', watcher, False, logger)
-        logger.error('Photo processor initialised')
+class PhotoProcessor(PreviewProcessor):
+    def __init__(self):
+        app = Flask('photos')
+        # Get resource information
+        res_app = App('nublic_app_photos_app')
+        res_key = res_app.get('db')
+        db_uri = 'postgresql://' + res_key.value('user') + ':' + \
+                   res_key.value('pass') + \
+                   '@localhost:5432/' + res_key.value('database')
+        # Init DB
+        app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+        db.app = app
+        db.init_app(app)
+        db.create_all(app=app)
 
-    def process(self, change):
-        self.get_logger().error('Photo processor file: %s, context: %s', change.filename, change.context)
+    def get_id(self):
+        return 'photo'
+
+    def process(self, element):
+        change = element.get_change()
+        info = element.get_info()
         if change.kind == FileChange.CREATED and not change.is_dir:
-            self.process_updated_file(change.filename, change.context)
+            self.process_updated_file(change.filename, change.context, info)
         elif change.kind == FileChange.MODIFIED and not change.is_dir:
-            self.process_updated_file(change.filename, change.context)
+            self.process_updated_file(change.filename, change.context, info)
         elif change.kind == FileChange.DELETED and not change.is_dir:
             self.process_deleted_file(change.filename)
         elif change.kind == FileChange.ATTRIBS_CHANGED and not change.is_dir:
@@ -34,8 +49,8 @@ class PhotoProcessor(Processor):
         filename = os.path.basename(path)
         return filename.endswith('~') or filename.startswith('.')
     
-    def process_updated_file(self, filename, context):
-        if not self.is_hidden(filename) and get_mime_type(filename).startswith('image/'):
+    def process_updated_file(self, filename, context, info):
+        if not self.is_hidden(filename) and info.mime_type().startswith('image/'):
             # Get modification time
             f = open(filename, 'rb')
             tags = EXIF.process_file(f, stop_tag='DateTimeOriginal')
