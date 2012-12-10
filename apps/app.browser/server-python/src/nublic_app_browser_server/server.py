@@ -8,7 +8,8 @@ from flask.helpers import send_from_directory
 import nublic_server
 from nublic_server.helpers import init_bare_nublic_server, \
     require_user
-from nublic_server.files import PermissionError, get_file_info, get_folders
+from nublic_server.files import PermissionError, get_file_info, get_folders,\
+    get_last_dir_name
 from nublic.files_and_users.mirror import get_all_mirrors
 from nublic.files_and_users.work_folder import get_all_work_folders
 from tempfile import NamedTemporaryFile
@@ -25,7 +26,7 @@ init_bare_nublic_server(app, '/var/log/nublic/nublic-app-browser.python.log')
 app.logger.error('Starting browser app')
 
 DATA_ROOT = '/var/nublic/data/'  # It MUST end with '/' for security reasons
-GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails'
+GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails/'
 
 
 @app.route('/devices')
@@ -110,7 +111,7 @@ def thumbnail(path):
     '''
     user = require_user()
     path_absolute = os.path.join(DATA_ROOT, path)
-    if user.can_read(path_absolute):
+    if user.can_read(path_absolute):  # @TODO: Rely a generic one if not exists
         return os.path.join(get_cache_folder(path_absolute), "thumbnail.png")
     else:
         abort(404)
@@ -234,7 +235,11 @@ def zip_path(path):
         add_file_zip(zip_file, internal_path,
                      os.path.dirname(internal_path), user)
         zip_file.close()
-        return send_file(zip_file.filename)
+        return send_file(
+                zip_file.filename,
+                mimetype='application/zip',
+                as_attachment=True,
+                attachment_filename=get_last_dir_name(internal_path) + '.zip')
     except PermissionError:
         abort(401)
 
@@ -255,7 +260,12 @@ def zip_set():
             add_file_zip(zip_file, abs_file,
                          os.path.dirname(abs_file), user)
         zip_file.close()
-        return send_file(zip_file.fp)
+        return send_file(
+                zip_file.filename,
+                mimetype='application/zip',
+                as_attachment=True,
+                attachment_filename='files.zip')
+
     except PermissionError:
         abort(401)
 
