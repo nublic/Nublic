@@ -9,7 +9,7 @@ from nublic_server.places import get_mime_type, get_cache_folder,\
 CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
 
 
-def _get_last_dir_name(src):
+def get_last_dir_name(src):
     """ Gets the last dir name, similar than basename but for directories"""
     if src[-1:] == '/':
         last = src.split(os.sep)[-2]  # @TODO Handling scaping, etc
@@ -25,7 +25,7 @@ def copy(src, dst, user):
     user.try_read(src)
     user.try_write(dst)
     if os.path.isdir(src):
-        shutil.copytree(src, os.path.join(dst, _get_last_dir_name(src)))
+        shutil.copytree(src, os.path.join(dst, get_last_dir_name(src)))
     else:
         shutil.copy(src, dst)
     user.assign_file(os.path.join(dst, os.path.basename(src)))
