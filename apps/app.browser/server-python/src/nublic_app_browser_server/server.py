@@ -136,8 +136,8 @@ audio_mapping = {'image': "audio.mp3",
                  'mimes': [
                             '''
                             Obtained looking at:
-                            List of files supported by ffmpeg: `ffmpeg -formats`
-                            Information about file extensions: http://filext.com/
+                            List of files supported by ffmpeg:`ffmpeg -formats`
+                         Information about file extensions: http://filext.com/
                             '''
                             # AAC
                             "audio/aac", "audio/x-aac",
@@ -388,7 +388,7 @@ def changes(date, path):
                        , "deleted_files": [ filename, ... ]  // just strings
                        }
     '''
-    # @todo: changes DEPENDS ON PROCESSOR
+    # @TODO: changes DEPENDS ON PROCESSOR
     pass
 
 
@@ -430,7 +430,7 @@ def upload():
     * Returns: nothing, or error 500 if something erroneous happens
     '''
     user = require_user()
-    file_request = request.files['contents']
+    file_request = request.files['Filedata']
     try:
         if file_request:  # All extensions are allowed
             filename = secure_filename(request.form.get('name'))
