@@ -7,6 +7,7 @@
   <!-- To prevent "required inherited module" error               -->
   <inherits name="com.google.gwt.junit.JUnit"/>
   <inherits name="com.google.common.collect.Collect"/>
+  <inherits name="com.google.gwt.resources.Resources" />
 
   <!-- Internationalization										  -->
   <inherits name="com.google.gwt.i18n.I18N"/>
@@ -27,6 +28,7 @@
   <source path='comparators'/>
   <source path='tuples'/>
   <source path='widgets'/>
+  <source path='images'/>
   <source path='range'/>
   <source path='cache'/>
 

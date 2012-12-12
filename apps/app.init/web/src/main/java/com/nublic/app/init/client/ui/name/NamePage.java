@@ -14,10 +14,10 @@ import com.nublic.app.init.client.model.InitModel;
 import com.nublic.app.init.client.model.Step;
 import com.nublic.app.init.client.model.handlers.CheckNublicNameHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
-import com.nublic.app.init.client.ui.CheckFeedback;
-import com.nublic.app.init.client.ui.Feedback;
 import com.nublic.app.init.client.ui.FooterPagination;
 import com.nublic.app.init.client.ui.RealChangeHandler;
+import com.nublic.util.widgets.CheckFeedback;
+import com.nublic.util.widgets.Feedback;
 
 public class NamePage extends CentralPanel {
 	private static NamePageUiBinder uiBinder = GWT.create(NamePageUiBinder.class);

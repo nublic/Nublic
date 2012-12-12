@@ -14,11 +14,11 @@ import com.nublic.app.init.client.Constants;
 import com.nublic.app.init.client.model.InitModel;
 import com.nublic.app.init.client.model.handlers.AddUserHandler;
 import com.nublic.app.init.client.model.handlers.CheckUserHandler;
-import com.nublic.app.init.client.ui.CheckFeedback;
-import com.nublic.app.init.client.ui.Feedback;
 import com.nublic.app.init.client.ui.MainUi;
 import com.nublic.app.init.client.ui.RealChangeHandler;
 import com.nublic.util.error.ErrorPopup;
+import com.nublic.util.widgets.CheckFeedback;
+import com.nublic.util.widgets.Feedback;
 
 public class UserWidget extends Composite {
 	private static UserWidgetUiBinder uiBinder = GWT.create(UserWidgetUiBinder.class);
