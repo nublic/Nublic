@@ -45,12 +45,16 @@
 			margin-bottom: 8px;
 			margin-top: 10px;
 		}
+		.passwordchanged {
+			font-weight: bold;
+			margin-top: 8px;
+		}
 	</ui:style>
 	
 	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
 	
 	<g:HTMLPanel addStyleNames="{style.somepadding}">
-		<n:EditableLabel ui:field="shownName" addStyleNames="{style.name}" title="Click to edit">
+		<n:EditableLabel ui:field="shownName" addStyleNames="{style.name}" title="{msg.clickToEdit}">
 			<ui:text from="{msg.shownName}"/>
 		</n:EditableLabel>
 		<g:HorizontalPanel addStyleNames="{style.evenmoremargin}">
@@ -69,8 +73,7 @@
 					</g:cell>
 					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
-						<g:Label text="a"/>
-	<!-- 					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/> -->
+	 					<n:CheckFeedback ui:field="oldPassFeedback" addStyleNames="{style.checkmargin}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 				
@@ -80,8 +83,7 @@
 					</g:cell>
 					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
-						<g:Label text="b"/>
-	<!-- 					<n:CheckFeedback ui:field="systemNameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/> -->
+						<n:CheckFeedback ui:field="newPassFeedback" addStyleNames="{style.checkmargin}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 	
@@ -91,14 +93,19 @@
 					</g:cell>
 					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
-						<g:Label text="b"/>
-	<!-- 					<n:CheckFeedback ui:field="systemNameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/> -->
+						<n:CheckFeedback ui:field="verificationPassFeedback" addStyleNames="{style.checkmargin}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel>
 					<g:cell width="430px">
-						<g:Button addStyleNames="info {style.floatright}" ui:field="createButton" text="{msg.changePassword}"/>
+						<g:Button ui:field="changePasswordButton" addStyleNames="info {style.floatright}" text="{msg.changePassword}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+				
+				<g:HorizontalPanel>
+					<g:cell width="430px">
+						<g:Label ui:field="changedLabel" text="Password properly changed" addStyleNames="{style.floatright} {style.passwordchanged}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 			</g:VerticalPanel>

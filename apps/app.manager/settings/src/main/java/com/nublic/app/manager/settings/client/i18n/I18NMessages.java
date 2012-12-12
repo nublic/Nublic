@@ -13,6 +13,7 @@ public interface I18NMessages extends Messages {
 	String shownName();
 	String username();
 	String changePassword();
+	String clickToEdit();
 	
 	// Work folders
 	String newWorkFolderName();
