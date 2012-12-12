@@ -7,8 +7,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.manager.settings.client.Constants;
 import com.nublic.app.manager.settings.client.Model;
+import com.nublic.app.manager.settings.client.RealChangeHandler;
 import com.nublic.app.manager.settings.client.comm.User;
 import com.nublic.app.manager.settings.client.comm.UserMessageCallback;
 import com.nublic.util.widgets.CheckFeedback;
@@ -24,6 +27,9 @@ public class PersonalPage extends Composite {
 	@UiField EditableLabel shownName;
 	@UiField Label systemName;
 	@UiField Label changedLabel;
+	@UiField PasswordTextBox oldPass;
+	@UiField PasswordTextBox newPass;
+	@UiField PasswordTextBox verificatePass;
 	@UiField CheckFeedback oldPassFeedback;
 	@UiField CheckFeedback newPassFeedback;
 	@UiField CheckFeedback verificationPassFeedback;
@@ -41,6 +47,41 @@ public class PersonalPage extends Composite {
 				systemName.setText(u.getSystemName());
 			}
 		});
+		
+
+		newPass.addKeyUpHandler(new RealChangeHandler(newPass) {
+			@Override
+			public void onRealChange(String newText) {
+				if (newText.isEmpty()) {
+					newPassFeedback.setFeedback(Feedback.NONE);
+				} else if (newText.length() < Constants.MIN_PASSWORD_LENGTH) {
+					newPassFeedback.setFeedback(Feedback.CROSS);
+				} else {
+					newPassFeedback.setFeedback(Feedback.CHECK);
+				}
+				verificatePassword();
+			}
+		});
+		
+		verificatePass.addKeyUpHandler(new RealChangeHandler(verificatePass) {
+			@Override
+			public void onRealChange(String newText) {
+				verificatePassword();
+			}
+		});
+	}
+	
+	public void verificatePassword() {
+		String verificationString = verificatePass.getText();
+		if (verificationString.isEmpty()) {
+			verificationPassFeedback.setFeedback(Feedback.NONE);
+		} else {
+			if (verificationString.compareTo(newPass.getText()) == 0) {
+				verificationPassFeedback.setFeedback(Feedback.CHECK);
+			} else {
+				verificationPassFeedback.setFeedback(Feedback.CROSS);
+			}
+		}
 	}
 
 	@UiHandler("shownName")

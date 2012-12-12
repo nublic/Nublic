@@ -71,7 +71,7 @@
 					<g:cell width="160px" horizontalAlignment="right">
 						<g:Label addStyleNames="{style.primarylabel}" text="Old password"/>
 					</g:cell>
-					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:PasswordTextBox ui:field="oldPass" addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
 	 					<n:CheckFeedback ui:field="oldPassFeedback" addStyleNames="{style.checkmargin}"/>
 					</g:cell>
@@ -81,7 +81,7 @@
 					<g:cell width="160px" horizontalAlignment="right">
 						<g:Label addStyleNames="{style.primarylabel}" text="New Password"/>
 					</g:cell>
-					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:PasswordTextBox ui:field="newPass" addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
 						<n:CheckFeedback ui:field="newPassFeedback" addStyleNames="{style.checkmargin}"/>
 					</g:cell>
@@ -91,7 +91,7 @@
 					<g:cell width="160px" horizontalAlignment="right">
 						<g:Label addStyleNames="{style.primarylabel}" text="Confirm new Password"/>
 					</g:cell>
-					<g:PasswordTextBox addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:PasswordTextBox ui:field="verificatePass" addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
 						<n:CheckFeedback ui:field="verificationPassFeedback" addStyleNames="{style.checkmargin}"/>
 					</g:cell>

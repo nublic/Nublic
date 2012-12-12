@@ -13,4 +13,6 @@ public class Constants {
 	public static final String VALUE_PRIVACY = "privacy";
 	public static final String VALUE_SYSTEM = "system";
 	public static final String VALUE_USERS = "users";
+	
+	public static final int MIN_PASSWORD_LENGTH = 5;
 }
