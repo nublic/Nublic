@@ -49,6 +49,6 @@ class DbusSignaler(): #dbus.service.Object):
                 sys.stderr.write("Error on socket write or flush\n")
                 pass
         try:
-            sys.stderr.write("%s %s (src_pathname %s)\n" % (ty, pathname, src_pathname))
+            sys.stderr.write("%s %s (src_pathname %s)[%s]\n" % (ty, pathname, src_pathname, 'dir' if isdir else 'file'))
         except:
             pass
