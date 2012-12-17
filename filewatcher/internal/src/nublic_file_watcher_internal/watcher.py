@@ -18,6 +18,7 @@ from time import sleep
 import signal
 import sys
 
+
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
         self._timer     = None
@@ -43,6 +44,7 @@ class RepeatedTimer(object):
         self._timer.cancel()
         self.is_running = False
 
+
 def start_watching(folder):
     wm = WatchManager2()
     handler = EventHandler(wm, folder)
@@ -52,7 +54,7 @@ def start_watching(folder):
     # Exclude files beginning with . or ending in ~
     e_filter = pyinotify.ExcludeFilter(['((/[^/]+)*/\\..*)|((/[^/]+)*/.+~)'])
     wm.add_watch(folder, handler.mask(), rec=True, auto_add=True, exclude_filter=e_filter)
-                    
+
     sys.stderr.write("Starting to watch...\n")
 
     try:
@@ -63,6 +65,7 @@ def start_watching(folder):
         peer.shutdown()
     sys.stderr.write("Filewatcher daemon shutdown\n")
 
+
 def quick_check(notifier):
     notifier.process_events()
     while notifier.check_events():
@@ -71,12 +74,14 @@ def quick_check(notifier):
 
     return True
 
+
 def scan_folder(folder):
     wm = WatchManager2()
     handler = EventHandler(wm)
     for element, isdir in walk_folder(folder):
         handler.send_repeated_creation(element, isdir)
-    
+
+
 def walk_folder(top):
     for root, dirs, files in os.walk(top):
         # Do not walk through hidden folders
@@ -96,4 +101,3 @@ def walk_folder(top):
         yield (root, True)
         for fl in files:
             yield (os.path.join(root, fl), False)
-    
