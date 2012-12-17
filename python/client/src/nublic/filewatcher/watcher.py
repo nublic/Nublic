@@ -40,7 +40,7 @@ class WatcherThread(threading.Thread):
             #if self._logger != None:
             #    self._logger.error('Waiting message')
             e = json.loads(self._unpickler.load())
-            change = parse_file_change(e['ty'], e['pathname'], e['src_pathname'], e['context'], e['isdir'])
+            change = parse_file_change(e['ty'], e['pathname'], e['src_pathname'], e['isdir'])
             #self._unpickler.memo = {}
             #if self._logger != None:
             #    self._logger.error('Message received')

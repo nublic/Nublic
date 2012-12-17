@@ -28,26 +28,27 @@ class DbusSignaler(): #dbus.service.Object):
         #dbus.service.Object.__init__(self, bus_name, '/com/nublic/filewatcher/Filewatcher')
         # Initialize sockets
         self.sockets = []
-    
+
     def add_socket(self, socket):
         self.sockets.append(socket)
 
     def raise_event(self, ty, pathname, src_pathname, isdir):
         self.file_changed(ty, pathname, src_pathname, isdir)
-    
+
     #@dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir):
         o = { 'ty': unicode(ty), 'pathname': unicode(pathname.decode('utf-8')), \
               'src_pathname': unicode(src_pathname.decode('utf-8')), \
-              'isdir': bool(isdir), 'context': unicode(context.decode('utf-8')) }
+              'isdir': bool(isdir) }
         o_string = simplejson.dumps(o)
         for socket in self.sockets:
             try:
                 socket.write(o_string + '\n')
                 socket.flush()
             except:
+                sys.stderr.write("Error on socket write or flush\n")
                 pass
         try:
-            sys.stderr.write("%s %s (context %s)\n" % (ty, pathname, context))
+            sys.stderr.write("%s %s (src_pathname %s)\n" % (ty, pathname, src_pathname))
         except:
             pass
