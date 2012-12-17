@@ -93,9 +93,9 @@ class EventHandler(pyinotify.ProcessEvent):
             sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
-    
+
     def _raise_signal(self, ty, pathname, src_pathname, is_dir):
-        signaler.raise_event(ty, pathname, src_pathname, is_dir)
-    
+        self.signaler.raise_event(ty, pathname, src_pathname, is_dir)
+
     def send_repeated_creation(self, pathname, is_dir):
-        signaler.raise_event("repeat", pathname, '', is_dir)
+        self.signaler.raise_event("repeat", pathname, '', is_dir)
