@@ -63,12 +63,12 @@ def start_watching(folder):
         peer.shutdown()
     sys.stderr.write("Filewatcher daemon shutdown\n")
 
-def quick_check():
+def quick_check(notifier):
     notifier.process_events()
     while notifier.check_events():
         notifier.read_events()
         notifier.process_events()
-    
+
     return True
 
 def scan_folder(folder):
