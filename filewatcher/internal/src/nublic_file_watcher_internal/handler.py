@@ -15,10 +15,12 @@ import sys
 import threading
 import traceback
 
+
 class FakeCreationEvent:
     def __init__(self, pathname, isdir):
         self.pathname = pathname
         self.dir = isdir
+
 
 class FakeMoveEvent:
     def __init__(self, pathname, src_pathname, isdir):
@@ -26,13 +28,14 @@ class FakeMoveEvent:
         self.src_pathname = src_pathname
         self.dir = isdir
 
+
 class SocketListener(threading.Thread):
     MAX_CONN = 100
-    
+
     def __init__(self, handler):
         self.handler = handler
         threading.Thread.__init__(self)
-    
+
     def run(self):
         serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         serversocket.bind(('localhost', 5438))
@@ -48,6 +51,7 @@ class SocketListener(threading.Thread):
             sys.stderr.write('Added app ' + name + '\n')
             # add to corresponding signaler
             self.handler.signaler.add_socket(clientsocket)
+
 
 class EventHandler(pyinotify.ProcessEvent):
     '''
@@ -68,10 +72,10 @@ class EventHandler(pyinotify.ProcessEvent):
 
     def process_IN_CREATE(self, event):
         self.raise_signal("modify", event)
-    
+
     def process_IN_CLOSE_WRITE(self, event):
         self.raise_signal("modify", event)
-    
+
     def process_IN_DELETE(self, event):
         self.raise_signal("delete", event)
 
@@ -82,7 +86,7 @@ class EventHandler(pyinotify.ProcessEvent):
             self.process_IN_CREATE(event)
         else:
             self.raise_signal("move", event)
-    
+
     def raise_signal(self, ty, event):
         try:
             if not hasattr(event, 'src_pathname'):
