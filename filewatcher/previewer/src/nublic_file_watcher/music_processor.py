@@ -41,9 +41,9 @@ SUPPORTED_MIME_TYPES = TAGGED_MIME_TYPES + [
       "audio/aiff", "audio/x-aiff", "sound/aiff",
       "audio/x-pn-aiff",
       # MIDI
-      "audio/mid", "audio/x-midi", 
+      "audio/mid", "audio/x-midi",
       # AU
-      "audio/basic", "audio/x-basic", "audio/au", 
+      "audio/basic", "audio/x-basic", "audio/au",
       "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
       # PCM
       "application/x-pcm",
@@ -76,11 +76,11 @@ class MusicProcessor(Processor):
                 self.process_moved_folder(change.filename_from, change.filename_to, change.context)
             else:
                 self.process_moved_file(change.filename_from, change.filename_to, change.context)
-    
+
     def is_hidden(self, path):
         filename = os.path.basename(path)
         return filename.endswith('~') or filename.startswith('.')
-    
+
     def process_updated_file(self, filename, context):
         self.get_logger().error('Updated file: %s', filename)
         mime = get_mime_type(filename)
@@ -100,19 +100,19 @@ class MusicProcessor(Processor):
                     self.add_to_database(filename, song_info)
                 else:
                     self.replace_in_database(filename, s, song_info)
-    
+
     def process_attribs_change(self, filename, context):
         song = Song.query.filter_by(file=filename).first()
         if song != None:
             self.update_attribs(song)
         else:
             self.process_updated_file(filename, context)
-    
+
     def update_attribs(self, song):
         song.owner = get_file_owner(song.file.encode('utf-8')).get_username()
         song.shared = is_file_shared(song.file.encode('utf-8'))
         db.session.commit()
-    
+
     def process_deleted_file(self, filename):
         song = Song.query.filter_by(file=filename).first()
         if song != None:
@@ -134,7 +134,7 @@ class MusicProcessor(Processor):
             self.delete_album_if_no_assoc(song.albumId)
             db.session.delete(song)
             db.session.commit()
-    
+
     def process_moved_folder(self, from_, to, context):
         for e in os.listdir(to):
             file_from = os.path.join(from_, e)
@@ -143,7 +143,7 @@ class MusicProcessor(Processor):
                 self.process_moved_folder(file_from, file_to, context)
             else:
                 self.process_moved_file(file_from, file_to, context)
-    
+
     def process_moved_file(self, from_, to, context):
         song = Song.query.filter_by(file=from_).first()
         if song != None:
@@ -151,7 +151,7 @@ class MusicProcessor(Processor):
             db.session.commit()
         else:
             self.process_updated_file(to, context)
-    
+
     def ensure_or_create_artist(self, artist_name):
         n_artist = unidecode(unicode(artist_name).lower())
         # Try to find an artist
@@ -163,7 +163,7 @@ class MusicProcessor(Processor):
             db.session.add(new_artist)
             db.session.commit()
             return new_artist
-    
+
     def ensure_or_create_album(self, file_, artist_name, album_name):
         directory, _ = os.path.split(file_)
         # Case 1. we have artist and album name
@@ -202,7 +202,7 @@ class MusicProcessor(Processor):
             return None
         else:
             return Album.query.filter_by(normalized=n_album).filter(Song.albumId==Album.id).filter(Song.artistId==artist.id).first()
-    
+
     def find_album_by_directory(self, directory, album_name):
         n_album = unidecode(unicode(album_name).lower())
         # Try to find a song with name album name
@@ -214,19 +214,19 @@ class MusicProcessor(Processor):
             db.session.add(new_album)
             db.session.commit()
             return new_album
-    
+
     def delete_artist_if_no_assoc(self, artist_id):
         songs = Song.query.filter_by(artistId=artist_id).count()
         if songs == 0:
             Artist.query.filter_by(id=artist_id).delete()
             db.session.commit()
-            
+
     def delete_album_if_no_assoc(self, album_id):
         songs = Song.query.filter_by(albumId=album_id).count()
         if songs == 0:
             Album.query.filter_by(id=album_id).delete()
             db.session.commit()
-    
+
     def add_to_database(self, filename, song_info):
         # Just in case anything is None
         if song_info.title == None:
@@ -256,7 +256,7 @@ class MusicProcessor(Processor):
         song = Song(filename, r_title, artist.id, album.id, r_length, song_info.year, song_info.track, song_info.disc_no)
         db.session.add(song)
         db.session.commit()
-    
+
     def replace_in_database(self, filename, s, song_info):
         # Just in case anything is None
         if song_info.title == None:

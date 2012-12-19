@@ -1,4 +1,6 @@
-class Element:
+
+
+class Element(object):
     def __init__(self, change):
         self.change = change
         self.path = change.filename
@@ -34,7 +36,8 @@ class Element:
                 self.change.kind == FileChange.ATTRIBS_CHANGED or \
                 self.change.kind == FileChange.MOVED)
 
-class PreviewProcessor:
+
+class PreviewProcessor(object):
     def __init__(self):
         pass
 
