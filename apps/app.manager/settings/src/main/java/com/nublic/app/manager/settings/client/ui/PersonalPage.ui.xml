@@ -65,28 +65,28 @@
 			<ui:text from="{msg.shownName}"/>
 		</n:EditableLabel>
 		<g:HorizontalPanel addStyleNames="{style.evenmoremargin}">
-			<g:HTMLPanel><strong style="margin-right: 5px;">System name:</strong></g:HTMLPanel>
+			<g:HTMLPanel><strong style="margin-right: 5px;"><ui:text from="{msg.systemName}"/></strong></g:HTMLPanel>
 			<g:Label ui:field="systemName"><ui:text from="{msg.username}"/></g:Label>
 		</g:HorizontalPanel>
 		
 		<div class="{style.passbox} {style.somepadding}">
 			<g:VerticalPanel>
 				<g:HTMLPanel>
-					<h4 style="margin-bottom: 15px;">Change password</h4>
+					<h4 style="margin-bottom: 15px;"><ui:text from="{msg.changePass}"/></h4>
 				</g:HTMLPanel>
 				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
-					<g:cell width="160px" horizontalAlignment="right">
-						<g:Label addStyleNames="{style.primarylabel}" text="Old password"/>
+					<g:cell width="190px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="{msg.oldPass}"/>
 					</g:cell>
 					<g:PasswordTextBox ui:field="oldPass" addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
-	 					<n:CheckFeedback ui:field="oldPassFeedback" addStyleNames="{style.checkmargin}"/>
+	 					<n:CheckFeedback ui:field="oldPassFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.couldntChangePass}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
-					<g:cell width="160px" horizontalAlignment="right">
-						<g:Label addStyleNames="{style.primarylabel}" text="New Password"/>
+					<g:cell width="190px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="{msg.newPass}"/>
 					</g:cell>
 					<g:PasswordTextBox ui:field="newPass" addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
@@ -95,8 +95,8 @@
 				</g:HorizontalPanel>
 	
 				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
-					<g:cell width="160px" horizontalAlignment="right">
-						<g:Label addStyleNames="{style.primarylabel}" text="Confirm new Password"/>
+					<g:cell width="190px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="{msg.confirmPass}"/>
 					</g:cell>
 					<g:PasswordTextBox ui:field="verificatePass" addStyleNames="{style.input} {style.faketextmargin}"/>
 					<g:cell verticalAlignment="middle">
@@ -105,14 +105,14 @@
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel>
-					<g:cell width="430px">
-						<g:Button ui:field="changePasswordButton" addStyleNames="info {style.floatright}" text="{msg.changePassword}"/>
+					<g:cell width="460px">
+						<g:Button ui:field="changePasswordButton" addStyleNames="info {style.floatright}" text="{msg.changePass}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 				
 				<g:HorizontalPanel>
-					<g:cell width="430px">
-						<g:Label ui:field="changedLabel" text="Password properly changed" addStyleNames="{style.floatright} {style.passwordchanged}"/>
+					<g:cell width="460px">
+						<g:Label ui:field="changedLabel" text="{msg.passChanged}" addStyleNames="{style.floatright} {style.passwordchanged}"/>
 					</g:cell>
 				</g:HorizontalPanel>
 			</g:VerticalPanel>

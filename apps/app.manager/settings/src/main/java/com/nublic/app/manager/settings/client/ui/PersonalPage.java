@@ -14,6 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.manager.settings.client.Constants;
 import com.nublic.app.manager.settings.client.Model;
 import com.nublic.app.manager.settings.client.RealChangeHandler;
+import com.nublic.app.manager.settings.client.comm.ChangePassCallback;
 import com.nublic.app.manager.settings.client.comm.User;
 import com.nublic.app.manager.settings.client.comm.UserMessageCallback;
 import com.nublic.util.widgets.CheckFeedback;
@@ -99,13 +100,18 @@ public class PersonalPage extends Composite {
 	@UiHandler("changePasswordButton")
 	void onChangePasswordButtonClick(ClickEvent event) {
 		if (verificationPassFeedback.getState() == Feedback.CHECK && newPassFeedback.getState() == Feedback.CHECK) {
-			boolean succeed = Model.INSTANCE.changePassword(oldPass.getText(), newPass.getText());
-			if (succeed) {
-				cleanup();
-				showFeedback();
-			} else {
-				hideFeedback();
-			}
+			Model.INSTANCE.changePassword(oldPass.getText(), newPass.getText(), new ChangePassCallback() {
+				@Override
+				public void onPasswordChanged(boolean succeed) {
+					if (succeed) {
+						cleanup();
+						showFeedback();
+					} else {
+						oldPassFeedback.setFeedback(Feedback.CROSS);
+						hideFeedback();
+					}
+				}
+			});
 		}
 	}
 

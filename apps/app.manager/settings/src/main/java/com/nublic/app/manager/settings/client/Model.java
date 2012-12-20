@@ -3,6 +3,7 @@ package com.nublic.app.manager.settings.client;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.Response;
+import com.nublic.app.manager.settings.client.comm.ChangePassCallback;
 import com.nublic.app.manager.settings.client.comm.JSUser;
 import com.nublic.app.manager.settings.client.comm.User;
 import com.nublic.app.manager.settings.client.comm.UserMessageCallback;
@@ -63,19 +64,19 @@ public class Model {
 		SequenceHelper.sendJustOne(m, RequestBuilder.PUT);
 	}
 
-	public boolean changePassword(String oldPass, String newPass) {
+	public boolean changePassword(String oldPass, String newPass, final ChangePassCallback cpc) {
 		Message m = new Message() {
 			@Override
 			public String getURL() {
 				return LocationUtil.getHostBaseUrl() + "manager/server/change-password";
 			}
 			@Override
-			public void onSuccess(Response response) {				
-				// TODO: Do something
+			public void onSuccess(Response response) {		
+				cpc.onPasswordChanged(true);
 			}
 			@Override
 			public void onError() {
-				// Do nothing
+				cpc.onPasswordChanged(false);
 			}
 		};
 		m.addParam("old", oldPass);
