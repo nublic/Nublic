@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.util.widgets">
-	<ui:style>
+	<ui:style type='com.nublic.app.manager.settings.client.ui.PersonalPage.PersonalStyle'>
 		.input {
 			margin-bottom: 0px;
 			width: 260px;
@@ -47,7 +47,14 @@
 		}
 		.passwordchanged {
 			font-weight: bold;
-			margin-top: 8px;
+			margin-top: 12px;
+			opacity: 0;
+			transition: opacity .25s ease-in-out;
+   			-moz-transition: opacity .25s ease-in-out;
+   			-webkit-transition: opacity .25s ease-in-out;
+		}
+		.opaque {
+			opacity: 1;
 		}
 	</ui:style>
 	

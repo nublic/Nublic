@@ -63,4 +63,25 @@ public class Model {
 		SequenceHelper.sendJustOne(m, RequestBuilder.PUT);
 	}
 
+	public boolean changePassword(String oldPass, String newPass) {
+		Message m = new Message() {
+			@Override
+			public String getURL() {
+				return LocationUtil.getHostBaseUrl() + "manager/server/change-password";
+			}
+			@Override
+			public void onSuccess(Response response) {				
+				// TODO: Do something
+			}
+			@Override
+			public void onError() {
+				// Do nothing
+			}
+		};
+		m.addParam("old", oldPass);
+		m.addParam("new", newPass);
+		SequenceHelper.sendJustOne(m, RequestBuilder.POST);
+		return true;
+	}
+
 }

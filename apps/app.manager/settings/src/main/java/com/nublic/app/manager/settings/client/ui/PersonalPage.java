@@ -2,9 +2,11 @@ package com.nublic.app.manager.settings.client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -34,11 +36,16 @@ public class PersonalPage extends Composite {
 	@UiField CheckFeedback newPassFeedback;
 	@UiField CheckFeedback verificationPassFeedback;
 	@UiField Button changePasswordButton;
+	@UiField PersonalStyle style;
+	Timer t = null;
 
+	// CSS Styles defined in the .xml file
+	interface PersonalStyle extends CssResource {
+		String opaque();
+	}
+	
 	public PersonalPage() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		changedLabel.setVisible(false);
 
 		Model.INSTANCE.getUserInfo(new UserMessageCallback() {
 			@Override
@@ -91,7 +98,40 @@ public class PersonalPage extends Composite {
 	
 	@UiHandler("changePasswordButton")
 	void onChangePasswordButtonClick(ClickEvent event) {
-		oldPassFeedback.setFeedback(Feedback.CHECK);
-		changedLabel.setVisible(true);
+		if (verificationPassFeedback.getState() == Feedback.CHECK && newPassFeedback.getState() == Feedback.CHECK) {
+			boolean succeed = Model.INSTANCE.changePassword(oldPass.getText(), newPass.getText());
+			if (succeed) {
+				cleanup();
+				showFeedback();
+			} else {
+				hideFeedback();
+			}
+		}
+	}
+
+	private void showFeedback() {
+		if (t == null) {
+			t = new Timer() {
+				@Override
+				public void run() {
+					changedLabel.addStyleName(style.opaque());
+				}
+			};
+		}
+		t.schedule(250);
+	}
+	
+	private void hideFeedback() {
+		changedLabel.removeStyleName(style.opaque());
+	}
+
+	private void cleanup() {
+		hideFeedback();
+		oldPass.setText("");
+		newPass.setText("");
+		verificatePass.setText("");
+		oldPassFeedback.setFeedback(Feedback.NONE);
+		newPassFeedback.setFeedback(Feedback.NONE);
+		verificationPassFeedback.setFeedback(Feedback.NONE);
 	}
 }
