@@ -1,6 +1,6 @@
 import datetime
 from Queue import PriorityQueue
-from pykka import ThreadingActor
+from pykka.actor import ThreadingActor
 from nublic.filewatcher import FileChange
 from file_info import FileInfo
 from solr_processor import SolrProcessor

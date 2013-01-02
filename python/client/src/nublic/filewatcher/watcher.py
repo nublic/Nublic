@@ -118,4 +118,4 @@ class FileWatcherActor(ThreadingActor):
                 processor.tell({'change': message.get('change'), 'id': self._messageId})
         #elif message['command'] == 'back':
             # Don't do anything by now
-            #pass
+            # pass
