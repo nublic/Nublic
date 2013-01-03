@@ -6,12 +6,13 @@ import logging
 from pykka.actor import ThreadingActor
 import traceback
 
+
 class Processor(ThreadingActor):
     '''
     Defines a processor for watcher events
     '''
 
-    def __init__(self, name, watcher, throwException, logger = None):
+    def __init__(self, name, watcher, throwException, logger=None):
         '''
         Creates a new processor
 
@@ -22,7 +23,7 @@ class Processor(ThreadingActor):
         :param throwException: whether to throw an exception or log errors
         :type throwException: boolean
         '''
-	super(Processor, self).__init__()
+        super(Processor, self).__init__()
         self._name = name
         self._watcher = watcher
         self._throwException = throwException
@@ -57,11 +58,15 @@ class Processor(ThreadingActor):
                     raise
                 else:
                     if self._logger != None:
-                        self._logger.error('ERROR in %s PROCESSOR: %s\n%s', self._name, str(e), traceback.format_exc())
+                        self._logger.error('ERROR in %s PROCESSOR: %s\n%s',
+                                           self._name,
+                                           str(e),
+                                           traceback.format_exc())
             # Tell back the parent watcher
             #self._watcher.tell({'command': 'back', 'app_name': self._name,
-            #                    'id': message.get('id'), 'change': message.get('change')})
+            #                    'id': message.get('id'),
+            #                    'change': message.get('change')})
         else:
             if self._logger != None:
-                self._logger.error('Message without change or id: %s', str(message))
-
+                self._logger.error('Message without change or id: %s',
+                                   str(message))
