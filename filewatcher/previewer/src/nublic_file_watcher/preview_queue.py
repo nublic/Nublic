@@ -9,13 +9,13 @@ class CentralQueue(ThreadingActor):
     def __init__(self, processors):
         super(CentralQueue, self).__init__()
         # Create the wrapped SolrProcessor
-        self.solr = ProcessorWrapper.start(SolrProcessor(), self)
+        self.solr = CentralQueueWrapper.start(SolrProcessor(), self)
         self.solr_q = PriorityQueue()
         # Create the rest of wrappers
         self.procs = dict()
         self.qs = dict()
         for proc in processors:
-            self.procs[proc.get_id()] = ProcessorWrapper.start(proc, self)
+            self.procs[proc.get_id()] = CentralQueueWrapper.start(proc, self)
             self.qs[proc.get_id()] = PriorityQueue()
 
     def on_receive(self, msg):
@@ -49,9 +49,9 @@ class CentralQueue(ThreadingActor):
                 next_e = q.get()
                 p.tell(next_e)
 
-class ProcessorWrapper(ThreadingActor):
+class CentralQueueWrapper(ThreadingActor):
     def __init__(self, processor, central_queue):
-        super(ProcessorWrapper, self).__init__()
+        super(CentralQueueWrapper, self).__init__()
         self.processor = processor
         self.central_queue = central_queue
         self.id = processor.get_id()
