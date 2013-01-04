@@ -2,7 +2,8 @@
 
 # Runs in the foreground. It is suited for use with the Upstart manager
 
-# Initial version from: http://www.python.org/dev/peps/pep-3143/ from Public Domain
+# Initial version from:
+#   http://www.python.org/dev/peps/pep-3143/ from Public Domain
 # Second version from: https://gist.github.com/339430
 #
 # @author: David Navarro Estruch
@@ -10,31 +11,35 @@
 # @copyright: 2011 Nublic
 
 
-from nublic_file_watcher.preview_queue import CentralQueue
+from nublic_file_watcher.central_queue import CentralQueue
 from nublic_file_watcher.preview_processor import Element
 from nublic.filewatcher import Processor, init_watcher
+from nublic_file_watcher.music_processor import MusicProcessor
 
-from photo_processor import PhotoProcessor
+#from nublic_file_watcher.photo_processor import PhotoProcessor
 
 from time import sleep
 import logging
 import signal
 
+
 class MainProcessor(Processor):
     def __init__(self, watcher, logger):
         Processor.__init__(self, "previewer", watcher, False)
-        self.central_queue = CentralQueue.start([PhotoProcessor()])
+        self.central_queue = CentralQueue.start([MusicProcessor()])
+        self.central_queue = CentralQueue.start([])
 
     def process(self, change):
         self.central_queue.tell(('_watcher', Element(change)))
 
-if __name__ == '__main__':
-    logging.basicConfig(level = logging.WARNING)
-    init_socket_watcher("previewer",[MainProcessor.start()])
 
+if __name__ == '__main__':
+    log = logging.basicConfig(level=logging.WARNING)
+    init_socket_watcher("previewer", [MainProcessor.start()], logger=log)
     try:
         while True:
             sleep(1)
     except KeyboardInterrupt:
         peer.shutdown()
-    sys.stderr.write("Resource daemon shutdown\n")
+    log.info("Resource daemon shutdown")
+#    sys.stderr.write("Resource daemon shutdown\n")
