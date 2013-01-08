@@ -132,7 +132,7 @@ build_gwt_package() {
         echo "No changes in files since deb package was compiled. Skipping compilation!"
         return 0
     else
-        echo "TESTING: Should be compiled"
+        echo "GWT pakckage would be compiled"
     fi
     cd "$1"
     # Try to run Maven clean
