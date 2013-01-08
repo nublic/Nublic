@@ -27,14 +27,15 @@ class MainProcessor(Processor):
     def __init__(self, watcher, logger):
         Processor.__init__(self, "previewer", watcher, False)
         self.central_queue = CentralQueue.start([MusicProcessor()])
-        self.central_queue = CentralQueue.start([])
+        #self.central_queue = CentralQueue.start([])
 
     def process(self, change):
         self.central_queue.tell(('_watcher', Element(change)))
 
 
 if __name__ == '__main__':
-    log = logging.basicConfig(level=logging.WARNING)
+    log = logging.basicConfig(level=logging.DEBUG)
+
     init_socket_watcher("previewer", [MainProcessor.start()], logger=log)
     try:
         while True:

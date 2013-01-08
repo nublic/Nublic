@@ -6,7 +6,7 @@ from file_info import FileInfo
 from solr_processor import SolrProcessor
 
 class CentralQueue(ThreadingActor):
-    def __init__(self, processors):
+    def __init__(self, processors, log):
         super(CentralQueue, self).__init__()
         # Create the wrapped SolrProcessor
         self.solr = CentralQueueWrapper.start(SolrProcessor(), self)

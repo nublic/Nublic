@@ -20,7 +20,7 @@ from images import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
 app = Flask(__name__)
 app.debug = True
 init_nublic_server(app, '/var/log/nublic/nublic-app-music.python.log', 'nublic_app_music',
-                   db, 'music', [lambda w: MusicProcessor.start(app.logger, w)])
+                   db, 'music', [])
 app.logger.error('Starting music app')
 
 # COLLECTIONS HANDLING

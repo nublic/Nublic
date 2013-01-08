@@ -1,3 +1,9 @@
 #!/bin/bash
-service nublic-file-watcher stop
+
+#if [ $1 = "remove" ]
+#then
+#    nublic-resource-setup uninstall nublic_app_photos db
+#    echo ""
+#fi
+
 #DEBHELPER#

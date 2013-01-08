@@ -7,7 +7,8 @@ from unidecode import unidecode
 from nublic.filewatcher import FileChange, Processor
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
-from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist
+from nublic_app_music_server.server import app
+from nublic_app_music_server.model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist
 from song_info import get_song_info, extract_using_filename
 from images import ensure_artist_image, ensure_album_image
 
@@ -60,6 +61,13 @@ class MusicProcessor(Processor):
     def __init__(self, logger, watcher):
         Processor.__init__(self, 'music', watcher, False, logger)
         logger.error('Music processor initialised')
+        db.init_app(app)
+        self.ctx = app.test_request_context().push()
+        app.preprocess_request()
+
+    def shutdown(self):
+        app.process_response(app.response_class())
+        self.ctx.pop()
 
     def process(self, change):
         self.get_logger().error('Music processor file: %i %s, context: %s', change.kind, change.filename, change.context)
