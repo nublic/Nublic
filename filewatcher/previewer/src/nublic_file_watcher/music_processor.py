@@ -1,15 +1,14 @@
-import datetime
-import EXIF
 import os
 import os.path
 from unidecode import unidecode
 
-from nublic.filewatcher import FileChange, Processor
+from nublic.filewatcher import FileChange
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
+from preview_processor import PreviewProcessor
 from nublic_app_music_server.server import app
-from nublic_app_music_server.model import db, Album, Artist, Collection,\
-        Playlist, Song, SongCollection, SongPlaylist
+from nublic_app_music_server.model import db, Album, Artist,\
+        Song, SongCollection, SongPlaylist
 from nublic_app_music_server.song_info import get_song_info,\
         extract_using_filename
 from nublic_app_music_server.images import ensure_artist_image, \
@@ -66,9 +65,9 @@ SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff",
 
 # Set up processors
 class MusicProcessor(PreviewProcessor):
-    def __init__(self, logger, watcher):
+    def __init__(self, logger=None, watcher=''):
         PreviewProcessor.__init__(self, 'music')
-        logger.error('Music processor initialised')
+        log.error('Music processor initialised')
         db.init_app(app)
         self.ctx = app.test_request_context().push()
         app.preprocess_request()
@@ -78,7 +77,7 @@ class MusicProcessor(PreviewProcessor):
         self.ctx.pop()
 
     def process(self, change):
-        self.get_logger().error('Music processor file: %i %s, context: %s', change.kind, change.filename, change.context)
+        log.error('Music processor file: %i %s, context: %s', change.kind, change.filename, change.context)
         if change.kind == FileChange.CREATED and not change.is_dir:
             self.process_updated_file(change.filename, change.context)
         elif change.kind == FileChange.MODIFIED and not change.is_dir:
@@ -98,15 +97,15 @@ class MusicProcessor(PreviewProcessor):
         return filename.endswith('~') or filename.startswith('.')
 
     def process_updated_file(self, filename, context):
-        self.get_logger().error('Updated file: %s', filename)
+        log.error('Updated file: %s', filename)
         mime = get_mime_type(filename)
         _, ext = os.path.splitext(filename)
         if not self.is_hidden(filename):
             # Process song
             if mime in TAGGED_MIME_TYPES or ext in TAGGED_EXTENSIONS:
-                song_info = get_song_info(filename, context, self.get_logger())
+                song_info = get_song_info(filename, context, log)
             elif mime in SUPPORTED_MIME_TYPES or ext in SUPPORTED_EXTENSIONS:
-                song_info = extract_using_filename(filename, context, self.get_logger()).clean()
+                song_info = extract_using_filename(filename, context, log).clean()
             else:
                 song_info = None
             # If we got some information
@@ -261,7 +260,7 @@ class MusicProcessor(PreviewProcessor):
             r_length = 0
         else:
             r_length = song_info.length
-        self.get_logger().error('Adding to database: %s by %s in %s', r_title, r_artist_name, r_album_name)
+        log.error('Adding to database: %s by %s in %s', r_title, r_artist_name, r_album_name)
         # Ensure artist
         artist = self.ensure_or_create_artist(r_artist_name)
         ensure_artist_image(artist.id, r_artist_name)
