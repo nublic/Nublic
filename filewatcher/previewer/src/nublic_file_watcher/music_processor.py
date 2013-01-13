@@ -8,9 +8,15 @@ from nublic.filewatcher import FileChange, Processor
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
 from nublic_app_music_server.server import app
-from nublic_app_music_server.model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist
-from song_info import get_song_info, extract_using_filename
-from images import ensure_artist_image, ensure_album_image
+from nublic_app_music_server.model import db, Album, Artist, Collection,\
+        Playlist, Song, SongCollection, SongPlaylist
+from nublic_app_music_server.song_info import get_song_info,\
+        extract_using_filename
+from nublic_app_music_server.images import ensure_artist_image, \
+        ensure_album_image
+
+import logging
+log = logging.getLogger(__name__)
 
 TAGGED_MIME_TYPES = [
       # MP4
@@ -54,12 +60,14 @@ SUPPORTED_MIME_TYPES = TAGGED_MIME_TYPES + [
       # Various
       "audio/vnd.qcelp", "audio/x-gsm", "audio/snd"
       ]
-SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff", ".mid", ".midi", ".au", ".pcm"]
+SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff",
+                                            ".mid", ".midi", ".au", ".pcm"]
+
 
 # Set up processors
-class MusicProcessor(Processor):
+class MusicProcessor(PreviewProcessor):
     def __init__(self, logger, watcher):
-        Processor.__init__(self, 'music', watcher, False, logger)
+        PreviewProcessor.__init__(self, 'music')
         logger.error('Music processor initialised')
         db.init_app(app)
         self.ctx = app.test_request_context().push()

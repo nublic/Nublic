@@ -72,7 +72,7 @@ def quick_check(notifier):
         try:
             notifier.read_events()
         except pyinotify.NotifierError as e:  # Under REALLY extreme load it might give errors
-            sys.stderr.write("NotifierError exception reported. Message: %s" % str(e))
+            sys.stderr.write("NotifierError exception reported. Message: %s\n" % str(e))
         notifier.process_events()
     return True
 

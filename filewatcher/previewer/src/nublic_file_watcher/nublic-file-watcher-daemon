@@ -13,7 +13,7 @@
 
 from nublic_file_watcher.central_queue import CentralQueue
 from nublic_file_watcher.preview_processor import Element
-from nublic.filewatcher import Processor, init_watcher
+from nublic.filewatcher import Processor, init_socket_watcher
 from nublic_file_watcher.music_processor import MusicProcessor
 
 #from nublic_file_watcher.photo_processor import PhotoProcessor
@@ -21,26 +21,32 @@ from nublic_file_watcher.music_processor import MusicProcessor
 from time import sleep
 import logging
 import signal
+import sys
 
+logging.basicConfig(level=logging.DEBUG, filename="/var/log/nublic-file-watcher.log")
+log = logging.getLogger("nublic-file-watcher-daemon")
 
 class MainProcessor(Processor):
-    def __init__(self, watcher, logger):
-        Processor.__init__(self, "previewer", watcher, False)
+    def __init__(self):
+        Processor.__init__(self, "previewer")
         self.central_queue = CentralQueue.start([MusicProcessor()])
         #self.central_queue = CentralQueue.start([])
 
     def process(self, change):
-        self.central_queue.tell(('_watcher', Element(change)))
+        #self.central_queue.tell(('_watcher', Element(change)))
+        log.debug("Change received %s", repr(change))
 
 
 if __name__ == '__main__':
-    log = logging.basicConfig(level=logging.DEBUG)
-
-    init_socket_watcher("previewer", [MainProcessor.start()], logger=log)
+    init_socket_watcher("previewer", [MainProcessor.start()])
     try:
         while True:
             sleep(1)
-    except KeyboardInterrupt:
-        peer.shutdown()
+    except KeyboardInterrupt as e:
+        sys.exit(1)
+        raise e
+    except BaseException as e:
+        log.exception("Exception raised: %s" % repr(e))
+        raise e
     log.info("Resource daemon shutdown")
 #    sys.stderr.write("Resource daemon shutdown\n")

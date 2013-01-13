@@ -12,7 +12,7 @@ class Processor(ThreadingActor):
     Defines a processor for watcher events
     '''
 
-    def __init__(self, name, watcher, throwException, logger=None):
+    def __init__(self, name, watcher='', throwException=True, logger=None):
         '''
         Creates a new processor
 

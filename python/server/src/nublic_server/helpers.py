@@ -12,7 +12,7 @@ class RequestWithDelete(Request):
 
 
 def init_nublic_server(app, log_file, resource_app, db,
-                       filewatcher_app_name, processors):
+                       filewatcher_app_name="", processors=None):
     app.request_class = RequestWithDelete
     # Set up logging handlers
     handler = logging.FileHandler(log_file)

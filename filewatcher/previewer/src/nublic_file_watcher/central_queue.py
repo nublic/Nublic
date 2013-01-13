@@ -5,8 +5,11 @@ from nublic.filewatcher import FileChange
 from file_info import FileInfo
 from solr_processor import SolrProcessor
 
+import logging
+log = logging.getLogger(__name__)
+
 class CentralQueue(ThreadingActor):
-    def __init__(self, processors, log):
+    def __init__(self, processors):
         super(CentralQueue, self).__init__()
         # Create the wrapped SolrProcessor
         self.solr = CentralQueueWrapper.start(SolrProcessor(), self)
@@ -20,6 +23,8 @@ class CentralQueue(ThreadingActor):
 
     def on_receive(self, msg):
         (sender_id, element) = msg
+
+        log.debug("Sent message %s from sender_id %s" % repr(element), sender_id)
 
         if sender_id == '_watcher':
             if self.solr_q.empty():
