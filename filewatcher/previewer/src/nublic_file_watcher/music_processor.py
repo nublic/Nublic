@@ -66,11 +66,14 @@ SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff",
 # Set up processors
 class MusicProcessor(PreviewProcessor):
     def __init__(self, logger=None, watcher=''):
-        PreviewProcessor.__init__(self, 'music')
+        PreviewProcessor.__init__(self)
         log.error('Music processor initialised')
         db.init_app(app)
         self.ctx = app.test_request_context().push()
         app.preprocess_request()
+
+    def get_id(self):
+        return 'music'
 
     def shutdown(self):
         app.process_response(app.response_class())

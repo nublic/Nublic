@@ -12,11 +12,11 @@ class FileChange:
     ATTRIBS_CHANGED = 3
     MOVED = 4
     SCAN_REPEATED = 5
-    
+
     def __init__(self, kind, filename, filename_from, filename_to, is_dir):
         '''
         Creates a new file change
-        
+
         :type kind: one of the elements in the enumeration
         :type filename: string
         :param filename_from: only available in MOVE changes
@@ -30,7 +30,8 @@ class FileChange:
         self.filename_from = filename_from
         self.filename_to = filename_to
         self.is_dir = is_dir
-    
+
+
 def parse_file_change(kind, pathname, src_pathname, is_dir):
     if kind == 'create':
         return FileChange(FileChange.CREATED, pathname, None, None, is_dir)
