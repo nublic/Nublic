@@ -23,9 +23,9 @@ def init_watcher(app_name, processors):
         stdout=subprocess.PIPE, universal_newlines=True)
     atexit.register(lambda: p.kill())
     # Start actor
-    actor = FileWatcherActor.start(app_name, processors, logger)
+    actor = FileWatcherActor.start(app_name, processors, log)
     # Now start listening
-    WatcherThread(actor, p, logger).start()
+    WatcherThread(actor, p, log).start()
 
 
 class WatcherThread(threading.Thread):
