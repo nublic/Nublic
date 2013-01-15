@@ -78,8 +78,7 @@ class SocketWatcherThread(threading.Thread):
             line = fs.readline()[:-1]
             e = json.loads(line)
             change = parse_file_change(e['ty'], e['pathname'],
-                                       e['src_pathname'], e['context'],
-                                       e['isdir'])
+                                       e['src_pathname'], e['isdir'])
             #self._unpickler.memo = {}
             log.info('Actor %s: Message received' % self.app_name)
             self._actor.tell({'command': 'forward', 'change': change})
