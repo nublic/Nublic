@@ -22,13 +22,13 @@ class SolrFileInfo:
     def set_new_pathname(self, new_pathname):
         self.props['path'] = to_utf8(new_pathname)
         self.props['filename'] = to_utf8(os.path.basename(new_pathname))
-    
+
     def get_pathname(self):
         return from_utf8(self.props['path'])
-    
+
     def is_directory(self):
         return self.props['isDir']
-    
+
     def save(self, should_recreate_mime):
         self.props['updatedAt'] = datetime.datetime.now()
         path = from_utf8(self.props['path'])
@@ -38,7 +38,7 @@ class SolrFileInfo:
         # Save in Solr
         self.interface.add(self.props)
         self.interface.commit()
-    
+
     def delete(self):
         if 'id' in self.props: # Don't delete a not saved document
             self.interface.delete(self.props['id'])
@@ -52,7 +52,7 @@ class SolrProcessor(PreviewProcessor):
 
     def get_id(self):
         return 'solr'
-    
+
     def get_solr_interface(self):
         if self._solr_interface == None:
             http_connection = httplib2.Http(cache="/var/tmp/solr_cache")
@@ -118,12 +118,12 @@ class SolrProcessor(PreviewProcessor):
         else:
             # Recreate Solr info
             file_info.save(should_recreate_preview)
-    
+
     def process_deleted_file(self, filename):
         file_info = solr.retrieve_doc(filename)
         if file_info != None:
             file_info.delete()
-    
+
     def process_moved_file(self, from_, to, is_dir):
         if solr.has_doc(from_):
             file_info = solr.retrieve_doc(from_)

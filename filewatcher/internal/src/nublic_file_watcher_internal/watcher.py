@@ -53,10 +53,9 @@ def start_watching(folder):
     # gobject.timeout_add(100, quick_check, notifier)
     # Exclude files beginning with . or ending in ~
     e_filter = pyinotify.ExcludeFilter(['((/[^/]+)*/\\..*)|((/[^/]+)*/.+~)'])
-    wm.add_watch(folder, handler.mask(), rec=True, auto_add=True, exclude_filter=e_filter)
-
+    wm.add_watch(folder, handler.mask(), rec=True,
+                 auto_add=True, exclude_filter=e_filter)
     sys.stderr.write("Starting to watch...\n")
-
     try:
         while True:
             sleep(1)

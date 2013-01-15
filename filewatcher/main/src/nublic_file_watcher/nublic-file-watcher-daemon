@@ -11,7 +11,7 @@
 
 import argparse
 import gobject
-from dbus.mainloop.glib import DBusGMainLoop
+#from dbus.mainloop.glib import DBusGMainLoop
 
 # from watcher import (
 from nublic_file_watcher.watcher import (
@@ -28,7 +28,7 @@ SCANNED_FOLDER = '/var/nublic/data'
 
 def main():
     parser = argparse.ArgumentParser(description='Starts and communicates with the Nublic file watcher system.')
-    
+
     parser.add_argument('--delete', dest='delete', action='store_const',
                         const=True, default=False,
                         help='Delete the entire index.')
@@ -36,18 +36,20 @@ def main():
                         const=True, default=False,
                         help='Scan the entire Nublic data folder.')
     args = parser.parse_args()
-    
+
     if args.delete:
         print("Deleting all documents in the index...")
         delete_all_documents()
-    
+
     if args.scan:
         print("Scanning the entire Nublic data folder...")
-        dbus_loop = DBusGMainLoop(set_as_default=True)
+        # @TODO Make it work with new infrastructure
+        # dbus_loop = DBusGMainLoop(set_as_default=True)
         scan_folder(SCANNED_FOLDER)
-    
+
     if not args.delete and not args.scan:
-        dbus_loop = DBusGMainLoop(set_as_default=True)
+        # @TODO Make it work with new infrastructure
+        #dbus_loop = DBusGMainLoop(set_as_default=True)
         start_watching(SCANNED_FOLDER)
         loop = gobject.MainLoop()
         loop.run()
