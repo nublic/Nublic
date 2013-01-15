@@ -33,7 +33,7 @@ def init_nublic_server(app, log_file, resource_app, db,
     db.init_app(app)
     db.create_all(app=app)
     # Init watching
-    init_socket_watcher(filewatcher_app_name, processors, app.logger)
+    #init_socket_watcher(filewatcher_app_name, processors)
 
 
 def init_bare_nublic_server(app, log_file):
