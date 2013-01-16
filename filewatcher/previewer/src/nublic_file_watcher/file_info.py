@@ -5,6 +5,7 @@ import os.path
 SharedMagic = magic.open(magic.MAGIC_MIME_TYPE)
 SharedMagic.load()
 
+
 class FileInfo:
     def __init__(self, path):
         self.path = path
@@ -30,23 +31,25 @@ class FileInfo:
         return os.path.getmtime(self.path)
 
     def mime_type(self):
-        if self._mime == None:
-            mime = Magic.file(self.path)
-            if mime == "application/zip": # for Office XML docs
+        if self._mime is None:
+            mime = SharedMagic.file(self.path)
+            if mime == "application/zip":  # for Office XML docs
                 if self.extension == ".docx":
                     mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 elif self.extension == ".xlsx":
                     mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 elif self.extension == ".pptx":
                     mime = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-            elif mime == "application/vnd.ms-office": # for Office non-XML docs
+            elif mime == "application/vnd.ms-office":  # for Office non-XML docs
                 if self.extension == ".doc":
                     mime = "application/msword"
                 elif self.extension == ".xls":
                     mime = "application/msexcel"
                 elif self.extension == ".ppt":
                     mime = "application/mspowerpoint"
-            elif mime == "application/x-staroffice" or mime == "application/soffice" or mime == "application/x-soffice":
+            elif mime == "application/x-staroffice" or \
+                    mime == "application/soffice" or \
+                    mime == "application/x-soffice":
                 if self.extension == ".sdw":
                     mime = "application/vnd.stardivision.writer"
                 elif self.extension == ".sdc":

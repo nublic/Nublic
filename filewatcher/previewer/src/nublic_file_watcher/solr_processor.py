@@ -35,8 +35,8 @@ class SolrFileInfo:
 
     def save(self, should_recreate_mime):
         self.props['updatedAt'] = datetime.datetime.now()
-        path = from_utf8(self.props['path'])
-        self.props['size'] = self.info.size()
+        # path = from_utf8(self.props['path'])
+        # self.props['size'] = self.info.size()
         if should_recreate_mime:
             self.props['mime'] = self.info.mime_type()
         # Save in Solr
