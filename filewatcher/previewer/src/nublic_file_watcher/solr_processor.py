@@ -1,17 +1,21 @@
 import datetime
 import httplib2
-import magic
+#import magic
 import os
 import os.path
 from sunburnt import SolrInterface
 from preview_processor import PreviewProcessor
 from file_info import FileInfo
+from nublic.filewatcher.change import FileChange
 
-def to_utf8(self, string):
+
+def to_utf8(string):
     return unicode(string, 'utf-8')
 
-def from_utf8(self, string):
+
+def from_utf8(string):
     return string.encode('utf-8')
+
 
 class SolrFileInfo:
     def __init__(self, props, interface):
@@ -40,11 +44,12 @@ class SolrFileInfo:
         self.interface.commit()
 
     def delete(self):
-        if 'id' in self.props: # Don't delete a not saved document
+        if 'id' in self.props:  # Don't delete a not saved document
             self.interface.delete(self.props['id'])
             self.interface.commit()
 
 SOLR_URL = "http://localhost:8080/solr"
+
 
 class SolrProcessor(PreviewProcessor):
     def __init__(self):
@@ -54,36 +59,38 @@ class SolrProcessor(PreviewProcessor):
         return 'solr'
 
     def get_solr_interface(self):
-        if self._solr_interface == None:
+        if self._solr_interface is None:
             http_connection = httplib2.Http(cache="/var/tmp/solr_cache")
-            self._solr_interface = SolrInterface(url=SOLR_URL, http_connection=http_connection)
+            self._solr_interface = SolrInterface(
+                url=SOLR_URL, http_connection=http_connection)
         return self._solr_interface
 
     def has_doc(self, pathname):
-        results = self.get_solr_interface().query(path=to_utf8(pathname)).field_limit("path").execute()
+        results = self.get_solr_interface(
+        ).query(path=to_utf8(pathname)).field_limit("path").execute()
         return len(results) > 0
 
     def retrieve_doc(self, pathname):
-        results = self.get_solr_interface().query(path=to_utf8(pathname)).execute()
+        results = self.get_solr_interface(
+        ).query(path=to_utf8(pathname)).execute()
         if len(results) > 0:
             return SolrFileInfo(results[0], self.get_solr_interface())
         else:
             return None
 
     def retrieve_docs_in_dir(self, path):
-        results = self.get_solr_interface().query(path=to_utf8(path + '/*')).execute()
+        results = self.get_solr_interface(
+        ).query(path=to_utf8(path + '/*')).execute()
         for result in results:
             if from_utf8(result['path']).startswith(path + '/'):
                 # So the folder name does not appear in the middle
                 yield SolrFileInfo(result, self.get_solr_interface())
 
     def new_doc(self, pathname, isdir):
-        document = { 'isFile': True
-                   , 'isDir': isdir
-                   , 'path': to_utf8(pathname)
-                   , 'filename': to_utf8(os.path.basename(pathname))
-                   , 'createdAt': datetime.datetime.now()
-                   }
+        document = {'isFile': True, 'isDir': isdir, 'path': to_utf8(pathname),
+                    'filename': to_utf8(os.path.basename(pathname)),
+                    'createdAt': datetime.datetime.now()
+                    }
         return SolrFileInfo(document, self.get_solr_interface())
 
     def delete_all_documents(self):
@@ -101,12 +108,13 @@ class SolrProcessor(PreviewProcessor):
         elif change.kind == FileChange.DELETED:
             self.process_deleted_file(change.filename)
         elif change.kind == FileChange.MOVED:
-            self.process_moved_file(change.filename_from, change.filename_to, change.is_dir)
+            self.process_moved_file(
+                change.filename_from, change.filename_to, change.is_dir)
 
     def process_updated_file(self, filename, is_dir, should_recreate_preview):
         # Check if it is itself in Solr
         file_info = self.retrieve_doc(filename)
-        if file_info == None:
+        if file_info is None:
             # Create new Solr document
             file_info = self.new_doc(filename, is_dir)
             file_info.save(True)
@@ -114,25 +122,27 @@ class SolrProcessor(PreviewProcessor):
             if is_dir:
                 for f in os.listdir(filename):
                     inner_fname = os.path.join(filename, f)
-                    self.process_updated_file(self, inner_fname, os.path.isdir(inner_fname), should_recreate_preview)
+                    self.process_updated_file(self, inner_fname,
+                                              os.path.isdir(inner_fname),
+                                              should_recreate_preview)
         else:
             # Recreate Solr info
             file_info.save(should_recreate_preview)
 
     def process_deleted_file(self, filename):
-        file_info = solr.retrieve_doc(filename)
-        if file_info != None:
+        file_info = self.retrieve_doc(filename)
+        if file_info is not None:
             file_info.delete()
 
     def process_moved_file(self, from_, to, is_dir):
-        if solr.has_doc(from_):
-            file_info = solr.retrieve_doc(from_)
+        if self.has_doc(from_):
+            file_info = self.retrieve_doc(from_)
             file_info.set_new_pathname(to)
             file_info.save(False)
         if is_dir:
-            for file_info in self.retrieve_docs_in_dir(dir_name):
+            for file_info in self.retrieve_docs_in_dir(from_):
                 # Change files inside
                 file_path = file_info.get_pathname()
-                new_file_path = file_path.replace(dir_name, new_dir_name, 1)
+                new_file_path = file_path.replace(from_, to, 1)
                 file_info.set_new_pathname(new_file_path)
                 file_info.save(False)

@@ -105,7 +105,7 @@ class FileWatcherActor(ThreadingActor):
             self._messageId += 1
             for processor in self._processors:
                 log.info('Sending message')
-                processor.tell({'change': message.get('change'), 'id': self._messageId})
+                processor.tell({'change': message['change'], 'id': self._messageId})
         #elif message['command'] == 'back':
             # Don't do anything by now
             # pass

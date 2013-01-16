@@ -31,6 +31,16 @@ class FileChange:
         self.filename_to = filename_to
         self.is_dir = is_dir
 
+    def __str__(self):
+        return ('FileChange' + ' kind :' + str(self.kind) +
+                ' file : ' + str(self.filename) +
+                ' file_from : ' + str(self.filename_from) +
+                ' filename_to : ' + str(self.filename_to) +
+                ' is_dir : ' + str(self.is_dir))
+
+    def __repr__(self):
+        return self.__str__()
+
 
 def parse_file_change(kind, pathname, src_pathname, is_dir):
     if kind == 'create':

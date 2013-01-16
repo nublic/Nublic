@@ -52,7 +52,7 @@ class Processor(ThreadingActor):
         '''
         if 'change' in message and 'id' in message:
             try:
-                self.process(message.get('change'))
+                self.process(message['change'])
             except BaseException as e:
                 if self._throwException:
                     raise
