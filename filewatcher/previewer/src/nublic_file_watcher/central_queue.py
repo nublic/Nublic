@@ -1,35 +1,38 @@
-import datetime
 from Queue import PriorityQueue
 from pykka.actor import ThreadingActor
-from nublic.filewatcher import FileChange
-from file_info import FileInfo
 from solr_processor import SolrProcessor
 
 import logging
 log = logging.getLogger(__name__)
 
+
 class CentralQueue(ThreadingActor):
     def __init__(self, processors):
         super(CentralQueue, self).__init__()
         # Create the wrapped SolrProcessor
-        self.solr = CentralQueueWrapper.start(SolrProcessor(), self)
+        log.info('CentralQueue starting')
+        self.solr = CentralQueueWrapper.start(SolrProcessor(), self.actor_ref)
+        log.info('SolrProcessor started')
         self.solr_q = PriorityQueue()
         # Create the rest of wrappers
         self.procs = dict()
         self.qs = dict()
         for proc in processors:
-            self.procs[proc.get_id()] = CentralQueueWrapper.start(proc, self)
+            log.info('Processor %s starting', proc.get_id())
+            self.procs[proc.get_id(
+            )] = CentralQueueWrapper.start(proc, self.actor_ref)
             self.qs[proc.get_id()] = PriorityQueue()
+        log.info('All Processors started')
 
     def on_receive(self, msg):
-        (sender_id, element) = msg
-
-        log.debug("Sent message %s from sender_id %s" % repr(element), sender_id)
-
+        sender_id = msg['id']
+        element = msg['element']
+        log.debug(
+            "Received message %s from sender_id %s", repr(element), sender_id)
         if sender_id == '_watcher':
             if self.solr_q.empty():
                 # We have an empry Solr queue
-                self.solr.tell(element)
+                self.solr.tell({'element': element})
             else:
                 # Else, put in queue
                 self.solr_q.put(element)
@@ -39,20 +42,21 @@ class CentralQueue(ThreadingActor):
                 p = self.procs[k]
                 q = self.qs[k]
                 if q.empty():
-                    p.tell(element)
+                    p.tell({'element': element})
                 else:
                     q.put(element)
             # Now we have to get the next item
             if not self.solr_q.empty():
                 next_e = self.solr_q.get()
-                self.solr.tell(next_e)
-        else: # Any other processor
+                self.solr.tell({'element': next_e})
+        else:  # Any other processor
             # Now we have to get the next item
             p = self.procs[sender_id]
             q = self.qs[sender_id]
             if not q.empty():
                 next_e = q.get()
-                p.tell(next_e)
+                p.tell({'element': next_e})
+
 
 class CentralQueueWrapper(ThreadingActor):
     def __init__(self, processor, central_queue):
@@ -61,6 +65,7 @@ class CentralQueueWrapper(ThreadingActor):
         self.central_queue = central_queue
         self.id = processor.get_id()
 
-    def on_receive(self, element):
+    def on_receive(self, msg):
+        element = msg['element']
         self.processor.process(element)
-        self.central_queue.tell((self.id, element))
+        self.central_queue.tell({'id': self.id, 'element': element})
