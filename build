@@ -265,7 +265,8 @@ do_build() {
             rm -r ${INITIAL_DIR}/3rd-party-libs/pyechonest/pyechonest.egg-info/
             copy_and_touch 3rd-party-libs/aria2
             copy_and_touch 3rd-party-libs/python-fstab
-            # copy_and_touch 3rd-party-libs/tomcat7
+            # Some libraries of tomcat7 are required by jetty8 so we cannot get rid of it
+            copy_and_touch 3rd-party-libs/tomcat7
             copy_and_touch 3rd-party-libs/jetty8
             copy_and_touch 3rd-party-libs/lucene-solr
             build_deb_package 3rd-party-libs/pykka pykka

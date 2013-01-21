@@ -1,5 +1,5 @@
 WSGIPassAuthorization On
-WSGIDaemonProcess nublic user=tomcat7 group=tomcat7
+WSGIDaemonProcess nublic user=jetty group=jetty
  
 <VirtualHost *:80>
     ServerAdmin webmaster@nublic.me
