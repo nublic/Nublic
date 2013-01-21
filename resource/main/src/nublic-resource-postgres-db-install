@@ -9,6 +9,9 @@ EOF
 chmod a-rwx /etc/nublic/resource.conf
 chmod u+rw /etc/nublic/resource.conf
 
+# Fix: Avoid postgres taking LANG without UTF8
+#export LANG=en_US.UTF-8
+
 # sudo passwd postgres
 # 2. Access to PostgreSQL command line
 # 3. Create the new super user for Resource with all the permissions
@@ -19,6 +22,7 @@ CREATE USER nublic_resource WITH
       SUPERUSER
       PASSWORD '$password';
 CREATE DATABASE nublic_resource WITH OWNER nublic_resource
-    ENCODING 'UTF8';
+    ENCODING 'UTF8' LC_CTYPE='en_US.utf8'
+    LC_COLLATE='en_US.utf8' TEMPLATE template0;
 EOF
 # Similar in the shell is: createuser -s -P -U usuario nublic_resource
