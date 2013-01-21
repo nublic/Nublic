@@ -11,3 +11,4 @@ a2ensite nublic
 service apache2 restart
 ufw allow http
 ufw allow https
+ufw --force enable

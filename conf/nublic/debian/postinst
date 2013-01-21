@@ -4,20 +4,20 @@
 set-acls.py
 # Remount the root
 mount -o remount /
-# Set tomcat7 to be able to write everywhere
+# Set jetty to be able to write everywhere
 for dir in cache fs log work-folders "data/nublic-only" "data/mirrors" "data/work-folders"
 do
     CURRENT_DIR=/var/nublic/${dir}
-    setfacl -Rdm u:tomcat7:rwx ${CURRENT_DIR}
+    setfacl -Rdm u:jetty:rwx ${CURRENT_DIR}
 done
-# Set tomcat7 to be able to read apps configurations
-setfacl -Rdm u:tomcat7:rx /var/lib/nublic/apps
-# Allow tomcat7 to write logs
+# Set jetty to be able to read apps configurations
+setfacl -Rdm u:jetty:rx /var/lib/nublic/apps
+# Allow jetty to write logs
 mkdir -p /var/log/nublic
-setfacl -Rdm u:tomcat7:rwx /var/log/nublic
+setfacl -Rdm u:jetty:rwx /var/log/nublic
 chmod 777 /var/log/nublic
 # Set OpenJDK 7 as default virtual machine
 update-java-alternatives -s java-1.7.0-openjdk-\*
 # Set ubuntu firewall
 ufw default deny
-ufw enable
+ufw --force enable

@@ -1,11 +1,12 @@
 #!/bin/bash -e
-ufw enable netbios-ns
+#ufw enable netbios-ns
 ufw allow netbios-ns
-ufw enable netbios-dgm
+#ufw enable netbios-dgm
 ufw allow netbios-dgm
-ufw enable netbios-ssn
+#ufw enable netbios-ssn
 ufw allow netbios-ssn
-ufw enable microsoft-ds
+#ufw enable microsoft-ds
 ufw allow microsoft-ds
 # ufw enable ldap # Not needed right now
 # ufw enable swat # If we want to allow Samba Web Administration Tool
+ufw --force enable
