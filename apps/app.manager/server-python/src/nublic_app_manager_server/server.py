@@ -250,6 +250,14 @@ def synced_upload_key(iid):
         user.add_public_key(real_key)
     else:
         abort(403)
+        
+@app.route('/change-password', methods=['POST'])
+def change_password():
+    user = require_user()
+    oldPass = request.form.get('old', None)
+    newPass = request.form.get('new', None)
+    user.change_password(oldPass, newPass)
+    return 'ok'
 
 if __name__ == '__main__':
     app.run()

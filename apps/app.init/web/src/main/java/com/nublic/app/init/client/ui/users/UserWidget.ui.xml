@@ -1,11 +1,17 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:com.nublic.app.init.client.ui">
+	xmlns:n="urn:import:com.nublic.util.widgets">
 	<ui:style>
-		.labelmargin {
+		.primarylabel {
 			margin-top: 7px;
 			margin-right: 8px;
+		}
+		.secondarylabel {
+			margin-top: 2px;
+			font-size: 90%;
+			opacity: 0.8;
+			filter: alpha(opacity=80); /* For IE8 and earlier */
 		}
 		.floatright {
 			float: right;
@@ -17,6 +23,16 @@
 			margin-left: 10px;
 			margin-top: -7px;
 		}
+		.input {
+			margin-bottom: 0px;
+			width: 260px;
+		}
+		.bottommargin {
+			margin-bottom: 8px;
+		}
+		.faketextmargin {
+			margin-bottom: 9px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
 	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
@@ -25,38 +41,54 @@
 		<g:Image resource="{res.person}"/>
 
 		<g:VerticalPanel>
-			<g:HorizontalPanel>
-				<g:cell width="200px" horizontalAlignment="right">
-					<g:Label addStyleNames="{style.labelmargin}" text="{msg.userName}"/>
+			<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+				<g:cell width="160px" horizontalAlignment="right">
+					<g:Label addStyleNames="{style.primarylabel}" text="{msg.userName}"/>
 				</g:cell>
-				<g:TextBox ui:field="nameBox"/>
+				<g:VerticalPanel>
+					<g:TextBox ui:field="nameBox" addStyleNames="{style.input}"/>
+					<g:Label addStyleNames="{style.secondarylabel}" text="{msg.userNameHelp}"/>
+				</g:VerticalPanel>
 				<g:cell verticalAlignment="middle">
 					<n:CheckFeedback ui:field="nameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/>
 				</g:cell>
 			</g:HorizontalPanel>
-
-			<g:HorizontalPanel>
-				<g:cell width="200px" horizontalAlignment="right">
-					<g:Label addStyleNames="{style.labelmargin}" text="{msg.password}"/>
+			
+			<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+				<g:cell width="160px" horizontalAlignment="right">
+					<g:Label addStyleNames="{style.primarylabel}" text="{msg.systemUserName}"/>
 				</g:cell>
-				<g:PasswordTextBox ui:field="passwordBox"/>
+				<g:VerticalPanel>
+					<g:TextBox ui:field="systemNameBox" addStyleNames="{style.input}"/>
+					<g:Label addStyleNames="{style.secondarylabel}" text="{msg.systemUserNameHelp}"/>
+				</g:VerticalPanel>	
+				<g:cell verticalAlignment="middle">
+					<n:CheckFeedback ui:field="systemNameFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.userNameNotAvailable}"/>
+				</g:cell>
+			</g:HorizontalPanel>
+
+			<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+				<g:cell width="160px" horizontalAlignment="right">
+					<g:Label addStyleNames="{style.primarylabel}" text="{msg.password}"/>
+				</g:cell>
+				<g:PasswordTextBox ui:field="passwordBox" addStyleNames="{style.input} {style.faketextmargin}"/>
 				<g:cell verticalAlignment="middle">
 					<n:CheckFeedback ui:field="passwordFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.shortPassword}"/>
 				</g:cell>
 			</g:HorizontalPanel>
 
-			<g:HorizontalPanel>
-				<g:cell width="200px" horizontalAlignment="right">
-					<g:Label addStyleNames="{style.labelmargin}" text="{msg.passwordVerification}"/>
+			<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+				<g:cell width="160px" horizontalAlignment="right">
+					<g:Label addStyleNames="{style.primarylabel}" text="{msg.passwordVerification}"/>
 				</g:cell>
-				<g:PasswordTextBox ui:field="verificationBox"/>
+				<g:PasswordTextBox ui:field="verificationBox" addStyleNames="{style.input} {style.faketextmargin}"/>
 				<g:cell verticalAlignment="middle">
 					<n:CheckFeedback ui:field="verificationFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.noCoincidentPassword}"/>
 				</g:cell>
 			</g:HorizontalPanel>
 
 			<g:HorizontalPanel>
-				<g:cell width="420px">
+				<g:cell width="430px">
 					<g:Button addStyleNames="{style.floatright}" ui:field="createButton" text="{msg.createUser}"/>
 				</g:cell>
 			</g:HorizontalPanel>

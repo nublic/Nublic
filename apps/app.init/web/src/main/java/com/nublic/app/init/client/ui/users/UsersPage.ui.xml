@@ -7,6 +7,9 @@
 		.defaultheight {
 			min-height: 400px;
 		}
+		.bottommargin {
+			margin-bottom: 30px;
+		}
 	</ui:style>
 	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
 	
@@ -17,7 +20,7 @@
 			</div>
 			<p><ui:text from="{msg.usersText}"/></p>
 			<g:HTMLPanel ui:field="centralPanel"/>
-			<u:UserWidget/>
+			<u:UserWidget addStyleNames="{style.bottommargin}"/>
 		</g:HTMLPanel>
 		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>

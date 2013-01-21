@@ -1,0 +1,20 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.manager.settings.client.ui">
+	<ui:style>
+		
+	</ui:style>
+	<g:HTMLPanel height="100%" width="100%">
+		<div class="well" style="padding: 8px 0; height: 100%; width: 100%;">
+			<ul class="nav nav-list">
+  				<li class="nav-header">Configuration</li>
+  				<li><n:NavLink ui:field="personal" text="Personal configuration"/></li>
+  				<li><n:NavLink ui:field="workFolders" text="Work folders"/></li>
+  				<li><n:NavLink ui:field="privacy" text="Privacy"/></li>
+  				<li><n:NavLink ui:field="system" text="System"/></li>
+  				<li><n:NavLink ui:field="users" text="Users"/></li>
+			</ul>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

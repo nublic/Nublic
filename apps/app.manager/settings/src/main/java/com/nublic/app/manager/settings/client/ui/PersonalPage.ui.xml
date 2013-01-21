@@ -1,0 +1,121 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.util.widgets">
+	<ui:style type='com.nublic.app.manager.settings.client.ui.PersonalPage.PersonalStyle'>
+		.input {
+			margin-bottom: 0px;
+			width: 260px;
+		}
+		.bottommargin {
+			margin-bottom: 8px;
+		}
+		.faketextmargin {
+			margin-bottom: 9px;
+		}
+		.evenmoremargin {
+			margin-bottom: 20px;
+		}
+		.primarylabel {
+			margin-top: 7px;
+			margin-right: 8px;
+		}
+		.checkmargin {
+			margin-left: 10px;
+			margin-top: -7px;
+		}
+		.floatright {
+			float: right;
+		}
+		.passbox {
+			background-color: #F2F6F8;
+			border: solid 1px #CCC;
+			-webkit-border-radius: 10px;
+			-moz-border-radius: 10px;
+			border-radius: 10px;
+		}
+		.somepadding {
+			padding: 10px;
+		}
+		.name {
+			width: 252px;
+			font-size: 200%;
+			font-weight: bold;
+			height: 20px;
+			margin-bottom: 8px;
+			margin-top: 10px;
+		}
+		.passwordchanged {
+			font-weight: bold;
+			margin-top: 12px;
+			opacity: 0;
+			transition: opacity .25s ease-in-out;
+   			-moz-transition: opacity .25s ease-in-out;
+   			-webkit-transition: opacity .25s ease-in-out;
+		}
+		.opaque {
+			opacity: 1;
+		}
+	</ui:style>
+	
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
+	
+	<g:HTMLPanel addStyleNames="{style.somepadding}">
+		<n:EditableLabel ui:field="shownName" addStyleNames="{style.name}" title="{msg.clickToEdit}">
+			<ui:text from="{msg.shownName}"/>
+		</n:EditableLabel>
+		<g:HorizontalPanel addStyleNames="{style.evenmoremargin}">
+			<g:HTMLPanel><strong style="margin-right: 5px;"><ui:text from="{msg.systemName}"/></strong></g:HTMLPanel>
+			<g:Label ui:field="systemName"><ui:text from="{msg.username}"/></g:Label>
+		</g:HorizontalPanel>
+		
+		<div class="{style.passbox} {style.somepadding}">
+			<g:VerticalPanel>
+				<g:HTMLPanel>
+					<h4 style="margin-bottom: 15px;"><ui:text from="{msg.changePass}"/></h4>
+				</g:HTMLPanel>
+				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+					<g:cell width="190px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="{msg.oldPass}"/>
+					</g:cell>
+					<g:PasswordTextBox ui:field="oldPass" addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:cell verticalAlignment="middle">
+	 					<n:CheckFeedback ui:field="oldPassFeedback" addStyleNames="{style.checkmargin}" crossInfo="{msg.couldntChangePass}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+				
+				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+					<g:cell width="190px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="{msg.newPass}"/>
+					</g:cell>
+					<g:PasswordTextBox ui:field="newPass" addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:cell verticalAlignment="middle">
+						<n:CheckFeedback ui:field="newPassFeedback" addStyleNames="{style.checkmargin}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+	
+				<g:HorizontalPanel addStyleNames="{style.bottommargin}">
+					<g:cell width="190px" horizontalAlignment="right">
+						<g:Label addStyleNames="{style.primarylabel}" text="{msg.confirmPass}"/>
+					</g:cell>
+					<g:PasswordTextBox ui:field="verificatePass" addStyleNames="{style.input} {style.faketextmargin}"/>
+					<g:cell verticalAlignment="middle">
+						<n:CheckFeedback ui:field="verificationPassFeedback" addStyleNames="{style.checkmargin}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+				
+				<g:HorizontalPanel>
+					<g:cell width="460px">
+						<g:Button ui:field="changePasswordButton" addStyleNames="info {style.floatright}" text="{msg.changePass}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+				
+				<g:HorizontalPanel>
+					<g:cell width="460px">
+						<g:Label ui:field="changedLabel" text="{msg.passChanged}" addStyleNames="{style.floatright} {style.passwordchanged}"/>
+					</g:cell>
+				</g:HorizontalPanel>
+			</g:VerticalPanel>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder>

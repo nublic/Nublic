@@ -54,9 +54,9 @@ public class MainUi extends Composite {
 		History.back();
 	}
 
-	public void addCompletedUser(String name) {
+	public void addCompletedUser(String systemName, String shownName) {
 		if (currentPanel instanceof UsersPage) {
-			((UsersPage) currentPanel).addCompletedUser(name);
+			((UsersPage) currentPanel).addCompletedUser(systemName, shownName);
 		}
 	}
 

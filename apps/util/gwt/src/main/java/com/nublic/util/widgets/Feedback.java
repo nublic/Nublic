@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.ui;
+package com.nublic.util.widgets;
 
 public enum Feedback {
 	NONE,

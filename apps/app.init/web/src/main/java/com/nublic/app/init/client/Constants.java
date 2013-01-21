@@ -16,6 +16,7 @@ public class Constants {
 	public static final String EXISTS = "exists";
 
 	public static final int MIN_PASSWORD_LENGTH = 5;
+	public static final int MAX_USERNAME_LENGTH = 30;
 
 
 

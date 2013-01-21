@@ -78,11 +78,15 @@ public class PasteAction extends ActionWidget {
 					// Remove feedback
 					stateProvider.removeFromTaskList(feedbackLabel);
 				} else {
+					// Remove feedback
+					stateProvider.removeFromTaskList(feedbackLabel);
 					error(mode);
 				}
 			}
 			@Override
 			public void onError() {
+				// Remove feedback
+				stateProvider.removeFromTaskList(feedbackLabel);
 				error(mode);
 			}
 			@Override

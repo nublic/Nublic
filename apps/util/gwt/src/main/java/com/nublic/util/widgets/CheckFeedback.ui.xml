@@ -8,7 +8,7 @@
 			max-width: 320px;
 		}
 	</ui:style>
-	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
+	<ui:with type="com.nublic.util.images.Resources" field="res"/>
 	
 	<g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
 		<g:Image ui:field="check" resource="{res.check}"/>

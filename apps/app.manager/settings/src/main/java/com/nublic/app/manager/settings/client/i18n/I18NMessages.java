@@ -9,10 +9,17 @@ public interface I18NMessages extends Messages {
 	String user();
 	String workFolders();
 	
-	// User
+	// Personal config
 	String shownName();
 	String username();
-	String changePassword();
+	String systemName();
+	String clickToEdit();
+	String changePass();
+	String couldntChangePass();
+	String oldPass();
+	String newPass();
+	String confirmPass();
+	String passChanged();
 	
 	// Work folders
 	String newWorkFolderName();

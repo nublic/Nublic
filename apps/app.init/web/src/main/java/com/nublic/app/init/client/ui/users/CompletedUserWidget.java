@@ -6,19 +6,21 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
-import com.nublic.app.init.client.ui.CheckFeedback;
+import com.nublic.util.widgets.CheckFeedback;
 
 public class CompletedUserWidget extends Composite {
 	private static CompletedUserWidgetUiBinder uiBinder = GWT.create(CompletedUserWidgetUiBinder.class);
 	interface CompletedUserWidgetUiBinder extends UiBinder<Widget, CompletedUserWidget> {}
 
-	@UiField Label nameLabel;
+	@UiField Label systemNameLabel;
+	@UiField Label shownNameLabel;
 	@UiField CheckFeedback checkFeedback;
 
-	public CompletedUserWidget(String name) {
+	public CompletedUserWidget(String systemName, String shownName) {
 		initWidget(uiBinder.createAndBindUi(this));
 		
-		nameLabel.setText(name);
+		systemNameLabel.setText(systemName);
+		shownNameLabel.setText(shownName);
 	}
 
 }

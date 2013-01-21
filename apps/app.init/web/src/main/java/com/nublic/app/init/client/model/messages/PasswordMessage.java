@@ -21,15 +21,9 @@ public class PasswordMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
-//			String text = response.getText();
-//
-//			List<Playlist> involvedSet = new ArrayList<Playlist>();
-//			Playlist p = new Playlist(text, name);
-//			involvedSet.add(p);
-//			PlaylistsChangeEvent event = new PlaylistsChangeEvent(PlaylistsChangeEventType.PLAYLISTS_ADDED, involvedSet);
-//			Controller.INSTANCE.getModel().firePlaylistsHandlers(event);
-//			Controller.INSTANCE.getModel().getPlaylistCache().put(text, p);
-			ph.onPasswordFetch("ThisIsAPasswordExample0123456789");
+			String text = response.getText();
+
+			ph.onPasswordFetch(text);
 		} else {
 			onError();
 		}
@@ -38,7 +32,6 @@ public class PasswordMessage extends Message {
 	@Override
 	public void onError() {
 //		ErrorPopup.showError(Constants.I18N.addPlaylistError());
-		ph.onPasswordFetch("ThisIsAPasswordExample0123456789");
 	}
 
 }
