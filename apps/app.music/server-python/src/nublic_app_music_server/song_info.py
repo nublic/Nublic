@@ -42,14 +42,14 @@ class SongInfo:
 
 
 def get_song_info(file_):
-    log.error('Extracting from mutagen: %s', file_)
+    log.info('Extracting from mutagen: %s', file_)
     tag_info = extract_using_mutagen(file_).clean()
     if tag_info.has_important_info_missing():
-        log.error('Extracting from Echonest: %s', file_)
+        log.info('Extracting from Echonest: %s', file_)
         echonest_info = extract_using_echonest(file_).clean()
         tag_info = merge_song_infos(tag_info, echonest_info)
     if tag_info.has_important_info_missing():
-        log.error('Extracting from filename: %s', file_)
+        log.info('Extracting from filename: %s', file_)
         file_info = extract_using_filename(file_).clean()
         tag_info = merge_song_infos(tag_info, file_info)
     return tag_info
@@ -121,7 +121,7 @@ def extract_using_mutagen(file_):
             disc_no = None
         return SongInfo(title, artist, album, length, year, track_no, disc_no)
     except:
-        log.error("%s", traceback.format_exc())
+        log.exception("%s", traceback.format_exc())
         return empty_song_info()
 
 
@@ -155,11 +155,11 @@ def extract_using_filename(file_):
     except:
         length = None
     # Get information from filename
-    log.error('File: %s', file_)
+    log.info('File: %s', file_)
     # @TODO Assuming context == os.path.dirname
     context = os.path.dirname(file_)
     no_context = file_.replace('/var/nublic/data/' + context, '', 1)
-    log.error('No context: %s', no_context)
+    log.info('No context: %s', no_context)
     parent, filename = os.path.split(no_context)
     # Initialize to empty
     track = None
@@ -185,7 +185,7 @@ def extract_using_filename(file_):
         title = filename
     # Get information from path
     while parent != '' and parent != '/':
-        log.error('Parent is now: %s', parent)
+        log.info('Parent is now: %s', parent)
         p_parent, p_name = os.path.split(parent)
         if album is None:
             ar_ab_match = re.match(r"\s*(.*)-\s*(.*)$", p_name)

@@ -98,6 +98,7 @@ class MusicProcessor(PreviewProcessor):
             else:
                 self.process_moved_file(
                     change.filename_from, change.filename_to)
+        log.info('Finish processing file: %i %s', change.kind, change.filename)
 
     def is_hidden(self, path):
         filename = os.path.basename(path)
@@ -268,8 +269,8 @@ class MusicProcessor(PreviewProcessor):
             r_length = 0
         else:
             r_length = song_info.length
-        log.error('Adding to database: %s by %s in %s', r_title,
-                  r_artist_name, r_album_name)
+        log.info('Adding to database: %s by %s in %s', r_title,
+                 r_artist_name, r_album_name)
         # Ensure artist
         artist = self.ensure_or_create_artist(r_artist_name)
         ensure_artist_image(artist.id, r_artist_name)
