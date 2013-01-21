@@ -229,6 +229,8 @@ create_repo() {
         if [ ${DEB_DATE} -gt ${INITIAL_TIME} ]
         then
             dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
+            #reprepro --ignore=wrongdistribution -Vb repo listmatched precise `echo $pkg | sed -e 's|_.*.deb||g'`
+            reprepro --ignore=wrongdistribution -Vb repo removematched precise `echo $pkg | sed -e 's|_.*.deb||g'`
             reprepro --ignore=wrongdistribution -Vb repo includedeb precise $pkg
         fi
     done
