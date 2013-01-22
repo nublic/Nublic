@@ -53,3 +53,4 @@ derby.log
 files
 *.debhelper.log
 *.substvars
+.vagrant
