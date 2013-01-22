@@ -14,11 +14,12 @@ import model
 from database_stored import ExistingKeyError, \
     NotExistingKeyError
 
+
 class PostgresqlDB(DatabaseStored):
     '''
     Resource class that provides a database access to postgre.
     Gives a user with access to a empty database.
-    
+
     Subkeys:
         * user: Username
         * password: Password
@@ -27,7 +28,7 @@ class PostgresqlDB(DatabaseStored):
         * uri: Returns the connection uri
     '''
     __lenght_of_database_sufix = 16
-    __lenght_of_user_name = 14 # Max of 16 in database
+    __lenght_of_user_name = 14  # Max of 16 in database
     __lenght_of_password = 32
     __random_characters = string.ascii_letters + string.digits + ""
     __random_lowercase = string.ascii_lowercase + string.digits + ""
@@ -43,17 +44,17 @@ class PostgresqlDB(DatabaseStored):
         if self.__is_key(app, key):
             raise ExistingKeyError(key)
         database_name, user_name, password = \
-                        self.__create_postgre_resource(app, key)
+            self.__create_postgre_resource(app, key)
         self.save_value(app, key, 'user', user_name)
         self.save_value(app, key, 'pass', password)
         self.save_value(app, key, 'database', database_name)
-        '''self.save_value(app, key, 'uri', 
-                        self.__generate_connection_uri(user_name, password, 
+        '''self.save_value(app, key, 'uri',
+                        self.__generate_connection_uri(user_name, password,
                                                        database_name))'''
 
     def uninstall(self, app, key):
         if not self.__is_key(app, key):
-            raise NotExistingKeyError(key) 
+            raise NotExistingKeyError(key)
         user_name = self.value(app, key, 'user')
         database_name = self.value(app, key, 'database')
         self.remove_key(app, key)
@@ -61,14 +62,14 @@ class PostgresqlDB(DatabaseStored):
 
     def request(self, app, key):
         pass
-             
+
     def release(self, app, key):
         pass
-        
+
     def value(self, app, key, subkey=None):
         '''
         Provides the values for the given app key/subkey.
-        
+
         Some values are shared to every postgresql-db resource.
         '''
         if subkey == "uri":
@@ -83,7 +84,7 @@ class PostgresqlDB(DatabaseStored):
         return ['database', 'pass', 'port', 'uri', 'user']
 
     def __is_key(self, app, key):
-        return not (self.get_key(app, key) == None)
+        return not (self.get_key(app, key) is None)
 
     def __create_random_data(self):
         '''
@@ -91,59 +92,58 @@ class PostgresqlDB(DatabaseStored):
         with randomized data
         '''
         rand_gen = Random()
-        database_name = "".join(rand_gen.sample(string.ascii_lowercase, 1) + 
+        database_name = "".join(rand_gen.sample(string.ascii_lowercase, 1) +
                                 rand_gen.sample(self.__random_lowercase,
-                                        self.__lenght_of_database_sufix - 1))
+                                                self.__lenght_of_database_sufix - 1))
         user_name = "".join(rand_gen.sample(string.ascii_lowercase, 1) +
                             rand_gen.sample(self.__random_lowercase,
-                                    self.__lenght_of_user_name - 1))
+                                            self.__lenght_of_user_name - 1))
         password = "".join(rand_gen.sample(self.__random_characters,
-                                  self.__lenght_of_password)).lower()
+                                           self.__lenght_of_password)).lower()
         return database_name, user_name, password
 
     def __generate_connection_uri(self, user, password, database=None):
         '''
-        Returns a conection uri with database 
+        Returns a conection uri with database
         '''
-        if database == None:
+        if database is None:
             return self.__connection_protocol + "://" + user + ":" + password \
-                    + "@localhost"
+                + "@localhost"
         else:
             return self.__connection_protocol + "://" + user + ":" + password \
-                    + "@localhost" + "/" + database
-    
+                + "@localhost" + "/" + database
+
     def __create_postgre_resource(self, app, key):
         bind = metadata.bind
         # Creates a connection with permission to create users and databases
         metadata.bind = self.__generate_connection_uri(
-                                    self.__root_user, self.__root_password)
-        # Create database cannot be executed as a transaction block so we 
+            self.__root_user, self.__root_password)
+        # Create database cannot be executed as a transaction block so we
         # should change the isolation level to create a database
         connection = metadata.bind.engine.connect()
-        conection.connection.connection.set_isolation_level(0)
-        
+        connection.connection.connection.set_isolation_level(0)
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data()
-        
-        # It is needed to concatenate this way to avoid the usual but 
-        # incompatible way to escape strings while executing some admin-level 
+        # It is needed to concatenate this way to avoid the usual but
+        # incompatible way to escape strings while executing some admin-level
         # sql commands
         sql_create_user = \
-                "CREATE USER " + user_name + \
-                " WITH PASSWORD '" + password + "';"
-        
+            "CREATE USER " + user_name + \
+            " WITH PASSWORD '" + password + "';"
         sql_create_database =  \
-                "CREATE DATABASE " + database_name + \
-                " WITH OWNER " + user_name + \
-                " ENCODING 'UTF8';" # @TODO: Check if it is correct 
+            "CREATE DATABASE " + database_name + \
+            " WITH OWNER " + user_name + \
+            " ENCODING 'UTF8';"  # @TODO: Check if it is correct
         # Show the queries
         print("LOG: " + sql_create_user)
         print("LOG: " + sql_create_database)
         # Perform the queries
-        text(sql_create_user, metadata.bind).execute(user=user_name, password=password)
-        text(sql_create_database, metadata.bind).execute(database=database_name)
+        text(sql_create_user, metadata.bind).execute(
+            user=user_name, password=password)
+        text(sql_create_database, metadata.bind).execute(
+            database=database_name)
         #text(sql_revoke_permissions, metadata.bind).execute(user = user_name)
-	connection.close()
+        connection.close()
         metadata.bind.engine.dispose()
         # Restores the old database
         metadata.bind = bind
@@ -153,18 +153,18 @@ class PostgresqlDB(DatabaseStored):
         bind = metadata.bind
         # Creates a connection with permission to create users and databases
         metadata.bind = self.__generate_connection_uri(
-                                        self.__root_user, self.__root_password)
+            self.__root_user, self.__root_password)
         connection = metadata.bind.engine.connect()
-        conection.connection.connection.set_isolation_level(0)
-        
+        connection.connection.connection.set_isolation_level(0)
+
         # Generate data and queries
         sql_delete_database = "DROP DATABASE " + database_name + ";"
         sql_delete_user = "DROP USER " + user_name + ";"
         # Perform the queries
-        text(sql_delete_database, metadata.bind).execute(database=database_name)
+        text(sql_delete_database, metadata.bind).execute(
+            database=database_name)
         text(sql_delete_user, metadata.bind).execute(user=user_name)
-	connection.close()
+        connection.close()
         metadata.bind.engine.dispose()
         # Restores the old database_name
         metadata.bind = bind
-
