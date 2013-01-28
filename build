@@ -25,6 +25,7 @@ export MAVEN_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=1024m"
 # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx
 # sudo update-java-alternatives -s java-1.7.0-\*
 
+#####################################################
 # Development environment
 
 install_vagrant() {
@@ -36,7 +37,12 @@ install_vm() {
     vagrant box add precise32 http://files.vagrantup.com/precise32.box
 }
 
+install_devel_packages() {
+    sudo apt-get install python-elixir python-coverage python-nose python-mock
 
+}
+
+#####################################################
 # Config options
 export SHOULD_CLEAN_MAVEN=1 # 1 for running 'maven clean'
 
