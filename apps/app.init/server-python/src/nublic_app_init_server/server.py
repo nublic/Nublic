@@ -1,16 +1,15 @@
-from flask import Flask, request, abort, send_file
-import os.path
+from flask import Flask, request  # , abort, send_file
+#import os.path
 #import random
 import simplejson as json
-from sqlalchemy.sql.expression import func
+#from sqlalchemy.sql.expression import func
 
 import requests
 
 #from nublic.files_and_users import User
-from nublic_server.helpers import split_reasonable, require_user,\
-    init_bare_nublic_server
-from nublic_server.places import get_cache_folder
-from nublic.files_and_users.user import *
+from nublic_server.helpers import init_bare_nublic_server
+#from nublic_server.places import get_cache_folder
+from nublic.files_and_users.user import User, get_all_users
 
 #from model import db, Album, Artist, Collection, Playlist, Song, SongCollection, SongPlaylist, \
 #    collection_or_playlist_as_json, album_as_json, artist_as_json,\
@@ -23,12 +22,14 @@ app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-init.python.log')
 app.logger.error('Starting init app')
 
+
 @app.route('/checkuser/<name>')
 def check_user(name):
     if User(name).exists():
         return 'exists'
     else:
         return 'ok'
+
 
 @app.route('/adduser/', methods=['PUT'])
 def add_user():
@@ -42,17 +43,21 @@ def add_user():
     else:
         return 'exists'
 
+
 @app.route('/userlist/')
 def get_user_list():
     return json.dumps(get_all_users(), default=user_as_json)
 
+
 def user_as_json(c):
-    return { 'username': c.get_username(),
-             'shownname': c.get_shown_name() }
+    return {'username': c.get_username(),
+            'shownname': c.get_shown_name()}
+
 
 @app.route('/password/')
 def master_password():
     return 'ThisIsAPasswordExample2'
+
 
 @app.route('/checknublicname/<name>')
 def check_name(name):
@@ -240,7 +245,7 @@ if __name__ == '__main__':
 #def artists():
 #    require_user()
 #    return artists_get('asc', 0, 20, [])
-#    
+#
 #@app.route('/artists/<asc>/<int:start>/<int:length>')
 #def artists_(asc, start, length):
 #    require_user()
