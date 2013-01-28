@@ -1,7 +1,7 @@
 from flask import Request, request, abort
 import logging
 from nublic.files_and_users import User
-from nublic.filewatcher import init_socket_watcher
+#from nublic.filewatcher import init_socket_watcher
 from nublic.resource import App
 
 
@@ -13,20 +13,11 @@ class RequestWithDelete(Request):
 
 def init_nublic_server(app, log_file, resource_app, db,
                        filewatcher_app_name="", processors=None):
-    app.request_class = RequestWithDelete
-    # Set up logging handlers
-    handler = logging.FileHandler(log_file)
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
-    app.logger.addHandler(handler)
+    init_bare_nublic_server(app, log_file)
     # Get resource information
     res_app = App(resource_app)
     res_key = res_app.get('db')
-    db_uri = 'postgresql://' + res_key.value('user') + ':' + \
-                res_key.value('pass') + \
-                '@localhost:5432/' + res_key.value('database')
+    db_uri = res_key.value('uri')
     # Init DB
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     db.app = app
@@ -44,13 +35,13 @@ def init_bare_nublic_server(app, log_file):
     handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s '
         '[in %(pathname)s:%(lineno)d]'
-            ))
+    ))
     app.logger.addHandler(handler)
 
 
 def split_reasonable(string, separator):
     '''It improves split with a [] instead of none and removes empty strings'''
-    if string == None:
+    if string is None:
         return []
     else:
         return filter(lambda st: st != '', string.split(separator))
