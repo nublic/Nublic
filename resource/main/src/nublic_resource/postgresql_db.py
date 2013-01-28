@@ -11,13 +11,13 @@ from random import Random
 from database_stored import DatabaseStored
 from model import metadata
 import model
-from database_stored import ExistingKeyError, \
-    NotExistingKeyError
+from database_stored import (ExistingKeyError,
+                             NotExistingKeyError)
 
 
 class PostgresqlDB(DatabaseStored):
     '''
-    Resource class that provides a database access to postgre.
+    Resource class that provides a database access to postgresql.
     Gives a user with access to a empty database.
 
     Subkeys:
@@ -105,7 +105,7 @@ class PostgresqlDB(DatabaseStored):
 
     def __generate_connection_uri(self, user, password, database=None):
         '''
-        Returns a conection uri with database
+        Returns a connection uri with database
         '''
         if database is None:
             return (self.__connection_protocol + "://" + user + ":" + password
@@ -121,20 +121,24 @@ class PostgresqlDB(DatabaseStored):
             self.__root_user, self.__root_password)
         # Create database cannot be executed as a transaction block so we
         # should change the isolation level to create a database
-        connection = metadata.bind.engine.connect()
-        connection.connection.connection.set_isolation_level(0)
+        metadata.bind.engine.connect().\
+            connection.connection.set_isolation_level(0)
+        #connection = metadata.bind.engine.connect()
+        #conection.connection.connection.set_isolation_level(0)
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data()
         # It is needed to concatenate this way to avoid the usual but
         # incompatible way to escape strings while executing some admin-level
         # sql commands
-        sql_create_user = \
-            "CREATE USER " + user_name + \
-            " WITH PASSWORD '" + password + "';"
-        sql_create_database =  \
-            "CREATE DATABASE " + database_name + \
-            " WITH OWNER " + user_name + \
-            " ENCODING 'UTF8';"  # @TODO: Check if it is correct
+        sql_create_user = (
+            "CREATE USER " + user_name +
+            " WITH PASSWORD '" + password + "';")
+        sql_create_database = (
+            "CREATE DATABASE " + database_name +
+            " WITH OWNER " + user_name +
+            " ENCODING 'UTF8' "  # @TODO: Check if it is correct
+            " LC_CTYPE='en_US.utf8'"
+            " LC_COLLATE='en_US.utf8' TEMPLATE template0;")
         # Show the queries
         print("LOG: " + sql_create_user)
         print("LOG: " + sql_create_database)
@@ -144,7 +148,8 @@ class PostgresqlDB(DatabaseStored):
         text(sql_create_database, metadata.bind).execute(
             database=database_name)
         #text(sql_revoke_permissions, metadata.bind).execute(user = user_name)
-        connection.close()
+        metadata.bind.engine.dispose()
+        #connection.close()
         metadata.bind.engine.dispose()
         # Restores the old database
         metadata.bind = bind
@@ -155,9 +160,10 @@ class PostgresqlDB(DatabaseStored):
         # Creates a connection with permission to create users and databases
         metadata.bind = self.__generate_connection_uri(
             self.__root_user, self.__root_password)
-        connection = metadata.bind.engine.connect()
-        connection.connection.connection.set_isolation_level(0)
-
+        #connection = metadata.bind.engine.connect()
+        #connection.connection.connection.set_isolation_level(0)
+        metadata.bind.engine.connect().\
+            connection.connection.set_isolation_level(0)
         # Generate data and queries
         sql_delete_database = "DROP DATABASE " + database_name + ";"
         sql_delete_user = "DROP USER " + user_name + ";"
@@ -165,7 +171,7 @@ class PostgresqlDB(DatabaseStored):
         text(sql_delete_database, metadata.bind).execute(
             database=database_name)
         text(sql_delete_user, metadata.bind).execute(user=user_name)
-        connection.close()
+        #connection.close()
         metadata.bind.engine.dispose()
         # Restores the old database_name
         metadata.bind = bind
