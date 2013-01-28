@@ -35,6 +35,7 @@ class PostgresqlDB(DatabaseStored):
     __root_password = model.postgres_root_password
     __root_user = model.postgres_root_user
     __connection_protocol = "postgresql"
+    __connection_port = "5432"
     providerType = "postgresql-db"
 
     def __init__(self):
@@ -107,11 +108,11 @@ class PostgresqlDB(DatabaseStored):
         Returns a conection uri with database
         '''
         if database is None:
-            return self.__connection_protocol + "://" + user + ":" + password \
-                + "@localhost"
+            return (self.__connection_protocol + "://" + user + ":" + password
+                    + "@localhost:" + self.__connection_port)
         else:
-            return self.__connection_protocol + "://" + user + ":" + password \
-                + "@localhost" + "/" + database
+            return (self.__connection_protocol + "://" + user + ":" + password
+                    + "@localhost:" + self.__connection_port + "/" + database)
 
     def __create_postgre_resource(self, app, key):
         bind = metadata.bind
