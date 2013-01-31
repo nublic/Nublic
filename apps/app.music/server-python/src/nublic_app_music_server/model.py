@@ -24,7 +24,7 @@ def artist_as_json((id_, name, songs, albums)):
             'name': name,
             'songs': songs,
             'albums': albums
-           }
+            }
 
 
 def artists_and_row_count_as_json(row_count, artists):
@@ -34,7 +34,7 @@ def artists_and_row_count_as_json(row_count, artists):
 def get_or_create_artist(artist_name):
     normalized_name = unidecode(unicode(artist_name).lower())
     a = Artist.query.filter_by(normalized=normalized_name).first()
-    if a == None:
+    if a is None:
         a = Artist(artist_name)
         db.session.add(a)
         db.session.commit()
@@ -60,7 +60,7 @@ def album_as_json((id_, name, songs, artists)):
             'name': name,
             'songs': songs,
             'artists': artists
-           }
+            }
 
 
 def albums_and_row_count_as_json(row_count, albums):
@@ -70,7 +70,7 @@ def albums_and_row_count_as_json(row_count, albums):
 def get_or_create_album(album_name):
     normalized_name = unidecode(unicode(album_name).lower())
     a = Album.query.filter_by(normalized=normalized_name).first()
-    if a == None:
+    if a is None:
         a = Album(album_name)
         db.session.add(a)
         db.session.commit()
@@ -92,8 +92,8 @@ class Song(db.Model):
     owner = db.Column(db.String(255))
     shared = db.Column(db.Boolean)
 
-    def __init__(self, file_, title, artistId, albumId,\
-                  length, year, track, disc_no):
+    def __init__(self, file_, title, artistId, albumId,
+                 length, year, track, disc_no):
         self.file = file_
         self.title = title
         self.artistId = artistId
@@ -113,12 +113,12 @@ def song_as_json(song):
          'title': song.title,
          'artist_id': song.artistId,
          'album_id': song.albumId
-        }
-    if song.length != None:
+         }
+    if song.length is not None:
         o['length'] = song.length
-    if song.track != None:
+    if song.track is not None:
         o['track'] = song.track
-    if song.disc_no != None:
+    if song.disc_no is not None:
         o['disc_no'] = song.disc_no
     return o
 
@@ -140,10 +140,10 @@ class Collection(db.Model):
 class SongCollection(db.Model):
     __tablename__ = 'SongCollection'
 
-    songId = db.Column('songId', db.BigInteger,\
-                        db.ForeignKey('Song.id'), primary_key=True)
-    collectionId = db.Column('collectionId', db.BigInteger,\
-                              db.ForeignKey('Collection.id'), primary_key=True)
+    songId = db.Column('songId', db.BigInteger,
+                       db.ForeignKey('Song.id'), primary_key=True)
+    collectionId = db.Column('collectionId', db.BigInteger,
+                             db.ForeignKey('Collection.id'), primary_key=True)
 
     def __init__(self, collectionId, songId):
         self.songId = songId
@@ -168,7 +168,7 @@ class SongPlaylist(db.Model):
 
     id = db.Column(db.BigInteger, primary_key=True)
     songId = db.Column('songId', db.BigInteger, db.ForeignKey('Song.id'))
-    playlistId = db.Column('playlistId',\
+    playlistId = db.Column('playlistId',
                            db.BigInteger, db.ForeignKey('Playlist.id'))
     position = db.Column(db.BigInteger)
 
@@ -184,4 +184,4 @@ class SongPlaylist(db.Model):
 def collection_or_playlist_as_json(c):
     return {'id': c.id,
             'name': c.name
-           }
+            }

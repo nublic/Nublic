@@ -18,8 +18,9 @@ from images import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
 # Init app
 app = Flask(__name__)
 app.debug = True
-init_nublic_server(app, '/var/log/nublic/nublic-app-music.python.log', 'nublic_app_music',
-                   db)
+init_nublic_server(
+    app, '/var/log/nublic/nublic-app-music.python.log', 'nublic_app_music',
+    db)
 app.logger.error('Starting music app')
 
 # COLLECTIONS HANDLING
@@ -46,36 +47,39 @@ def collections_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
     coll = Collection.query.get(id_as_int)
-    if coll != None:
+    if coll is not None:
         SongCollection.query.filter_by(collectionId=id_as_int).delete()
         db.session.delete(coll)
         db.session.commit()
     return 'ok'
 
+
 @app.route('/collection/<int:collection_id>', methods=['PUT'])
 def one_collection_put(collection_id):
-    collection = Collection.query.get_or_404(collection_id)
+    Collection.query.get_or_404(collection_id)
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
         #app.logger.error('Trying to add %s to album %s',\
         #                        str(id_as_int), str(album_id))
-        relation = SongCollection.query.filter_by(collectionId=collection_id,\
+        relation = SongCollection.query.filter_by(collectionId=collection_id,
                                                   songId=id_as_int).first()
         song = Song.query.get(id_as_int)
-        if relation == None and song != None:
+        if relation is None and song is not None:
             relation = SongCollection(collection_id, id_as_int)
             db.session.add(relation)
             db.session.commit()
     return 'ok'
 
+
 @app.route('/collection/<int:collection_id>', methods=['DELETE'])
 def one_collection_delete(collection_id):
-    collection = Collection.query.get_or_404(collection_id)
+    Collection.query.get_or_404(collection_id)
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
-        SongCollection.query.filter_by(collectionId=collection_id, songId=id_as_int).delete()
+        SongCollection.query.filter_by(
+            collectionId=collection_id, songId=id_as_int).delete()
     db.session.commit()
     return 'ok'
 
@@ -104,21 +108,22 @@ def playlists_delete():
     id_ = request.form.get('id', None)
     id_as_int = int(id_)
     ps = Playlist.query.get(id_as_int)
-    if ps != None:
+    if ps is not None:
         SongPlaylist.query.filter_by(playlistId=id_as_int).delete()
         db.session.delete(ps)
         db.session.commit()
     return 'ok'
 
+
 @app.route('/playlist/<int:playlist_id>', methods=['PUT'])
 def one_playlist_put(playlist_id):
-    ps = Playlist.query.get_or_404(playlist_id)
+    Playlist.query.get_or_404(playlist_id)
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     ps_count = SongPlaylist.query.filter_by(playlistId=playlist_id).count()
     for id_as_int in ids_as_ints:
         song = Song.query.get(id_as_int)
-        if song != None:
+        if song is not None:
             relation = SongPlaylist(playlist_id, id_as_int, ps_count)
             db.session.add(relation)
             ps_count += 1
@@ -128,13 +133,14 @@ def one_playlist_put(playlist_id):
 
 @app.route('/playlist/<int:playlist_id>', methods=['DELETE'])
 def one_playlist_delete(playlist_id):
-    ps = Playlist.query.get_or_404(playlist_id)
+    Playlist.query.get_or_404(playlist_id)
     position = int(request.form.get('position'))
-    relation = SongPlaylist.query.filter_by(playlistId=playlist_id,\
+    relation = SongPlaylist.query.filter_by(playlistId=playlist_id,
                                             position=position).first()
     relation.delete()
-    if relation != None:
-        rest = SongPlaylist.query.filter_by(playlistId=playlist_id).filter(SongPlaylist.position > position).all()
+    if relation is not None:
+        rest = SongPlaylist.query.filter_by(playlistId=playlist_id).filter(
+            SongPlaylist.position > position).all()
         for r in rest:
             r.position -= 1
     db.session.commit()
@@ -143,7 +149,7 @@ def one_playlist_delete(playlist_id):
 
 @app.route('/playlist/order/<int:playlist_id>', methods=['POST'])
 def playlist_order(playlist_id):
-    ps = Playlist.query.get_or_404(playlist_id)
+    Playlist.query.get_or_404(playlist_id)
     from_ = int(request.form.get('from'))
     to_ = int(request.form.get('to'))
     # Check is inside
@@ -151,8 +157,9 @@ def playlist_order(playlist_id):
     if from_ < 0 or to_ < 0 or from_ >= ps_count or to_ > ps_count:
         abort(500)
     # Change relations
-    relation = SongPlaylist.query.filter_by(playlistId=playlist_id, position=from_).first()
-    if relation != None:
+    relation = SongPlaylist.query.filter_by(
+        playlistId=playlist_id, position=from_).first()
+    if relation is not None:
         if from_ < to_:
             rest = SongPlaylist.query.filter_by(playlistId=playlist_id).filter(SongPlaylist.position > from_).filter(SongPlaylist.position < to_).all()
             for r in rest:
@@ -205,8 +212,8 @@ def artists_get(asc, start, length, collection_ids):
         query = Artist.query.order_by(asc_desc(Artist.name))
     else:
         query_ = Artist.query.order_by(asc_desc(Artist.name)).\
-                            filter(Song.artistId == Artist.id).\
-                            filter(SongCollection.songId == Song.id)
+            filter(Song.artistId == Artist.id).\
+            filter(SongCollection.songId == Song.id)
         query = query_.filter(SongCollection.collectionId.in_(collection_ids))\
                       .distinct()
     # Get count and offset
@@ -216,7 +223,7 @@ def artists_get(asc, start, length, collection_ids):
     result = []
     for a in q_offset.all():
         artistInfo = get_artist_info(a, collection_ids)
-        if artistInfo != None:
+        if artistInfo is not None:
             result.append(artistInfo)
     return json.dumps(artists_and_row_count_as_json(count, result))
 
@@ -231,13 +238,13 @@ def get_artist_info(a, collection_ids=None):
     # Create queries
     q_songs = Song.query.filter_by(artistId=a.id)
     q_albums = Album.query.filter(Song.albumId == Album.id).\
-                           filter(Song.artistId == a.id)
+        filter(Song.artistId == a.id)
     # Add extra collection constraints
     if collection_ids:
         q_songs = q_songs.filter(SongCollection.songId == Song.id).\
-                        filter(SongCollection.collectionId.in_(collection_ids))
+            filter(SongCollection.collectionId.in_(collection_ids))
         q_albums = q_albums.filter(SongCollection.songId == Song.id).\
-                        filter(SongCollection.collectionId.in_(collection_ids))
+            filter(SongCollection.collectionId.in_(collection_ids))
     # Ask DB
     a_songs = q_songs.distinct().count()
     if a_songs != 0:
@@ -290,13 +297,13 @@ def albums_get(artist, asc, start, length, collection_ids):
         query = Album.query.order_by(asc_desc(Album.name))
     else:
         query = Album.query.order_by(asc_desc(Album.name)).\
-                        filter(Song.albumId == Album.id).\
-                        filter(Song.artistId == int(artist))
+            filter(Song.albumId == Album.id).\
+            filter(Song.artistId == int(artist))
     if collection_ids:
         query = query.filter(Song.albumId == Album.id).\
-                      filter(SongCollection.songId == Song.id).\
-                      filter(SongCollection.collectionId.in_(collection_ids)).\
-                      distinct()
+            filter(SongCollection.songId == Song.id).\
+            filter(SongCollection.collectionId.in_(collection_ids)).\
+            distinct()
     # Get count and offset
     count = query.count()
     q_offset = query.offset(start).limit(length)
@@ -304,7 +311,7 @@ def albums_get(artist, asc, start, length, collection_ids):
     result = []
     for a in q_offset.all():
         albumInfo = get_album_info(a, collection_ids)
-        if albumInfo != None:
+        if albumInfo is not None:
             result.append(albumInfo)
     return json.dumps(albums_and_row_count_as_json(count, result))
 
@@ -319,18 +326,18 @@ def get_album_info(a, collection_ids=None):
     # Create queries
     q_songs = Song.query.filter_by(albumId=a.id)
     q_artists = Artist.query.filter(Song.artistId == Artist.id).\
-                             filter(Song.albumId == a.id)
+        filter(Song.albumId == a.id)
     # Add extra collection constraints
     if collection_ids:
         q_songs = q_songs.filter(SongCollection.songId == Song.id).\
-                        filter(SongCollection.collectionId.in_(collection_ids))
+            filter(SongCollection.collectionId.in_(collection_ids))
         q_artists = q_artists.filter(SongCollection.songId == Song.id).\
-                        filter(SongCollection.collectionId.in_(collection_ids))
+            filter(SongCollection.collectionId.in_(collection_ids))
     # Ask DB
     a_songs = q_songs.distinct().count()
     if a_songs != 0:
         a_artists = q_artists.distinct().all()
-        return (a.id, a.name, a_songs, \
+        return (a.id, a.name, a_songs,
                 map(lambda artist: artist.id, a_artists))
     else:
         return None
@@ -341,7 +348,7 @@ def get_album_info(a, collection_ids=None):
 
 @app.route('/songs')
 def songs():
-    return songs_get(ALL_OF_SOMETHING, ALL_OF_SOMETHING,\
+    return songs_get(ALL_OF_SOMETHING, ALL_OF_SOMETHING,
                      'alpha', 'asc', 0, 20, [])
 
 
@@ -372,10 +379,10 @@ def songs_almost_all_(artist_id, album_id, order, asc, start, length):
 
 @app.route('/songs/<artist_id>/<album_id>/<order>/<asc>/<int:start>/<int:length>/<path:collection_ids>')
 def songs_with_collections(artist_id, album_id, order, asc, start,
-                              length, collection_ids):
+                           length, collection_ids):
     ids = split_reasonable(collection_ids, '/')
     ids_as_ints = map(lambda s: int(s), ids)
-    return songs_get(artist_id, album_id, order,\
+    return songs_get(artist_id, album_id, order,
                      asc, start, length, ids_as_ints)
 
 
@@ -390,21 +397,21 @@ def songs_get(artist_id, album_id, order, asc, start, length, collections):
         order_q = lambda q: q.order_by(asc_desc(Song.title))
     elif order == 'album':
         order_q = lambda q: q.order_by(asc_desc(Album.name)).\
-                            order_by(asc_desc(Song.disc_no)).\
-                            order_by(asc_desc(Song.track))
+            order_by(asc_desc(Song.disc_no)).\
+            order_by(asc_desc(Song.track))
     elif order == 'artist_alpha':
         order_q = lambda q: q.order_by(asc_desc(Artist.name)).\
-                            order_by(asc_desc(Song.title))
+            order_by(asc_desc(Song.title))
     elif order == 'artist_album':
         order_q = lambda q: q.order_by(asc_desc(Artist.name)).\
-                            order_by(asc_desc(Album.name)).\
-                            order_by(asc_desc(Song.disc_no)).\
-                            order_by(asc_desc(Song.track))
+            order_by(asc_desc(Album.name)).\
+            order_by(asc_desc(Song.disc_no)).\
+            order_by(asc_desc(Song.track))
     # Create initial query
     query = Song.query.join(Album).join(Artist)
     if collections:
         query = query.join(SongCollection).\
-                    filter(SongCollection.collectionId.in_(collections))
+            filter(SongCollection.collectionId.in_(collections))
     # Apply artist and album
     if artist_id != ALL_OF_SOMETHING:
         query = query.filter(Song.artistId == int(artist_id))
@@ -448,7 +455,7 @@ def playlist_songs(ps_id, order, asc, start, length):
             order_by(asc_desc(Song.track))
     # Create initial query
     query = SongPlaylist.query.join(Song).join(Album).join(Artist).\
-                filter(SongPlaylist.playlistId == ps_id)
+        filter(SongPlaylist.playlistId == ps_id)
     # Finally, apply order
     query = order_q(query)
     # Get results
@@ -500,4 +507,3 @@ def view_song(song_id):
 
 if __name__ == '__main__':
     app.run()
-

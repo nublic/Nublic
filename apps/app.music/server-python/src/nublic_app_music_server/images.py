@@ -16,11 +16,14 @@ ORIGINAL_FILENAME = "orig"
 THUMBNAIL_FILENAME = "thumb.png"
 THUMBNAIL_SIZE = 96
 
+
 def get_artist_folder(artist_id):
     return os.path.join(ARTISTS_FOLDER, str(artist_id))
 
+
 def get_album_folder(artist_id):
     return os.path.join(ALBUMS_FOLDER, str(artist_id))
+
 
 def _ensure(id_, folderer, getter):
     folder = folderer(id_)
@@ -38,8 +41,11 @@ def _ensure(id_, folderer, getter):
         img.scale((THUMBNAIL_SIZE, THUMBNAIL_SIZE))
         img.write(thumb)
 
+
 def ensure_artist_image(id_, name):
-    _ensure(id_, get_artist_folder, lambda path: get_artist_image(id_, name, path))
+    _ensure(id_, get_artist_folder, lambda path: get_artist_image(id_,
+            name, path))
+
 
 def get_artist_image(id_, name, place):
     # Get from Echo Nest
@@ -60,29 +66,33 @@ def get_artist_image(id_, name, place):
         pass
     return False
 
+
 def ensure_album_image(id_, file_, album_name, artist_name):
-    _ensure(id_, get_album_folder, lambda path: get_album_image(id_, file_, album_name, artist_name, path))
+    _ensure(id_, get_album_folder, lambda path: get_album_image(id_,
+            file_, album_name, artist_name, path))
+
 
 def get_album_image(id_, file_, album_name, artist_name, place):
     # Try to get from filesystem
     parent_f, _ = os.path.split(file_)
     for f in os.listdir(parent_f):
-        r = re.match(r"(cover|folder|front|album|albumart)\.(jpg|jpeg|png|bmp)", f)
-        if r != None:
+        r = re.match(
+            r"(cover|folder|front|album|albumart)\.(jpg|jpeg|png|bmp)", f)
+        if r is not None:
             shutil.copyfile(os.path.join(parent_f, f), place)
             return True
     # Try to get from discogs
     try:
-        if artist_name == None:
+        if artist_name is None:
             search = album_name
         else:
             search = album_name + ' ' + artist_name
-        discogs_params = { 'f': 'json' 
-                         , 'type': 'releases'
-                         , 'q': search}
-        r = requests.get('http://api.discogs.com/search', params=discogs_params)
+        discogs_params = {'f': 'json',
+                          'type': 'releases', 'q': search}
+        r = requests.get(
+            'http://api.discogs.com/search', params=discogs_params)
         json = simplejson.loads(r.content)
-        if json != None:
+        if json is not None:
             img_results = json['resp']['search']['searchresults']['results']
             if img_results:
                 image_url = img_results[0]['thumb']
