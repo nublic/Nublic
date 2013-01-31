@@ -20,4 +20,7 @@ chmod 777 /var/log/nublic
 update-java-alternatives -s java-1.7.0-openjdk-\*
 # Set ubuntu firewall
 ufw default deny
+# Enable SSH access from ufw in case openssh config is not installed
+ufw allow OpenSSH
+
 ufw --force enable

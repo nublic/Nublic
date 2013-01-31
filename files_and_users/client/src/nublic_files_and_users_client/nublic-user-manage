@@ -5,7 +5,12 @@
 import sys
 import simplejson as json
 
-from nublic.files_and_users.user import *
+from nublic.files_and_users.user import User, get_all_users
+
+
+def to_utf8(string):
+    return unicode(string, 'utf-8')
+
 
 if __name__ == '__main__':
     # Add an user
@@ -38,4 +43,3 @@ if __name__ == '__main__':
         for u in get_all_users():
             sys.stdout.write(json.dumps(u.as_map()))
             sys.stdout.write("\n")
-

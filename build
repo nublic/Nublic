@@ -295,7 +295,7 @@ do_build() {
         then
             clean
         fi
-        
+
         # Initialize build
         if in_list $thing "all initialize"
         then
@@ -348,7 +348,7 @@ do_build() {
             build_deb_package python/client/src python-nublic
             build_deb_package python/server/src python-nublic-server
         fi
-        
+
         if in_list $thing "all base base_java"
         then
             build_gwt_package resource/java libnublic-resource-java
@@ -360,26 +360,26 @@ do_build() {
             build_gwt_package filewatcher/scala lib-nublic-filewatcher-scala
             install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
         fi
-        
+
         if in_list $thing "all gwt gwt_base"
         then
             package_and_install apps/util/gwt
             package_and_install apps/util/ws-json
         fi
-        
+
         # Manager App
         if in_list $thing "all fast server app_manager app_manager_server"
         then
             build_deb_package apps/app.manager/server-python/src nublic-app-manager-server
         fi
-        
+
         if in_list $thing "all fast gwt app_manager app_manager_gwt"
         then
             build_gwt_package apps/app.manager/web nublic-app-manager-web
             build_gwt_package apps/app.manager/welcome nublic-app-manager-welcome
             build_gwt_package apps/app.manager/settings nublic-app-manager-settings
         fi
-        
+
         if in_list $thing "all fast app_manager"
         then
             build_deb_package apps/app.manager nublic-app-manager
@@ -390,12 +390,12 @@ do_build() {
         then
             build_deb_package apps/app.browser/server-python/src nublic-app-browser-server
         fi
-            
+
         if in_list $thing "all fast gwt app_browser app_browser_gwt"
         then
             build_gwt_package apps/app.browser/web nublic-app-browser-web
         fi
-         
+
         if in_list $thing "all fast app_browser"
         then
             build_deb_package apps/app.browser nublic-app-browser
@@ -407,12 +407,12 @@ do_build() {
             build_deb_package apps/app.music/server-python/src nublic-app-music-server
             build_deb_package apps/app.music/fs/src nublic-app-music-fs
         fi
-        
+
         if in_list $thing "all fast gwt app_music app_music_gwt"
         then
             build_gwt_package apps/app.music/web nublic-app-music-web
         fi
-        
+
         if in_list $thing "all fast app_music"
         then
             build_deb_package apps/app.music nublic-app-music
@@ -424,7 +424,7 @@ do_build() {
             build_deb_package apps/app.photos/server-common/src nublic-app-photos-server-common
             build_deb_package apps/app.photos/server-python/src nublic-app-photos-server
         fi
-        
+
         if in_list $thing "all gwt app_photos app_photos_gwt"
         then
             package_and_install apps/app.photos/common
@@ -435,7 +435,7 @@ do_build() {
             build_gwt_package apps/app.photos/web nublic-app-photos-web
             build_gwt_package apps/app.photos/mobile nublic-app-photos-mobile
         fi
-        
+
         if in_list $thing "all fast app_photos"
         then
             build_deb_package apps/app.photos nublic-app-photos
@@ -446,12 +446,12 @@ do_build() {
         then
             build_deb_package apps/app.downloads/server nublic-app-downloads-server
         fi
-        
+
         if in_list $thing "all fast gwt app_downloads app_downloads_gwt"
         then
             build_gwt_package apps/app.downloads/web nublic-app-downloads-web
         fi
-        
+
         if in_list $thing "all fast app_downloads"
         then
             build_deb_package apps/app.downloads nublic-app-downloads
@@ -463,12 +463,12 @@ do_build() {
             build_deb_package apps/app.market/daemon/src nublic-app-market-daemon
             build_deb_package apps/app.market/server-python/src nublic-app-market-server
         fi
-        
+
         if in_list $thing "all fast gwt app_market app_market_gwt"
         then
             build_gwt_package apps/app.market/web nublic-app-market-web
         fi
-            
+
         if in_list $thing "all fast app_market"
         then
             build_deb_package apps/app.market nublic-app-market
@@ -479,12 +479,12 @@ do_build() {
         then
             build_deb_package apps/app.init/server-python/src nublic-app-init-server
         fi
-        
+
         if in_list $thing "all fast gwt app_init app_init_gwt"
         then
             build_gwt_package apps/app.init/web nublic-app-init-web
         fi
-        
+
         if in_list $thing "all fast app_init"
         then
             build_deb_package apps/app.init nublic-app-init
@@ -509,7 +509,7 @@ do_build() {
             build_deb_package conf/nublic nublic
         fi
     done
-    
+
     # Create final repository
     create_repo
 }

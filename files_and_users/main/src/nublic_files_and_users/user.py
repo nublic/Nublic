@@ -6,21 +6,23 @@ import spwd
 import grp
 import sys
 
-from elixir import *
-from model import *
-from utf8 import *
+from elixir import session
+from model import User
+from utf8 import from_utf8
 
 # Needs a group 'nublic' in the system
 
 # APACHE_PASSWD_FILE = "/var/nublic/conf/apache.passwd"
-APACHE_PASSWD_FILE = "/var/nublic/secure/.htpasswd" # for debugging purposes
+APACHE_PASSWD_FILE = "/var/nublic/secure/.htpasswd"  # for debugging purposes
 USER_SEPARATOR = ':'
 DATA_ROOT = "/var/nublic/data"
 
-class UserDBus(): #(dbus.service.Object):
-    def __init__(self, loop = None, initialize_dbus=True):
+
+class UserDBus():  # (dbus.service.Object):
+    def __init__(self, loop=None, initialize_dbus=False):
         if initialize_dbus:
-            bus_name = dbus.service.BusName('com.nublic.users', bus=dbus.SystemBus())
+            bus_name = dbus.service.BusName(
+                'com.nublic.users', bus=dbus.SystemBus())
             dbus.service.Object.__init__(self, bus_name, '/com/nublic/Users')
 
     #@dbus.service.signal(dbus_interface='com.nublic.users', signature='ss')
@@ -56,7 +58,7 @@ class UserDBus(): #(dbus.service.Object):
     #@dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 'i')
     def get_user_uid(self, username):
         user = pwd.getpwnam(from_utf8(username))
-        return user[2] # Corresponds to uid
+        return user[2]  # Corresponds to uid
 
     #@dbus.service.method('com.nublic.users', in_signature = 'sss', out_signature = '')
     def create_user(self, username_, password_, name_):
@@ -84,9 +86,11 @@ class UserDBus(): #(dbus.service.Object):
         print("Added in smbpasswd")
         # apache
         if os.path.exists(APACHE_PASSWD_FILE):
-            htpasswd_child = pexpect.spawn('htpasswd ' + APACHE_PASSWD_FILE + ' ' + username)
+            htpasswd_child = pexpect.spawn(
+                'htpasswd ' + APACHE_PASSWD_FILE + ' ' + username)
         else:
-            htpasswd_child = pexpect.spawn('htpasswd -c ' + APACHE_PASSWD_FILE + ' ' + username)
+            htpasswd_child = pexpect.spawn(
+                'htpasswd -c ' + APACHE_PASSWD_FILE + ' ' + username)
         htpasswd_child.expect('.*:')
         htpasswd_child.sendline(password)
         htpasswd_child.expect('.*:')
@@ -110,7 +114,7 @@ class UserDBus(): #(dbus.service.Object):
         # Notify
         self.user_created(username, name)
 
-    def touch(self, fname, times = None):
+    def touch(self, fname, times=None):
         with file(fname, 'a'):
             os.utime(fname, times)
 
@@ -140,7 +144,8 @@ class UserDBus(): #(dbus.service.Object):
         smbpasswd_child.sendline(new_password)
         print("Changed in smbpasswd")
         # apache
-        htpasswd_child = pexpect.spawn('htpasswd ' + APACHE_PASSWD_FILE + ' ' + username)
+        htpasswd_child = pexpect.spawn(
+            'htpasswd ' + APACHE_PASSWD_FILE + ' ' + username)
         htpasswd_child.expect('.*:')
         htpasswd_child.sendline(new_password)
         htpasswd_child.expect('.*:')
@@ -150,7 +155,8 @@ class UserDBus(): #(dbus.service.Object):
     #@dbus.service.method('com.nublic.users', in_signature = 's', out_signature = 's')
     def get_user_shown_name(self, username_):
         # Convert to utf-8
-        sys.stderr.write('Starting to get user shown name for ' + username_ + '\n')
+        sys.stderr.write(
+            'Starting to get user shown name for ' + username_ + '\n')
         username = from_utf8(username_)
         # Do things
         if ' ' in username or not self.user_exists(username):
