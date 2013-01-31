@@ -14,6 +14,7 @@ export REPO_DIR="${TARGET_DIR}/repo"
 export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
 export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
 export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
+export MAVEN_SYS="mvn -Dmaven.test.skip"
 export DEBUILD="debuild -d -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
 export MAVEN_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=1024m"
 
@@ -28,7 +29,7 @@ install_in_maven_repo() {
 initialize() {
     # Make sure you have libdbus-java maven2 and reprepro installed
     # You need to install maven3!! It's not in the repository and needs to be manually installed
-    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx python-support
     # sudo update-java-alternatives -s java-1.7.0-\*
     rm -rf "${REPO_DIR}"
     # Create build folders, if non existant
@@ -48,6 +49,31 @@ initialize() {
     # Install key into user keychain
     gpg --import conf/keys/packaging.key
     gpg --import conf/keys/packaging.private.key
+}
+
+install_in_system_repo() {
+    ${MAVEN_SYS} install:install-file -Dfile=$1 -DgroupId=$2 \
+        -DartifactId=$3 -Dversion=$4 -Dpackaging=jar
+}
+
+package_and_sysinstall_dev_mode() {
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
+    cd "$1"
+    ${MAVEN_SYS} -Pdev-mode clean
+    ${MAVEN_SYS} -Pdev-mode install
+    cd "${INITIAL_DIR}"
+}
+
+initialize_system() {
+    install_in_system_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwtmobile/gwtmobile-1.1.jar" gwtmobile gwtmobile 1.1
+    package_and_sysinstall_dev_mode player
 }
 
 copy_and_touch() {
