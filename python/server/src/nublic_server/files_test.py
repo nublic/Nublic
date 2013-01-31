@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import files
+#import files
 import os
 import tempfile
 import shutil
-import stat
-from nublic_server.files import PermissionError, get_folders,\
-        _get_last_dir_name
+#import stat
+from nublic_server.files import get_last_dir_name
 
 
 class FileOwnTests(unittest.TestCase):
@@ -72,11 +71,11 @@ class FileDirectoryTests(unittest.TestCase):
 
 class DirectoryTests(unittest.TestCase):
     def test_get_last_dir_name(self):
-        self.assertEqual(_get_last_dir_name("/loco/mongo"), "mongo")
-        self.assertEqual(_get_last_dir_name("/loco/mongo/"), "mongo")
-        self.assertEqual(_get_last_dir_name("/locño/mon`aügo"), "mon`aügo")
-        self.assertEqual(_get_last_dir_name("/locño/mon`aügo/"), "mon`aügo")
-        self.assertEqual(_get_last_dir_name("/"), "")
+        self.assertEqual(get_last_dir_name("/loco/mongo"), "mongo")
+        self.assertEqual(get_last_dir_name("/loco/mongo/"), "mongo")
+        self.assertEqual(get_last_dir_name("/locño/mon`aügo"), "mon`aügo")
+        self.assertEqual(get_last_dir_name("/locño/mon`aügo/"), "mon`aügo")
+        self.assertEqual(get_last_dir_name("/"), "")
 
 
 if __name__ == '__main__':

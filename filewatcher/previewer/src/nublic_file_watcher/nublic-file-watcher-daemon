@@ -47,4 +47,3 @@ if __name__ == '__main__':
         log.exception("Exception raised: %s" % repr(e))
         raise e
     log.info("Resource daemon shutdown")
-#    sys.stderr.write("Resource daemon shutdown\n")
