@@ -15,7 +15,7 @@ from nublic_file_watcher.central_queue import CentralQueue
 from nublic_file_watcher.preview_processor import Element
 from nublic.filewatcher import Processor, init_socket_watcher
 from nublic_file_watcher.music_processor import MusicProcessor
-#from nublic_file_watcher.photo_processor import PhotoProcessor
+from nublic_file_watcher.photo_processor import PhotoProcessor
 
 from time import sleep
 import logging
@@ -24,10 +24,11 @@ import sys
 logging.basicConfig(level=logging.DEBUG, filename="/var/log/nublic-file-watcher.log")
 log = logging.getLogger("nublic-file-watcher-daemon")
 
+
 class MainProcessor(Processor):
     def __init__(self):
         Processor.__init__(self, "previewer")
-        self.central_queue = CentralQueue.start([MusicProcessor()])
+        self.central_queue = CentralQueue.start([MusicProcessor(), PhotoProcessor()])
         #self.central_queue = CentralQueue.start([])
 
     def process(self, change):
