@@ -29,8 +29,6 @@ Vagrant::Config.run do |config|
   # physical device on your network.
   # config.vm.network :bridged
 
-#  config.vm.network :bridged
-
   # Forward a port from the guest to the host, which allows for outside
   # computers to access the VM, whereas host only networking does not.
   # config.vm.forward_port 80, 8080
@@ -41,6 +39,7 @@ Vagrant::Config.run do |config|
   # config.vm.share_folder "v-data", "/vagrant_data", "../data"
 
   config.vm.share_folder "repo", "/opt/repo", "target/repo"
+  config.vm.share_folder "code", "/opt/code", "."
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.
@@ -108,6 +107,8 @@ Vagrant::Config.run do |config|
   # We need to install and remove samba configuration for a truly non-interactive instalation
   config.vm.provision :shell, :inline => "sudo apt-get update && sudo apt-get install --assume-yes samba && sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.default"
   # Install full nublic
-  config.vm.provision :shell, :inline => "sudo apt-get install --assume-yes --force-yes nublic-notification libjetty8-extra-java nublic-solr-jetty8-config libtomcat7-java nublic-file-watcher nublic-app-browser nublic"
+  #config.vm.provision :shell, :inline => "sudo apt-get install --assume-yes --force-yes nublic-notification libjetty8-extra-java nublic-solr-jetty8-config libtomcat7-java nublic-file-watcher nublic-app-browser nublic"
 
+  # Use it as a fix in case Valgrind cannot connect by ssh.
+  # config.vm.boot_mode = :gui
 end
