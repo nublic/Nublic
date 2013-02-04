@@ -70,7 +70,7 @@ class UserDBus():  # (dbus.service.Object):
         if ' ' in username or self.user_exists(username) or USER_SEPARATOR in name:
             raise NameError()
         # passwd
-        pexpect.run('useradd -s /usr/bin/lshell -m -G nublic -N ' + username)
+        pexpect.run('useradd -m -G nublic -N ' + username)
         passwd_child = pexpect.spawn('passwd ' + username)
         passwd_child.expect('.*:')
         passwd_child.sendline(password)
