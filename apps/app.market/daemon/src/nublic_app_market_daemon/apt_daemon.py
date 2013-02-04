@@ -29,15 +29,16 @@ class InstallProgress(apt.progress.base.InstallProgress):
     def has_any_error_ocurred(self):
         return self.some_error
 
-class Apt(): #(dbus.service.Object, Handler):
+class Apt(Handler): #(dbus.service.Object, Handler):
     '''
     Small APT daemon for Nublic use
     '''
     assume_methods_block=False
-    
-    def __init__(self):
+
+    def __init__(self, connection):
         #bus_name = dbus.service.BusName('com.nublic.apt', bus=dbus.SystemBus())
         #dbus.service.Object.__init__(self, bus_name, '/com/nublic/Apt')
+        super(Apt, self).__init__(connection)
         self.lock = Lock()
 
     #@dbus.service.method('com.nublic.apt', in_signature = 's', out_signature = 'b')
@@ -134,4 +135,4 @@ class Apt(): #(dbus.service.Object, Handler):
             self.lock.release()
             sys.stderr.write("Unlocked\n")
             return False
-    
+
