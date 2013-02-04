@@ -5,6 +5,7 @@ import sys
 from threading import (Lock)
 from rpcbd import Handler
 
+
 class AcquireProgress(apt.progress.base.AcquireProgress):
     def __init__(self):
         apt.progress.base.AcquireProgress.__init__(self)
@@ -16,6 +17,7 @@ class AcquireProgress(apt.progress.base.AcquireProgress):
 
     def has_any_error_ocurred(self):
         return self.some_error
+
 
 class InstallProgress(apt.progress.base.InstallProgress):
     def __init__(self):
@@ -29,11 +31,12 @@ class InstallProgress(apt.progress.base.InstallProgress):
     def has_any_error_ocurred(self):
         return self.some_error
 
-class Apt(Handler): #(dbus.service.Object, Handler):
+
+class Apt(Handler):  # (dbus.service.Object, Handler):
     '''
     Small APT daemon for Nublic use
     '''
-    assume_methods_block=False
+    assume_methods_block = False
 
     def __init__(self, connection):
         #bus_name = dbus.service.BusName('com.nublic.apt', bus=dbus.SystemBus())
@@ -135,4 +138,3 @@ class Apt(Handler): #(dbus.service.Object, Handler):
             self.lock.release()
             sys.stderr.write("Unlocked\n")
             return False
-
