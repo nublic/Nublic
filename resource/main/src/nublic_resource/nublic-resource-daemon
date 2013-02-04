@@ -13,17 +13,17 @@ import sys
 # import dbus.service
 # import gobject
 # from dbus.mainloop.glib import DBusGMainLoop
-from nublic_resource.select_provider import get_provider 
-from nublic_resource.provider import get_all_apps
+from nublic_resource.select_provider import get_provider
+#from nublic_resource.provider import get_all_apps
 
 from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 from time import sleep
 import logging
-import signal
+#import signal
 
 # class DBusResourceValue(dbus.service.Object):
 #     _base_object_path = '/com/nublic/resource'
-    
+
 #     def __init__(self, app_name, key, loop = None):
 #         bus_path = 'com.nublic.resource'
 #         self.app = app_name
@@ -31,30 +31,30 @@ import signal
 #         provider = get_provider(app_name, key)
 #         self.provider = provider
 #         self.object_path = self._base_object_path + '/' + app_name + '/' + key
-        
+
 #         # Init DBus object
-#         bus_name = dbus.service.BusName(bus_path, 
+#         bus_name = dbus.service.BusName(bus_path,
 #                                         dbus.SystemBus(mainloop = loop))
 #         dbus.service.Object.__init__(self, bus_name, self.object_path)
 
-#     @dbus.service.method('com.nublic.resource.value', 
+#     @dbus.service.method('com.nublic.resource.value',
 #                          in_signature='s', out_signature='s')
 #     def value(self, subkey):
 #         return self.provider.value(self.app, self.key, subkey)
 
 # class DBusResourceManager(dbus.service.Object):
 #     _object_path = '/com/nublic/resource'
-    
+
 #     def __init__(self, resourceValues, loop = None):
 #         self.resourceValues = resourceValues
 #         self.loop = loop
 #         bus_path = 'com.nublic.resource'
 #         # Init DBus object
-#         bus_name = dbus.service.BusName(bus_path, 
+#         bus_name = dbus.service.BusName(bus_path,
 #                                         dbus.SystemBus(mainloop = loop))
 #         dbus.service.Object.__init__(self, bus_name, self._object_path)
 
-#     @dbus.service.method('com.nublic.resource.manager', 
+#     @dbus.service.method('com.nublic.resource.manager',
 #                          in_signature='ss')
 #     def load(self, app, key):
 #         a = app + ""
@@ -63,7 +63,7 @@ import signal
 #             self.resourceValues[a] = dict()
 #         self.resourceValues[a][k] = DBusResourceValue(a, k, self.loop)
 
-#     @dbus.service.method('com.nublic.resource.manager', 
+#     @dbus.service.method('com.nublic.resource.manager',
 #                          in_signature='ss')
 #     def unload(self, app, key):
 #         a = app + ""
@@ -73,13 +73,15 @@ import signal
 #         self.resourceValues[a][k].remove_from_connection()
 #         del self.resourceValues[a][k]
 
+
 class JsonRpcResource(Handler):
     assume_methods_block = False
+
     def value(self, app_name, key, subkey):
         try:
             return get_provider(app_name, key).value(app_name, key, subkey)
         except BaseException as e:
-            logging.error("Detected exception %s", str(e))
+            logging.exception("Detected exception %s", str(e))
             return None
 
 if __name__ == '__main__':
@@ -87,9 +89,10 @@ if __name__ == '__main__':
         sys.exit('Script must be run as root')
 
     # Initialize JSON-RPC
-    logging.basicConfig(level = logging.WARNING)
-    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcResource)
-    peer.listen_tcp(port = 5439)
+    logging.basicConfig(level=logging.WARNING)
+    peer = ThreadedTCPJsonRpcPeer(
+        JSONRPC_V2, default_handler=JsonRpcResource)
+    peer.listen_tcp(port=5439)
     sys.stderr.write("Resource daemon listening\n")
 
     try:
