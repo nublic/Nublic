@@ -8,14 +8,13 @@ from nublic_server.helpers import init_nublic_server, split_reasonable
 from nublic_server.places import get_cache_folder
 
 from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, photos_and_row_count_as_json
-from photo_watcher import PhotoProcessor
 
 # Init app
 app = Flask(__name__)
 app.debug = True
 init_nublic_server(
     app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos',
-    db, 'photos', [lambda w: PhotoProcessor.start(app.logger, w)])
+    db, 'photos')
 app.logger.error('Starting photos app')
 
 
