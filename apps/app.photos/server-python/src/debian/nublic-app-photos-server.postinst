@@ -1,5 +1,7 @@
 #!/bin/bash
 
+nublic-resource-setup install nublic_app_photos db postgresql-db
+
 touch /var/lib/nublic/webapps/app.photos/app.photos.wsgi
 service apache2 restart
 
