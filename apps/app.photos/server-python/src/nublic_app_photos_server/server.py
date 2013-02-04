@@ -13,8 +13,7 @@ from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, ph
 app = Flask(__name__)
 app.debug = True
 init_nublic_server(
-    app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos',
-    db, 'photos')
+    app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos', db)
 app.logger.error('Starting photos app')
 
 
