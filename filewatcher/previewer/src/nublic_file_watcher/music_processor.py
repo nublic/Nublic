@@ -9,7 +9,7 @@ from preview_processor import PreviewProcessor
 from nublic_app_music_server.server import app
 from nublic_app_music_server.model import db, Album, Artist,\
     Song, SongCollection, SongPlaylist
-from nublic_app_music_server.song_info import get_song_info,\
+from song_info import get_song_info,\
     extract_using_filename
 from nublic_app_music_server.images import ensure_artist_image, \
     ensure_album_image
