@@ -7,12 +7,12 @@ from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type
 from preview_processor import PreviewProcessor
 from nublic_app_music_server.server import app
-from nublic_app_music_server.model import db, Album, Artist,\
-    Song, SongCollection, SongPlaylist
-from song_info import get_song_info,\
-    extract_using_filename
-from nublic_app_music_server.images import ensure_artist_image, \
-    ensure_album_image
+from nublic_app_music_server.model import (db, Album, Artist,
+                                           Song, SongCollection, SongPlaylist)
+from song_info import (get_song_info,
+                       extract_using_filename)
+from nublic_app_music_server.images import (ensure_artist_image,
+                                            ensure_album_image)
 
 import logging
 log = logging.getLogger(__name__)
