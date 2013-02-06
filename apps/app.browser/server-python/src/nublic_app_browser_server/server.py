@@ -17,13 +17,16 @@ from zipfile import ZipFile
 from werkzeug.utils import secure_filename
 from nublic_server.places import get_cache_folder, get_cache_view
 import re
+import logging
 
 
 # Init app
 app = Flask(__name__)
 app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-browser.python.log')
-app.logger.error('Starting browser app')
+log = app.logger
+log.setLevel(logging.DEBUG)
+log.info('Starting browser app')
 
 DATA_ROOT = '/var/nublic/data/'  # It MUST end with '/' for security reasons
 GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails/'

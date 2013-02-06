@@ -31,12 +31,14 @@ def init_bare_nublic_server(app, log_file):
     ''' Inits a nublic server without database support '''
     app.request_class = RequestWithDelete
     # Set up logging handlers
-    handler = logging.FileHandler(log_file)
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(levelname)s: %(message)s '
-        '[in %(pathname)s:%(lineno)d]'
-    ))
-    app.logger.addHandler(handler)
+    #handler = logging.FileHandler(log_file)
+    #handler.setFormatter(logging.Formatter(
+    #    '%(asctime)s %(levelname)s: %(message)s '
+    #    '[in %(pathname)s:%(lineno)d]'
+    #))
+    log_format = ('%(asctime)s %(levelname)s: %(message)s '
+                  '[in %(pathname)s:%(lineno)d]')
+    logging.basicConfig(filename=log_file, format=log_format)
 
 
 def split_reasonable(string, separator):
