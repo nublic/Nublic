@@ -1,12 +1,13 @@
 import os
 import hashlib
 import magic
+from fnmatch import fnmatch
 
 BROWSER_ROOT_FOLDER = '/var/nublic/cache/browser'
 
 
 def get_cache_folder(path):
-    cache_folder = hashlib.sha1(path.encode('utf-8')).hexdigest()
+    cache_folder = hashlib.sha1(path).hexdigest()
     return os.path.join(BROWSER_ROOT_FOLDER, cache_folder)
 
 

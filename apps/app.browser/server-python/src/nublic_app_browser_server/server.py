@@ -6,10 +6,10 @@ from flask import Flask, request, abort, send_file
 from flask.helpers import send_from_directory
 
 import nublic_server
-from nublic_server.helpers import init_bare_nublic_server, \
-    require_user
-from nublic_server.files import PermissionError, get_file_info, get_folders,\
-    get_last_dir_name
+from nublic_server.helpers import (init_bare_nublic_server,
+                                   require_user)
+from nublic_server.files import (PermissionError, get_file_info, get_folders,
+                                 get_last_dir_name)
 from nublic.files_and_users.mirror import get_all_mirrors
 from nublic.files_and_users.work_folder import get_all_work_folders
 from tempfile import NamedTemporaryFile
@@ -60,7 +60,7 @@ def folders(depth, path):
     if depth <= 0:
         abort(400)
     user = require_user()
-    path_absolute = os.path.join(DATA_ROOT, path)
+    path_absolute = os.path.join(DATA_ROOT, path.encode('utf8'))
     if not os.path.isdir(path_absolute):
         abort(404)
     return json.dumps(get_folders(depth, path_absolute, user))
@@ -85,7 +85,7 @@ def files_path(path):
                 -> Size in bytes
     '''
     user = require_user()
-    path_absolute = os.path.join(DATA_ROOT, path)
+    path_absolute = os.path.join(DATA_ROOT, path.encode('utf8'))
     try:
         if not os.path.exists(path_absolute):
             abort(404)
@@ -110,7 +110,7 @@ def thumbnail(path):
       -> only try to get things with thumbnail
     '''
     user = require_user()
-    path_absolute = os.path.join(DATA_ROOT, path)
+    path_absolute = os.path.join(DATA_ROOT, path.encode('utf8'))
     if user.can_read(path_absolute):  # @TODO: Rely a generic one if not exists
         return os.path.join(get_cache_folder(path_absolute), "thumbnail.png")
     else:
@@ -176,7 +176,7 @@ audio_mapping = {'image': "audio.mp3",
                             # Various
                             "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
                             "audio/x-gsm", "audio/snd"
-                          ]
+                 ]
                  }
 
 
@@ -229,17 +229,17 @@ def zip_path(path):
     * Returns: the data of the zip
     '''
     user = require_user()
-    internal_path = os.path.join(DATA_ROOT, path)
+    internal_path = os.path.join(DATA_ROOT, path.encode('utf8'))
     try:
         zip_file = prepare_zip_file()
         add_file_zip(zip_file, internal_path,
                      os.path.dirname(internal_path), user)
         zip_file.close()
         return send_file(
-                zip_file.filename,
-                mimetype='application/zip',
-                as_attachment=True,
-                attachment_filename=get_last_dir_name(internal_path) + '.zip')
+            zip_file.filename,
+            mimetype='application/zip',
+            as_attachment=True,
+            attachment_filename=get_last_dir_name(internal_path) + '.zip')
     except PermissionError:
         abort(401)
 
@@ -256,15 +256,15 @@ def zip_set():
     try:
         zip_file = prepare_zip_file()
         for file_zip in files:
-            abs_file = os.path.join(DATA_ROOT, file_zip)
+            abs_file = os.path.join(DATA_ROOT, file_zip.encode('utf8'))
             add_file_zip(zip_file, abs_file,
                          os.path.dirname(abs_file), user)
         zip_file.close()
         return send_file(
-                zip_file.filename,
-                mimetype='application/zip',
-                as_attachment=True,
-                attachment_filename='files.zip')
+            zip_file.filename,
+            mimetype='application/zip',
+            as_attachment=True,
+            attachment_filename='files.zip')
 
     except PermissionError:
         abort(401)
@@ -278,7 +278,7 @@ def raw(file_raw):
     * Returns: raw data for the file
     '''
     user = require_user()
-    internal_path = os.path.join(DATA_ROOT, file_raw)
+    internal_path = os.path.join(DATA_ROOT, file_raw.encode('utf8'))
     try:
         user.try_write(internal_path)
         return send_file(internal_path, as_attachment=True)
@@ -298,7 +298,7 @@ def view(file_path, extension):
     '''
     if not re.match('\w+', extension):
         abort(401)
-    internal_path = os.path.join(DATA_ROOT, file_path)
+    internal_path = os.path.join(DATA_ROOT, file_path.encode('utf8'))
     view = get_cache_view(internal_path, extension)
     if view:
         return send_file(view)
@@ -314,8 +314,8 @@ def rename():
             * :to -> new name of the file
     '''
     user = require_user()
-    path_from = os.path.join(DATA_ROOT, request.form.get('from'))
-    path_to = os.path.join(DATA_ROOT, request.form.get('to'))
+    path_from = os.path.join(DATA_ROOT, request.form.get('from').encode('utf8'))
+    path_to = os.path.join(DATA_ROOT, request.form.get('to').encode('utf8'))
     if not os.path.exists(path_from):
         abort(404)
     if not user.can_write(path_from):
@@ -331,12 +331,12 @@ def move():
         * :files -> files to move
         * :target -> folder to put the files
     '''
-    from_array = request.form.get('files').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
     user = require_user()
+    from_array = request.form.get('files').split(':')
+    internal_to = os.path.join(DATA_ROOT, request.form.get('target').encode('utf8'))
     try:
         for from_path in from_array:
-            internal_from = os.path.join(DATA_ROOT, from_path)
+            internal_from = os.path.join(DATA_ROOT, from_path.encode('utf8'))
             user.try_write(internal_to)
             shutil.move(internal_from, internal_to)
     except PermissionError:
@@ -351,12 +351,12 @@ def copy():
         * :files -> files to move or copy separated by :
         * :target -> folder to put the files
     '''
-    from_array = request.form.get('files').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('target'))
     user = require_user()
+    from_array = request.form.get('files').split(':')
+    internal_to = os.path.join(DATA_ROOT, request.form.get('target').encode('utf8'))
     try:
         for from_path in from_array:
-            internal_from = os.path.join(DATA_ROOT, from_path)
+            internal_from = os.path.join(DATA_ROOT, from_path.encode('utf8'))
             nublic_server.files.copy(internal_from, internal_to, user)
     except PermissionError:
         abort(401)
@@ -373,7 +373,7 @@ def delete():
     user = require_user()
     try:
         for raw_file in raw_files:
-            internal_path = os.path.join(DATA_ROOT, raw_file)
+            internal_path = os.path.join(DATA_ROOT, raw_file.encode('utf8'))
             user.try_write_recursive(internal_path)
             if os.path.isdir(internal_path):
                 shutil.rmtree(internal_path)
@@ -382,7 +382,7 @@ def delete():
     except PermissionError:
         abort(401)
     except Exception as e:  # Catch a possible rmtree Exception
-        app.log("Exception on delete file %s", str(e))
+        log.exception("Exception on delete file %s", str(e))
         abort(500)
     return 'ok'
 
@@ -412,8 +412,9 @@ def new_folder():
         It only creates ONE LEVEL NEW FOLDERS
     '''
     user = require_user()
-    path = os.path.join(DATA_ROOT, request.form.get('path'),
-                        request.form.get('name'))
+
+    path = os.path.join(DATA_ROOT, request.form.get('path').encode('utf8'),
+                        request.form.get('name').encode('utf8'))
     try:
         nublic_server.files.mkdir(path, user)
         return 'ok'
@@ -444,7 +445,7 @@ def upload():
     try:
         if file_request:  # All extensions are allowed
             filename = secure_filename(request.form.get('name'))
-            path = request.form.get('path')
+            path = request.form.get('path').encode('utf8')
             abs_path = os.path.join(DATA_ROOT, path)
             if stay_in_directory(path, DATA_ROOT):
                 user.try_write(abs_path)  # Check permission write in directory
