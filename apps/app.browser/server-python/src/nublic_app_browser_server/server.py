@@ -135,7 +135,7 @@ images_mapping = {'image': 'image.png',
                             "image/x-wmf", "image/x-ms-bmp"
                             ]
                   }
-audio_mapping = {'image': "audio.mp3",
+audio_mapping = {'image': "audio.png",
                  'preview': 'audio.mp3',
                  'mimes': [
                             '''
@@ -198,7 +198,8 @@ def generic_thumbnail(mime):
                 thumb = mapping['image']
                 return send_from_directory(GENERIC_THUMB_PATH, thumb)
     except KeyError:
-        thumb = "file.png"
+        log.exception('KeyError found looking for generic thumbnail')
+    thumb = "file.png"
     return send_from_directory(GENERIC_THUMB_PATH, thumb)
 
 
