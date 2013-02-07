@@ -2,6 +2,7 @@
 :author Alejandro Serrano <alex@nublic.com>
 '''
 
+
 class FileChange:
     '''
     Represents a change in the file system
@@ -32,11 +33,11 @@ class FileChange:
         self.is_dir = is_dir
 
     def __str__(self):
-        return ('FileChange' + ' kind :' + str(self.kind) +
-                ' file : ' + str(self.filename) +
-                ' file_from : ' + str(self.filename_from) +
-                ' filename_to : ' + str(self.filename_to) +
-                ' is_dir : ' + str(self.is_dir))
+        return ('FileChange' + ' kind :' + unicode(self.kind) +
+                ' file : ' + unicode(self.filename) +
+                ' file_from : ' + unicode(self.filename_from) +
+                ' filename_to : ' + unicode(self.filename_to) +
+                ' is_dir : ' + unicode(self.is_dir))
 
     def __repr__(self):
         return self.__str__()
