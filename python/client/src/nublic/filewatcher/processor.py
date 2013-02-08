@@ -5,7 +5,7 @@
 import logging
 from pykka.actor import ThreadingActor
 import traceback
-log = logging.get_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class Processor(ThreadingActor):
