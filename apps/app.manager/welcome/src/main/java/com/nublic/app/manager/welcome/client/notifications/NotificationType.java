@@ -8,7 +8,7 @@ public enum NotificationType {
 	ATTENTION(Resources.INSTANCE.attention()),
 	POWER(Resources.INSTANCE.power()),
 	USER(Resources.INSTANCE.user()),
-	PASWORD(Resources.INSTANCE.password());
+	PASSWORD(Resources.INSTANCE.password());
 	
 	ImageResource icon;
 	
