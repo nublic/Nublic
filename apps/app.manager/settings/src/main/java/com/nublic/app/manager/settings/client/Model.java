@@ -71,8 +71,12 @@ public class Model {
 				return LocationUtil.getHostBaseUrl() + "manager/server/change-password";
 			}
 			@Override
-			public void onSuccess(Response response) {		
-				cpc.onPasswordChanged(true);
+			public void onSuccess(Response response) {
+				if (response.getStatusCode() == Response.SC_OK) {
+					cpc.onPasswordChanged(true);
+				} else {
+					onError();
+				}
 			}
 			@Override
 			public void onError() {
