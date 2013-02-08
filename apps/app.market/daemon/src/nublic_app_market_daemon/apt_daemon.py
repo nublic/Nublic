@@ -1,9 +1,10 @@
 import apt
 import apt.progress.base
 # import dbus.service
-import sys
 from threading import (Lock)
 from rpcbd import Handler
+import logging
+log = logging.getLogger(__name__)
 
 
 class AcquireProgress(apt.progress.base.AcquireProgress):
@@ -46,23 +47,23 @@ class Apt(Handler):  # (dbus.service.Object, Handler):
 
     #@dbus.service.method('com.nublic.apt', in_signature = 's', out_signature = 'b')
     def is_package_installed(self, package):
-        sys.stderr.write("is_package_installed: Locked\n")
+        log.info("is_package_installed for package %s: Locked", package)
         self.lock.acquire()
         try:
             cache = apt.Cache()
             pkg = cache[package]
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return pkg.is_installed
-        except BaseException as e:
-            sys.stderr.write("Error: " + str(e) + '\n')
+        except BaseException:
+            log.exception("Error checking if package %s is installed", package)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return False
 
     #@dbus.service.method('com.nublic.apt', in_signature = 's', out_signature = 'b')
     def install_package(self, package):
-        sys.stderr.write("install_package: Locked\n")
+        log.info("install_package package %s: Locked", package)
         self.lock.acquire()
         try:
             cache = apt.Cache()
@@ -70,20 +71,20 @@ class Apt(Handler):  # (dbus.service.Object, Handler):
             pkg.mark_install()
             acq_progress = AcquireProgress()
             ins_progress = InstallProgress()
-            sys.stderr.write("Installing " + package + "...\n")
+            log.info("Installing %s...", package)
             cache.commit(acq_progress, ins_progress)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return not (acq_progress.has_any_error_ocurred() or ins_progress.has_any_error_ocurred())
-        except BaseException as e:
-            sys.stderr.write("Error " + str(e) + '\n')
+        except BaseException:
+            log.exception("Error installing package %s", package)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return False
 
     #@dbus.service.method('com.nublic.apt', in_signature = 's', out_signature = 'b')
     def remove_package(self, package):
-        sys.stderr.write("remove_package: Locked\n")
+        log.info("remove_package: Locked")
         self.lock.acquire()
         try:
             cache = apt.Cache()
@@ -93,36 +94,36 @@ class Apt(Handler):  # (dbus.service.Object, Handler):
             ins_progress = InstallProgress()
             cache.commit(acq_progress, ins_progress)
             cache.open()
-            sys.stderr.write("Removing " + package + "...\n")
+            log.info("Removing %s...", package)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return not (acq_progress.has_any_error_ocurred() or ins_progress.has_any_error_ocurred())
-        except BaseException as e:
-            sys.stderr.write("Error: " + str(e) + '\n')
+        except BaseException:
+            log.exception("Exception in remove_package for package %s", package)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return False
 
     #@dbus.service.method('com.nublic.apt', in_signature = '', out_signature = 'b')
     def update_cache(self):
-        sys.stderr.write("update_cache: Locked\n")
+        log.info("update_cache: Locked\n")
         self.lock.acquire()
         try:
             cache = apt.Cache()
             acq_progress = AcquireProgress()
             cache.update(acq_progress)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return not acq_progress.has_any_error_ocurred()
-        except BaseException as e:
-            sys.stderr.write("Error: " + str(e) + '\n')
+        except BaseException:
+            log.exception("Error in update_cache")
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return False
 
     #@dbus.service.method('com.nublic.apt', in_signature = '', out_signature = 'b')
     def upgrade_system(self):
-        sys.stderr.write("upgrade_system: Locked\n")
+        log.info("upgrade_system locked")
         self.lock.acquire()
         try:
             cache = apt.Cache()
@@ -131,10 +132,10 @@ class Apt(Handler):  # (dbus.service.Object, Handler):
             ins_progress = InstallProgress()
             cache.commit(acq_progress, ins_progress)
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return True
-        except BaseException as e:
-            sys.stderr.write("Error: " + str(e) + '\n')
+        except BaseException:
+            log.exception("Error at upgrade_system")
             self.lock.release()
-            sys.stderr.write("Unlocked\n")
+            log.info("Unlocked")
             return False
