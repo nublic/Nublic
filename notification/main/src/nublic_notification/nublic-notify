@@ -10,13 +10,14 @@ It sends a notification via the Nublic Notification System
 import sys
 import logging
 logging.basicConfig(stream=sys.stderr)
-#logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG) # TODO DEACTIVATE
-logging.getLogger('sqlalchemy.engine').setLevel(logging.CRITICAL) # TODO ACTIVATE
+#logging.getLogger('sqlalchemy.engine').setLevel(logging.DEBUG)  # TODO DEACTIVATE
+logging.getLogger(
+    'sqlalchemy.engine').setLevel(logging.CRITICAL)  # TODO ACTIVATE
 
 from optparse import OptionParser
 
 # from nublic_notification.dbus_client import Notification
-from nublic.notification import *
+from nublic.notification import send_notification
 
 
 def main():
@@ -24,18 +25,19 @@ def main():
     parser = OptionParser(usage)
 
     parser.add_option("-u", "--user", action="store", type="string")
-    parser.add_option("-a", "--action", action="append", nargs=3, type="string") 
+    parser.add_option(
+        "-a", "--action", action="append", nargs=3, type="string")
     parser.add_option("-s", "--stock", action="append", nargs=2, type="string")
     (options, args) = parser.parse_args()
-    
+
     if len(args) != 3:
         parser.error('Invalid number of parameters. For example nublic-notify appCommandLine" Some thing happened" notice')
     else:
         app = args[0]
         text = args[1]
         level = args[2]
-        if options.user != None:
-            user = option.user
+        if options.user is not None:
+            user = options.user
         else:
             user = ""
 
@@ -44,7 +46,7 @@ def main():
         if options.action:
             for a in options.action:
                 actions.append(a[0], a[1])
-        
+
         # Stocks are not implemented yet
         stocks = []
         if options.stock:
@@ -52,6 +54,6 @@ def main():
                 stocks.append(s[0], s[1])
 
         return send_notification(app, user, level, text)
-        
+
 if __name__ == '__main__':
     main()

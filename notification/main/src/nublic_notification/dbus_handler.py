@@ -7,7 +7,7 @@ Created on 18/07/2011
 @copyright: 2011 Nublic
 '''
 #import gtk
-import dbus
+#import dbus
 #import dbus.service
 #import dbus.exceptions
 #import gobject
@@ -19,13 +19,16 @@ from elixir import metadata, setup_all
 #import dbus
 import time
 from time import sleep
-import signal
+#import signal
 import sys
 
-from nublic.resource import *
+from nublic.resource import App
+import notification
+
 
 def __get_bind_uri():
     return App("nublic_notification").get("db").value("uri")
+
 
 def __check_nublic_resource_is_on():
     WAITING_MAX = 200
@@ -40,20 +43,23 @@ def __check_nublic_resource_is_on():
             time.sleep(2)
             waited = waited + 1
 
+
 def initial_program_setup():
     pass
+
 
 def do_main_program():
     # dbus_loop = DBusGMainLoop(set_as_default=True)
     __check_nublic_resource_is_on()
     metadata.bind = __get_bind_uri()
-    setup_all(create_tables = True)
+    setup_all(create_tables=True)
     sys.stderr.write("Notification daemon database setup\n")
 
     # Initialize JSON-RPC
-    logging.basicConfig(level = logging.WARNING)
-    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcNotification)
-    peer.listen_tcp(port = 5441)
+    logging.basicConfig(level=logging.WARNING)
+    peer = ThreadedTCPJsonRpcPeer(
+        JSONRPC_V2, default_handler=JsonRpcNotification)
+    peer.listen_tcp(port=5441)
     sys.stderr.write("Notification daemon listening\n")
 
     try:
@@ -68,9 +74,11 @@ def do_main_program():
     #loop = gobject.MainLoop()
     #gobject.threads_init()
     #loop.run()
-    
+
+
 def program_cleanup():
     pass
+
 
 def reload_program_config():
     pass
@@ -78,7 +86,7 @@ def reload_program_config():
 # class DBusValue(dbus.service.Object):
 #     bus_path = 'com.nublic.notification'
 #     _base_object_path = '/com/nublic/notification'
-    
+
 #     def __init__(self, loop = None):
 #         # Init DBus object
 #         self.object_path = "/com/nublic/notification/Messages"
@@ -87,10 +95,11 @@ def reload_program_config():
 
 #     @dbus.service.method('com.nublic.notification', in_signature = 'ssss', out_signature='s')
 #     def new_message(self, app, user, level, text):
-#         return str(notification.new_message(app, user, level, text))
+#         return unicode(notification.new_message(app, user, level, text))
+
 
 class JsonRpcNotification(Handler):
-    assume_methods_block=False
+    assume_methods_block = False
+
     def new_message(self, app, user, level, text):
-        return str(notification.new_message(app, user, level, text))
-        
+        return unicode(notification.new_message(app, user, level, text))

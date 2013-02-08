@@ -8,18 +8,17 @@
 # @author: David Navarro Estruch
 # @copyright: 2011 Nublic
 
-import os
-import logging
+#import os
+#import logging
 
 from nublic_notification.dbus_handler import (
     initial_program_setup,
     do_main_program,
     program_cleanup,
-    reload_program_config,
-    )
+    #    reload_program_config,
+)
 
 if __name__ == '__main__':
     initial_program_setup()
     do_main_program()
     program_cleanup()
-
