@@ -19,10 +19,16 @@
 	.somepadding {
 		padding: 10px;
 	}
+	.background {
+		background-image: url('images/background.png');
+	    background-repeat: no-repeat;
+	    background-attachment: fixed;
+	    background-position: 550px 350px; 
+	}
 	</ui:style>
 	<ui:with type="com.nublic.app.manager.welcome.client.i18n.I18NMessages" field="msg"/>
 	
-	<g:HTMLPanel>
+	<g:HTMLPanel addStyleNames="{style.background}">
 		<div class="container">
 			<div class="row">
 				<!--<div class="span6">
