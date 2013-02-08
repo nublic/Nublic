@@ -51,4 +51,24 @@ public class NotificationHackManager {
 		}
 		return retList;
 	}
+
+	public static ArrayList<Notification> getSystemNotifications() {
+		ArrayList<Notification> retList = new ArrayList<Notification>();
+
+		retList.add(new Notification(NotificationType.USER, new SafeHtml() {
+			private static final long serialVersionUID = 4654149898045281890L;
+			@Override
+			public String asString() {
+				return "Creado nuevo usuario: <strong>pablo</strong>";
+			}
+		}));
+		retList.add(new Notification(NotificationType.PASSWORD, new SafeHtml() {
+			private static final long serialVersionUID = 4654149898045281890L;
+			@Override
+			public String asString() {
+				return "Cambiada contraseña de <strong>david</strong>";
+			}
+		}));
+		return retList;
+	}
 }

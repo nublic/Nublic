@@ -48,7 +48,6 @@ public class AppCell extends Composite {
 		for (Notification n : list) {
 			notificationPanel.add(new NotificationLine(n));
 		}
-		
 	}
 	
 	/*public void setFavouriteImage() {

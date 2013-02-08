@@ -7,22 +7,23 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.Response;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.manager.welcome.client.notifications.Notification;
+import com.nublic.app.manager.welcome.client.notifications.NotificationHackManager;
+import com.nublic.app.manager.welcome.client.notifications.NotificationLine;
 import com.nublic.util.gwt.LocationUtil;
-import com.nublic.util.messages.Message;
 import com.nublic.util.messages.SequenceHelper;
 
 public class WelcomePage extends Composite {
 
 	private static WelcomePageUiBinder uiBinder = GWT.create(WelcomePageUiBinder.class);
 	@UiField VerticalPanel appGrid;
-	@UiField Label welcomeLabel;
+	@UiField VerticalPanel eventsPanel;
+//	@UiField Label welcomeLabel;
 
 	interface WelcomePageUiBinder extends UiBinder<Widget, WelcomePage> {
 	}
@@ -34,22 +35,31 @@ public class WelcomePage extends Composite {
 		SequenceHelper.sendJustOne(msg, RequestBuilder.GET);
 		
 		// Get user name to welcome it better
-		SequenceHelper.sendJustOne(new Message() {
-			@Override
-			public String getURL() {
-				return LocationUtil.getHostBaseUrl() + "manager/server/user-name";
-			}
-			@Override
-			public void onSuccess(Response response) {
-				if (response.getStatusCode() == Response.SC_OK) {
-					welcomeLabel.setText(Constants.I18N.greeting(response.getText()));
-				}
-			}
-			@Override
-			public void onError() {
-				// Do nothing
-			}
-		}, RequestBuilder.GET);
+//		SequenceHelper.sendJustOne(new Message() {
+//			@Override
+//			public String getURL() {
+//				return LocationUtil.getHostBaseUrl() + "manager/server/user-name";
+//			}
+//			@Override
+//			public void onSuccess(Response response) {
+//				if (response.getStatusCode() == Response.SC_OK) {
+//					welcomeLabel.setText(Constants.I18N.greeting(response.getText()));
+//				}
+//			}
+//			@Override
+//			public void onError() {
+//				// Do nothing
+//			}
+//		}, RequestBuilder.GET);
+		
+		fillNotifications();
+	}
+	
+	private void fillNotifications() {
+		ArrayList<Notification> list = NotificationHackManager.getSystemNotifications();
+		for (Notification n : list) {
+			eventsPanel.add(new NotificationLine(n));
+		}
 	}
 
 	public void showApps(final HashMap<String, AppData> apps) {
