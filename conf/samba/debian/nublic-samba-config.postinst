@@ -10,3 +10,4 @@ ufw allow microsoft-ds
 # ufw enable ldap # Not needed right now
 # ufw enable swat # If we want to allow Samba Web Administration Tool
 ufw --force enable
+service smbd restart

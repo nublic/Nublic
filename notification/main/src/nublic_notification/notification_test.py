@@ -10,16 +10,17 @@ Created on 15/08/2010
 import unittest
 from notification import Notification, new_message
 
-from elixir import *
+from elixir import create_all, setup_all, drop_all
+
 
 class testNotification(unittest.TestCase):
     """
     A test class for the Notification module.
     """
-    
+
     def __init__(self, methodName='runTest'):
         # Clean and create database
-        setup_all(create_tables = True)
+        setup_all(create_tables=True)
         drop_all()
         create_all()
         unittest.TestCase.__init__(self, methodName=methodName)
@@ -32,16 +33,16 @@ class testNotification(unittest.TestCase):
         pass
 
     def testNewMessage(self):
-        new_message("app", "user1", "level","CriticalMessage")
-        notice = Notification.get_by(app="app") 
-        self.assertEqual(notice.app, "app", 
+        new_message("app", "user1", "level", "CriticalMessage")
+        notice = Notification.get_by(app="app")
+        self.assertEqual(notice.app, "app",
                          "Value retrieved should be the stored")
-        self.assertEqual(notice.user, "user1", 
+        self.assertEqual(notice.user, "user1",
                          "Value retrieved should be the stored")
-        self.assertEqual(notice.level, "level", 
+        self.assertEqual(notice.level, "level",
                          "Value retrieved should be the stored")
-        self.assertEqual(notice.text, "CriticalMessage", 
-                         "Value retrieved should be the stored")        
+        self.assertEqual(notice.text, "CriticalMessage",
+                         "Value retrieved should be the stored")
         #self.assertEqual(self.blogger.get_title(), title)
 
 

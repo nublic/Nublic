@@ -18,11 +18,11 @@ THUMBNAIL_SIZE = 96
 
 
 def get_artist_folder(artist_id):
-    return os.path.join(ARTISTS_FOLDER, str(artist_id))
+    return os.path.join(ARTISTS_FOLDER, unicode(artist_id).encode('utf8'))
 
 
 def get_album_folder(artist_id):
-    return os.path.join(ALBUMS_FOLDER, str(artist_id))
+    return os.path.join(ALBUMS_FOLDER, unicode(artist_id).encode('utf8'))
 
 
 def _ensure(id_, folderer, getter):

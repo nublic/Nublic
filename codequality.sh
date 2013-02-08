@@ -10,6 +10,10 @@ find_python_modules_path() { # Find all python modules on $1
     find $1 -name __init__.py ! -wholename \*/sunburnt/\* -printf "`pwd`/%P:" | sed s~/[^/]*/__init__.py~~g
 }
 
+find_python_module_names() { # Find all python modules on $1
+    find $1 -name __init__.py \! -wholename \*/3rd-party-libs/\* -printf "`pwd`/%P " | sed 's~/[^ ]*/\([^/]*\)/__init__.py~\1~g'
+}
+
 find_python_modules() { # Find all python modules on $1
     find $1 -name __init__.py \! -wholename \*/3rd-party-libs/\* -printf "`pwd`/%P " | sed s~/[^/]*/__init__.py~~g
 }
@@ -68,10 +72,10 @@ fi
 if [[ $pylint = 0 ]]; then
     echo "Running pylint to $TARGET_DIR/pylint.log"
     touch $TARGET_DIR/pylint.dot
-    PYTHONPATH=`find_python_modules_path .` pylint `find_python_modules . ` --import-graph=`pwd`/$TARGET_DIR/pylint.dot > $TARGET_DIR/pylint.log
+    PYTHONPATH=`find_python_modules_path .` pylint `find_python_module_names . ` --import-graph=`pwd`/$TARGET_DIR/pylint.dot > $TARGET_DIR/pylint.log
     dot -Tpng $TARGET_DIR/pylint.dot -o $TARGET_DIR/pylint.png
     echo "Running pylint to $TARGET_DIR/pylint.html"
-    PYTHONPATH=`find_python_modules_path .` pylint `find_python_modules . ` -f html > $TARGET_DIR/pylint.html
+    PYTHONPATH=`find_python_modules_path .` pylint `find_python_module_names . ` -f html > $TARGET_DIR/pylint.html
 fi
 
 if [[ $nosetests = 0 ]]; then
