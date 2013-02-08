@@ -512,6 +512,17 @@ do_build() {
 
     # Create final repository
     create_repo
+
+    # Deploy
+    if in_list $thing "deploy"
+    then
+        vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
+    fi
+
+    if in_list $thing "notify fast deploy"
+    then
+        notify-send "Nublic build ended $*"
+    fi
 }
 
 if [ $# = 0 ]
