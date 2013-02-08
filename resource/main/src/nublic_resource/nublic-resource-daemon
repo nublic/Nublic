@@ -81,7 +81,7 @@ class JsonRpcResource(Handler):
         try:
             return get_provider(app_name, key).value(app_name, key, subkey)
         except BaseException as e:
-            logging.exception("Detected exception %s", str(e))
+            logging.exception("Detected exception %s", unicode(e))
             return None
 
 if __name__ == '__main__':
