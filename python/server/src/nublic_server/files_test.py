@@ -66,7 +66,7 @@ class FileDirectoryTests(unittest.TestCase):
     #def testGetFolders(self):
     #    folders = get_folders(3, self.dirWrite, self.uid)
 
-        #print(str(folders))
+        #print(unicode(folders))
 
 
 class DirectoryTests(unittest.TestCase):
