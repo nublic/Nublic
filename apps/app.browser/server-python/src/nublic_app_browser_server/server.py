@@ -93,10 +93,10 @@ def files_path(path):
         if not os.path.exists(path_absolute):
             abort(404)
         else:
-            app.logger.error('Getting files from %s', path_absolute)
+            app.logger.info('Getting files from %s', path_absolute)
             user.try_read(path_absolute)
             dirs = os.listdir(path_absolute)
-            app.logger.error('Getting files: %s', str(dirs))
+            app.logger.info('Getting files: %s', unicode(dirs))
             infos = [get_file_info(os.path.join(path_absolute, p), user)
                      for p in dirs]
     except PermissionError:
@@ -386,7 +386,7 @@ def delete():
     except PermissionError:
         abort(401)
     except Exception as e:  # Catch a possible rmtree Exception
-        log.exception("Exception on delete file %s", str(e))
+        log.exception("Exception on delete file %s", unicode(e))
         abort(500)
     return 'ok'
 
