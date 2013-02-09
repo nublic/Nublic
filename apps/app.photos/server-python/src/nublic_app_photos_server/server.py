@@ -29,7 +29,7 @@ def albums_put():
     new_album = Album(name)
     db.session.add(new_album)
     db.session.commit()
-    return str(new_album.id)
+    return unicode(new_album.id)
 
 
 @app.route('/albums', methods=['DELETE'])
@@ -66,7 +66,7 @@ def one_album_put(album_id):
     ids = split_reasonable(request.form.get('photos', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
-        #app.logger.error('Trying to add %s to album %s', str(id_as_int), str(album_id))
+        app.logger.info('Trying to add %s to album %s', unicode(id_as_int), unicode(album_id))
         relation = PhotoAlbum.query.filter_by(
             albumId=album_id, photoId=id_as_int).first()
         if relation is None:

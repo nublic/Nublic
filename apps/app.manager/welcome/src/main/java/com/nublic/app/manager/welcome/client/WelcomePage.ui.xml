@@ -9,23 +9,43 @@
 	    float: right;
 	    padding-top: 5px;
 	}
+	.stylishbox {
+		background-color: #F2F6F8;
+		border: solid 1px #CCC;
+		-webkit-border-radius: 10px;
+		-moz-border-radius: 10px;
+		border-radius: 10px;
+	}
+	.somepadding {
+		padding: 10px;
+	}
+	.background {
+		background-image: url('images/background.png');
+	    background-repeat: no-repeat;
+	    background-attachment: fixed;
+	    background-position: 550px 350px; 
+	}
 	</ui:style>
 	<ui:with type="com.nublic.app.manager.welcome.client.i18n.I18NMessages" field="msg"/>
 	
-	<g:HTMLPanel>
+	<g:HTMLPanel addStyleNames="{style.background}">
 		<div class="container">
 			<div class="row">
-				<div class="span6">
+				<!--<div class="span6">
 				   <h1 style="padding-top: 10px;"><g:Label ui:field="welcomeLabel"><ui:text from="{msg.welcomeToNublic}" /></g:Label></h1>
 				   <p></p>
 				   <ui:safehtml from="{msg.thanksForTesting}" />
-				</div>
-				<div class="span6">
+				</div> -->
+				<div class="span7" style="margin-top: 20px;">
 				  <div class="page-header">
 				    <h3 class="{style.inline}"><ui:text from="{msg.yourApps}" /></h3>
 				    <span class="{style.findMore}"><ui:safehtml from="{msg.findMoreInMarket}" /></span>
 				  </div>
 				  <g:VerticalPanel width="100%" ui:field="appGrid" spacing="5" />
+				</div>
+				<div class="span3 offset1 {style.stylishbox} {style.somepadding}" style="margin-top: 20px;">
+				   <h3 style="margin-left: 10px;">Eventos del sistema</h3>
+				   <g:VerticalPanel ui:field="eventsPanel" width="100%" height="120px" verticalAlignment="middle"/>
 				</div>
 			</div>
 		</div>

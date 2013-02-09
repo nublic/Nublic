@@ -16,11 +16,12 @@ from change import parse_file_change
 import logging
 log = logging.getLogger(__name__)
 
+
 def init_watcher(app_name, processors):
     """ DEPRECATED """
     # Init process
     p = subprocess.Popen(["/usr/bin/nublic-file-watcher-client", app_name],
-        stdout=subprocess.PIPE, universal_newlines=True)
+                         stdout=subprocess.PIPE, universal_newlines=True)
     atexit.register(lambda: p.kill())
     # Start actor
     actor = FileWatcherActor.start(app_name, processors, log)
@@ -39,7 +40,8 @@ class WatcherThread(threading.Thread):
     def run(self):
         while True:
             e = json.loads(self._unpickler.load())
-            change = parse_file_change(e['ty'], e['pathname'], e['src_pathname'], e['isdir'])
+            change = parse_file_change(
+                e['ty'], e['pathname'], e['src_pathname'], e['isdir'])
             #self._unpickler.memo = {}
             self._actor.tell({'command': 'forward', 'change': change})
 
@@ -94,18 +96,19 @@ class FileWatcherActor(ThreadingActor):
         self.app_name = app_name
         self._messageId = 0
         self._processors = []
-        log.error('Processors: %s', str(processors))
+        log.info('Processors: %s', unicode(processors))
         for processor in processors:
             log.info('Adding a processor')
             self._processors.append(processor)
 
     def on_receive(self, message):
-        log.info('Message received in actor: %s', str(message))
+        log.info('Message received in actor: %s', unicode(message))
         if message['command'] == 'forward':
             self._messageId += 1
             for processor in self._processors:
                 log.info('Sending message')
-                processor.tell({'change': message['change'], 'id': self._messageId})
+                processor.tell(
+                    {'change': message['change'], 'id': self._messageId})
         #elif message['command'] == 'back':
             # Don't do anything by now
             # pass

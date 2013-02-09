@@ -6,6 +6,7 @@ import shlex
 import subprocess
 #import pexpect
 
+#import logging
 #log = logging.getLogger(__name__)
 
 ROOT_FOLDER = "/var/nublic/cache/music"
@@ -113,7 +114,7 @@ class NublicConverter(object):
 def ffmpeg_convert(in_file, out_file, logfile=None):
     c = NublicConverter()
     options = c.recommended_options(in_file)
-    print str(options)
+    print unicode(options)
     c.output_file(out_file)
     #timeout = ""
     output, exit = c.ffmpeg_video_convert()
@@ -121,9 +122,10 @@ def ffmpeg_convert(in_file, out_file, logfile=None):
     print exit
     if exit != 0:
         #log.error("Conversion unsuccessful of file %s: Options were %s",
-        #          in_file, str(options))
+        #          in_file, unicode(options))
         pass
     return True
+
 
 if __name__ == '__main__':
     argv = sys.argv

@@ -1,0 +1,34 @@
+{ "id" : "house"
+, "name" : {
+    "default"   : "Home"
+  , "localized" : {
+      "es": "Hogar"
+    }
+  }
+, "developer" : "Nublic"
+, "dark_icon" : {
+    "16" : "/var/lib/nublic/app-images/house_dark_16.png"
+  , "24" : "/var/lib/nublic/app-images/house_dark_24.png"
+  , "32" : "/var/lib/nublic/app-images/house_dark_32.png"
+  , "48" : "/var/lib/nublic/app-images/house_dark_48.png"
+  }
+, "light_icon" : {
+    "16" : "/var/lib/nublic/app-images/house_light_16.png"
+  , "24" : "/var/lib/nublic/app-images/house_light_24.png"
+  , "32" : "/var/lib/nublic/app-images/house_light_32.png"
+  , "48" : "/var/lib/nublic/app-images/house_light_48.png"
+  }
+, "color_icon" : {
+    "16" : "/var/lib/nublic/app-images/house_color_16.png"
+  , "32" : "/var/lib/nublic/app-images/house_color_32.png"
+  , "48" : "/var/lib/nublic/app-images/house_color_48.png"
+  }
+, "web" : {
+    "path"  : ""
+  , "extra" : "#"
+  }
+, "filewatcher" : {
+    "supported" : true
+  , "paths"     : [ ".*/[^/]*musi(c|ca|que|k)[^/]*$" ]
+  }
+}

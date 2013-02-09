@@ -29,11 +29,11 @@ class FakeMoveEvent:
 
 class SocketListener(threading.Thread):
     MAX_CONN = 100
-    
+
     def __init__(self, handler):
         self.handler = handler
         threading.Thread.__init__(self)
-    
+
     def run(self):
         serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         serversocket.bind(('localhost', 5438))
@@ -71,7 +71,7 @@ class EventHandler(pyinotify.ProcessEvent):
             app = self.apps_info[app_id]
             if app.supports_filewatcher():
                 self.signalers.append(DbusSignaler(self.config, app))
-    
+
     def mask(self):
         return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW #IGNORE:E1101
 
@@ -103,7 +103,7 @@ class EventHandler(pyinotify.ProcessEvent):
         try:
             self.create_or_send_modifications("attrib", event)
         except:
-            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            sys.stderr.write('An exception ocurred at ' + unicode(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
 
@@ -111,18 +111,18 @@ class EventHandler(pyinotify.ProcessEvent):
         try:
             self.create_or_send_modifications("modify", event)
         except:
-            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            sys.stderr.write('An exception ocurred at ' + unicode(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
-    
+
     def process_IN_CLOSE_WRITE(self, event):
         try:
             self.create_or_send_modifications("modify", event)
         except:
-            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            sys.stderr.write('An exception ocurred at ' + unicode(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
-    
+
     def process_IN_DELETE(self, event):
         try:
             # Delete in Solr
@@ -136,7 +136,7 @@ class EventHandler(pyinotify.ProcessEvent):
             # Notify via D-Bus
             self.raise_signal("delete", event)
         except:
-            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            sys.stderr.write('An exception ocurred at ' + unicode(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
 
@@ -178,10 +178,10 @@ class EventHandler(pyinotify.ProcessEvent):
                             for signaler in self.signalers:
                                 signaler.replace_context(file_path, new_file_path, True)
         except:
-            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            sys.stderr.write('An exception ocurred at ' + unicode(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
-                            
+
     def change_watched_path(self, source, target):
         mgr = self.manager
         watch_ = mgr.get_watch(mgr.get_wd(source))
@@ -193,17 +193,17 @@ class EventHandler(pyinotify.ProcessEvent):
             if os.path.isdir(file_name):
                 prev_file_name = os.path.join(source, inner_file)
                 self.change_watched_path(prev_file_name, file_name)
-    
+
     def raise_signal(self, ty, event):
         if not hasattr(event, 'src_pathname'):
             self._raise_signal(ty, event.pathname, '', event.dir)
         else:
             self._raise_signal(ty, event.pathname, event.src_pathname, event.dir)
-    
+
     def _raise_signal(self, ty, pathname, src_pathname, is_dir):
         for signaler in self.signalers:
             signaler.raise_event(ty, pathname, src_pathname, is_dir)
-    
+
     def send_repeated_creation(self, pathname, is_dir):
         # Check if it is in Solr
         if not solr.has_doc(pathname):

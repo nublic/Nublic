@@ -15,17 +15,20 @@ from manager import WatchManager2
 from threading import Timer
 
 from time import sleep
-import signal
+#import signal
 import sys
+
+import logging
+log = logging.getLogger(__name__)
 
 
 class RepeatedTimer(object):
     def __init__(self, interval, function, *args, **kwargs):
-        self._timer     = None
-        self.function   = function
-        self.interval   = interval
-        self.args       = args
-        self.kwargs     = kwargs
+        self._timer = None
+        self.function = function
+        self.interval = interval
+        self.args = args
+        self.kwargs = kwargs
         self.is_running = False
         self.start()
 
@@ -62,7 +65,8 @@ def start_watching(folder):
     except KeyboardInterrupt:
         rt.stop()
         peer.shutdown()
-    sys.stderr.write("Filewatcher daemon shutdown\n")
+    #sys.stderr.write("Filewatcher daemon shutdown\n")
+    log.info("Filewatcher daemon shutdown\n")
 
 
 def quick_check(notifier):
@@ -71,7 +75,9 @@ def quick_check(notifier):
         try:
             notifier.read_events()
         except pyinotify.NotifierError as e:  # Under REALLY extreme load it might give errors
-            sys.stderr.write("NotifierError exception reported. Message: %s\n" % str(e))
+            #sys.stderr.write("NotifierError exception reported. Message: %s\n" % unicode(e))
+            log.exception(
+                "NotifierError exception reported. Message: %s\n" % unicode(e))
         notifier.process_events()
     return True
 

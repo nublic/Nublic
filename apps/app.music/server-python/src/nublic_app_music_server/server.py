@@ -39,7 +39,7 @@ def collections_put():
     new_coll = Collection(name)
     db.session.add(new_coll)
     db.session.commit()
-    return str(new_coll.id)
+    return unicode(new_coll.id)
 
 
 @app.route('/collections', methods=['DELETE'])
@@ -60,8 +60,8 @@ def one_collection_put(collection_id):
     ids = split_reasonable(request.form.get('songs', None), ',')
     ids_as_ints = map(lambda s: int(s), ids)
     for id_as_int in ids_as_ints:
-        #app.logger.error('Trying to add %s to album %s',\
-        #                        str(id_as_int), str(album_id))
+        app.logger.error('Trying to add %s to collection %s',
+                         unicode(id_as_int), unicode(collection_id))
         relation = SongCollection.query.filter_by(collectionId=collection_id,
                                                   songId=id_as_int).first()
         song = Song.query.get(id_as_int)
@@ -100,7 +100,7 @@ def playlists_put():
     db.session.add(new_ps)
     db.session.commit()
     one_playlist_put(new_ps.id)
-    return str(new_ps.id)
+    return unicode(new_ps.id)
 
 
 @app.route('/playlists', methods=['DELETE'])
