@@ -1,5 +1,6 @@
 from Queue import PriorityQueue
 from pykka.actor import ThreadingActor
+from pykka import ActorDeadError
 from solr_processor import SolrProcessor
 
 import logging
@@ -9,20 +10,53 @@ log = logging.getLogger(__name__)
 class CentralQueue(ThreadingActor):
     def __init__(self, processors):
         super(CentralQueue, self).__init__()
-        # Create the wrapped SolrProcessor
-        log.info('CentralQueue starting')
-        self.solr = CentralQueueWrapper.start(SolrProcessor(), self.actor_ref)
-        log.info('SolrProcessor started')
-        self.solr_q = PriorityQueue()
-        # Create the rest of wrappers
         self.procs = dict()
         self.qs = dict()
+        self.actors = dict()
+        # Create the wrapped SolrProcessor
+        log.info('CentralQueue starting')
+        self.start_solr(start_queue=True)
+        #log.info('SolrProcessor started')
+        #self.solr_q = PriorityQueue()
+        # Create the rest of wrappers
         for proc in processors:
-            log.info('Processor %s starting', proc.get_id())
-            self.procs[proc.get_id(
-            )] = CentralQueueWrapper.start(proc, self.actor_ref)
-            self.qs[proc.get_id()] = PriorityQueue()
+            self.start_processor(proc, start_queue=True)
+            #self.procs[proc.get_id(
+            #)] = CentralQueueWrapper.start(proc, self.actor_ref)
+            #self.qs[proc.get_id()] = PriorityQueue()
         log.info('All Processors started')
+
+    def start_solr(self, start_queue=False):
+        solr = SolrProcessor()
+        log.info('SolrProcessor started')
+        self.actors[solr.get_id()] = solr
+        self.solr = CentralQueueWrapper.start(solr, self.actor_ref)
+        if start_queue:
+            self.solr_q = PriorityQueue()
+
+    def start_processor(self, processor, start_queue=False):
+        proc = processor()
+        log.info('Processor %s starting', proc.get_id())
+        self.actors[proc.get_id()] = processor
+        self.procs[proc.get_id()] = CentralQueueWrapper.start(proc, self.actor_ref)
+        if start_queue:
+            self.qs[proc.get_id()] = PriorityQueue()
+
+    def tell_reload(self, actor, element, key):
+        try:
+            actor.tell({'element': element})
+        except ActorDeadError:
+            log.exception("Processor %s was dead when trying to reach it", key)
+            self.start_processor(self.actors[key], start_queue=False)
+            self.tell_reload(actor, element, key)
+
+    def tell_solr(self, element):
+        try:
+            self.solr.tell({'element': element})
+        except ActorDeadError:
+            log.exception("Solr was dead when trying to reach it")
+            self.start_solr(start_queue=False)
+            self.tell_solr(element)
 
     def on_receive(self, msg):
         sender_id = msg['id']
