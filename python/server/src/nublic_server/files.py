@@ -59,7 +59,7 @@ def get_folders(depth, path, user):
 
 def get_file_info(path, user):
     ''' Gets some information about the given file in a dictionary. The fields
-    are 'name', 'writable', 'last_update', 'size', 'hast_thumb', 'mime' and
+    are 'name', 'writable', 'last_update', 'size', 'thumb', 'mime' and
     'view' '''
     info = {}
     info['name'] = os.path.basename(path)
@@ -67,7 +67,7 @@ def get_file_info(path, user):
     file_stat = os.stat(path)
     info['last_update'] = file_stat.st_mtime
     info['size'] = file_stat.st_size
-    info['has_thumb'] = os.path.exists(os.path.join(get_cache_folder(path),
+    info['thumb'] = os.path.exists(os.path.join(get_cache_folder(path),
                                                     "thumbnail.png"))
     if os.path.isdir(path):
         info['mime'] = 'application/x-directory'
