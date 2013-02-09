@@ -12,6 +12,7 @@ from nublic_server.files import (PermissionError, get_file_info, get_folders,
                                  get_last_dir_name)
 from nublic.files_and_users.mirror import get_all_mirrors
 from nublic.files_and_users.work_folder import get_all_work_folders
+from nublic.filewatcher import Processor, init_socket_watcher
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from werkzeug.utils import secure_filename
@@ -31,6 +32,18 @@ log.info('Starting browser app')
 DATA_ROOT = '/var/nublic/data/'  # It MUST end with '/' for security reasons
 GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails/'
 
+# Place to save events from filewatcher
+class BrowserProcessor(Processor):
+    def __init__(self):
+        Processor.__init__(self, "browser")
+
+    def process(self, change):
+        global WATCHER_EVENTS
+        WATCHER_EVENTS.append(change)
+        log.info("Event captured %s", unicode(change))
+
+WATCHER_EVENTS = []
+init_socket_watcher("browser", [BrowserProcessor.start()])
 
 @app.route('/devices')
 def devices():
@@ -465,7 +478,6 @@ def upload():
 def about():
     ''' Returns our Nublic browser version!!'''
     return 'Nublic Server v0.0.3'
-
 
 if __name__ == '__main__':
     app.run()
