@@ -1,8 +1,9 @@
-from elixir import Entity, metadata, setup_all
+from elixir import Entity
 from elixir.fields import Field
-from sqlalchemy.types import Integer, UnicodeText, String, Boolean, Unicode, Text
-from elixir.relationships import ManyToOne, OneToMany, OneToOne, ManyToMany
+from sqlalchemy.types import Integer, String
+from elixir.relationships import ManyToOne, OneToMany, ManyToMany
 from elixir.options import using_options
+
 
 class Song(Entity):
     '''
@@ -22,6 +23,7 @@ class Song(Entity):
     def __init__(self):
         Entity.__init__(self)
 
+
 class Artist(Entity):
     '''
     Represents an artist in the database
@@ -34,6 +36,7 @@ class Artist(Entity):
 
     def __init__(self):
         Entity.__init__(self)
+
 
 class Album(Entity):
     '''
@@ -48,6 +51,7 @@ class Album(Entity):
     def __init__(self):
         Entity.__init__(self)
 
+
 class Collection(Entity):
     '''
     Represents a collection in the database
@@ -55,7 +59,8 @@ class Collection(Entity):
     using_options(tablename='Collection')
     id = Field(Integer, primary_key=True)
     name = Field(String())
-    songs = ManyToMany('Song', tablename='SongCollection', local_colname='collectionId', remote_colname='songId')
-    
+    songs = ManyToMany('Song', tablename='SongCollection',
+                       local_colname='collectionId', remote_colname='songId')
+
     def __init__(self):
         Entity.__init__(self)
