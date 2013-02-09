@@ -7,8 +7,6 @@ Created on 06/09/2011
 
 from datetime import datetime
 from dbus_signals import (DbusSignaler)
-import os
-import os.path
 import pyinotify
 import socket
 import sys
@@ -65,7 +63,7 @@ class EventHandler(pyinotify.ProcessEvent):
         SocketListener(self).start()
 
     def mask(self):
-        return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW #IGNORE:E1101
+        return pyinotify.IN_CREATE | pyinotify.IN_DELETE | pyinotify.IN_CLOSE_WRITE | pyinotify.IN_MOVED_TO | pyinotify.IN_MOVED_FROM | pyinotify.IN_ISDIR | pyinotify.IN_ATTRIB | pyinotify.IN_DONT_FOLLOW  # IGNORE:E1101
 
     def process_IN_ATTRIB(self, event):
         self.raise_signal("attrib", event)
@@ -92,9 +90,11 @@ class EventHandler(pyinotify.ProcessEvent):
             if not hasattr(event, 'src_pathname'):
                 self._raise_signal(ty, event.pathname, '', event.dir)
             else:
-                self._raise_signal(ty, event.pathname, event.src_pathname, event.dir)
+                self._raise_signal(
+                    ty, event.pathname, event.src_pathname, event.dir)
         except:
-            sys.stderr.write('An exception ocurred at ' + str(datetime.now()) + ':\n')
+            sys.stderr.write(
+                'An exception ocurred at ' + unicode(datetime.now()) + ':\n')
             traceback.print_exc(file=sys.stderr)
             sys.stderr.write('\n\n')
 
