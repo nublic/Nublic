@@ -126,8 +126,8 @@ class SolrProcessor(PreviewProcessor):
             if is_dir:
                 for f in os.listdir(from_utf8(filename)):
                     inner_fname = os.path.join(from_utf8(filename), f)
-                    self.process_updated_file(self, inner_fname,
-                                              os.path.isdir(from_utf8(inner_fname)),
+                    self.process_updated_file(inner_fname,
+                                              os.path.isdir(inner_fname),
                                               should_recreate_preview)
         else:
             # Recreate Solr info
