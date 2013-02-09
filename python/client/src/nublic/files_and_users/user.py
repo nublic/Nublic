@@ -25,7 +25,8 @@ def _call_user_method(m, use_dbus=False):
 
 
 def get_all_users(use_dbus=False):
-    notSplitted = _call_user_method_return(lambda i: i.get_all_users(), use_dbus)
+    notSplitted = _call_user_method_return(
+        lambda i: i.get_all_users(), use_dbus)
     if notSplitted == '':
         return []
     # Take elements apart
@@ -58,11 +59,8 @@ class User:
         self.use_dbus = use_dbus
 
     def as_map(self):
-        return { 'username' : self.get_username()
-               , 'exists'   : self.exists()
-               , 'uid'      : self.get_id()
-               , 'shown'    : self.get_shown_name()
-               }
+        return {'username': self.get_username(), 'exists': self.exists(), 'uid': self.get_id(), 'shown': self.get_shown_name()
+                }
 
     def exists(self):
         return _call_user_method_return(lambda i: i.user_exists(self._username), self.use_dbus)
@@ -77,18 +75,21 @@ class User:
         return self._username
 
     def get_id(self):
-        if self._uid == None:
-            self._uid = _call_user_method_return(lambda i: i.get_user_uid(self._username), self.use_dbus)
+        if self._uid is None:
+            self._uid = _call_user_method_return(
+                lambda i: i.get_user_uid(self._username), self.use_dbus)
         return self._uid
 
     def get_shown_name(self):
         return _call_user_method_return(lambda i: i.get_user_shown_name(self._username), self.use_dbus)
 
     def change_shown_name(self, shown_name):
-        _call_user_method(lambda i: i.change_user_shown_name(self._username, shown_name), self.use_dbus)
+        _call_user_method(lambda i: i.change_user_shown_name(
+            self._username, shown_name), self.use_dbus)
 
     def change_password(self, old, new):
-        _call_user_method(lambda i: i.change_user_password(self._username, old, new), self.use_dbus)
+        _call_user_method(lambda i: i.change_user_password(
+            self._username, old, new), self.use_dbus)
 
     def is_owner(self, path):
         owner_uid = os.stat(path).st_uid
@@ -96,13 +97,16 @@ class User:
 
     def assign_file(self, path, touch_after=True):
         if not path.startswith(DATA_ROOT + '/'):
-            raise ValueError('You are not allowed to change that path\'s owner')
+            raise ValueError(
+                'You are not allowed to change that path\'s owner')
         path_to_send = path.replace(DATA_ROOT, '', 1)
-        _call_user_method(lambda i: i.assign_file(self._username, path_to_send, touch_after), self.use_dbus)
+        _call_user_method(lambda i: i.assign_file(
+            self._username, path_to_send, touch_after), self.use_dbus)
 
     def _check_permissions(self, path, allowed_paths, group_bits, others_bits):
         # Check if it is in a allowed path
-        filtered = filter(lambda p: path.startswith(p + '/') or path == p, allowed_paths)
+        filtered = filter(
+            lambda p: path.startswith(p + '/') or path == p, allowed_paths)
         if not filtered:
             return False
         if not os.path.exists(path):
@@ -139,7 +143,7 @@ class User:
             raise PermissionError(self.get_username(), path, "Read")
         if os.path.isdir(path):
             [self.try_write_recursive(os.path.join(path, s))
-                    for s in os.listdir(path)]
+             for s in os.listdir(path)]
         else:
             self.try_write(path)
 
@@ -149,7 +153,7 @@ class User:
         if not os.path.exists(path):
             raise PermissionError(self.get_username(), path, "Read")
         if os.path.isdir(path):
-            [self.try_read_recursive(s) for s in os.listdir(path)]
+            [self.try_read_recursive(s, uid) for s in os.listdir(path)]
         else:
             self.try_read(path)
 
@@ -166,4 +170,5 @@ class User:
         return filter(lambda m: self.can_read(m.get_path()), work_folder.get_all_work_folders(self.use_dbus))
 
     def add_public_key(self, key):
-        _call_user_method(lambda i: i.add_public_key(self._username, key), self.use_dbus)
+        _call_user_method(
+            lambda i: i.add_public_key(self._username, key), self.use_dbus)
