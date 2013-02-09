@@ -1,7 +1,7 @@
 
 import dbus
 import dbus.mainloop.glib
-from multiprocessing import Process, Queue
+
 
 def call_expecting_return(bus_name, object_path, dbus_iface, m):
     #q = Queue()
@@ -10,6 +10,7 @@ def call_expecting_return(bus_name, object_path, dbus_iface, m):
     #return q.get()
     return _internal_call_expecting_return(None, bus_name, object_path, dbus_iface, m)
 
+
 def _internal_call_expecting_return(queue, bus_name, object_path, dbus_iface, m):
     bus = dbus.SystemBus()
     o = bus.get_object(bus_name, object_path)
@@ -17,10 +18,12 @@ def _internal_call_expecting_return(queue, bus_name, object_path, dbus_iface, m)
     #queue.put(m(iface))
     return m(iface)
 
+
 def call_without_return(bus_name, object_path, dbus_iface, m):
     #p = Process(target=_internal_call_not_expecting_return, args=(bus_name,object_path,dbus_iface,m,))
     #p.start()
     _internal_call_not_expecting_return(bus_name, object_path, dbus_iface, m)
+
 
 def _internal_call_not_expecting_return(bus_name, object_path, dbus_iface, m):
     bus = dbus.SystemBus()

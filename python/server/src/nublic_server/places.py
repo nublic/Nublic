@@ -11,6 +11,13 @@ def get_cache_folder(path):
     return os.path.join(BROWSER_ROOT_FOLDER, cache_folder)
 
 
+def ensure_cache_folder(path):
+    cache_folder = get_cache_folder(path)
+    if not os.exists(cache_folder):
+        os.mkdir(cache_folder)
+    return cache_folder
+
+
 def get_cache_view(path, extension):
     ''' Returns the absolute path to the extension given'''
     cache_folder = get_cache_folder(path)
