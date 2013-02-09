@@ -9,8 +9,12 @@ from file_info import FileInfo
 from nublic.filewatcher.change import FileChange
 
 
-def to_utf8(string):
-    return unicode(string, 'utf-8')
+def to_utf8(text):
+    try:
+        text = unicode(text, 'utf-8')
+    except TypeError:
+        return text
+    return text
 
 
 def from_utf8(string):
@@ -67,7 +71,7 @@ class SolrProcessor(PreviewProcessor):
 
     def has_doc(self, pathname):
         results = self.get_solr_interface(
-        ).query(path=to_utf8(pathname)).field_limit("path").execute()
+        ).query(path=pathname).field_limit("path").execute()
         return len(results) > 0
 
     def retrieve_doc(self, pathname):
@@ -80,7 +84,7 @@ class SolrProcessor(PreviewProcessor):
 
     def retrieve_docs_in_dir(self, path):
         results = self.get_solr_interface(
-        ).query(path=to_utf8(path + '/*')).execute()
+        ).query(path=(path + '/*')).execute()
         for result in results:
             if from_utf8(result['path']).startswith(path + '/'):
                 # So the folder name does not appear in the middle
@@ -123,7 +127,7 @@ class SolrProcessor(PreviewProcessor):
                 for f in os.listdir(filename):
                     inner_fname = os.path.join(filename, f)
                     self.process_updated_file(self, inner_fname,
-                                              os.path.isdir(inner_fname),
+                                              os.path.isdir(from_utf8(inner_fname)),
                                               should_recreate_preview)
         else:
             # Recreate Solr info

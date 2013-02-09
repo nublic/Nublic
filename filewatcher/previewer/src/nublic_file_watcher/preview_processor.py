@@ -2,10 +2,14 @@ import datetime
 from file_info import FileInfo
 from nublic.filewatcher.change import FileChange
 
+
 class Element(object):
+    '''
+    self.path is a byte utf8 object
+    '''
     def __init__(self, change):
         self.change = change
-        self.path = change.filename
+        self.path = change.filename.encode('utf8')
         self.info = FileInfo(self.path)
         self.time = datetime.datetime.now()
 
@@ -34,8 +38,8 @@ class Element(object):
             return self.info.size() <= other.info.size()
 
     def is_short_kind(self):
-        return (self.change.kind == FileChange.DELETED or \
-                self.change.kind == FileChange.ATTRIBS_CHANGED or \
+        return (self.change.kind == FileChange.DELETED or
+                self.change.kind == FileChange.ATTRIBS_CHANGED or
                 self.change.kind == FileChange.MOVED)
 
 

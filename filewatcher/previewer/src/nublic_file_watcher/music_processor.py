@@ -4,7 +4,7 @@ from unidecode import unidecode
 
 from nublic.filewatcher import FileChange
 from nublic.files_and_users import get_file_owner, is_file_shared
-from nublic_server.places import get_mime_type
+from nublic_server.places import get_mime_type, ensure_cache_folder
 from preview_processor import PreviewProcessor
 from nublic_app_music_server.server import app
 from nublic_app_music_server.model import (db, Album, Artist,
@@ -105,6 +105,10 @@ class MusicProcessor(PreviewProcessor):
         return filename.endswith('~') or filename.startswith('.')
 
     def process_updated_file(self, filename):
+        ''' Process an update of a file.
+        The file might exist before.
+        filename is an Unicode variable.
+        '''
         log.info('Updated file: %s', filename)
         mime = get_mime_type(filename)
         _, ext = os.path.splitext(filename)
@@ -124,6 +128,15 @@ class MusicProcessor(PreviewProcessor):
                     self.add_to_database(filename, song_info)
                 else:
                     self.replace_in_database(filename, s, song_info)
+        # @TODO Do conversion if needed
+        log.warning("No compatibility check for audio file %s", filename)
+        cache_folder = ensure_cache_folder(filename.encode('utf8'))
+        mp3_cache = os.path.join(cache_folder, 'audio.mp3')
+        if os.path.exists(mp3_cache):
+            log.warning("Cache existing for audio file %s, skipping", filename)
+        else:
+            log.info("Creating cache for audio file %s", filename)
+            os.symlink(filename.encode('utf8'), mp3_cache)
 
     def process_attribs_change(self, filename):
         song = Song.query.filter_by(file=filename).first()
@@ -158,6 +171,15 @@ class MusicProcessor(PreviewProcessor):
             self.delete_album_if_no_assoc(song.albumId)
             db.session.delete(song)
             db.session.commit()
+        # @TODO HOW TO REMOVE THE RIGHT CACHE?
+        log.warning("No cache removed for audio file %s", filename)
+        mp3_cache = os.path.join(ensure_cache_folder(filename.encode('utf8')), 'audio.mp3')
+        if os.path.exists(mp3_cache):
+            log.info("Cache removed for audio file %s", filename.encode('utf8'))
+            os.remove(mp3_cache)
+        else:
+            log.warning("Cache for audio file %s does not exist. Not removed",
+                        filename.encode('utf8'))
 
     def process_moved_folder(self, from_, to):
         for e in os.listdir(to):
@@ -252,6 +274,9 @@ class MusicProcessor(PreviewProcessor):
             db.session.commit()
 
     def add_to_database(self, filename, song_info):
+        ''' Add the song to the database if required.
+        filename is an Unicode variable
+        '''
         # Just in case anything is None
         if song_info.title is None:
             r_title = ''
@@ -277,7 +302,7 @@ class MusicProcessor(PreviewProcessor):
         # Ensure album
         album = self.ensure_or_create_album(
             filename, r_artist_name, r_album_name)
-        ensure_album_image(album.id, filename, r_album_name, r_artist_name)
+        ensure_album_image(album.id, filename.encode('utf8'), r_album_name, r_artist_name)
         # Create song in database
         song = Song(filename, r_title, artist.id, album.id, r_length,
                     song_info.year, song_info.track, song_info.disc_no)

@@ -37,31 +37,35 @@ class PhotoProcessor(PreviewProcessor):
         log.info('Photo processor file: %i %s',
                  change.kind, change.filename)
         if change.kind == FileChange.CREATED and not change.is_dir:
-            self.process_updated_file(change.filename, change.context, info)
+            self.process_updated_file(change.filename, info)
         elif change.kind == FileChange.MODIFIED and not change.is_dir:
-            self.process_updated_file(change.filename, change.context, info)
+            self.process_updated_file(change.filename, info)
         elif change.kind == FileChange.DELETED and not change.is_dir:
             self.process_deleted_file(change.filename)
         elif change.kind == FileChange.ATTRIBS_CHANGED and not change.is_dir:
-            self.process_attribs_change(change.filename, change.context)
+            self.process_attribs_change(change.filename)
         elif change.kind == FileChange.MOVED:
             if change.is_dir:
                 self.process_moved_folder(
-                    change.filename_from, change.filename_to, change.context)
+                    change.filename_from, change.filename_to)
             else:
                 self.process_moved_file(
-                    change.filename_from, change.filename_to, change.context)
+                    change.filename_from, change.filename_to)
         log.info('Finish processing file: %i %s', change.kind, change.filename)
 
     def is_hidden(self, path):
         filename = os.path.basename(path)
         return filename.endswith('~') or filename.startswith('.')
 
-    def process_updated_file(self, filename, context, info):
-        log.info('Updated file: %s', filename)
-        if not self.is_hidden(filename) and info.mime_type().startswith('image/'):
+    def process_updated_file(self, filename, info):
+        ''' Update a file. It creates the file if required.
+        filename is an Unicode object
+        '''
+        filename_byte = filename.encode('utf8')
+        log.info('Updated file: %s', filename_byte)
+        if not self.is_hidden(filename_byte) and info.mime_type().startswith('image/'):
             # Get modification time
-            f = open(filename, 'rb')
+            f = open(filename_byte, 'rb')
             tags = EXIF.process_file(f, stop_tag='DateTimeOriginal')
             if 'EXIF DateTimeOriginal' in tags:
                 date_as_string = tags['EXIF DateTimeOriginal'].values
@@ -69,13 +73,13 @@ class PhotoProcessor(PreviewProcessor):
                     date_as_string, '%Y:%m:%d %H:%M:%S')
             else:
                 date = datetime.datetime.fromtimestamp(
-                    os.path.getmtime(filename))
+                    os.path.getmtime(filename_byte))
             f.close()
             # Update or write new
             photo = Photo.query.filter_by(file=filename).first()
             now = datetime.datetime.now()
-            owner = get_file_owner(filename).get_username()
-            shared = is_file_shared(filename)
+            owner = get_file_owner(filename_byte).get_username()
+            shared = is_file_shared(filename_byte)
             if photo is not None:
                 photo.date = date
                 photo.lastModified = now
@@ -83,35 +87,39 @@ class PhotoProcessor(PreviewProcessor):
                 photo.shared = shared
                 db.session.commit()
             else:
-                photo = Photo(filename, os.path.basename(filename), date,
+                photo = Photo(filename, os.path.basename(filename_byte), date,
                               datetime.datetime.now(), owner, shared)
                 db.session.add(photo)
                 db.session.commit()
                 # Add to album
-                context_path = '/var/nublic/data/' + context[:-1]
-                (parent, _basename) = os.path.split(filename)
+                #context_path = '/var/nublic/data/' + context[:-1]
+                (parent, _basename) = os.path.split(filename_byte)
                 (p_parent, p_basename) = os.path.split(parent)
                 (_p_p_parent, p_p_basename) = os.path.split(p_parent)
-                if context_path == parent:
-                    album = None
-                elif context_path == p_parent:
-                    album = p_basename
-                else:
-                    album = p_p_basename + '/' + p_basename
+                #if context_path == parent:
+                #    album = None
+                #elif context_path == p_parent:
+                #    album = p_basename
+                #else:
+                #    album = p_p_basename + '/' + p_basename
+                # @TODO What to do with album name
+                log.warning("Album name gessed without care")
+                album = p_basename
                 if album is not None:
                     ab = get_or_create_album(album)
                     relation = PhotoAlbum(ab.id, photo.id)
                     db.session.add(relation)
                     db.session.commit()
 
-    def process_attribs_change(self, filename, context):
+    def process_attribs_change(self, filename):
+        filename_byte = filename.encode('utf8')
         photo = Photo.query.filter_by(file=filename).first()
         if photo is not None:
-            photo.owner = get_file_owner(filename).get_username()
-            photo.shared = is_file_shared(filename)
+            photo.owner = get_file_owner(filename_byte).get_username()
+            photo.shared = is_file_shared(filename_byte)
             db.session.commit()
         else:
-            self.process_updated_file(filename, context)
+            self.process_updated_file(filename)
 
     def process_deleted_file(self, filename):
         photo = Photo.query.filter_by(file=filename).first()
