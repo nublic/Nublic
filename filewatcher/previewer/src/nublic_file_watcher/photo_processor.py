@@ -43,7 +43,7 @@ class PhotoProcessor(PreviewProcessor):
         elif change.kind == FileChange.DELETED and not change.is_dir:
             self.process_deleted_file(change.filename)
         elif change.kind == FileChange.ATTRIBS_CHANGED and not change.is_dir:
-            self.process_attribs_change(change.filename)
+            self.process_attribs_change(change.filename, info)
         elif change.kind == FileChange.MOVED:
             if change.is_dir:
                 self.process_moved_folder(
@@ -111,7 +111,7 @@ class PhotoProcessor(PreviewProcessor):
                     db.session.add(relation)
                     db.session.commit()
 
-    def process_attribs_change(self, filename):
+    def process_attribs_change(self, filename, info):
         filename_byte = filename.encode('utf8')
         photo = Photo.query.filter_by(file=filename).first()
         if photo is not None:
@@ -119,7 +119,7 @@ class PhotoProcessor(PreviewProcessor):
             photo.shared = is_file_shared(filename_byte)
             db.session.commit()
         else:
-            self.process_updated_file(filename)
+            self.process_updated_file(filename, info)
 
     def process_deleted_file(self, filename):
         photo = Photo.query.filter_by(file=filename).first()
