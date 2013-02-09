@@ -96,7 +96,7 @@ public class FileWidget extends Composite implements HasMouseDownHandlers {
 			viewType = Constants.FOLDER_TYPE;
 		}
 		// Check whether the file has a view or not (to files with views and to folders we'll show links)
-		if (viewType != null) {
+		if (viewType != null && !viewType.equals("null")) {
 			hasPreview = true;
 		}
 		
