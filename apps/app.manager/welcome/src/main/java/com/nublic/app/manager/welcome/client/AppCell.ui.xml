@@ -1,7 +1,6 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:n="urn:import:com.nublic.app.manager.welcome.client">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<ui:style>
 	   .appName {
 	       font-size: 120%;
@@ -12,12 +11,11 @@
 	       min-width: 32px;
 	   }
 	</ui:style>
-	<g:VerticalPanel>
+	<g:VerticalPanel ui:field="notificationPanel">
 		<g:HorizontalPanel height="32" verticalAlignment="ALIGN_MIDDLE">
 	        <!-- <g:Image height="32" width="32" ui:field="star" url="images/fav-not-selected.png" addStyleNames="{style.margined}"/> -->
 			<g:Image width="32" height="32" ui:field="image" addStyleNames="{style.margined}"/>
 			<g:Anchor text="App" ui:field="name" styleName="{style.appName}" addStyleNames="{style.margined}" />
 		</g:HorizontalPanel>
-		<n:NotificationLine/>
 	</g:VerticalPanel>
-</ui:UiBinder> 
+</ui:UiBinder>

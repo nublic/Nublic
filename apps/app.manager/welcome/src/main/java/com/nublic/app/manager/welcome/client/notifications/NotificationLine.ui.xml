@@ -5,10 +5,17 @@
 		.marginleft{
 			margin-left: 40px;
 		}
+		.lineheight {
+			line-height: 15px;
+		}
 	</ui:style>
 		
 	<g:HorizontalPanel verticalAlignment="middle" addStyleNames="{style.marginleft}">
-		<g:Image ui:field="icon"/>
-		<g:Label ui:field="text"/>
+		<g:cell width="25px" height="30px">
+			<g:Image ui:field="icon"/>
+		</g:cell>
+		<g:DeckPanel ui:field="notiPanel">
+			<g:Label ui:field="text" addStyleNames="{style.lineheight}"/>
+		</g:DeckPanel>
 	</g:HorizontalPanel>
 </ui:UiBinder>

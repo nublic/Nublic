@@ -1,12 +1,18 @@
 package com.nublic.app.manager.welcome.client;
 
+import java.util.ArrayList;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+import com.nublic.app.manager.welcome.client.notifications.Notification;
+import com.nublic.app.manager.welcome.client.notifications.NotificationHackManager;
+import com.nublic.app.manager.welcome.client.notifications.NotificationLine;
 
 public class AppCell extends Composite {
 
@@ -17,6 +23,8 @@ public class AppCell extends Composite {
 	@SuppressWarnings("unused")
 	private String appId;
 	// private boolean favourite;
+	
+	@UiField VerticalPanel notificationPanel;
 	
 	// private static String FAV_SELECTED = "images/fav-selected.png";
 	// private static String FAV_NOT_SELECTED = "images/fav-not-selected.png";
@@ -32,6 +40,14 @@ public class AppCell extends Composite {
 		this.name.setHref(url);
 		// this.favourite = favourite;
 		// this.setFavouriteImage();
+		fillNotifications(id);
+	}
+
+	private void fillNotifications(String id) {
+		ArrayList<Notification> list = NotificationHackManager.getNotificationsOf(id);
+		for (Notification n : list) {
+			notificationPanel.add(new NotificationLine(n));
+		}
 	}
 	
 	/*public void setFavouriteImage() {

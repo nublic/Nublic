@@ -1,0 +1,13 @@
+nublic-app-house (2013-02-08-16-32) UNRELEASED; urgency=low
+
+  * Building on vie feb 8 16:17:16 CET 2013
+  * Building on vie feb 8 16:29:42 CET 2013
+  * Building on vie feb 8 16:32:29 CET 2013
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Fri, 08 Feb 2013 16:32:29 +0100
+
+nublic-app-house (0.0.1-1) unstable; urgency=low
+
+  * Initial release
+
+ -- Nublic Packaging Team <packaging@nublic.com>  Tue, 15 Nov 2011 16:53:48 +0200
