@@ -1,4 +1,6 @@
 #!/bin/bash -e
+mv /etc/samba/smb.conf /etc/samba/smb.conf.backup || true
+ln -s /var/lib/nublic/smb.conf /etc/samba/smb.conf
 #ufw enable netbios-ns
 ufw allow netbios-ns
 #ufw enable netbios-dgm

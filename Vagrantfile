@@ -105,7 +105,7 @@ Vagrant::Config.run do |config|
   # Add Nublic repository pointing local build
   config.vm.provision :shell, :inline => "echo 'deb file:///opt/repo/ precise nublic' | sudo tee /etc/apt/sources.list.d/nublic.list > /dev/null"
   # We need to install and remove samba configuration for a truly non-interactive instalation
-  config.vm.provision :shell, :inline => "sudo apt-get update && sudo apt-get install --assume-yes samba && sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.default"
+  # config.vm.provision :shell, :inline => "sudo apt-get update && sudo apt-get install --assume-yes samba && sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.default"
   # Install full nublic
   config.vm.provision :shell, :inline => "sudo apt-get install --assume-yes --force-yes nublic-notification libjetty8-extra-java nublic-solr-jetty8-config libtomcat7-java nublic-file-watcher nublic-app-browser nublic"
 

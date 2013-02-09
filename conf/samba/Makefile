@@ -2,5 +2,5 @@ all:
 	echo "Make nothing"
 
 install:
-	mkdir -p ${DESTDIR}/etc/samba
-	cp *.conf ${DESTDIR}/etc/samba
+	mkdir -p ${DESTDIR}/var/lib/nublic
+	cp *.conf ${DESTDIR}/var/lib/nublic
