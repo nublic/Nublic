@@ -83,7 +83,7 @@ def files_path(path):
                          "view": $view }
             -> we know it's a directory if mime == "application/x-directory"
             -> view indicates which preview you have for the item:
-                -> now pdf, png, mp3, flv
+                -> now pdf, png, mp3, flv, txt
                 -> if "null", there is no preview available
                 -> Size in bytes
     '''

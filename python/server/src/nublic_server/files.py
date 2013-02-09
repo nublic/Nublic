@@ -77,7 +77,7 @@ def get_file_info(path, user):
     if views:
         info['view'] = views[0]  # @TODO Choose the best representative
     else:
-        info['view'] = ""  # @TODO Leave it empty (better?)
+        info['view'] = "null"  # @TODO Leave it empty (better?)
     return info
 
 
