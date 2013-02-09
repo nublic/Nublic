@@ -1,4 +1,4 @@
-import os
+import os.path
 import hashlib
 import magic
 from fnmatch import fnmatch
@@ -13,7 +13,7 @@ def get_cache_folder(path):
 
 def ensure_cache_folder(path):
     cache_folder = get_cache_folder(path)
-    if not os.exists(cache_folder):
+    if not os.path.exists(cache_folder):
         os.mkdir(cache_folder)
     return cache_folder
 
