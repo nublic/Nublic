@@ -33,14 +33,17 @@ class FileChange:
         self.is_dir = is_dir
 
     def __str__(self):
+        return self.__unicode__().encode('utf8')
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __unicode__(self):
         return ('FileChange' + ' kind :' + unicode(self.kind) +
                 ' file : ' + unicode(self.filename) +
                 ' file_from : ' + unicode(self.filename_from) +
                 ' filename_to : ' + unicode(self.filename_to) +
                 ' is_dir : ' + unicode(self.is_dir))
-
-    def __repr__(self):
-        return self.__str__()
 
 
 def parse_file_change(kind, pathname, src_pathname, is_dir):

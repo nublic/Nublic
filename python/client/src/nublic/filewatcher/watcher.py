@@ -102,7 +102,7 @@ class FileWatcherActor(ThreadingActor):
             self._processors.append(processor)
 
     def on_receive(self, message):
-        log.info('Message received in actor: %s', unicode(message))
+        log.info('Message received in actor: %s', repr(message))
         if message['command'] == 'forward':
             self._messageId += 1
             for processor in self._processors:
