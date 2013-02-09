@@ -28,7 +28,7 @@ log = logging.getLogger("nublic-file-watcher-daemon")
 class MainProcessor(Processor):
     def __init__(self):
         Processor.__init__(self, "previewer")
-        self.central_queue = CentralQueue.start([MusicProcessor(), PhotoProcessor()])
+        self.central_queue = CentralQueue.start([MusicProcessor, PhotoProcessor])
         #self.central_queue = CentralQueue.start([])
 
     def process(self, change):
