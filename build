@@ -516,6 +516,8 @@ do_build() {
     # Deploy
     if in_list $thing "deploy"
     then
+        echo " "
+        echo "DEPLOYING TO VAGRANT"
         vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
     fi
 
