@@ -1,0 +1,271 @@
+#!/bin/bash
+
+# For .deb packages
+export DEBFULLNAME='Nublic Packaging Team'
+export DEBEMAIL='packaging@nublic.com'
+export DEBKEY=4EEA5986
+export DEBREVISION=`date +%F-%H-%M`
+export INITIAL_TIME=`date +%s`
+
+# Used directories
+export INITIAL_DIR=`pwd`
+export TARGET_DIR="${INITIAL_DIR}/target"
+export REPO_DIR="${TARGET_DIR}/repo"
+export MAVEN_REPO_DIR="${TARGET_DIR}/temp/maven"
+export MAVEN_CONFIG_FILE="${INITIAL_DIR}/conf/maven/settings.xml"
+export MAVEN="mvn --settings \"${MAVEN_CONFIG_FILE}\" -Dmaven.test.skip"
+export MAVEN_SYS="mvn -Dmaven.test.skip"
+export DEBUILD="debuild -d -eMAVEN -eMAVEN_REPO_DIR -eMAVEN_OPTS"
+export MAVEN_OPTS="-XX:PermSize=1024m -XX:MaxPermSize=1024m"
+
+# Config options
+export SHOULD_CLEAN_MAVEN=1 # 1 for running 'maven clean'
+
+install_in_maven_repo() {
+    ${MAVEN} install:install-file -Dfile=$1 -DgroupId=$2 \
+        -DartifactId=$3 -Dversion=$4 -Dpackaging=jar
+}
+
+initialize() {
+    # Make sure you have libdbus-java maven2 and reprepro installed
+    # You need to install maven3!! It's not in the repository and needs to be manually installed
+    # sudo apt-get install libdbus-java maven2 reprepro dpkg-sig libterm-readkey-perl cdbs python-all python-setuptools libtag1-dev ffmpeg libboost1.42-dev zlib1g-dev scala dpkg-sig reprepro devscripts openjdk-7-jdk junit junit4 python-sphinx python-support
+    # sudo update-java-alternatives -s java-1.7.0-\*
+    rm -rf "${REPO_DIR}"
+    # Create build folders, if non existant
+    mkdir -p "${TARGET_DIR}"
+    mkdir -p "${REPO_DIR}"
+    mkdir -p "${MAVEN_REPO_DIR}"
+    # Delete previous builds
+    rm -rf "${TARGET_DIR}"/*.{deb,build,changes}
+    # Install libraries in maven repo
+    install_in_maven_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
+    install_in_maven_repo "${INITIAL_DIR}/3rd-party-libs/gwtmobile/gwtmobile-1.1.jar" gwtmobile gwtmobile 1.1
+    # Install key into user keychain
+    gpg --import conf/keys/packaging.key
+    gpg --import conf/keys/packaging.private.key
+}
+
+install_in_system_repo() {
+    ${MAVEN_SYS} install:install-file -Dfile=$1 -DgroupId=$2 \
+        -DartifactId=$3 -Dversion=$4 -Dpackaging=jar
+}
+
+package_and_sysinstall_dev_mode() {
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
+    cd "$1"
+    ${MAVEN_SYS} -Pdev-mode clean
+    ${MAVEN_SYS} -Pdev-mode install
+    cd "${INITIAL_DIR}"
+}
+
+initialize_system() {
+    install_in_system_repo /usr/share/java/dbus.jar org.freedesktop dbus 2.8.1
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/jEN/json_simple-1.1.jar" jEN json-simple 1.1
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/jEN/jEN.jar" jEN jEN 4.x.o
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwt-dnd/gwt-dnd-3.1.2-2.jar" com.allen_sauer gwt-dnd 3.1.2-2
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwt-slider/gwt-slider-bar-1.0.jar" gwt-incubator gwt-slider-bar 1.0
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwt-comet/gwt-comet-1.2.3.jar" gwt-comet gwt-comet 1.2.3
+    install_in_system_repo "${INITIAL_DIR}/3rd-party-libs/gwtmobile/gwtmobile-1.1.jar" gwtmobile gwtmobile 1.1
+    package_and_sysinstall_dev_mode player
+}
+
+copy_and_touch() {
+    echo
+    echo "COPYING DEBS FROM " $1
+    sleep 1
+    cd "$1"
+    for f in *.deb
+    do
+        cp $f "${TARGET_DIR}"
+        touch "${TARGET_DIR}/$f"
+    done
+    cd "${INITIAL_DIR}"
+}
+
+package_and_install() {
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
+    cd "$1"
+    ${MAVEN} clean
+    ${MAVEN} install
+    cd "${INITIAL_DIR}"
+}
+
+package_and_install_dev_mode() {
+    echo
+    echo "PACKAGING AND INSTALLING IN MAVEN " $1
+    cd "$1"
+    ${MAVEN} -Pdev-mode clean
+    ${MAVEN} -Pdev-mode install
+    cd "${INITIAL_DIR}"
+}
+
+build_deb_package() {  # $1 = directory, $2 = "gather_dependencies" -> try to gather dependencies
+    echo
+    echo "BUILDING .DEB FOR " $1
+    cd "$1"
+    # Try to run Maven clean
+    if [ ${SHOULD_CLEAN_MAVEN} -eq 1 ]
+    then
+        ${MAVEN} clean
+    fi
+    # Add changelog entry
+    dch -p -v ${DEBREVISION} Building on `date`
+    ${DEBUILD} -i -us -uc -b
+    exit=$?
+    git checkout debian/changelog
+    if [ $exit -ne 0 ]
+    then
+        dch -p -v ${DEBREVISION} Building on `date`
+        ${DEBUILD} -i -us -uc -b
+        exit=$?
+        git checkout debian/changelog
+        if [ $exit -ne 0 ]
+        then
+            echo "Error building package " $1
+            exit 1
+        fi
+    fi
+    ${DEBUILD} clean
+    cd ..
+    mv *.deb *.build *.changes "${TARGET_DIR}"
+    cd "${INITIAL_DIR}"
+}
+
+build_submodule_lib() {
+    echo
+    echo "BUILDING EXTERNAL LIBRARY " $1
+    cd 3rd-party-libs
+    rm -rf "$1"/debian
+    mkdir "$1"/debian
+    cp -R "$1-debian"/* "$1"/debian
+    cd "$1"
+    ${DEBUILD} -i -us -uc -b
+    exit=$?
+    if [ $exit != 0 ]
+    then
+        echo "Error building submodule " $1
+        exit 1
+    fi
+    ${DEBUILD} clean
+    cd ..
+    mv *.deb *.build *.changes *.dsc *.tar.gz "${TARGET_DIR}"
+    cd "${INITIAL_DIR}"
+}
+
+create_repo() {
+    echo
+    echo "CREATING REPOSITORY"
+    # Create repo structure
+    mkdir -p "${REPO_DIR}/conf"
+    mkdir -p "${REPO_DIR}/incoming"
+    cp conf/repo/conf/distributions "${REPO_DIR}/conf"
+    cd "${TARGET_DIR}"
+    # Sign packages and add packages to repo
+    for pkg in *.deb
+    do
+        DEB_DATE=`date -r ${pkg} +%s`
+        if [ ${DEB_DATE} -gt ${INITIAL_TIME} ]
+        then
+            dpkg-sig -k ${DEBKEY} --verbose --sign builder $pkg
+            reprepro --ignore=wrongdistribution -Vb repo includedeb precise $pkg
+        fi
+    done
+    cd "${INITIAL_DIR}"
+}
+
+git submodule update --init --merge
+initialize
+# Libraries
+cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
+build_submodule_lib echoprint-codegen
+build_submodule_lib sunburnt
+build_submodule_lib pyechonest
+copy_and_touch 3rd-party-libs/aria2
+copy_and_touch 3rd-party-libs/python-fstab
+copy_and_touch 3rd-party-libs/tomcat7
+copy_and_touch 3rd-party-libs/lucene-solr
+build_deb_package 3rd-party-libs/pykka
+# build_deb_package 3rd-party-libs/guava
+# bst-player fork
+package_and_install_dev_mode player
+# Base modules
+build_deb_package resource/main/src
+build_deb_package resource/java
+package_and_install resource/java
+build_deb_package notification/main/src
+build_deb_package notification/java
+package_and_install notification/java
+build_deb_package files_and_users/main/src
+build_deb_package files_and_users/client/src
+build_deb_package files_and_users/java
+package_and_install files_and_users/java
+build_deb_package filewatcher/main/src
+build_deb_package filewatcher/scala
+install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
+# Utilities
+build_deb_package python/client/src
+build_deb_package python/server/src
+package_and_install apps/util/gwt
+package_and_install apps/util/ws-json
+# Manager App
+build_deb_package apps/app.manager/server-python/src
+build_deb_package apps/app.manager/web
+build_deb_package apps/app.manager/welcome
+build_deb_package apps/app.manager/settings
+build_deb_package apps/app.manager
+# Browser App
+build_deb_package apps/app.browser/server
+build_deb_package apps/app.browser/web
+build_deb_package apps/app.browser
+# Music App
+build_deb_package apps/app.music/server-python/src
+build_deb_package apps/app.music/fs/src
+build_deb_package apps/app.music/web
+build_deb_package apps/app.music
+# Photos App
+build_deb_package apps/app.photos/server-python/src
+package_and_install apps/app.photos/common
+build_deb_package apps/app.photos/web
+build_deb_package apps/app.photos/mobile
+build_deb_package apps/app.photos
+# Downloads App
+build_deb_package apps/app.downloads/server
+build_deb_package apps/app.downloads/web
+build_deb_package apps/app.downloads
+# Market App
+build_deb_package apps/app.market/daemon/src
+build_deb_package apps/app.market/server-python/src
+build_deb_package apps/app.market/web
+build_deb_package apps/app.market
+# Init App
+build_deb_package apps/app.init/server-python/src
+build_deb_package apps/app.init/web
+build_deb_package apps/app.init
+# House App
+build_deb_package apps/app.house nublic-app-house
+# Extra configuration packages
+build_deb_package conf/apache
+build_deb_package conf/samba
+build_deb_package conf/solr
+build_deb_package conf/tomcat6
+build_deb_package conf/tomcat7
+build_deb_package conf/minidlna
+build_deb_package conf/upstart
+build_deb_package conf/lshell
+build_deb_package conf/openssh
+build_deb_package conf/dyndnschecker
+build_deb_package conf/unattended-upgrades
+build_deb_package conf/nublic
+create_repo
+# create_repo_cd
+
+exit 0
+
