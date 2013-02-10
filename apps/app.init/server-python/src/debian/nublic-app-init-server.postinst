@@ -2,6 +2,6 @@
 
 touch /var/lib/nublic/webapps/app.init/app.init.wsgi
 nublic-resource-setup install nublic_app_init db postgresql-db
-service apache2 restart
+service apache2 reload
 
 #DEBHELPER#

@@ -1,2 +1,2 @@
 #!/bin/bash -e
-service apache2 reload
+#service apache2 reload

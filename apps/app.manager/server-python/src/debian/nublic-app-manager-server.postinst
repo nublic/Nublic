@@ -1,6 +1,6 @@
 #!/bin/bash
 ssh-keygen -lf /etc/ssh/ssh_host_rsa_key.pub | cut -d " " -f 2 > /var/nublic/cache/fingerprint
 touch /var/lib/nublic/webapps/app.manager/app.manager.wsgi
-service apache2 restart
+service apache2 reload
 
 #DEBHELPER#
