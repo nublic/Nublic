@@ -38,18 +38,26 @@ class DbusSignaler():  # dbus.service.Object):
 
     #@dbus.service.signal(dbus_interface='com.nublic.filewatcher', signature='sssbs')
     def file_changed(self, ty, pathname, src_pathname, isdir):
-        o = {'ty': unicode(ty), 'pathname': unicode(pathname.decode('utf-8')),
-             'src_pathname': unicode(src_pathname.decode('utf-8')),
+        o = {'ty': ty, 'pathname': unicode(pathname, 'utf8'),
+             'src_pathname': unicode(src_pathname, 'utf8'),
              'isdir': bool(isdir)}
         o_string = simplejson.dumps(o)
-        for socket in self.sockets:
+        sys.stderr.write("File_changed: Sending '%s'" % o_string)
+        errors = []
+        for sock in self.sockets:
             try:
-                socket.write(o_string + '\n')
-                socket.flush()
+                sock.write(o_string + '\n')
+                sock.flush()
+            except socket.error as e:
+                sys.stderr.write(
+                    "Error on socket write or flush: %s\n" % repr(e))
+                errors.append(sock)
+                #self.sockets.delete(socket)
             except BaseException as e:
                 sys.stderr.write(
                     "Error on socket write or flush: %s\n" % repr(e))
                 pass
+        self.sockets = [s for s in self.sockets if s not in errors]
         try:
             sys.stderr.write("%s %s (src_pathname %s)[%s]\n" % (
                 ty, pathname, src_pathname, 'dir' if isdir else 'file'))

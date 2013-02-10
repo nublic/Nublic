@@ -10,18 +10,19 @@
 # @copyright: 2011 Nublic
 
 import argparse
-import gobject
+#import gobject
 #from dbus.mainloop.glib import DBusGMainLoop
-from time import sleep
-import signal
+#from time import sleep
+#import signal
 
 # from watcher import (
 from nublic_file_watcher_internal.watcher import (
     start_watching,
     scan_folder
-    )
+)
 
 SCANNED_FOLDER = '/var/nublic/data'
+
 
 def main():
     parser = argparse.ArgumentParser(description='Starts and communicates with the Nublic file watcher system.')
@@ -30,7 +31,7 @@ def main():
                         const=True, default=False,
                         help='Scan the entire Nublic data folder.')
     args = parser.parse_args()
-    
+
     if args.scan:
         print("Scanning the entire Nublic data folder...")
         #dbus_loop = DBusGMainLoop(set_as_default=True)
@@ -39,7 +40,7 @@ def main():
         #dbus_loop = DBusGMainLoop(set_as_default=True)
         start_watching(SCANNED_FOLDER)
         #loop = gobject.MainLoop()
-        #loop.run()    
-        
+        #loop.run()
+
 if __name__ == '__main__':
     main()

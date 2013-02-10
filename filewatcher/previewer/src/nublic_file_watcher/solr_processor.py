@@ -17,8 +17,8 @@ def to_utf8(text):
     return text
 
 
-def from_utf8(string):
-    return string.encode('utf-8')
+def from_utf8(text):
+    return text.encode('utf-8')
 
 
 class SolrFileInfo:

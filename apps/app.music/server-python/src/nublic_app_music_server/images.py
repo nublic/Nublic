@@ -16,6 +16,9 @@ ORIGINAL_FILENAME = "orig"
 THUMBNAIL_FILENAME = "thumb.png"
 THUMBNAIL_SIZE = 96
 
+import logging
+log = logging.getLogger(__name__)
+
 
 def get_artist_folder(artist_id):
     return os.path.join(ARTISTS_FOLDER, unicode(artist_id).encode('utf8'))
@@ -92,7 +95,7 @@ def get_album_image(id_, file_, album_name, artist_name, place):
         r = requests.get(
             'http://api.discogs.com/search', params=discogs_params)
         json = simplejson.loads(r.content)
-        if json is not None:
+        if json is not None and json['resp']['status']:
             img_results = json['resp']['search']['searchresults']['results']
             if img_results:
                 image_url = img_results[0]['thumb']
@@ -101,6 +104,6 @@ def get_album_image(id_, file_, album_name, artist_name, place):
                 f.write(r.content)
                 f.close()
                 return True
-    except:
-        pass
+    except BaseException:
+        log.exception("Exception detected getting album from api.discogs.com")
     return False
