@@ -11,7 +11,7 @@ from elixir.relationships import ManyToOne, OneToMany
 from elixir.options import using_options
 
 #metadata.bind = 'mysql://nublic_notif:ScamUp@localhost:3306/nublic_notification'
-metadata.bind.echo = True
+#metadata.bind.echo = True
 
 NOTIFICATION_LEVEL_LOG = 'LOG'
 NOTIFICATION_LEVEL_NOTICE = 'NOTICE'

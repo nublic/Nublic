@@ -21,7 +21,7 @@ postgres_root_password = __config.get('DB_ACCESS','NUBLIC_RESOURCE_PASS').strip(
 postgres_root_user = __config.get('DB_ACCESS','NUBLIC_RESOURCE_USER').strip("'")
 
 
-metadata.bind = create_engine("postgresql://"+postgres_root_user+":"+postgres_root_password+'@localhost/nublic_resource', pool_size = 100)
+metadata.bind = create_engine("postgresql://"+postgres_root_user+":"+postgres_root_password+'@localhost/nublic_resource', pool_size = 100, pool_recycle=3)
 metadata.bind.echo = False
 
 class App(Entity):

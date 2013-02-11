@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 from elixir import *
+from sqlalchemy import create_engine
 from nublic_files_and_users.model import *
 from nublic_files_and_users.user import *
 from nublic_files_and_users.mirror import *
@@ -19,6 +20,9 @@ from time import sleep
 import signal
 
 from nublic.resource import *
+
+logging.basicConfig(level=logging.DEBUG)
+
 
 NOTIFICATION_LEVEL_LOG = 'LOG'
 NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
@@ -123,12 +127,13 @@ class JsonRpcFilesAndUsers(Handler):
 if __name__ == '__main__':
     __check_nublic_resource_is_on()
     # Initialize connection to database
-    metadata.bind = __get_bind_uri()
+
+    metadata.bind = create_engine(__get_bind_uri(), pool_size=100, pool_recycle=3)
+    metadata.bind.echo = False
     setup_all(create_tables=True)
     sys.stderr.write("database set up\n")
-    
+
     # Initialize JSON-RPC
-    logging.basicConfig(level = logging.WARNING)
     peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcFilesAndUsers)
     peer.listen_tcp(port = 5440)
     sys.stderr.write("Initialized files and users tcp\n")
