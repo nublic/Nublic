@@ -107,7 +107,7 @@ Vagrant::Config.run do |config|
   # We need to install and remove samba configuration for a truly non-interactive instalation
   # config.vm.provision :shell, :inline => "sudo apt-get update && sudo apt-get install --assume-yes samba && sudo mv /etc/samba/smb.conf /etc/samba/smb.conf.default"
   # Install full nublic
-  config.vm.provision :shell, :inline => "sudo apt-get update -o Dir::Etc::sourcelist='sources.list.d/nublic.list' -o Dir::Etc::sourceparts='-' -o APT::Get::List-Cleanup='0' && sudo apt-get install --assume-yes --force-yes libjetty8-extra-java nublic-solr-jetty8-config libtomcat7-java nublic-file-watcher nublic-app-browser nublic"
+  config.vm.provision :shell, :inline => "sudo apt-get update && sudo apt-get install --assume-yes --force-yes libjetty8-extra-java nublic-solr-jetty8-config libtomcat7-java nublic-file-watcher nublic-app-browser nublic"
 
   # Use it as a fix in case Valgrind cannot connect by ssh.
   # config.vm.boot_mode = :gui
