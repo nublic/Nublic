@@ -9,6 +9,9 @@ Created on 08/09/2011
 # import dbus.service
 import simplejson
 import sys
+import socket
+import logging
+log = logging.getLogger(__name__)
 
 
 def to_utf8(string):
