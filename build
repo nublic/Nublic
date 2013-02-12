@@ -291,7 +291,7 @@ do_build() {
     for thing in $@
     do
         # Clean previous builds
-        if in_list $thing "all clean"
+        if in_list $thing "clean"
         then
             clean
         fi
