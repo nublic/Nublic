@@ -31,18 +31,18 @@ class App(Entity):
     name = Field(String(256), primary_key=True)
     using_options(tablename='app')
     keys = OneToMany('Key')
-    
+
 
 class Key(Entity):
     '''
-    Represents a Key from an App 
+    Represents a Key from an App
     '''
     name = Field(Unicode(256), primary_key=True)
     type_name = Field(Unicode(256), primary_key=True)
     app = ManyToOne('App', primary_key=True)
     values = OneToMany('Value')
     using_options(tablename='key')
-    
+
     def __repr__(self):
         return "Key <"+self.name+"> of type <"+self.type_name+\
                  "> of app <"+self.app.name+">\n"
