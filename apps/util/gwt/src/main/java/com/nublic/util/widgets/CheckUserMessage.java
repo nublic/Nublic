@@ -1,6 +1,5 @@
 package com.nublic.util.widgets;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.util.i18n.Constants;
@@ -15,7 +14,7 @@ public class CheckUserMessage extends Message {
 	}
 	@Override
 	public String getURL() {
-		return URL.encode(GWT.getHostPageBaseURL() + "server/checkuser/" + name);
+		return URL.encode("/manager/server/checkuser/" + name);
 	}
 	@Override
 	public void onSuccess(Response response) {

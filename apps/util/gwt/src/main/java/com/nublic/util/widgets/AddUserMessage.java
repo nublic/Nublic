@@ -1,6 +1,5 @@
 package com.nublic.util.widgets;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
 import com.nublic.util.error.ErrorPopup;
@@ -23,7 +22,7 @@ public class AddUserMessage extends Message {
 		addParam("password", password);
 		addParam("systemname", systemName);
 		addParam("shownname", shownName);
-		return URL.encode(GWT.getHostPageBaseURL() + "server/adduser/");
+		return URL.encode("/manager/server/adduser/");
 	}
 	@Override
 	public void onSuccess(Response response) {
