@@ -34,8 +34,8 @@
 			margin-bottom: 9px;
 		}
 	</ui:style>
-	<ui:with type="com.nublic.app.init.client.i18n.I18NMessages" field="msg"/>
-	<ui:with type="com.nublic.app.init.client.Resources" field="res"/>
+	<ui:with type="com.nublic.util.i18n.I18NMessages" field="msg"/>
+	<ui:with type="com.nublic.util.images.Resources" field="res"/>
 
 	<g:HorizontalPanel addStyleNames="{style.wholemargin}">
 		<g:Image resource="{res.person}"/>

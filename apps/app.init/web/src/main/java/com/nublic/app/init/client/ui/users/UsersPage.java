@@ -14,12 +14,16 @@ import com.nublic.app.init.client.model.User;
 import com.nublic.app.init.client.model.handlers.UserListHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
 import com.nublic.app.init.client.ui.FooterPagination;
+import com.nublic.app.init.client.ui.MainUi;
+import com.nublic.util.widgets.AddUserHandler;
+import com.nublic.util.widgets.UserWidget;
 import com.google.gwt.uibinder.client.UiField;
 
 public class UsersPage extends CentralPanel {
 	private static UsersPageUiBinder uiBinder = GWT.create(UsersPageUiBinder.class);
 	interface UsersPageUiBinder extends UiBinder<Widget, UsersPage> {}
 
+	@UiField UserWidget createUser;
 	@UiField FooterPagination footer;
 	@UiField HTMLPanel centralPanel;
 
@@ -36,6 +40,13 @@ public class UsersPage extends CentralPanel {
 				for (User u : userList) {
 					addCompletedUser(u.getUserName(), u.getShownName());
 				}
+			}
+		});
+		
+		createUser.setFeedbackHandler(new AddUserHandler() {
+			@Override
+			public void onUserAdded(String systemName, String shownName) {
+				MainUi.INSTANCE.addCompletedUser(systemName, shownName);
 			}
 		});
 	}

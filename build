@@ -326,7 +326,7 @@ do_build() {
             rm -r ${INITIAL_DIR}/3rd-party-libs/rpcbd-0.6.0/rpcbd.egg-info/
             build_deb_package 3rd-party-libs/flask-sqlalchemy flask_sqlalchemy
             build_deb_package 3rd-party-libs/python-video-converter python-video-converter
-            # build_deb_package 3rd-party-libs/guava
+            #build_deb_package 3rd-party-libs/guava libguava-java
         fi
 
         # bst-player fork
@@ -349,22 +349,22 @@ do_build() {
             build_deb_package python/server/src python-nublic-server
         fi
 
-        if in_list $thing "all base base_java"
-        then
-            build_gwt_package resource/java libnublic-resource-java
-            package_and_install resource/java
-            build_gwt_package notification/java libnublic-notification-java
-            package_and_install notification/java
-            build_gwt_package files_and_users/java libnublic-files-and-users-java
-            package_and_install files_and_users/java
-            build_gwt_package filewatcher/scala lib-nublic-filewatcher-scala
-            install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
-        fi
+        #if in_list $thing "all base base_java"
+        #then
+            #build_gwt_package resource/java libnublic-resource-java
+            #package_and_install resource/java
+            #build_gwt_package notification/java libnublic-notification-java
+            #package_and_install notification/java
+            #build_gwt_package files_and_users/java libnublic-files-and-users-java
+            #package_and_install files_and_users/java
+            #build_gwt_package filewatcher/scala lib-nublic-filewatcher-scala
+            #install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
+        #fi
 
         if in_list $thing "all gwt gwt_base"
         then
             package_and_install apps/util/gwt
-            package_and_install apps/util/ws-json
+            #package_and_install apps/util/ws-json
         fi
 
         # Manager App
@@ -442,20 +442,20 @@ do_build() {
         fi
 
          # Downloads App
-        if in_list $thing "all fast server app_downloads app_downloads_server"
-        then
-            build_deb_package apps/app.downloads/server nublic-app-downloads-server
-        fi
+#        if in_list $thing "all fast server app_downloads app_downloads_server"
+#        then
+#            build_deb_package apps/app.downloads/server nublic-app-downloads-server
+#        fi
 
-        if in_list $thing "all fast gwt app_downloads app_downloads_gwt"
-        then
-            build_gwt_package apps/app.downloads/web nublic-app-downloads-web
-        fi
+#        if in_list $thing "all fast gwt app_downloads app_downloads_gwt"
+#        then
+#            build_gwt_package apps/app.downloads/web nublic-app-downloads-web
+#        fi
 
-        if in_list $thing "all fast app_downloads"
-        then
-            build_deb_package apps/app.downloads nublic-app-downloads
-        fi
+#        if in_list $thing "all fast app_downloads"
+#        then
+#            build_deb_package apps/app.downloads nublic-app-downloads
+#        fi
 
         # House App
         if in_list $thing "all fast app_house"
