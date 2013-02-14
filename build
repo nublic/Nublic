@@ -94,14 +94,22 @@ install_in_maven_repo() {
         -DartifactId=$3 -Dversion=$4 -Dpackaging=jar
 }
 
-clean() {
+clean_repo_dir() {
     rm -rf "${REPO_DIR}"
     # Create build folders, if non existant
     mkdir -p "${TARGET_DIR}"
     mkdir -p "${REPO_DIR}"
     mkdir -p "${MAVEN_REPO_DIR}"
+}
+
+clean_builds() {
     # Delete previous builds
     rm -rf "${TARGET_DIR}"/*.{deb,build,changes}
+}
+
+clean() {
+    clean_repo_dir
+    clean_builds
 }
 
 initialize() {
@@ -290,10 +298,15 @@ in_list() {
 do_build() {
     for thing in $@
     do
-        # Clean previous builds
-        if in_list $thing "clean"
+        # Clean repo dir
+        if in_list $thing "clean clean_repo_dir"
         then
-            clean
+            clean_repo_dir
+        fi
+        # Clean build
+        if in_list $thing "clean clean_builds"
+        then
+            clean_builds
         fi
 
         # Initialize build
@@ -519,25 +532,28 @@ do_build() {
     # Create final repository
     create_repo
 
-    # Deploy
-    if in_list $thing "deploy"
-    then
-        echo " "
-        echo "DEPLOYING TO VAGRANT"
-        vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
-    fi
+    for thing in $@
+    do
+        # Deploy
+        if in_list $thing "deploy"
+        then
+            echo " "
+            echo "DEPLOYING TO VAGRANT"
+            vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
+        fi
 
-    if in_list $thing "test"
-    then
-        echo " "
-        echo "TESTING"
-        vagrant ssh --command "/opt/code/manage_vagrant.sh test"
-    fi
+        if in_list $thing "test"
+        then
+            echo " "
+            echo "TESTING"
+            vagrant ssh --command "/opt/code/manage_vagrant.sh test"
+        fi
 
-    if in_list $thing "notify fast deploy"
-    then
-        notify-send "Nublic build ended with tasks: $*"
-    fi
+        if in_list $thing "notify fast deploy"
+        then
+            notify-send "Nublic build ended with tasks: $*"
+        fi
+    done
 }
 
 if [ $# = 0 ]
