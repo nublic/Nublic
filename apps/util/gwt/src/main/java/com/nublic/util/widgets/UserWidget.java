@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.ui.users;
+package com.nublic.util.widgets;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,12 +10,8 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.nublic.app.init.client.Constants;
-import com.nublic.app.init.client.model.InitModel;
-import com.nublic.app.init.client.model.handlers.AddUserHandler;
-import com.nublic.app.init.client.model.handlers.CheckUserHandler;
-import com.nublic.app.init.client.ui.MainUi;
-import com.nublic.app.init.client.ui.RealChangeHandler;
+import com.nublic.util.gwt.RealChangeHandler;
+import com.nublic.util.i18n.Constants;
 import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.widgets.CheckFeedback;
 import com.nublic.util.widgets.Feedback;
@@ -35,7 +31,13 @@ public class UserWidget extends Composite {
 	@UiField CheckFeedback verificationFeedback;
 	boolean hasTriedCustomName = false;
 	public final MyCheckUserHandler userChecker = new MyCheckUserHandler();
+	AddUserHandler feedbackHandler;
 
+	public UserWidget(AddUserHandler auh) {
+		super();
+		setFeedbackHandler(auh);
+	}
+	
 	public UserWidget() {
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -60,9 +62,9 @@ public class UserWidget extends Composite {
 				if (newText.isEmpty()) {
 					systemNameFeedback.setFeedback(Feedback.NONE);
 				} else {
-					if (InitModel.checkValidName(newText)) {
+					if (UserUtils.checkValidName(newText)) {
 						systemNameFeedback.setFeedback(Feedback.LOADING);
-						InitModel.INSTANCE.checkUserAvailability(newText, userChecker);
+						UserUtils.checkUserAvailability(newText, userChecker);
 					} else {
 						systemNameFeedback.setCrossInfo(Constants.I18N.userNameInvalid());
 						systemNameFeedback.setFeedback(Feedback.CROSS);
@@ -76,7 +78,7 @@ public class UserWidget extends Composite {
 			public void onRealChange(String newText) {
 				if (newText.isEmpty()) {
 					passwordFeedback.setFeedback(Feedback.NONE);
-				} else if (newText.length() < Constants.MIN_PASSWORD_LENGTH) {
+				} else if (newText.length() < UserUtils.MIN_PASSWORD_LENGTH) {
 					passwordFeedback.setFeedback(Feedback.CROSS);
 				} else {
 					passwordFeedback.setFeedback(Feedback.CHECK);
@@ -91,6 +93,10 @@ public class UserWidget extends Composite {
 				verificatePassword();
 			}
 		});
+	}
+	
+	public void setFeedbackHandler(AddUserHandler auh) {
+		feedbackHandler = auh;
 	}
 	
 	public void verificatePassword() {
@@ -128,16 +134,18 @@ public class UserWidget extends Composite {
 				systemNameFeedback.isChecked() &&
 				passwordFeedback.isChecked() &&
 				verificationFeedback.isChecked()) {
-			InitModel.INSTANCE.addUser(systemNameBox.getText(),
+			UserUtils.addUser(systemNameBox.getText(),
 					nameBox.getText(),
 					passwordBox.getText(),
-					new AddUserHandler() {
-				@Override
-				public void onUserAdded(String systemName, String shownName) {
-					MainUi.INSTANCE.addCompletedUser(systemName, shownName);
-					emptyBoxes();
-				}
-			});
+					feedbackHandler);
+			emptyBoxes();
+//					new AddUserHandler() {
+//				@Override
+//				public void onUserAdded(String systemName, String shownName) {
+//					MainUi.INSTANCE.addCompletedUser(systemName, shownName);
+//					emptyBoxes();
+//				}
+//			});
 		} else {
 			ErrorPopup.showError(Constants.I18N.allFieldsError());
 		}
@@ -145,13 +153,13 @@ public class UserWidget extends Composite {
 	
 	
 	public void updateSystemName(String realName) {
-		String userName = InitModel.getSystemName(realName);
+		String userName = UserUtils.getSystemName(realName);
 		systemNameBox.setText(userName);
 		if (userName.isEmpty()) {
 			systemNameFeedback.setFeedback(Feedback.NONE);
 		} else {
 			systemNameFeedback.setFeedback(Feedback.LOADING);
-			InitModel.INSTANCE.checkUserAvailability(userName, userChecker);
+			UserUtils.checkUserAvailability(userName, userChecker);
 		}
 	}
 

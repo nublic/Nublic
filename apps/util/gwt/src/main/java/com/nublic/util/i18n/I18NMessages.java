@@ -17,4 +17,19 @@ public interface I18NMessages extends Messages {
 	String changeName();
 	
 	String error();
+	
+	// Users
+	String userNameInvalid();
+	String userNameNotAvailable();
+	String allFieldsError();
+	String userName();
+	String userNameHelp();
+	String systemUserName();
+	String systemUserNameHelp();
+	String password();
+	String passwordVerification();
+	String createUser();
+	String shortPassword();
+	String noCoincidentPassword();
+	String couldNotCreateUser();
 }

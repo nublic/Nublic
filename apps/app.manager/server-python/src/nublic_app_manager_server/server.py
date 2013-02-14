@@ -7,7 +7,7 @@ import simplejson as json
 import string
 #import pexpect
 
-from nublic.files_and_users import get_all_users, Mirror, WorkFolder, create_mirror, create_work_folder
+from nublic.files_and_users import User, get_all_users, Mirror, WorkFolder, create_mirror, create_work_folder
 from nublic_server.helpers import init_bare_nublic_server, require_user
 
 # Init app
@@ -284,5 +284,30 @@ def change_password():
     user.change_password(oldPass, newPass)
     return 'ok'
 
+
+# User interface functions
+@app.route('/adduser/', methods=['PUT'])
+def add_user():
+    systemname = request.form.get('systemname', None)
+    shownname = request.form.get('shownname', None)
+    password = request.form.get('password', None)
+    newuser = User(systemname)
+    if not newuser.exists():
+        newuser.create(password, shownname)
+        return 'ok'
+    else:
+        return 'exists'
+
+
+@app.route('/checkuser/<name>')
+def check_user(name):
+    if User(name).exists():
+        return 'exists'
+    else:
+        return 'ok'
+
+
 if __name__ == '__main__':
     app.run()
+
+

@@ -2,7 +2,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.app.init.client.ui"
-	xmlns:u="urn:import:com.nublic.app.init.client.ui.users">
+	xmlns:u="urn:import:com.nublic.util.widgets">
 	<ui:style>
 		.defaultheight {
 			min-height: 400px;
@@ -20,7 +20,7 @@
 			</div>
 			<p><ui:text from="{msg.usersText}"/></p>
 			<g:HTMLPanel ui:field="centralPanel"/>
-			<u:UserWidget addStyleNames="{style.bottommargin}"/>
+			<u:UserWidget ui:field="createUser" addStyleNames="{style.bottommargin}"/>
 		</g:HTMLPanel>
 		<n:FooterPagination ui:field="footer"/>
 	</g:HTMLPanel>

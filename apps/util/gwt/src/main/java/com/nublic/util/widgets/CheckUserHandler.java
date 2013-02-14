@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.model.handlers;
+package com.nublic.util.widgets;
 
 import com.google.gwt.event.shared.EventHandler;
 

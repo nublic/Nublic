@@ -212,7 +212,7 @@ public class SelectionDetails extends Composite {
 	}
 	
 	public static String getFormatedDate(double ddate) {
-		Date date = new Date((long) ddate);
+		Date date = new Date((long) ddate * 1000);
 		return ((long) ddate) == 0 ? "" :
 			Constants.I18N.modifiedDate(DateTimeFormat.getFormat(PredefinedFormat.DATE_SHORT).format(date));
 	}
