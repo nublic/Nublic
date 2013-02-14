@@ -498,7 +498,7 @@ def raw_song(song_id):
 def view_song(song_id):
     app.logger.error('Getting song %i', song_id)
     song = Song.query.get_or_404(song_id)
-    mp3_file = os.path.join(get_cache_folder(song.file), 'audio.mp3')
+    mp3_file = os.path.join(get_cache_folder(song.file.encode('utf8')), 'view.mp3')
     app.logger.error('Getting file %s', mp3_file)
     if os.path.exists(mp3_file):
         return send_file(mp3_file)

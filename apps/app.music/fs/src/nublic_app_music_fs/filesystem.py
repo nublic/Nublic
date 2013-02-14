@@ -7,12 +7,13 @@ from stat import S_IFDIR  # , S_IFREG
 from threading import Lock
 
 from fuse import FUSE, FuseOSError, Operations, LoggingMixIn
-from model import setup_all, Collection, Album, Song, Artist
+from model import Collection, Album, Song, Artist
 
 import os
 import hashlib
 
 import elixir
+from elixir import setup_all
 
 
 def to_utf8(string):
@@ -27,7 +28,7 @@ class Filesystem(LoggingMixIn, Operations):
     """Example memory filesystem. Supports only one level of files."""
 
     NUBLIC_BROWSER_ROOT = "/var/nublic/cache/browser"
-    AUDIO_FILENAME = "audio.mp3"
+    AUDIO_FILENAME = "view.mp3"
 
     def __init__(self):
         setup_all()

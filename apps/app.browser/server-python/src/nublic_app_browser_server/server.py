@@ -149,7 +149,7 @@ images_mapping = {'image': 'image.png',
                             ]
                   }
 audio_mapping = {'image': "audio.png",
-                 'preview': 'audio.mp3',
+                 'preview': 'view.mp3',
                  'mimes': [
                             '''
                             Obtained looking at:
@@ -478,6 +478,7 @@ def upload():
 def about():
     ''' Returns our Nublic browser version!!'''
     return 'Nublic Server v0.0.3'
+
 
 if __name__ == '__main__':
     app.run()
