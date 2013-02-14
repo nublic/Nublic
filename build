@@ -527,6 +527,13 @@ do_build() {
         vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
     fi
 
+    if in_list $thing "test"
+    then
+        echo " "
+        echo "TESTING"
+        vagrant ssh --command "/opt/code/manage_vagrant.sh test"
+    fi
+
     if in_list $thing "notify fast deploy"
     then
         notify-send "Nublic build ended with tasks: $*"

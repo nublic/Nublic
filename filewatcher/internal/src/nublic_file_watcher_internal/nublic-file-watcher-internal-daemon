@@ -9,6 +9,7 @@
 # @author: Alejandro Serrano Mena
 # @copyright: 2011 Nublic
 
+import ConfigParser
 import argparse
 from nublic_file_watcher_internal.watcher import (
     start_watching,
@@ -16,25 +17,38 @@ from nublic_file_watcher_internal.watcher import (
 )
 
 import logging
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 
-
-SCANNED_FOLDER = '/var/nublic/data'
+CONFIG_SECTION = 'filewatcher-internal'
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Starts and communicates with the Nublic file watcher system.')
+    parser = argparse.ArgumentParser(
+        description='Starts and communicates with the Nublic file watcher system.')
 
-    parser.add_argument('--scan', dest='scan', action='store_const',
-                        const=True, default=False,
+    parser.add_argument('--scan', action='store_true',
                         help='Scan the entire Nublic data folder.')
+    parser.add_argument('--config', help='Change the configuration read')
     args = parser.parse_args()
 
+    # Configure Nublic
+    conf = ConfigParser.RawConfigParser()
+    conf.add_section(CONFIG_SECTION)
+    conf.set(CONFIG_SECTION, 'directory', '/var/nublic/data')
+    conf.set(CONFIG_SECTION, 'listen_port', 5438)
+    conf.set(CONFIG_SECTION, 'listen_address', 'localhost')
+
+    if args.config:
+        conf.read(args.config)
+
+    dir = conf.get(CONFIG_SECTION, 'directory')
     if args.scan:
         print("Scanning the entire Nublic data folder...")
-        scan_folder(SCANNED_FOLDER)
+        scan_folder(dir)
     else:
-        start_watching(SCANNED_FOLDER)
+        port = conf.getint(CONFIG_SECTION, 'listen_port')
+        address = conf.get(CONFIG_SECTION, 'listen_address')
+        start_watching(dir, port, address)
 
 if __name__ == '__main__':
     main()
