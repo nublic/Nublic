@@ -131,12 +131,9 @@
 					<forkMode>always</forkMode>
 
 					<!-- Folder for generated testing stuff -->
-					<systemProperties>
-						<property>
-							<name>gwt.args</name>
-							<value>-out target/www</value>
-						</property>
-					</systemProperties>
+					<systemPropertyVariables>
+						<gwt.args>-out target/www</gwt.args>
+				        </systemPropertyVariables>
 				</configuration>
 			</plugin>
 
