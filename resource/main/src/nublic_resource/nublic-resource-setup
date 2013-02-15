@@ -10,9 +10,12 @@ It works for usage during the install of applications.
 import os
 import sys
 from optparse import OptionParser
-# import dbus
 
 from nublic_resource.select_provider import generate_provider, get_provider
+from nublic_resource.database_stored import ExistingKeyError
+
+CONFIG_DIR = '/etc/nublic'
+
 
 def main():
     if not os.geteuid() == 0:
@@ -27,9 +30,10 @@ def main():
             "Optional args:\n" + \
             "\t-o --optional_arg: Provides a optional_arg"
     parser = OptionParser(usage)
-    parser.add_option("-o", "--optional-args", action="append", type="string", dest="optional")
+    parser.add_option("-o", "--optional-args", action="append",
+                      type="string", dest="optional")
     (options, args) = parser.parse_args()
-    
+
     if len(args) == 0:
         parser.error("Invalid order")
 
@@ -41,14 +45,20 @@ def main():
         # TODO Chech if the app + key are already used
         resource_id = args[3]
         provider = generate_provider(resource_id)
-        if provider == None:
+        if provider is None:
             parser.error("Invalid resource")
-        provider.install(app, key)
-        # Notify the daemon to load the values into dbus        
-        # bus = dbus.SystemBus()
-        # valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource')
-        # load = valueService.get_dbus_method("load", 'com.nublic.resource.manager')
-        # load(app,key)
+        try:
+            provider.install(app, key)
+        except ExistingKeyError:
+            print "Existing Database for %s with key %s" % (app, key)
+        # Write configuration file
+        path = os.path.join(CONFIG_DIR, '%s_%s.%s' % (app, key, "cfg"))
+        with open(path, 'w') as f:
+            uri = provider.value(app, key, 'uri')
+            config_line = "%s_%s_uri = %s" % (app, key, uri)
+            config_sqlalchemy = "SQLALCHEMY_DATABASE_URI = %s" % (uri)
+            f.write(config_line + '\n')
+            f.write(config_sqlalchemy + '\n')
 
     elif args[0] == 'uninstall':
         if len(args) != 3:
@@ -56,14 +66,11 @@ def main():
         app = args[1]
         key = args[2]
         provider = get_provider(app, key)
-        if provider == None:
+        if provider is None:
             parser.error("Invalid resource")
         provider.uninstall(app, key)
-        # Notify the daemon to unload the values into dbus        
-        # bus = dbus.SystemBus()
-        # valueService = bus.get_object('com.nublic.resource', '/com/nublic/resource')
-        # unload = valueService.get_dbus_method("unload", 'com.nublic.resource.manager')
-        # unload(app,key)
+        path = os.path.join(CONFIG_DIR, '%s_%s' % (app, key), ".cfg")
+        os.remove(path)
 
     elif args[0] == 'request':
         if len(args) != 4:
@@ -72,16 +79,16 @@ def main():
         key = args[2]
         resource_id = args[3]
         provider = generate_provider(resource_id)
-        if provider == None:
+        if provider is None:
             parser.error("Invalid resource")
-        provider.request(app, key)        
+        provider.request(app, key)
     elif args[0] == 'release':
         if len(args) != 3:
             parser.error("Invalid number of parameters")
         app = args[1]
         key = args[2]
         provider = get_provider(app, key)
-        if provider == None:
+        if provider is None:
             parser.error("Invalid resource")
         provider.release(app, key)
     elif args[0] == 'value':
@@ -91,7 +98,7 @@ def main():
         key_subkey = args[2]
         key, separator, subkey = key_subkey.partition("#")
         provider = get_provider(app, key)
-        if separator != "/": # Doesn't have a subkey value
+        if separator != "/":  # Doesn't have a subkey value
             parser.error("subkey not specified")
         else:
             print(provider.value(app, key, subkey))
