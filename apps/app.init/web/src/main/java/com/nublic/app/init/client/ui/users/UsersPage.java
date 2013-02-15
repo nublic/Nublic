@@ -8,15 +8,15 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.init.client.Constants;
-import com.nublic.app.init.client.model.InitModel;
 import com.nublic.app.init.client.model.Step;
-import com.nublic.app.init.client.model.User;
-import com.nublic.app.init.client.model.handlers.UserListHandler;
 import com.nublic.app.init.client.ui.CentralPanel;
 import com.nublic.app.init.client.ui.FooterPagination;
 import com.nublic.app.init.client.ui.MainUi;
-import com.nublic.util.widgets.AddUserHandler;
-import com.nublic.util.widgets.UserWidget;
+import com.nublic.util.users.AddUserHandler;
+import com.nublic.util.users.User;
+import com.nublic.util.users.UserListHandler;
+import com.nublic.util.users.UserUtils;
+import com.nublic.util.users.UserWidget;
 import com.google.gwt.uibinder.client.UiField;
 
 public class UsersPage extends CentralPanel {
@@ -34,7 +34,7 @@ public class UsersPage extends CentralPanel {
 				Constants.PARAM_PAGE + "=" + Constants.VALUE_MASTER_USER);
 		
 		// Get created users from model
-		InitModel.INSTANCE.getUserList(new UserListHandler() {
+		UserUtils.getUserList(new UserListHandler() {
 			@Override
 			public void onUserList(List<User> userList) {
 				for (User u : userList) {

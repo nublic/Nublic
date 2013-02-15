@@ -1,16 +1,12 @@
-package com.nublic.app.init.client.model.messages;
+package com.nublic.util.users;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JsArray;
 import com.google.gwt.core.client.JsonUtils;
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;
-import com.nublic.app.init.client.model.User;
-import com.nublic.app.init.client.model.handlers.UserListHandler;
-import com.nublic.app.init.client.model.js.JSUser;
 import com.nublic.util.messages.Message;
 
 public class UserListMessage extends Message {
@@ -22,7 +18,7 @@ public class UserListMessage extends Message {
 	
 	@Override
 	public String getURL() {
-		return URL.encode(GWT.getHostPageBaseURL() + "server/userlist/");
+		return URL.encode("/manager/server/userlist/");
 	}
 
 	@Override

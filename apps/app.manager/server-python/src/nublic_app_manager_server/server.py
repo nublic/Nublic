@@ -307,6 +307,16 @@ def check_user(name):
         return 'ok'
 
 
+def user_as_json(c):
+    return {'username': c.get_username(),
+            'shownname': c.get_shown_name()}
+
+
+@app.route('/userlist/')
+def get_user_list():
+    return json.dumps(get_all_users(), default=user_as_json)
+
+
 if __name__ == '__main__':
     app.run()
 

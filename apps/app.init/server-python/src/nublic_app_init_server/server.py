@@ -23,16 +23,6 @@ init_bare_nublic_server(app, '/var/log/nublic/nublic-app-init.python.log')
 app.logger.error('Starting init app')
 
 
-@app.route('/userlist/')
-def get_user_list():
-    return json.dumps(get_all_users(), default=user_as_json)
-
-
-def user_as_json(c):
-    return {'username': c.get_username(),
-            'shownname': c.get_shown_name()}
-
-
 @app.route('/password/')
 def master_password():
     return 'ThisIsAPasswordExample2'

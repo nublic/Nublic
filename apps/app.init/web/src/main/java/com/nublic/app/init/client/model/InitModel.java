@@ -3,10 +3,8 @@ package com.nublic.app.init.client.model;
 import com.google.gwt.http.client.RequestBuilder;
 import com.nublic.app.init.client.model.handlers.CheckNublicNameHandler;
 import com.nublic.app.init.client.model.handlers.PasswordHandler;
-import com.nublic.app.init.client.model.handlers.UserListHandler;
 import com.nublic.app.init.client.model.messages.CheckNublicNameMessage;
 import com.nublic.app.init.client.model.messages.PasswordMessage;
-import com.nublic.app.init.client.model.messages.UserListMessage;
 import com.nublic.util.messages.SequenceHelper;
 
 public class InitModel {
@@ -27,11 +25,6 @@ public class InitModel {
 	private void sendInitialMessages() {
 //		TagsMessage tm = new TagsMessage();
 //		SequenceHelper.sendJustOne(tm, RequestBuilder.GET);
-	}
-	
-	public void getUserList(UserListHandler ulh) {
-		UserListMessage ulm = new UserListMessage(ulh);
-		SequenceHelper.sendJustOne(ulm, RequestBuilder.GET);
 	}
 	
 	public void getMasterPassword(PasswordHandler ph) {

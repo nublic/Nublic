@@ -1,4 +1,4 @@
-package com.nublic.util.widgets;
+package com.nublic.util.users;
 
 import com.google.gwt.http.client.Response;
 import com.google.gwt.http.client.URL;

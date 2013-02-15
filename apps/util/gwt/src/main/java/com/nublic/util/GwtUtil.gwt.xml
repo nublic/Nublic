@@ -31,5 +31,6 @@
   <source path='images'/>
   <source path='range'/>
   <source path='cache'/>
+  <source path='users'/>
 
 </module>

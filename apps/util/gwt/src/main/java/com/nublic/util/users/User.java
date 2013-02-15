@@ -1,6 +1,4 @@
-package com.nublic.app.init.client.model;
-
-import com.nublic.app.init.client.model.js.JSUser;
+package com.nublic.util.users;
 
 public class User {
 	String userName;

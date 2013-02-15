@@ -1,4 +1,4 @@
-package com.nublic.util.widgets;
+package com.nublic.util.users;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;

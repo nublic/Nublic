@@ -1,4 +1,4 @@
-package com.nublic.app.init.client.model.js;
+package com.nublic.util.users;
 
 import com.google.gwt.core.client.JavaScriptObject;
 

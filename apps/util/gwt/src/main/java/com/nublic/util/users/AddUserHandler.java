@@ -1,4 +1,4 @@
-package com.nublic.util.widgets;
+package com.nublic.util.users;
 
 import com.google.gwt.event.shared.EventHandler;
 

@@ -1,4 +1,4 @@
-package com.nublic.util.widgets;
+package com.nublic.util.users;
 
 import com.google.gwt.http.client.RequestBuilder;
 import com.nublic.util.messages.SequenceHelper;
@@ -37,5 +37,10 @@ public class UserUtils {
 	public static void addUser(String systemName, String shownName, String password, AddUserHandler auh) {
 		AddUserMessage aum = new AddUserMessage(systemName, shownName, password, auh);
 		SequenceHelper.sendJustOne(aum, RequestBuilder.PUT);
+	}
+	
+	public static void getUserList(UserListHandler ulh) {
+		UserListMessage ulm = new UserListMessage(ulh);
+		SequenceHelper.sendJustOne(ulm, RequestBuilder.GET);
 	}
 }
