@@ -284,283 +284,281 @@ create_repo() {
 }
 
 in_list() {
-    for i in $2
+    for i in $1
     do
-        if [ $1 = $i ]
-        then
-            return 0
-        fi
+        for j in $2
+        do
+            if [ $j = $i ]
+            then
+                return 0
+            fi
+        done
     done
     return 1
 }
 
 
 do_build() {
-    for thing in $@
-    do
-        # Clean repo dir
-        if in_list $thing "clean clean_repo_dir"
-        then
-            clean_repo_dir
-        fi
-        # Clean build
-        if in_list $thing "clean clean_builds"
-        then
-            clean_builds
-        fi
+    thing="$1"
 
-        # Initialize build
-        if in_list $thing "all initialize"
-        then
-            initialize
-        fi
+    # Clean repo dir
+    if in_list "$thing" "clean clean_repo_dir"
+    then
+        clean_repo_dir
+    fi
+    # Clean build
+    if in_list "$thing" "clean clean_builds"
+    then
+        clean_builds
+    fi
 
-        if in_list $thing "all 3rd_party"
-        then
-            # Update submodule repositories
-            git submodule update --init --merge
-            git submodule foreach 'git pull origin master'
+    # Initialize build
+    if in_list "$thing" "all initialize"
+    then
+        initialize
+    fi
 
-            # Third-party libraries
-            cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
-            build_submodule_lib echoprint-codegen
-            rm ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/echoprint-codegen ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/src/libcodegen.so.4.1.1
-            build_submodule_lib sunburnt
-            build_submodule_lib pyechonest
-            rm -r ${INITIAL_DIR}/3rd-party-libs/pyechonest/pyechonest.egg-info/
-            copy_and_touch 3rd-party-libs/aria2
-            copy_and_touch 3rd-party-libs/python-fstab
-            # Some libraries of tomcat7 are required by jetty8 so we cannot get rid of it
-            copy_and_touch 3rd-party-libs/tomcat7
-            copy_and_touch 3rd-party-libs/jetty8
-            copy_and_touch 3rd-party-libs/lucene-solr
-            build_deb_package 3rd-party-libs/pykka pykka
-            build_deb_package 3rd-party-libs/rpcbd-0.6.0 rpcbd
-            rm -r ${INITIAL_DIR}/3rd-party-libs/rpcbd-0.6.0/rpcbd.egg-info/
-            build_deb_package 3rd-party-libs/flask-sqlalchemy flask_sqlalchemy
-            build_deb_package 3rd-party-libs/python-video-converter python-video-converter
-            # build_deb_package 3rd-party-libs/guava
-        fi
+    if in_list "$thing" "all 3rd_party"
+    then
+        # Update submodule repositories
+        git submodule update --init --merge
+        git submodule foreach 'git pull origin master'
 
-        # bst-player fork
-        if in_list $thing "all gwt bst_player"
-        then
-            package_and_install_dev_mode player
-        fi
+        # Third-party libraries
+        cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
+        build_submodule_lib echoprint-codegen
+        rm ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/echoprint-codegen ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/src/libcodegen.so.4.1.1
+        build_submodule_lib sunburnt
+        build_submodule_lib pyechonest
+        rm -r ${INITIAL_DIR}/3rd-party-libs/pyechonest/pyechonest.egg-info/
+        copy_and_touch 3rd-party-libs/aria2
+        copy_and_touch 3rd-party-libs/python-fstab
+        # Some libraries of tomcat7 are required by jetty8 so we cannot get rid of it
+        copy_and_touch 3rd-party-libs/tomcat7
+        copy_and_touch 3rd-party-libs/jetty8
+        copy_and_touch 3rd-party-libs/lucene-solr
+        build_deb_package 3rd-party-libs/pykka pykka
+        build_deb_package 3rd-party-libs/rpcbd-0.6.0 rpcbd
+        rm -r ${INITIAL_DIR}/3rd-party-libs/rpcbd-0.6.0/rpcbd.egg-info/
+        build_deb_package 3rd-party-libs/flask-sqlalchemy flask_sqlalchemy
+        build_deb_package 3rd-party-libs/python-video-converter python-video-converter
+        # build_deb_package 3rd-party-libs/guava
+    fi
 
-        if in_list $thing "all fast base base_python"
-        then
-            # Base modules
-            build_deb_package resource/main/src nublic-resource
-            build_deb_package notification/main/src nublic-notification
-            build_deb_package files_and_users/main/src nublic-files-and-users
-            build_deb_package files_and_users/client/src nublic-files-and-users-client
-            build_deb_package filewatcher/internal/src nublic-file-watcher-internal
-            build_deb_package filewatcher/previewer/src nublic-file-watcher
-            # build_deb_package filewatcher/main/src nublic-filewatcher
-            build_deb_package python/client/src python-nublic
-            build_deb_package python/server/src python-nublic-server
-        fi
+    # bst-player fork
+    if in_list "$thing" "all gwt bst_player"
+    then
+        package_and_install_dev_mode player
+    fi
 
-        #if in_list $thing "all base base_java" # Binding not needed anymore
-        #then
-            #build_gwt_package resource/java libnublic-resource-java
-            #package_and_install resource/java
-            #build_gwt_package notification/java libnublic-notification-java
-            #package_and_install notification/java
-            #build_gwt_package files_and_users/java libnublic-files-and-users-java
-            #package_and_install files_and_users/java
-            #build_gwt_package filewatcher/scala lib-nublic-filewatcher-scala
-            #install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
-        #fi
+    if in_list "$thing" "all fast base base_python"
+    then
+        # Base modules
+        build_deb_package resource/main/src nublic-resource
+        build_deb_package notification/main/src nublic-notification
+        build_deb_package files_and_users/main/src nublic-files-and-users
+        build_deb_package files_and_users/client/src nublic-files-and-users-client
+        build_deb_package filewatcher/internal/src nublic-file-watcher-internal
+        build_deb_package filewatcher/previewer/src nublic-file-watcher
+        # build_deb_package filewatcher/main/src nublic-filewatcher
+        build_deb_package python/client/src python-nublic
+        build_deb_package python/server/src python-nublic-server
+    fi
 
-        if in_list $thing "all gwt gwt_base"
-        then
-            package_and_install apps/util/gwt
-            #package_and_install apps/util/ws-json
-        fi
+    #if in_list "$thing" "all base base_java" # Binding not needed anymore
+    #then
+        #build_gwt_package resource/java libnublic-resource-java
+        #package_and_install resource/java
+        #build_gwt_package notification/java libnublic-notification-java
+        #package_and_install notification/java
+        #build_gwt_package files_and_users/java libnublic-files-and-users-java
+        #package_and_install files_and_users/java
+        #build_gwt_package filewatcher/scala lib-nublic-filewatcher-scala
+        #install_in_maven_repo filewatcher/scala/target/*jar-with-dependencies.jar com.nublic filewatcher.scala 0.0.1-SNAPSHOT
+    #fi
 
-        # Manager App
-        if in_list $thing "all fast server app_manager app_manager_server"
-        then
-            build_deb_package apps/app.manager/server-python/src nublic-app-manager-server
-        fi
+    if in_list "$thing" "all gwt gwt_base"
+    then
+        package_and_install apps/util/gwt
+        #package_and_install apps/util/ws-json
+    fi
 
-        if in_list $thing "all fast gwt app_manager app_manager_gwt"
-        then
-            build_gwt_package apps/app.manager/web nublic-app-manager-web
-            build_gwt_package apps/app.manager/welcome nublic-app-manager-welcome
-            build_gwt_package apps/app.manager/settings nublic-app-manager-settings
-        fi
+    # Manager App
+    if in_list "$thing" "all fast server app_manager app_manager_server"
+    then
+        build_deb_package apps/app.manager/server-python/src nublic-app-manager-server
+    fi
 
-        if in_list $thing "all fast app_manager"
-        then
-            build_deb_package apps/app.manager nublic-app-manager
-        fi
+    if in_list "$thing" "all fast gwt app_manager app_manager_gwt"
+    then
+        build_gwt_package apps/app.manager/web nublic-app-manager-web
+        build_gwt_package apps/app.manager/welcome nublic-app-manager-welcome
+        build_gwt_package apps/app.manager/settings nublic-app-manager-settings
+    fi
 
-        # Browser App
-        if in_list $thing "all fast server app_browser app_browser_server"
-        then
-            build_deb_package apps/app.browser/server-python/src nublic-app-browser-server
-        fi
+    if in_list "$thing" "all fast app_manager"
+    then
+        build_deb_package apps/app.manager nublic-app-manager
+    fi
 
-        if in_list $thing "all fast gwt app_browser app_browser_gwt"
-        then
-            build_gwt_package apps/app.browser/web nublic-app-browser-web
-        fi
+    # Browser App
+    if in_list "$thing" "all fast server app_browser app_browser_server"
+    then
+        build_deb_package apps/app.browser/server-python/src nublic-app-browser-server
+    fi
 
-        if in_list $thing "all fast app_browser"
-        then
-            build_deb_package apps/app.browser nublic-app-browser
-        fi
+    if in_list "$thing" "all fast gwt app_browser app_browser_gwt"
+    then
+        build_gwt_package apps/app.browser/web nublic-app-browser-web
+    fi
 
-        # Music App
-        if in_list $thing "all fast server app_music app_music_server"
-        then
-            build_deb_package apps/app.music/server-python/src nublic-app-music-server
-            build_deb_package apps/app.music/fs/src nublic-app-music-fs
-        fi
+    if in_list "$thing" "all fast app_browser"
+    then
+        build_deb_package apps/app.browser nublic-app-browser
+    fi
 
-        if in_list $thing "all fast gwt app_music app_music_gwt"
-        then
-            build_gwt_package apps/app.music/web nublic-app-music-web
-        fi
+    # Music App
+    if in_list "$thing" "all fast server app_music app_music_server"
+    then
+        build_deb_package apps/app.music/server-python/src nublic-app-music-server
+        build_deb_package apps/app.music/fs/src nublic-app-music-fs
+    fi
 
-        if in_list $thing "all fast app_music"
-        then
-            build_deb_package apps/app.music nublic-app-music
-        fi
+    if in_list "$thing" "all fast gwt app_music app_music_gwt"
+    then
+        build_gwt_package apps/app.music/web nublic-app-music-web
+    fi
 
-        # Photos App
-        if in_list $thing "all fast server app_photos app_photos_server"
-        then
-            build_deb_package apps/app.photos/server-common/src nublic-app-photos-server-common
-            build_deb_package apps/app.photos/server-python/src nublic-app-photos-server
-        fi
+    if in_list "$thing" "all fast app_music"
+    then
+        build_deb_package apps/app.music nublic-app-music
+    fi
 
-        if in_list $thing "all gwt app_photos app_photos_gwt"
-        then
-            package_and_install apps/app.photos/common
-        fi
+    # Photos App
+    if in_list "$thing" "all fast server app_photos app_photos_server"
+    then
+        build_deb_package apps/app.photos/server-common/src nublic-app-photos-server-common
+        build_deb_package apps/app.photos/server-python/src nublic-app-photos-server
+    fi
 
-        if in_list $thing "all fast gwt app_photos app_photos_gwt"
-        then
-            build_gwt_package apps/app.photos/web nublic-app-photos-web
-            build_gwt_package apps/app.photos/mobile nublic-app-photos-mobile
-        fi
+    if in_list "$thing" "all gwt app_photos app_photos_gwt"
+    then
+        package_and_install apps/app.photos/common
+    fi
 
-        if in_list $thing "all fast app_photos"
-        then
-            build_deb_package apps/app.photos nublic-app-photos
-        fi
+    if in_list "$thing" "all fast gwt app_photos app_photos_gwt"
+    then
+        build_gwt_package apps/app.photos/web nublic-app-photos-web
+        build_gwt_package apps/app.photos/mobile nublic-app-photos-mobile
+    fi
 
-         # Downloads App
-#        if in_list $thing "all fast server app_downloads app_downloads_server"
-#        then
-#            build_deb_package apps/app.downloads/server nublic-app-downloads-server
-#        fi
+    if in_list "$thing" "all fast app_photos"
+    then
+        build_deb_package apps/app.photos nublic-app-photos
+    fi
 
-#        if in_list $thing "all fast gwt app_downloads app_downloads_gwt"
-#        then
-#            build_gwt_package apps/app.downloads/web nublic-app-downloads-web
-#        fi
+    # Downloads App
+    #if in_list "$thing" "all fast server app_downloads app_downloads_server"
+    #then
+        #build_deb_package apps/app.downloads/server nublic-app-downloads-server
+    #fi
+    #if in_list "$thing" "all fast gwt app_downloads app_downloads_gwt"
+    #then
+        #build_gwt_package apps/app.downloads/web nublic-app-downloads-web
+    #fi
 
-#        if in_list $thing "all fast app_downloads"
-#        then
-#            build_deb_package apps/app.downloads nublic-app-downloads
-#        fi
+    #if in_list "$thing" "all fast app_downloads"
+    #then
+        #build_deb_package apps/app.downloads nublic-app-downloads
+    #fi
 
-        # House App
-        if in_list $thing "all fast app_house"
-        then
-            build_deb_package apps/app.house nublic-app-house
-        fi
+    # House App
+    if in_list "$thing" "all fast app_house"
+    then
+        build_deb_package apps/app.house nublic-app-house
+    fi
 
-        # Market App
-        if in_list $thing "all fast server app_market app_market_server"
-        then
-            build_deb_package apps/app.market/daemon/src nublic-app-market-daemon
-            build_deb_package apps/app.market/server-python/src nublic-app-market-server
-        fi
+    # Market App
+    if in_list "$thing" "all fast server app_market app_market_server"
+    then
+        build_deb_package apps/app.market/daemon/src nublic-app-market-daemon
+        build_deb_package apps/app.market/server-python/src nublic-app-market-server
+    fi
 
-        if in_list $thing "all fast gwt app_market app_market_gwt"
-        then
-            build_gwt_package apps/app.market/web nublic-app-market-web
-        fi
+    if in_list "$thing" "all fast gwt app_market app_market_gwt"
+    then
+        build_gwt_package apps/app.market/web nublic-app-market-web
+    fi
 
-        if in_list $thing "all fast app_market"
-        then
-            build_deb_package apps/app.market nublic-app-market
-        fi
+    if in_list "$thing" "all fast app_market"
+    then
+        build_deb_package apps/app.market nublic-app-market
+    fi
 
-        # Init App
-        if in_list $thing "all fast server app_init app_init_server"
-        then
-            build_deb_package apps/app.init/server-python/src nublic-app-init-server
-        fi
+    # Init App
+    if in_list "$thing" "all fast server app_init app_init_server"
+    then
+        build_deb_package apps/app.init/server-python/src nublic-app-init-server
+    fi
 
-        if in_list $thing "all fast gwt app_init app_init_gwt"
-        then
-            build_gwt_package apps/app.init/web nublic-app-init-web
-        fi
+    if in_list "$thing" "all fast gwt app_init app_init_gwt"
+    then
+        build_gwt_package apps/app.init/web nublic-app-init-web
+    fi
 
-        if in_list $thing "all fast app_init"
-        then
-            build_deb_package apps/app.init nublic-app-init
-        fi
+    if in_list "$thing" "all fast app_init"
+    then
+        build_deb_package apps/app.init nublic-app-init
+    fi
 
-        # Extra configuration packages
-        if in_list $thing "all fast config"
-        then
-            build_deb_package conf/apache nublic-apache-config
-            build_deb_package conf/samba nublic-samba-config
-            build_deb_package conf/jetty8 nublic-jetty8-config
-            build_deb_package conf/solr-jetty8 nublic-solr-jetty8-config
-            #build_deb_package conf/solr nublic-solr-config
-            #build_deb_package conf/tomcat6 nublic-tomcat-config
-            #build_deb_package conf/tomcat7 nublic-tomcat-config
-            build_deb_package conf/minidlna nublic-minidlna-config
-            build_deb_package conf/upstart nublic-upstart
-            build_deb_package conf/lshell nublic-lshell-config
-            build_deb_package conf/openssh nublic-openssh-config
-            build_deb_package conf/dyndnschecker nublic-dyndnschecker
-            build_deb_package conf/unattended-upgrades nublic-unattended-upgrades-config
-            build_deb_package conf/nublic nublic
-        fi
-    done
+    # Extra configuration packages
+    if in_list "$thing" "all fast config"
+    then
+        build_deb_package conf/apache nublic-apache-config
+        build_deb_package conf/samba nublic-samba-config
+        build_deb_package conf/jetty8 nublic-jetty8-config
+        build_deb_package conf/solr-jetty8 nublic-solr-jetty8-config
+        #build_deb_package conf/solr nublic-solr-config
+        #build_deb_package conf/tomcat6 nublic-tomcat-config
+        #build_deb_package conf/tomcat7 nublic-tomcat-config
+        build_deb_package conf/minidlna nublic-minidlna-config
+        build_deb_package conf/upstart nublic-upstart
+        build_deb_package conf/lshell nublic-lshell-config
+        build_deb_package conf/openssh nublic-openssh-config
+        build_deb_package conf/dyndnschecker nublic-dyndnschecker
+        build_deb_package conf/unattended-upgrades nublic-unattended-upgrades-config
+        build_deb_package conf/nublic nublic
+    fi
 
     # Create final repository
     create_repo
 
-    for thing in $@
-    do
-        # Deploy
-        if in_list $thing "deploy"
-        then
-            echo " "
-            echo "DEPLOYING TO VAGRANT"
-            vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
-        fi
+    # Deploy
+    if in_list "$thing" "deploy"
+    then
+        echo " "
+        echo "DEPLOYING TO VAGRANT"
+        vagrant ssh --command "/opt/code/manage_vagrant.sh reload_nublic"
+    fi
 
-        if in_list $thing "test"
-        then
-            echo " "
-            echo "TESTING"
-            vagrant ssh --command "/opt/code/manage_vagrant.sh test"
-        fi
+    if in_list "$thing" "test"
+    then
+        echo " "
+        echo "TESTING"
+        vagrant ssh --command "/opt/code/manage_vagrant.sh test"
+    fi
 
-        if in_list $thing "notify fast deploy"
-        then
-            notify-send "Nublic build ended with tasks: $*"
-        fi
-    done
+    if in_list "$thing" "notify fast deploy"
+    then
+        notify-send "Nublic build ended with tasks: $*"
+    fi
 }
 
 if [ $# = 0 ]
 then
     do_build all
 else
-    do_build $*
+    do_build "$*"
 fi
 
 exit 0
