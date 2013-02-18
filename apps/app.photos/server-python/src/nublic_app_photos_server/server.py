@@ -1,4 +1,5 @@
 from flask import Flask, request, abort, send_file
+import os
 import random
 import simplejson as json
 from sqlalchemy.sql.expression import func
@@ -12,9 +13,12 @@ from model import db, Photo, Album, PhotoAlbum, photo_as_json, album_as_json, ph
 # Init app
 app = Flask(__name__)
 app.debug = True
+settings = os.environ['APP_PHOTOS_SETTINGS'].split(':')
 init_nublic_server(
-    app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos', db)
-app.logger.error('Starting photos app')
+    app, '/var/log/nublic/nublic-app-photos.python.log', 'nublic_app_photos',
+    db, configuration_paths=settings
+)
+app.logger.info('Starting photos app')
 
 
 @app.route('/albums', methods=['GET'])

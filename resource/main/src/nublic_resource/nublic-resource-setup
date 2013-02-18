@@ -54,9 +54,11 @@ def main():
         # Write configuration file
         path = os.path.join(CONFIG_DIR, '%s_%s.%s' % (app, key, "cfg"))
         with open(path, 'w') as f:
+            header = "[%s_%s]" % (app, key)
             uri = provider.value(app, key, 'uri')
             config_line = "%s_%s_uri = %s" % (app, key, uri)
             config_sqlalchemy = "SQLALCHEMY_DATABASE_URI = %s" % (uri)
+            f.write(header + '\n')
             f.write(config_line + '\n')
             f.write(config_sqlalchemy + '\n')
 
