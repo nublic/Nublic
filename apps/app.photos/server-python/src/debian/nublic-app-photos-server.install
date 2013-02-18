@@ -1,1 +1,2 @@
 nublic_app_photos_server/app.photos.wsgi /var/lib/nublic/webapps/app.photos
+nublic_app_photos.cfg /etc/nublic

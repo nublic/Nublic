@@ -1,5 +1,6 @@
 from flask import Flask, request, abort, send_file
 import os.path
+import os
 #import random
 import simplejson as json
 from sqlalchemy.sql.expression import func
@@ -15,13 +16,16 @@ from model import db, Album, Artist, Collection, Playlist, Song,\
     song_as_json, songs_and_row_count_as_json
 from images import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
 
+
 # Init app
 app = Flask(__name__)
-app.debug = True
+#app.debug = True
+settings = os.environ['APP_MUSIC_SETTINGS'].split(':')
 init_nublic_server(
     app, '/var/log/nublic/nublic-app-music.python.log', 'nublic_app_music',
-    db)
-app.logger.error('Starting music app')
+    db, configuration_paths=settings
+)
+app.logger.info('Starting music app')
 
 # COLLECTIONS HANDLING
 # ====================

@@ -6,6 +6,7 @@ a2enmod proxy_html
 a2enmod proxy_http
 a2enmod proxy_ajp
 a2enmod wsgi
+a2enmod xsendfile
 a2dissite default
 a2ensite nublic
 service apache2 restart
