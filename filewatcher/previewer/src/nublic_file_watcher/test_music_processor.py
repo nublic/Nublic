@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 
 # Configure library, it works at import time
@@ -71,14 +72,146 @@ SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff",
                                             ".mid", ".midi", ".au", ".pcm"]
 
 
-# Set up processors
+import logging
+logging.basicConfig()
+
+from nublic_app_music_server.model import (db, Album, Artist,
+                                           Song, SongCollection, SongPlaylist)
+
+
 class MusicProcessorTest(unittest.TestCase):
     def setUp(self):
         self.music_processor = MusicProcessor()
-        pass
+        db.create_all()
 
     def tearDown(self):
-        pass
+        db.drop_all()
+
+    def apply_to_process_updated(self, filename):
+        self.music_processor.process_updated(filename, is_dir=True)
+        self.music_processor.process_updated(filename, is_dir=False)
+
+    def apply_to_process_deleted(self, filename):
+        self.music_processor.process_deleted(filename, is_dir=True)
+        self.music_processor.process_deleted(filename, is_dir=False)
+
+    def apply_to_process_attribs_change(self, filename):
+        self.music_processor.process_attribs_change(filename, is_dir=True)
+        self.music_processor.process_attribs_change(filename, is_dir=False)
+
+    def apply_to_process_moved(self, from_, to_):
+        self.music_processor.process_moved(from_, to_, is_dir=True)
+        self.music_processor.process_moved(from_, to_, is_dir=False)
+
+    def assert_db_empty(self, message):
+        self.assertIs(Album.query.first(), None, message)
+        self.assertIs(SongCollection.query.first(), None, message)
+        self.assertIs(Artist.query.first(), None, message)
+        self.assertIs(Song.query.first(), None, message)
+        self.assertIs(SongPlaylist.query.first(), None, message)
+
+    # Test do not crash on non existing file
+    def test_non_existing_file_updated(self):
+        filename = "/tmp/test_music_processor/not_existing"
+        filename_unicode = u"/tmp/test_music_processor/con_eñe".encode('utf8')
+        #  Updated
+        self.apply_to_process_updated(filename)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing file")
+        self.apply_to_process_updated(filename_unicode)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing unicode path file")
+        #  Delete
+        self.apply_to_process_deleted(filename)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing file")
+        self.apply_to_process_deleted(filename_unicode)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing unicode path file")
+        #  Attribs_change
+        self.apply_to_process_attribs_change(filename)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing file")
+        self.apply_to_process_attribs_change(filename_unicode)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing unicode path file")
+        #  Moved
+        self.apply_to_process_moved(filename_unicode, filename)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing file")
+        self.apply_to_process_moved(filename, filename_unicode)
+        self.assert_db_empty(
+            "Database must be empty adding a not existing unicode path file")
+
+    # Test do not open an not valid file
+    def test_non_valid_file(self):
+        filename = "/tmp/test_music_processor/not_valid.mp3"
+        filename_unicode = u"/tmp/test_music_processor/con_eñe.mp3".encode('utf8')
+        with open(filename, "w") as f:
+            f.write("NOT AN AUDIO FILE!!")
+            self.apply_to_process_updated(filename)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing file")
+            #  Delete
+            self.apply_to_process_deleted(filename)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing file")
+            #  Attribs_change
+            self.apply_to_process_attribs_change(filename)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing file")
+            #  Moved
+            self.apply_to_process_moved(filename_unicode, filename)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing file")
+        with open(filename_unicode, "w") as f:
+            f.write(u"NOT AN AUDIO ññññ FILE!!".encode('utf8'))
+            #  Updated
+            self.apply_to_process_updated(filename_unicode)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing unicode path file")
+            #  Delete
+            self.apply_to_process_deleted(filename_unicode)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing unicode path file")
+            #  Attribs_change
+            self.apply_to_process_attribs_change(filename_unicode)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing unicode path file")
+            #  Moved
+            self.apply_to_process_moved(filename_unicode, filename)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing file")
+            self.apply_to_process_moved(filename, filename_unicode)
+            self.assert_db_empty(
+                "Database must be empty adding a not existing unicode path file")
+
+
+    #def process_updated(self, filename, is_dir, info=None):
+    #def process_deleted(self, filename, is_dir, info=None):
+    #def process_attribs_change(self, filename, is_dir, info):
+    #def process_moved(self, filename, is_dir, info=None):
+    #def process_updated_file(self, filename):
+
+
+
+    # Test work with audio song
+
+    # Test get metadata from file
+
+    # Test get metadata from internet
+
+    # Test get metadata from directory structure
+
+    # Methods to test
+    #def process_updated(self, filename, is_dir, info=None):
+    #def process_deleted(self, filename, is_dir, info=None):
+    #def process_attribs_change(self, filename, is_dir, info):
+    #def process_moved(self, filename, is_dir, info=None):
+    #def process_updated_file(self, filename):
+    #def update_attribs(self, song):
+    #def process_deleted_file(self, filename):
+    #def process_moved_folder(self, from_, to):
 
     #def __init__(self, logger=None, watcher=''):
         #PreviewProcessor.__init__(self)

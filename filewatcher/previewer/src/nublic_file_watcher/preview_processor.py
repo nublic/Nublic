@@ -1,6 +1,29 @@
 import datetime
 from file_info import FileInfo
 from nublic.filewatcher.change import FileChange
+#import sys
+
+import logging
+log = logging.getLogger(__name__)
+
+
+def trace_calls(frame, event, arg):
+    if event != 'call':
+        return
+    co = frame.f_code
+    func_name = co.co_name
+    if func_name == 'write':
+        # Ignore write() calls from print statements
+        return
+    func_line_no = frame.f_lineno
+    func_filename = co.co_filename
+    caller = frame.f_back
+    caller_line_no = caller.f_lineno
+    caller_filename = caller.f_code.co_filename
+    print 'Call to %s on line %s of %s from line %s of %s' % \
+        (func_name, func_line_no, func_filename,
+         caller_line_no, caller_filename)
+    return
 
 
 class Element(object):
@@ -45,9 +68,52 @@ class Element(object):
 
 class PreviewProcessor(object):
     def __init__(self):
+        #sys.settrace(trace_calls)
         pass
 
     def process(self, element):
+        change = element.change
+        info = element.get_info()
+        log.info('Processor %s: Change received: %i %s',
+                 self.get_id(), change.kind, change.filename)
+        if change.kind == FileChange.CREATED:
+            self.process_updated(change.filename, change.is_dir, info)
+        elif change.kind == FileChange.MODIFIED:
+            self.process_updated(change.filename, change.is_dir, info)
+        elif change.kind == FileChange.DELETED:
+            self.process_deleted(change.filename, change.is_dir)
+        elif change.kind == FileChange.ATTRIBS_CHANGED:
+            self.process_attribs_change(change.filename, change.is_dir, info)
+        elif change.kind == FileChange.MOVED:
+            self.process_moved(
+                change.filename_from, change.filename_to, change.is_dir)
+        log.info('Processor %s: Finish processing file: %i %s',
+                 change.kind, change.filename)
+
+    def process_updated(filename, is_dir, info=None):
+        """ Process a file changed or created.
+        It might be called several times without any changes
+        filename is a byte string in utf8
+        """
+        raise NotImplementedError("Should be implemented in derived classes")
+
+    def process_deleted(filename, is_dir, info=None):
+        """ Process a file deleted
+        filename is a byte string in utf8
+        """
+        raise NotImplementedError("Should be implemented in derived classes")
+
+    def process_attribs_change(filename, is_dir, info=None):
+        """ Process change of attributes.
+        Attributes are things specified in the os.stat
+        filename is a byte string in utf8
+        """
+        raise NotImplementedError("Should be implemented in derived classes")
+
+    def process_moved(filename_from, filename_to, is_dir, info=None):
+        """ Process a file changed or created.
+        filename_from, filename_to are byte strings in utf8
+        """
         raise NotImplementedError("Should be implemented in derived classes")
 
     def get_id(self):
