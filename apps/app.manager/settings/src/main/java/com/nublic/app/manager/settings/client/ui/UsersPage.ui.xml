@@ -3,12 +3,13 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.util.users">
 	<ui:style>
-		
 	</ui:style>
 
 	<g:HTMLPanel>
 		<div style="padding: 10px;">
 			<h3>Lista de usuarios</h3>
+			<g:VerticalPanel ui:field="existingPanel"/>
+			<g:Grid ui:field="existingGrid"/>
 			<h3>Crear nuevo usuario</h3>
 			<n:UserWidget ui:field="createUser"/>
 		</div>

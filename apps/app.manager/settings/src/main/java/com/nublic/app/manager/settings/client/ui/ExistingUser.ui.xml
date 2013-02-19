@@ -1,0 +1,21 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:style>
+		.leftmargin {
+			margin-left: 20px;
+		}
+		.grey {
+			color: #AAA;
+		}
+	</ui:style>
+
+	<g:HorizontalPanel addStyleNames="{style.leftmargin}" verticalAlignment="middle">
+		<g:HorizontalPanel>
+			<g:Label ui:field="shownLabel"/>
+			<g:Label ui:field="systemLabel" addStyleNames="{style.leftmargin} {style.grey}"/>
+		</g:HorizontalPanel>
+		<g:Button addStyleNames="btn btn-danger {style.leftmargin}">Delete user</g:Button>
+	</g:HorizontalPanel>
+
+</ui:UiBinder>
