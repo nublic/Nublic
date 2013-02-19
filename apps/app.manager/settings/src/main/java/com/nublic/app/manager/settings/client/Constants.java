@@ -16,5 +16,5 @@ public class Constants {
 	
 	public static final int MIN_PASSWORD_LENGTH = 5;
 	public static final String LEFT_GRID_MARGIN = "20px";
-	public static final String TABLE_CELL_HEIGHT = "20px";
+	public static final String TABLE_CELL_HEIGHT = "40px";
 }

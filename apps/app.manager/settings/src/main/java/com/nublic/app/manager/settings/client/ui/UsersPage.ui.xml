@@ -2,13 +2,21 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:n="urn:import:com.nublic.util.users">
-	<ui:style>
+	<ui:style type='com.nublic.app.manager.settings.client.ui.UsersPage.UserStyle'>
+		.gray {
+			color: #AAA;
+		}
+		.spacing {
+			margin-right: 20px;
+		}
+		.bold {
+			font-weight: bold;
+		}
 	</ui:style>
 
 	<g:HTMLPanel>
 		<div style="padding: 10px;">
 			<h3>Lista de usuarios</h3>
-			<g:VerticalPanel ui:field="existingPanel"/>
 			<g:Grid ui:field="existingGrid"/>
 			<h3>Crear nuevo usuario</h3>
 			<n:UserWidget ui:field="createUser"/>
