@@ -4,16 +4,21 @@ from pgmagick.api import Image
 import re
 import requests
 import shutil
-import simplejson
+import json
 
 from pyechonest import config
 import pyechonest.artist
 
-ROOT_FOLDER = "/var/nublic/cache/music"
-ARTISTS_FOLDER = os.path.join(ROOT_FOLDER, "artists")
-ALBUMS_FOLDER = os.path.join(ROOT_FOLDER, "albums")
+# Get the cache path from environment
+try:
+    ROOT_CACHE_MUSIC_FOLDER = os.environ["MUSIC_CACHE_FOLDER"]
+except KeyError:
+    ROOT_CACHE_MUSIC_FOLDER = "/var/nublic/cache/music"
+
+ARTISTS_FOLDER = os.path.join(ROOT_CACHE_MUSIC_FOLDER, "artists")
+ALBUMS_FOLDER = os.path.join(ROOT_CACHE_MUSIC_FOLDER, "albums")
 ORIGINAL_FILENAME = "orig"
-THUMBNAIL_FILENAME = "thumb.png"
+THUMBNAIL_FILENAME = "thumbnail.png"
 THUMBNAIL_SIZE = 96
 
 import logging

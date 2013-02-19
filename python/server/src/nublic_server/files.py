@@ -6,7 +6,10 @@ from nublic_server.places import get_mime_type, get_cache_folder,\
     get_cache_views
 #from hashlib import sha1  # pylint: disable=E0611
 
-CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
+try:
+    CACHE_ROOT_DIR = os.environ["BROWSER_CACHE_FOLDER"]
+except KeyError:
+    CACHE_ROOT_DIR = '/var/nublic/cache/browser/'
 
 
 def get_last_dir_name(src):
@@ -68,7 +71,7 @@ def get_file_info(path, user):
     info['last_update'] = file_stat.st_mtime
     info['size'] = file_stat.st_size
     info['thumb'] = os.path.exists(os.path.join(get_cache_folder(path),
-                                                    "thumbnail.png"))
+                                                "thumbnail.png"))
     if os.path.isdir(path):
         info['mime'] = 'application/x-directory'
     else:
