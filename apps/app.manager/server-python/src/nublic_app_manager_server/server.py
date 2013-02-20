@@ -299,6 +299,23 @@ def add_user():
         return 'exists'
 
 
+@app.route('/deleteuser/', methods=['DELETE'])
+def delete_user():
+    systemname = request.form.get('name', None)
+    masterpass = request.form.get('pass', None)
+    with open('/etc/nublic/master_password.conf', 'r') as f:
+        passinsys = f.read()
+    if passinsys == masterpass:
+        olduser = User(systemname)
+        if olduser.exists():
+            olduser.delete()
+            return 'ok'
+        else:
+            return 'Wrong user'
+    else:
+        return 'Wrong password'
+
+
 @app.route('/checkuser/<name>')
 def check_user(name):
     if User(name).exists():
