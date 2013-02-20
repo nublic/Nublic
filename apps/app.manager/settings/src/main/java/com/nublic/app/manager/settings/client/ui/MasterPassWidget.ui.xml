@@ -13,7 +13,7 @@
 			<g:Image resource="{res.password}" addStyleNames="{style.rightmargin}"/>
 			<g:Label>Enter master password to delete user</g:Label>
 		</g:HorizontalPanel>
-		<g:PasswordTextBox/>
+		<g:PasswordTextBox ui:field="passBox"/>
 	</g:VerticalPanel>
 	
 </ui:UiBinder>

@@ -6,6 +6,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -16,7 +17,10 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.nublic.app.manager.settings.client.Constants;
+import com.nublic.app.manager.settings.client.DeleteUserHandler;
+import com.nublic.app.manager.settings.client.DeleteUserMessage;
 import com.nublic.app.manager.settings.client.Resources;
+import com.nublic.util.messages.SequenceHelper;
 import com.nublic.util.users.AddUserHandler;
 import com.nublic.util.users.User;
 import com.nublic.util.users.UserListHandler;
@@ -36,23 +40,46 @@ public class UsersPage extends Composite {
 		String spacing();
 		String bold();
 	}
-	
-	ClickHandler deleteHandler = new ClickHandler() {
+
+	private class MyDeleteHandler implements ClickHandler {
+		String systemName;
+		
+		public MyDeleteHandler(String systemName) {
+			this.systemName = systemName;
+		}
+		
 		@Override
 		public void onClick(ClickEvent e) {
 			EnumSet<PopupButton> buttonSet = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
-			final Popup p = new Popup("Delete user", buttonSet, new MasterPassWidget());
+			final MasterPassWidget mpw = new MasterPassWidget();
+			final Popup p = new Popup("Delete user", buttonSet, mpw);
 			PopupButtonHandler closeHandler = new PopupButtonHandler() {
 				@Override
 				public void onClicked(PopupButton button, ClickEvent event) {
 					p.hide();
 				}
 			};
+			PopupButtonHandler deleteHandler = new PopupButtonHandler() {
+				@Override
+				public void onClicked(PopupButton button, ClickEvent event) {
+					DeleteUserMessage dum = new DeleteUserMessage(systemName, mpw.getPassword(), new DeleteUserHandler() {
+						@Override
+						public void onUserDeleted(boolean success) {
+							if (success) {
+								// remove from interface list
+							}
+							p.hide();
+						}
+					});
+					SequenceHelper.sendJustOne(dum, RequestBuilder.DELETE);
+				}
+			};
 			p.addButtonHandler(PopupButton.CANCEL, closeHandler);
 			p.addButtonHandler(PopupButton.CLOSE, closeHandler);
+			p.addButtonHandler(PopupButton.DELETE, deleteHandler);
 			p.center();
 		}
-	};
+	}
 
 	@UiField UserStyle style;
 	@UiField UserWidget createUser;
@@ -103,7 +130,7 @@ public class UsersPage extends Composite {
 		
 		Button b = new Button("Delete User");
 		b.addStyleName("btn btn-danger");
-		b.addClickHandler(deleteHandler);
+		b.addClickHandler(new MyDeleteHandler(systemName));
 		existingGrid.setWidget(rowCount, 4, b);
 
 		rowCount++;
