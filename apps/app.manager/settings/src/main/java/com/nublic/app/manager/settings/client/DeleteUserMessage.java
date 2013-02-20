@@ -24,7 +24,11 @@ public class DeleteUserMessage extends Message {
 	@Override
 	public void onSuccess(Response response) {
 		if (response.getStatusCode() == Response.SC_OK) {
-			duh.onUserDeleted(true);
+			if (response.getText().equals("ok")) {
+				duh.onUserDeleted(true);
+			} else {
+				duh.onUserDeleted(false);
+			}
 		} else {
 			onError();
 		}

@@ -66,7 +66,7 @@ public class UsersPage extends Composite {
 						@Override
 						public void onUserDeleted(boolean success) {
 							if (success) {
-								// remove from interface list
+								removeFromUserList(systemName);
 							}
 							p.hide();
 						}
@@ -109,7 +109,7 @@ public class UsersPage extends Composite {
 	}
 
 
-	private void addUserToList(String systemName, String shownName) {
+	public void addUserToList(String systemName, String shownName) {
 		existingGrid.resize(rowCount +1, 5);
 		existingGrid.getColumnFormatter().setWidth(0, Constants.LEFT_GRID_MARGIN);
 		existingGrid.getCellFormatter().setHeight(rowCount, 0, Constants.TABLE_CELL_HEIGHT);
@@ -134,6 +134,17 @@ public class UsersPage extends Composite {
 		existingGrid.setWidget(rowCount, 4, b);
 
 		rowCount++;
+	}
+	
+	public void removeFromUserList(String systemName) {
+		int rowCount = existingGrid.getRowCount();
+		boolean removed = false;
+		for (int i = 0; i < rowCount && !removed; i++) {
+			if (((Label)existingGrid.getWidget(i, 3)).getText().equals(systemName)) {
+				existingGrid.removeRow(i);
+				removed = true;
+			}
+		}
 	}
 
 }
