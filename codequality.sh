@@ -55,9 +55,8 @@ done
 
 mkdir -p $TARGET_DIR
 
-if [[ $# = 0 ]]; then
-    all
-fi
+# Export the PYTHONPATH variable.
+export PYTHONPATH=`find_python_modules_path .`
 
 if [[ $pyflakes = 0 ]]; then
     echo "Running pyflakes to $TARGET_DIR/pyflakes.log"
@@ -72,10 +71,10 @@ fi
 if [[ $pylint = 0 ]]; then
     echo "Running pylint to $TARGET_DIR/pylint.log"
     touch $TARGET_DIR/pylint.dot
-    PYTHONPATH=`find_python_modules_path .` pylint `find_python_module_names . ` --import-graph=`pwd`/$TARGET_DIR/pylint.dot > $TARGET_DIR/pylint.log
+    pylint `find_python_module_names . ` --import-graph=`pwd`/$TARGET_DIR/pylint.dot > $TARGET_DIR/pylint.log
     dot -Tpng $TARGET_DIR/pylint.dot -o $TARGET_DIR/pylint.png
     echo "Running pylint to $TARGET_DIR/pylint.html"
-    PYTHONPATH=`find_python_modules_path .` pylint `find_python_module_names . ` -f html > $TARGET_DIR/pylint.html
+    pylint `find_python_module_names . ` -f html > $TARGET_DIR/pylint.html
 fi
 
 if [[ $nosetests = 0 ]]; then
@@ -84,10 +83,9 @@ if [[ $nosetests = 0 ]]; then
     for module in `find_python_modules` ; do
         echo "Checking $module module"
         echo "Checking $module module" >> $TARGET_DIR/nosetests.log
-        PYTHONPATH=`find_python_modules_path .` nosetests $module  &>> $TARGET_DIR/nosetests.log
+        nosetests $module  &>> $TARGET_DIR/nosetests.log
         #PYTHONPATH=`find_python_modules_path .` nosetests $module --with-coverage --cover-tests  &>> $TARGET_DIR/nosetests.log
     done
-
 fi
 
 

@@ -6,7 +6,10 @@ import os.path
 from sunburnt import SolrInterface
 from preview_processor import PreviewProcessor
 from file_info import FileInfo
-from nublic.filewatcher.change import FileChange
+#from nublic.filewatcher.change import FileChange
+
+import logging
+log = logging.getLogger(__name__)
 
 
 def to_utf8(text):
@@ -18,7 +21,14 @@ def to_utf8(text):
 
 
 def from_utf8(text):
-    return text.encode('utf-8')
+    if isinstance(text, str):
+        log.debug("Not needed from_utf8 call")
+        return text
+    elif isinstance(text, unicode):
+        return text.encode('utf-8')
+    else:
+        log.error("Not handled type %s", type(text))
+        return text
 
 
 class SolrFileInfo:
@@ -101,21 +111,13 @@ class SolrProcessor(PreviewProcessor):
         self.get_solr_interface().delete_all()
         self.get_solr_interface().commit()
 
-    def process(self, element):
-        change = element.get_change()
-        if change.kind == FileChange.CREATED:
-            self.process_updated_file(change.filename, change.is_dir, True)
-        elif change.kind == FileChange.MODIFIED:
-            self.process_updated_file(change.filename, change.is_dir, True)
-        elif change.kind == FileChange.ATTRIBS_CHANGED:
-            self.process_updated_file(change.filename, change.is_dir, False)
-        elif change.kind == FileChange.DELETED:
-            self.process_deleted_file(change.filename)
-        elif change.kind == FileChange.MOVED:
-            self.process_moved_file(
-                change.filename_from, change.filename_to, change.is_dir)
+    def process_attribs_change(self, filename, is_dir):
+        self.update_in_solr(filename, is_dir, False)
 
-    def process_updated_file(self, filename, is_dir, should_recreate_preview):
+    def process_updated(self, filename, is_dir):
+        self.update_in_solr(filename, is_dir, True)
+
+    def update_in_solr(self, filename, is_dir, should_recreate_mime):
         # Check if it is itself in Solr
         file_info = self.retrieve_doc(filename)
         if file_info is None:
@@ -126,19 +128,19 @@ class SolrProcessor(PreviewProcessor):
             if is_dir:
                 for f in os.listdir(from_utf8(filename)):
                     inner_fname = os.path.join(from_utf8(filename), f)
-                    self.process_updated_file(inner_fname,
-                                              os.path.isdir(inner_fname),
-                                              should_recreate_preview)
+                    self.update_in_solr(inner_fname,
+                                        os.path.isdir(inner_fname),
+                                        should_recreate_mime)
         else:
             # Recreate Solr info
-            file_info.save(should_recreate_preview)
+            file_info.save(should_recreate_mime)
 
-    def process_deleted_file(self, filename):
+    def process_deleted_file(self, filename, is_dir):
         file_info = self.retrieve_doc(filename)
         if file_info is not None:
             file_info.delete()
 
-    def process_moved_file(self, from_, to, is_dir):
+    def process_moved(self, from_, to, is_dir):
         if self.has_doc(from_):
             file_info = self.retrieve_doc(from_)
             file_info.set_new_pathname(to)

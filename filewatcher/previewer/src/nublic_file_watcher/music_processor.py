@@ -2,7 +2,7 @@ import os
 import os.path
 from unidecode import unidecode
 
-from nublic.filewatcher import FileChange
+#from nublic.filewatcher import FileChange
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import get_mime_type, ensure_cache_folder
 from preview_processor import PreviewProcessor
@@ -69,46 +69,53 @@ class MusicProcessor(PreviewProcessor):
         PreviewProcessor.__init__(self)
         log.info('Music processor initialised')
         db.init_app(app)
-        self.ctx = app.test_request_context().push()
-        app.preprocess_request()
+        #self.ctx = app.test_request_context().push()
+        #app.preprocess_request()
 
     def get_id(self):
         return 'music'
 
-    def shutdown(self):
-        app.process_response(app.response_class())
-        self.ctx.pop()
+    # Inherited methods
+    def process_updated(self, filename, is_dir, info=None):
+        if not is_dir:
+            with app.test_request_context():
+                self.process_updated_file(filename)
 
-    def process(self, element):
-        change = element.change
-        log.info('Music processor file: %i %s',
-                 change.kind, change.filename)
-        if change.kind == FileChange.CREATED and not change.is_dir:
-            self.process_updated_file(change.filename)
-        elif change.kind == FileChange.MODIFIED and not change.is_dir:
-            self.process_updated_file(change.filename)
-        elif change.kind == FileChange.DELETED and not change.is_dir:
-            self.process_deleted_file(change.filename)
-        elif change.kind == FileChange.ATTRIBS_CHANGED and not change.is_dir:
-            self.process_attribs_change(change.filename)
-        elif change.kind == FileChange.MOVED:
-            if change.is_dir:
-                self.process_moved_folder(
-                    change.filename_from, change.filename_to)
+    def process_deleted(self, filename, is_dir, info=None):
+        if not is_dir:
+            with app.test_request_context():
+                self.process_deleted_file(filename)
+
+    def process_attribs_change(self, filename, is_dir, info=None):
+        if not is_dir:
+            with app.test_request_context():
+                filename_unicode = unicode(filename, 'utf8')
+                song = Song.query.filter_by(file=filename_unicode).first()
+                if song is not None:
+                    self.update_attribs(song)
+                else:
+                    self.process_updated_file(filename)
+
+    def process_moved(self, filename_from, filename_to, is_dir, info=None):
+        with app.test_request_context():
+            if is_dir:
+                self.process_moved_dir(filename_from, filename_to)
             else:
-                self.process_moved_file(
-                    change.filename_from, change.filename_to)
-        log.info('Finish processing file: %i %s', change.kind, change.filename)
+                self.process_moved_file(filename_from, filename_to)
 
     def is_hidden(self, path):
+        """
+        path is an byte string in utf8
+        """
         filename = os.path.basename(path)
         return filename.endswith('~') or filename.startswith('.')
 
     def process_updated_file(self, filename):
         ''' Process an update of a file.
         The file might exist before.
-        filename is an Unicode variable.
+        filename is an byte string in utf8
         '''
+        filename_unicode = unicode(filename, 'utf8')
         log.info('Updated file: %s', filename)
         mime = get_mime_type(filename)
         _, ext = os.path.splitext(filename)
@@ -123,35 +130,38 @@ class MusicProcessor(PreviewProcessor):
                 song_info = None
             # If we got some information
             if song_info is not None:
-                s = Song.query.filter_by(file=filename).first()
+                s = Song.query.filter_by(file=filename_unicode).first()
                 if s is None:
                     self.add_to_database(filename, song_info)
                 else:
                     self.replace_in_database(filename, s, song_info)
                 # @TODO Do conversion if needed
                 log.warning("No compatibility check for audio file %s", filename)
-                cache_folder = ensure_cache_folder(filename.encode('utf8'))
+                cache_folder = ensure_cache_folder(filename)  # @TODO: Check for utf8
                 mp3_cache = os.path.join(cache_folder, 'view.mp3')
                 if os.path.exists(mp3_cache):
                     log.warning("Cache existing for audio file %s, skipping", filename)
                 else:
                     log.info("Creating cache for audio file %s", filename)
-                    os.symlink(filename.encode('utf8'), mp3_cache)
-
-    def process_attribs_change(self, filename):
-        song = Song.query.filter_by(file=filename).first()
-        if song is not None:
-            self.update_attribs(song)
-        else:
-            self.process_updated_file(filename)
+                    os.symlink(filename, mp3_cache)
 
     def update_attribs(self, song):
+        """
+        Updates the attributes in the Song object in the database
+        song.file is an Unicode object
+        """
         song.owner = get_file_owner(song.file.encode('utf-8')).get_username()
         song.shared = is_file_shared(song.file.encode('utf-8'))
         db.session.commit()
 
     def process_deleted_file(self, filename):
-        song = Song.query.filter_by(file=filename).first()
+        """
+        Process a file deleted by removing the file from the previews
+        and the database
+        filename is a byte string in utf8
+        """
+        filename_unicode = unicode(filename, 'utf8')
+        song = Song.query.filter_by(file=filename_unicode).first()
         if song is not None:
             # Delete from collections
             SongCollection.query.filter_by(songId=song.id).delete()
@@ -174,26 +184,34 @@ class MusicProcessor(PreviewProcessor):
             # @TODO HOW TO REMOVE THE RIGHT CACHE?
             log.warning("No cache removed for audio file %s", filename)
             mp3_cache = os.path.join(
-                ensure_cache_folder(filename.encode('utf8')), 'view.mp3')
+                ensure_cache_folder(filename), 'view.mp3')
             if os.path.exists(mp3_cache):
                 log.info(
-                    "Cache removed for audio file %s", filename.encode('utf8'))
+                    "Cache removed for audio file %s", filename)
                 os.remove(mp3_cache)
             else:
                 log.warning("Cache for audio file %s does not exist. Not removed",
-                            filename.encode('utf8'))
+                            filename)
 
-    def process_moved_folder(self, from_, to):
-        for e in os.listdir(to):
-            file_from = os.path.join(from_, e)
-            file_to = os.path.join(to, e)
-            if os.path.isdir(file_to) and not self.is_hidden(file_to):
-                self.process_moved_folder(file_from, file_to)
-            else:
-                self.process_moved_file(file_from, file_to)
+    def process_moved_dir(self, from_, to):
+        """
+        from_ and to are byte strings in utf8
+        """
+        if os.path.exists(to):  # The dir was removed before this. Nothing to do
+            for e in os.listdir(to):
+                file_from = os.path.join(from_, e)
+                file_to = os.path.join(to, e)
+                if os.path.isdir(file_to) and not self.is_hidden(file_to):
+                    self.process_moved_dir(file_from, file_to)
+                else:
+                    self.process_moved_file(file_from, file_to)
 
     def process_moved_file(self, from_, to):
-        song = Song.query.filter_by(file=from_).first()
+        """
+        from_ and to are byte strings in utf8
+        """
+        from_unicode = unicode(from_, 'utf8')
+        song = Song.query.filter_by(file=from_unicode).first()
         if song is not None:
             song.file = to
             db.session.commit()
@@ -201,6 +219,11 @@ class MusicProcessor(PreviewProcessor):
             self.process_updated_file(to)
 
     def ensure_or_create_artist(self, artist_name):
+        """
+        Returns an artist.
+        If the artist does not exists it is created.
+        This function tries to match close but not exact artists
+        """
         n_artist = unidecode(unicode(artist_name).lower())
         # Try to find an artist
         artist = Artist.query.filter_by(normalized=n_artist).first()
@@ -213,6 +236,12 @@ class MusicProcessor(PreviewProcessor):
             return new_artist
 
     def ensure_or_create_album(self, file_, artist_name, album_name):
+        """
+        Returns an album for the artist given.
+        If the album does not exist the album is created for the
+        given file_ before.
+        file_ is a byte string in utf8
+        """
         directory, _ = os.path.split(file_)
         # Case 1. we have artist and album name
         if artist_name is not None and album_name is not None:
@@ -277,8 +306,9 @@ class MusicProcessor(PreviewProcessor):
 
     def add_to_database(self, filename, song_info):
         ''' Add the song to the database if required.
-        filename is an Unicode variable
+        filename is a byte string in utf8
         '''
+        filename_unicode = unicode(filename, 'utf8')
         # Just in case anything is None
         if song_info.title is None:
             r_title = ''
@@ -304,14 +334,18 @@ class MusicProcessor(PreviewProcessor):
         # Ensure album
         album = self.ensure_or_create_album(
             filename, r_artist_name, r_album_name)
-        ensure_album_image(album.id, filename.encode('utf8'), r_album_name, r_artist_name)
+        ensure_album_image(album.id, filename, r_album_name, r_artist_name)  # @ TODO Check for unicode problems
         # Create song in database
-        song = Song(filename, r_title, artist.id, album.id, r_length,
+        song = Song(filename_unicode, r_title, artist.id, album.id, r_length,
                     song_info.year, song_info.track, song_info.disc_no)
         db.session.add(song)
         db.session.commit()
 
     def replace_in_database(self, filename, s, song_info):
+        """
+        Replace a song that changed in the database
+        filename is a byte string in utf8
+        """
         # Just in case anything is None
         if song_info.title is None:
             r_title = ''

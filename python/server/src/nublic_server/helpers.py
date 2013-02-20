@@ -55,8 +55,19 @@ def init_bare_nublic_server(app, log_file, configuration_paths=None):
     app.request_class = RequestWithDelete
     if configuration_paths:
         config_to_obj(configuration_paths, app.config)
-        log_format = app.config['LOG_FORMAT']
-        log_level = int(app.config['LOG_LEVEL'])
+        try:
+            log_format = app.config['LOG_FORMAT']
+        except KeyError:
+            log_format = ('%(asctime)s %(levelname)s: %(message)s '
+                          '[in %(pathname)s:%(lineno)d]')
+        try:
+            log_level = int(app.config['LOG_LEVEL'])
+        except KeyError:
+            log_level = logging.INFO
+        try:
+            log_file = app.config['LOG_FILE']
+        except KeyError:
+            pass  # File as parameter is fine
     else:
         log_format = ('%(asctime)s %(levelname)s: %(message)s '
                       '[in %(pathname)s:%(lineno)d]')
