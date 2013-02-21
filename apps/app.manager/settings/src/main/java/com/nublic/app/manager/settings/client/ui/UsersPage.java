@@ -128,7 +128,7 @@ public class UsersPage extends Composite {
 		systemLabel.addStyleName(style.spacing());
 		existingGrid.setWidget(rowCount, 3, systemLabel);
 		
-		Button b = new Button("Delete User");
+		Button b = new Button(Constants.I18N.deleteUser());
 		b.addStyleName("btn btn-danger");
 		b.addClickHandler(new MyDeleteHandler(systemName));
 		existingGrid.setWidget(rowCount, 4, b);
