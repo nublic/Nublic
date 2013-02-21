@@ -14,7 +14,8 @@ from nublic_server.helpers import init_bare_nublic_server, require_user
 app = Flask(__name__)
 app.debug = True
 init_bare_nublic_server(app, '/var/log/nublic/nublic-app-manager.python.log')
-app.logger.error('Starting manager app')
+log = app.logger
+log.info('Starting manager app')
 
 APP_INFO_ROOT = '/var/lib/nublic/apps'
 
@@ -304,7 +305,7 @@ def delete_user():
     systemname = request.form.get('name', None)
     masterpass = request.form.get('pass', None)
     with open('/etc/nublic/master_password.conf', 'r') as f:
-        passinsys = f.read()
+        passinsys = f.read().rstrip()
     if passinsys == masterpass:
         olduser = User(systemname)
         if olduser.exists():
