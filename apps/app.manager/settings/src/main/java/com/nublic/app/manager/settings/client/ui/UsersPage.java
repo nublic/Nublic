@@ -52,7 +52,8 @@ public class UsersPage extends Composite {
 		public void onClick(ClickEvent e) {
 			EnumSet<PopupButton> buttonSet = EnumSet.of(PopupButton.DELETE, PopupButton.CANCEL);
 			final MasterPassWidget mpw = new MasterPassWidget();
-			final Popup p = new Popup("Delete user", buttonSet, mpw);
+			final Popup p = new Popup(Constants.I18N.deleteUser(), buttonSet, mpw);
+			p.setHeight("250px");
 			PopupButtonHandler closeHandler = new PopupButtonHandler() {
 				@Override
 				public void onClicked(PopupButton button, ClickEvent event) {

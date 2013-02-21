@@ -15,4 +15,13 @@ public interface Resources extends ClientBundle {
 	
 	@Source("images/password.png")
 	ImageResource password();
+	
+	@Source("images/trash.png")
+	ImageResource trash();
+	
+	@Source("images/attention.png")
+	ImageResource attention();
+	
+	@Source("images/eye.png")
+	ImageResource eye();
 }
