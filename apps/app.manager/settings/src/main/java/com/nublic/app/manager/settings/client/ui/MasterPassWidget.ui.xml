@@ -1,0 +1,41 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.manager.settings.client.ui.password">
+	<ui:style>
+		.leftmargin {
+			margin-left: 15px;
+		}
+		.topmargin {
+			margin-top: 12px;
+		}
+	</ui:style>
+
+	<ui:with type="com.nublic.app.manager.settings.client.Resources" field="res"/>
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
+
+	<g:VerticalPanel horizontalAlignment="center">
+		<g:VerticalPanel horizontalAlignment="left">
+			<g:HorizontalPanel verticalAlignment="middle" addStyleNames="{style.topmargin}">
+				<g:cell width="50">
+					<g:Image resource="{res.password}" addStyleNames="{style.leftmargin}"/>
+				</g:cell>
+				<g:Label text="{msg.enterMasterPass1}"/>
+			</g:HorizontalPanel>
+			<g:HorizontalPanel verticalAlignment="middle" addStyleNames="{style.topmargin}">
+				<g:cell width="50">
+					<g:Image resource="{res.trash}" addStyleNames="{style.leftmargin}"/>
+				</g:cell>
+				<g:Label text="{msg.enterMasterPass2}"/>
+			</g:HorizontalPanel>
+			<g:HorizontalPanel verticalAlignment="middle" addStyleNames="{style.topmargin}">
+				<g:cell width="50">
+					<g:Image resource="{res.attention}" addStyleNames="{style.leftmargin}"/>
+				</g:cell>
+				<g:Label text="{msg.enterMasterPass3}"/>
+			</g:HorizontalPanel>
+		</g:VerticalPanel>
+		<n:PassWithViewer ui:field="passBox" addStyleNames="{style.topmargin}"/>
+	</g:VerticalPanel>
+	
+</ui:UiBinder>

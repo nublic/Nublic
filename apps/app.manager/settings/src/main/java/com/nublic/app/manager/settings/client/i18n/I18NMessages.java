@@ -6,8 +6,11 @@ import com.google.gwt.i18n.client.LocalizableResource.DefaultLocale;
 @DefaultLocale("en")
 public interface I18NMessages extends Messages {
 	String title();
-	String user();
+	String personalConfig();
 	String workFolders();
+	String privacy();
+	String system();
+	String users();
 	
 	// Personal config
 	String shownName();
@@ -26,6 +29,15 @@ public interface I18NMessages extends Messages {
 	String confirmRemoval(String folder);
 	String changeWorkFolderName();
 	String browse();
+	
+	// Users
+	String userList();
+	String createUser();
+	String deleteUser();
+	String enterMasterPass1();
+	String enterMasterPass2();
+	String enterMasterPass3();
+	String couldntDelete();
 	
 	// Errors
 	String errorNewWorkFolder();

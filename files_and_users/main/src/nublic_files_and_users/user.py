@@ -190,7 +190,8 @@ class UserDBus():  # (dbus.service.Object):
         if ' ' in username or not self.user_exists(username):
             raise NameError()
         # passwd
-        pexpect.run('userdel ' + username)
+        # pexpect.run('userdel ' + username)
+        pexpect.run('deluser --remove-home ' + username)
         print("Deleted in passwd")
         # samba
         pexpect.run('smbpasswd -x ' + username)

@@ -5,15 +5,17 @@
 	<ui:style>
 		
 	</ui:style>
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
+	
 	<g:HTMLPanel height="100%" width="100%">
 		<div class="well" style="padding: 8px 0; height: 100%; width: 100%;">
 			<ul class="nav nav-list">
-  				<li class="nav-header">Configuration</li>
-  				<li><n:NavLink ui:field="personal" text="Personal configuration"/></li>
-  				<li><n:NavLink ui:field="workFolders" text="Work folders"/></li>
-  				<li><n:NavLink ui:field="privacy" text="Privacy"/></li>
-  				<li><n:NavLink ui:field="system" text="System"/></li>
-  				<li><n:NavLink ui:field="users" text="Users"/></li>
+  				<li class="nav-header"><ui:text from="{msg.title}"/></li>
+  				<li><n:NavLink ui:field="personal" text="{msg.personalConfig}"/></li>
+  				<li><n:NavLink ui:field="workFolders" text="{msg.workFolders}"/></li>
+  				<li><n:NavLink ui:field="privacy" text="{msg.privacy}"/></li>
+  				<li><n:NavLink ui:field="system" text="{msg.system}"/></li>
+  				<li><n:NavLink ui:field="users" text="{msg.users}"/></li>
 			</ul>
 		</div>
 	</g:HTMLPanel>

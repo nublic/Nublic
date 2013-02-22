@@ -4,7 +4,7 @@
 	xmlns:n="urn:import:com.nublic.util.users">
 	<ui:style type='com.nublic.app.manager.settings.client.ui.UsersPage.UserStyle'>
 		.gray {
-			color: #AAA;
+			color: #777;
 		}
 		.spacing {
 			margin-right: 20px;
@@ -13,12 +13,13 @@
 			font-weight: bold;
 		}
 	</ui:style>
+	<ui:with type="com.nublic.app.manager.settings.client.i18n.I18NMessages" field="msg"/>
 
 	<g:HTMLPanel>
 		<div style="padding: 10px;">
-			<h3>Lista de usuarios</h3>
+			<h3><ui:text from="{msg.userList}"/></h3>
 			<g:Grid ui:field="existingGrid"/>
-			<h3>Crear nuevo usuario</h3>
+			<h3 style="margin-top: 20px;"><ui:text from="{msg.createUser}"/></h3>
 			<n:UserWidget ui:field="createUser"/>
 		</div>
 	</g:HTMLPanel>

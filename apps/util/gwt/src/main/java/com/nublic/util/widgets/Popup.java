@@ -43,7 +43,7 @@ public class Popup extends PopupPanel implements ResizeHandler {
 	public void setInnerHeight(int h) {
 		this.content.setInnerHeight(h);
 	}
-	
+
 	public void setCustomButtonColor(PopupColor c) {
 		this.content.setCustomButtonColor(c);
 	}
