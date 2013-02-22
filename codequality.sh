@@ -14,6 +14,10 @@ find_python_module_names() { # Find all python modules on $1
     find $1 -name __init__.py \! -wholename \*/3rd-party-libs/\* -printf "`pwd`/%P " | sed 's~/[^ ]*/\([^/]*\)/__init__.py~\1~g'
 }
 
+find_python_module_names_comma() { # Find all python modules on $1
+    find $1 -name __init__.py \! -wholename \*/3rd-party-libs/\* -printf "`pwd`/%P," | sed 's~/[^ ]*/\([^/]*\)/__init__.py~\1~g'
+}
+
 find_python_modules() { # Find all python modules on $1
     find $1 -name __init__.py \! -wholename \*/3rd-party-libs/\* -printf "`pwd`/%P " | sed s~/[^/]*/__init__.py~~g
 }
@@ -83,7 +87,9 @@ if [[ $nosetests = 0 ]]; then
     for module in `find_python_modules` ; do
         echo "Checking $module module"
         echo "Checking $module module" >> $TARGET_DIR/nosetests.log
-        nosetests $module  &>> $TARGET_DIR/nosetests.log
+        #nosetests $module  &>> $TARGET_DIR/nosetests.log
+        mkdir -p $TARGET_DIR/coverage
+        nosetests $module --with-coverage --cover-package `find_python_module_names_comma .` --cover-tests --cover-html-dir=${TARGET_DIR}/coverage &>> $TARGET_DIR/nosetests.log
         #PYTHONPATH=`find_python_modules_path .` nosetests $module --with-coverage --cover-tests  &>> $TARGET_DIR/nosetests.log
     done
 fi
