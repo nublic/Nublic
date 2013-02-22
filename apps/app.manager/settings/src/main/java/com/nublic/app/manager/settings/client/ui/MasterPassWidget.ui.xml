@@ -1,6 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:n="urn:import:com.nublic.app.manager.settings.client.ui.password">
 	<ui:style>
 		.leftmargin {
 			margin-left: 15px;
@@ -34,12 +35,7 @@
 				<g:Label text="{msg.enterMasterPass3}"/>
 			</g:HorizontalPanel>
 		</g:VerticalPanel>
-		<g:HorizontalPanel verticalAlignment="middle" addStyleNames="{style.topmargin}">
-			<g:PasswordTextBox ui:field="passBox"/>
-			<g:cell width="50">
-				<g:Image resource="{res.eye}" title="mostrar contraseña" addStyleNames="{style.leftmargin}"/>
-			</g:cell>
-		</g:HorizontalPanel>
+		<n:PassWithViewer ui:field="passBox" addStyleNames="{style.topmargin}"/>
 	</g:VerticalPanel>
 	
 </ui:UiBinder>
