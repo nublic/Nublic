@@ -37,6 +37,7 @@ public interface I18NMessages extends Messages {
 	String enterMasterPass1();
 	String enterMasterPass2();
 	String enterMasterPass3();
+	String couldntDelete();
 	
 	// Errors
 	String errorNewWorkFolder();

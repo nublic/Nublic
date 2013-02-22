@@ -20,6 +20,7 @@ import com.nublic.app.manager.settings.client.Constants;
 import com.nublic.app.manager.settings.client.DeleteUserHandler;
 import com.nublic.app.manager.settings.client.DeleteUserMessage;
 import com.nublic.app.manager.settings.client.Resources;
+import com.nublic.util.error.ErrorPopup;
 import com.nublic.util.messages.SequenceHelper;
 import com.nublic.util.users.AddUserHandler;
 import com.nublic.util.users.User;
@@ -68,6 +69,10 @@ public class UsersPage extends Composite {
 						public void onUserDeleted(boolean success) {
 							if (success) {
 								removeFromUserList(systemName);
+							} else {
+								ErrorPopup couldnDelete = new ErrorPopup(Constants.I18N.couldntDelete());
+								couldnDelete.setHeight("150px");
+								couldnDelete.center();
 							}
 							p.hide();
 						}
