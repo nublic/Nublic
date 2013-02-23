@@ -8,7 +8,7 @@ db = SQLAlchemy()
 class Artist(db.Model):
     __tablename__ = 'Artist'
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.UnicodeText)
     normalized = db.Column(db.Text)
 
@@ -44,7 +44,7 @@ def get_or_create_artist(artist_name):
 class Album(db.Model):
     __tablename__ = 'Album'
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.UnicodeText)
     normalized = db.Column(db.Text)
 
@@ -80,7 +80,7 @@ def get_or_create_album(album_name):
 class Song(db.Model):
     __tablename__ = 'Song'
 
-    id = db.Column(db.BigInteger, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     file = db.Column(db.Unicode)
     title = db.Column(db.UnicodeText)
     artistId = db.Column(db.BigInteger, db.ForeignKey('Artist.id'))
