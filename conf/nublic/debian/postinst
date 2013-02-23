@@ -9,6 +9,7 @@ for dir in cache fs log work-folders "data/nublic-only" "data/mirrors" "data/wor
 do
     CURRENT_DIR=/var/nublic/${dir}
     setfacl -Rdm u:jetty:rwx ${CURRENT_DIR}
+    setfacl -Rdm u:www-data:rwx ${CURRENT_DIR}
 done
 # Set jetty to be able to read apps configurations
 setfacl -Rdm u:jetty:rx /var/lib/nublic/apps

@@ -8,6 +8,10 @@ WSGIDaemonProcess nublic user=jetty group=jetty
 
     ErrorLog /var/log/apache2/error.log
 
+    XSendFile On
+    XSendFilePath /var/nublic/data/
+    XSendFilePath /var/nublic/cache/
+
     ProxyRequests Off
     ProxyErrorOverride Off
     ProxyPreserveHost On
