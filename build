@@ -318,12 +318,15 @@ do_build() {
         initialize
     fi
 
-    if in_list "$thing" "all 3rd_party"
+    if in_list "$thing" "all 3rd_party 3rd_party_update"
     then
         # Update submodule repositories
         git submodule update --init --merge
         git submodule foreach 'git pull origin master'
+    fi
 
+    if in_list "$thing" "all 3rd_party 3rd_party_build"
+    then
         # Third-party libraries
         cp ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen-Makefile ${INITIAL_DIR}/3rd-party-libs/echoprint-codegen/Makefile
         build_submodule_lib echoprint-codegen
