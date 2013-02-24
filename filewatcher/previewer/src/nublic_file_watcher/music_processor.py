@@ -1,17 +1,21 @@
 import os
 import os.path
 from unidecode import unidecode
+import shutil
 
 #from nublic.filewatcher import FileChange
 from nublic.files_and_users import get_file_owner, is_file_shared
-from nublic_server.places import get_mime_type, ensure_cache_folder
+from nublic_server.places import (get_mime_type, ensure_cache_folder,
+                                  get_cache_folder)
 from preview_processor import PreviewProcessor
 from nublic_app_music_server.server import app
 from nublic_app_music_server.model import (db, Album, Artist,
                                            Song, SongCollection, SongPlaylist)
 from song_info import (get_song_info,
                        extract_using_filename)
-from nublic_app_music_server.images import (ensure_artist_image,
+from nublic_app_music_server.images import (get_artist_folder,
+                                            get_album_folder,
+                                            ensure_artist_image,
                                             ensure_album_image)
 
 import logging
@@ -69,8 +73,6 @@ class MusicProcessor(PreviewProcessor):
         PreviewProcessor.__init__(self)
         log.info('Music processor initialised')
         db.init_app(app)
-        #self.ctx = app.test_request_context().push()
-        #app.preprocess_request()
 
     def get_id(self):
         return 'music'
@@ -110,40 +112,46 @@ class MusicProcessor(PreviewProcessor):
         filename = os.path.basename(path)
         return filename.endswith('~') or filename.startswith('.')
 
+    def create_view(self, filename):
+        log.warning("No compatibility check for audio file %s", filename)
+        cache_folder = ensure_cache_folder(filename)  # @TODO: Check for utf8
+        mp3_cache = os.path.join(cache_folder, 'view.mp3')
+        if os.path.exists(mp3_cache):
+            # @TODO Check if it is a symlink and if it is not if the
+            # view is newer than the cache
+            log.warning("Cache existing for audio file %s, skipping", filename)
+        else:
+            log.info("Creating cache for audio file %s", filename)
+            # @TODO Do conversion if needed
+            os.symlink(filename, mp3_cache)
+
     def process_updated_file(self, filename):
         ''' Process an update of a file.
         The file might exist before.
         filename is an byte string in utf8
         '''
-        filename_unicode = unicode(filename, 'utf8')
-        log.info('Updated file: %s', filename)
-        mime = get_mime_type(filename)
-        _, ext = os.path.splitext(filename)
-        if not self.is_hidden(filename):
+        if os.path.exists(filename):
+            filename_unicode = unicode(filename, 'utf8')
+            log.info('Updated file: %s', filename)
+            mime = get_mime_type(filename)
+            #_, ext = os.path.splitext(filename)
             # Process song
-            if mime in TAGGED_MIME_TYPES or ext in TAGGED_EXTENSIONS:
+            if mime in TAGGED_MIME_TYPES:  # or ext in TAGGED_EXTENSIONS:
                 song_info = get_song_info(filename)
-            elif mime in SUPPORTED_MIME_TYPES or ext in SUPPORTED_EXTENSIONS:
+            elif mime in SUPPORTED_MIME_TYPES:  # or ext in SUPPORTED_EXTENSIONS:
                 song_info = extract_using_filename(
                     filename).clean()
             else:
                 song_info = None
             # If we got some information
             if song_info is not None:
+                self.create_view(filename)
+                # Add to database now
                 s = Song.query.filter_by(file=filename_unicode).first()
                 if s is None:
                     self.add_to_database(filename, song_info)
                 else:
                     self.replace_in_database(filename, s, song_info)
-                # @TODO Do conversion if needed
-                log.warning("No compatibility check for audio file %s", filename)
-                cache_folder = ensure_cache_folder(filename)  # @TODO: Check for utf8
-                mp3_cache = os.path.join(cache_folder, 'view.mp3')
-                if os.path.exists(mp3_cache):
-                    log.warning("Cache existing for audio file %s, skipping", filename)
-                else:
-                    log.info("Creating cache for audio file %s", filename)
-                    os.symlink(filename, mp3_cache)
 
     def update_attribs(self, song):
         """
@@ -154,6 +162,36 @@ class MusicProcessor(PreviewProcessor):
         song.shared = is_file_shared(song.file.encode('utf-8'))
         db.session.commit()
 
+    def delete_song_from_collections(self, song_id):
+        """ Delete from collections """
+        SongCollection.query.filter_by(songId=song_id).delete()
+        db.session.commit()
+
+    def delete_song_from_playlists(self, song_id):
+        " Delete from playlists "
+        relation = SongPlaylist.query.filter_by(songId=song_id).first()
+        while relation is not None:
+            rest = SongPlaylist.query.filter_by(playlistId=relation.playlistId).filter(SongPlaylist.position > relation.position).all()
+            for other_song in rest:
+                other_song.position -= 1
+            db.session.delete(relation)
+            #relation.delete()
+            db.session.commit()
+            # Try again
+            relation = SongPlaylist.query.filter_by(songId=song_id).first()
+
+    def remove_view(self, filename):
+        # exists return false for broken symlinks so we need to check is link
+        # before exists to remove the broken symlink
+        mp3_cache = os.path.join(get_cache_folder(filename), 'view.mp3')
+        if os.path.islink(mp3_cache) or os.path.exists(mp3_cache):
+            log.info(
+                "Cache removed for audio file %s as %s", filename, mp3_cache)
+            os.remove(mp3_cache)
+        else:
+            log.warning("Cache for audio file %s does not exist in %s. Not removed",
+                        filename, mp3_cache)
+
     def process_deleted_file(self, filename):
         """
         Process a file deleted by removing the file from the previews
@@ -163,35 +201,16 @@ class MusicProcessor(PreviewProcessor):
         filename_unicode = unicode(filename, 'utf8')
         song = Song.query.filter_by(file=filename_unicode).first()
         if song is not None:
-            # Delete from collections
-            SongCollection.query.filter_by(songId=song.id).delete()
-            db.session.commit()
-            # Delete from playlists
-            relation = SongPlaylist.query.filter_by(songId=song.id).first()
-            while relation is not None:
-                rest = SongPlaylist.query.filter_by(playlistId=relation.playlistId).filter(SongPlaylist.position > relation.position).all()
-                for other_song in rest:
-                    other_song.position -= 1
-                relation.delete()
-                db.session.commit()
-                # Try again
-                relation = SongPlaylist.query.filter_by(songId=song.id).first()
+            self.delete_song_from_collections(song.id)
+            self.delete_song_from_playlists(song.id)
             # Delete the song itself
-            self.delete_artist_if_no_assoc(song.artistId)
-            self.delete_album_if_no_assoc(song.albumId)
+            artistId = song.artistId
+            albumId = song.albumId
             db.session.delete(song)
             db.session.commit()
-            # @TODO HOW TO REMOVE THE RIGHT CACHE?
-            log.warning("No cache removed for audio file %s", filename)
-            mp3_cache = os.path.join(
-                ensure_cache_folder(filename), 'view.mp3')
-            if os.path.exists(mp3_cache):
-                log.info(
-                    "Cache removed for audio file %s", filename)
-                os.remove(mp3_cache)
-            else:
-                log.warning("Cache for audio file %s does not exist. Not removed",
-                            filename)
+            self.delete_artist_if_no_assoc(artistId)
+            self.delete_album_if_no_assoc(albumId)
+            self.remove_view(filename)
 
     def process_moved_dir(self, from_, to):
         """
@@ -213,8 +232,11 @@ class MusicProcessor(PreviewProcessor):
         from_unicode = unicode(from_, 'utf8')
         song = Song.query.filter_by(file=from_unicode).first()
         if song is not None:
-            song.file = to
+            song.file = unicode(to, 'utf8')
             db.session.commit()
+            # @TODO Do not recreate view if not needed
+            self.remove_view(from_)
+            self.create_view(to)
         else:
             self.process_updated_file(to)
 
@@ -297,12 +319,14 @@ class MusicProcessor(PreviewProcessor):
         if songs == 0:
             Artist.query.filter_by(id=artist_id).delete()
             db.session.commit()
+            shutil.rmtree(get_artist_folder(artist_id))
 
     def delete_album_if_no_assoc(self, album_id):
         songs = Song.query.filter_by(albumId=album_id).count()
         if songs == 0:
             Album.query.filter_by(id=album_id).delete()
             db.session.commit()
+            shutil.rmtree(get_album_folder(album_id))
 
     def add_to_database(self, filename, song_info):
         ''' Add the song to the database if required.
@@ -334,7 +358,7 @@ class MusicProcessor(PreviewProcessor):
         # Ensure album
         album = self.ensure_or_create_album(
             filename, r_artist_name, r_album_name)
-        ensure_album_image(album.id, filename, r_album_name, r_artist_name)  # @ TODO Check for unicode problems
+        ensure_album_image(album.id, filename, r_album_name, r_artist_name)
         # Create song in database
         song = Song(filename_unicode, r_title, artist.id, album.id, r_length,
                     song_info.year, song_info.track, song_info.disc_no)

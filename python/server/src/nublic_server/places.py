@@ -3,7 +3,10 @@ import hashlib
 import magic
 from fnmatch import fnmatch
 
-BROWSER_ROOT_FOLDER = '/var/nublic/cache/browser'
+try:
+    BROWSER_ROOT_FOLDER = os.environ["BROWSER_CACHE_FOLDER"]
+except KeyError:
+    BROWSER_ROOT_FOLDER = '/var/nublic/cache/browser'
 
 
 def get_cache_folder(path):
@@ -14,7 +17,7 @@ def get_cache_folder(path):
 def ensure_cache_folder(path):
     cache_folder = get_cache_folder(path)
     if not os.path.exists(cache_folder):
-        os.mkdir(cache_folder)
+        os.makedirs(cache_folder)
     return cache_folder
 
 

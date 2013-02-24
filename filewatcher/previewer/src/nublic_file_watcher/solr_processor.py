@@ -111,10 +111,10 @@ class SolrProcessor(PreviewProcessor):
         self.get_solr_interface().delete_all()
         self.get_solr_interface().commit()
 
-    def process_attribs_change(self, filename, is_dir):
+    def process_attribs_change(self, filename, is_dir, info=None):
         self.update_in_solr(filename, is_dir, False)
 
-    def process_updated(self, filename, is_dir):
+    def process_updated(self, filename, is_dir, info=None):
         self.update_in_solr(filename, is_dir, True)
 
     def update_in_solr(self, filename, is_dir, should_recreate_mime):
@@ -135,12 +135,12 @@ class SolrProcessor(PreviewProcessor):
             # Recreate Solr info
             file_info.save(should_recreate_mime)
 
-    def process_deleted_file(self, filename, is_dir):
+    def process_deleted(self, filename, is_dir, info=None):
         file_info = self.retrieve_doc(filename)
         if file_info is not None:
             file_info.delete()
 
-    def process_moved(self, from_, to, is_dir):
+    def process_moved(self, from_, to, is_dir, info=None):
         if self.has_doc(from_):
             file_info = self.retrieve_doc(from_)
             file_info.set_new_pathname(to)

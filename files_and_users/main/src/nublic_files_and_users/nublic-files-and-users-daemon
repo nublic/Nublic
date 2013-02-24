@@ -1,11 +1,11 @@
 #!/usr/bin/python
 
-from elixir import *
+from elixir import metadata, setup_all
 from sqlalchemy import create_engine
-from nublic_files_and_users.model import *
-from nublic_files_and_users.user import *
-from nublic_files_and_users.mirror import *
-from nublic_files_and_users.synced_folder import *
+#from nublic_files_and_users.model import *
+from nublic_files_and_users.user import UserDBus
+from nublic_files_and_users.mirror import MirrorDBus
+from nublic_files_and_users.synced_folder import SyncedFolderDBus
 
 import logging
 from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
@@ -17,9 +17,10 @@ from rpcbd import Handler, ThreadedTCPJsonRpcPeer, JSONRPC_V2
 import time
 import sys
 from time import sleep
-import signal
+#import signal
 
-from nublic.resource import *
+#from nublic.resource import App
+import nublic.resource
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -29,8 +30,10 @@ NOTIFICATION_LEVEL_NOTICE = 'NOTICE'
 NOTIFICATION_LEVEL_DEFAULT_PERFORMED = 'DEFAULT_PERFORMED'
 NOTIFICATION_LEVEL_BLOCKER = 'BLOCKER'
 
+
 def __get_bind_uri():
-    return App("nublic_files_and_users").get("db").value("uri")
+    return nublic.resource.App("nublic_files_and_users").get("db").value("uri")
+
 
 def __check_nublic_resource_is_on():
     WAITING_MAX = 200
@@ -49,8 +52,9 @@ userJson = UserDBus(None, False)
 mirrorJson = MirrorDBus(userJson, None, False)
 syncedJson = SyncedFolderDBus(userJson, None, False)
 
+
 class JsonRpcFilesAndUsers(Handler):
-    assume_methods_block=False
+    assume_methods_block = True
 
     def user_exists(self, username):
         return userJson.user_exists(username)
@@ -111,7 +115,7 @@ class JsonRpcFilesAndUsers(Handler):
 
     def get_synced_folder_name(self, mid):
         return syncedJson.get_synced_folder_name(mid)
-    
+
     def get_synced_folder_owner(self, mid):
         return syncedJson.get_synced_folder_owner(mid)
 
@@ -128,14 +132,16 @@ if __name__ == '__main__':
     __check_nublic_resource_is_on()
     # Initialize connection to database
 
-    metadata.bind = create_engine(__get_bind_uri(), pool_size=100, pool_recycle=3)
+    metadata.bind = create_engine(
+        __get_bind_uri(), pool_size=100, pool_recycle=3)
     metadata.bind.echo = False
     setup_all(create_tables=True)
     sys.stderr.write("database set up\n")
 
     # Initialize JSON-RPC
-    peer = ThreadedTCPJsonRpcPeer(JSONRPC_V2, default_handler = JsonRpcFilesAndUsers)
-    peer.listen_tcp(port = 5440)
+    peer = ThreadedTCPJsonRpcPeer(
+        JSONRPC_V2, default_handler=JsonRpcFilesAndUsers)
+    peer.listen_tcp(port=5440)
     sys.stderr.write("Initialized files and users tcp\n")
 
     try:
@@ -144,7 +150,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         peer.shutdown()
     sys.stderr.write("Files and users daemon shutdown\n")
-    
+
     # Initialize D-Bus loop
     #dbus_loop = DBusGMainLoop(set_as_default=True)
     # Initialize D-Bus objects

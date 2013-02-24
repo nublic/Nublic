@@ -2,6 +2,8 @@ from Queue import PriorityQueue
 from pykka.actor import ThreadingActor
 from pykka import ActorDeadError
 from solr_processor import SolrProcessor
+#import sys
+#from preview_processor import trace_calls
 
 import logging
 log = logging.getLogger(__name__)
@@ -43,20 +45,24 @@ class CentralQueue(ThreadingActor):
             self.qs[proc.get_id()] = PriorityQueue()
 
     def tell_reload(self, actor, element, key):
-        try:
-            actor.tell({'element': element})
-        except ActorDeadError:
-            log.exception("Processor %s was dead when trying to reach it", key)
-            self.start_processor(self.actors[key], start_queue=False)
-            self.tell_reload(actor, element, key)
+        for i in range(5):
+            try:
+                actor.tell({'element': element})
+            except ActorDeadError:
+                log.exception("Processor %s was dead when trying "
+                              "to reach it, attempt %i", key, i)
+                self.start_processor(self.actors[key], start_queue=False)
+                #self.tell_reload(actor, element, key)
 
     def tell_solr(self, element):
-        try:
-            self.solr.tell({'element': element})
-        except ActorDeadError:
-            log.exception("Solr was dead when trying to reach it")
-            self.start_solr(start_queue=False)
-            self.tell_solr(element)
+        for i in range(5):
+            try:
+                self.solr.tell({'element': element})
+            except ActorDeadError:
+                log.exception("Solr was dead when trying "
+                              "to reach it, attempt %i", i)
+                self.start_solr(start_queue=False)
+                #self.tell_solr(element)
 
     def on_receive(self, msg):
         sender_id = msg['id']
@@ -66,7 +72,8 @@ class CentralQueue(ThreadingActor):
         if sender_id == '_watcher':
             if self.solr_q.empty():
                 # We have an empry Solr queue
-                self.solr.tell({'element': element})
+                #self.solr.tell({'element': element})
+                self.tell_solr(element)
             else:
                 # Else, put in queue
                 self.solr_q.put(element)
@@ -76,25 +83,29 @@ class CentralQueue(ThreadingActor):
                 p = self.procs[k]
                 q = self.qs[k]
                 if q.empty():
-                    p.tell({'element': element})
+                    #p.tell({'element': element})
+                    self.tell_reload(p, element, k)
                 else:
                     q.put(element)
             # Now we have to get the next item
             if not self.solr_q.empty():
                 next_e = self.solr_q.get()
-                self.solr.tell({'element': next_e})
+                #self.solr.tell({'element': next_e})
+                self.tell_solr(element)
         else:  # Any other processor
             # Now we have to get the next item
             p = self.procs[sender_id]
             q = self.qs[sender_id]
             if not q.empty():
                 next_e = q.get()
-                p.tell({'element': next_e})
+                #p.tell({'element': next_e})
+                self.tell_reload(p, next_e, sender_id)
 
 
 class CentralQueueWrapper(ThreadingActor):
     def __init__(self, processor, central_queue):
         super(CentralQueueWrapper, self).__init__()
+        #sys.settrace(trace_calls)
         self.processor = processor
         self.central_queue = central_queue
         self.id = processor.get_id()

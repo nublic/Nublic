@@ -32,21 +32,27 @@ class FileChange:
         self.filename_to = filename_to
         self.is_dir = is_dir
 
-    def __str__(self):
-        return self.__unicode__().encode('utf8')
+    #def __str__(self):
+        #return self.__unicode__().encode('utf8')
 
-    def __repr__(self):
-        return self.__str__()
+    #def __repr__(self):
+        #return self.__str__()
 
-    def __unicode__(self):
-        return ('FileChange' + ' kind :' + unicode(self.kind) +
-                ' file : ' + unicode(self.filename) +
-                ' file_from : ' + unicode(self.filename_from) +
-                ' filename_to : ' + unicode(self.filename_to) +
-                ' is_dir : ' + unicode(self.is_dir))
+    #def __unicode__(self):
+        #return ('FileChange' + ' kind :' + unicode(self.kind) +
+                #' file : ' + unicode(self.filename, 'utf8') +
+                #' file_from : ' + unicode(self.filename_from, 'utf8')
+                #if self.filename_from else "None" +
+                #' filename_to : ' + unicode(self.filename_to, 'utf8')
+                #if self.filename_to else "None" +
+                #' is_dir : ' + unicode(self.is_dir))
 
 
 def parse_file_change(kind, pathname, src_pathname, is_dir):
+    if type(pathname) == unicode:
+        pathname = pathname.encode('utf8')
+    if type(src_pathname) == unicode:
+        src_pathname = pathname.encode('utf8')
     if kind == 'create':
         return FileChange(FileChange.CREATED, pathname, None, None, is_dir)
     elif kind == 'delete':

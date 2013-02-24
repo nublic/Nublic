@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
-
+import shutil
+import glob
+#from os.path import join
 # Configure library, it works at import time
 os.environ.update({"BROWSER_CACHE_FOLDER":
                    "/tmp/test_music_processor/cache/browser",
@@ -10,6 +12,9 @@ os.environ.update({"BROWSER_CACHE_FOLDER":
 
 if not os.path.exists("/tmp/test_music_processor/cache"):
     os.makedirs("/tmp/test_music_processor/cache")
+if not os.path.exists("/tmp/test_music_processor/test_dir"):
+    os.makedirs("/tmp/test_music_processor/test_dir")
+
 with open("/tmp/test_music_processor/config.cfg", "w") as f:
     config_file = """
 [nublic_app_photos_db]
@@ -24,6 +29,7 @@ if os.path.exists("/tmp/test_music_processor/database.sqlite"):
 
 
 from nublic_file_watcher.music_processor import MusicProcessor
+from nublic_server.places import get_cache_folder
 import unittest
 
 TAGGED_MIME_TYPES = [
@@ -73,19 +79,26 @@ SUPPORTED_EXTENSIONS = TAGGED_EXTENSIONS + [".wav", ".aac", ".ac3", ".aiff",
 
 
 import logging
-logging.basicConfig()
+logging.basicConfig(level=logging.INFO)
 
 from nublic_app_music_server.model import (db, Album, Artist,
                                            Song, SongCollection, SongPlaylist)
+
+
+#os.system("rm -rf /tmp/test_music_processor/cache/")
 
 
 class MusicProcessorTest(unittest.TestCase):
     def setUp(self):
         self.music_processor = MusicProcessor()
         db.create_all()
+        os.system("rm -rf /tmp/test_music_processor/cache/")
+        os.system("rm -rf /tmp/test_music_processor/test_dir/")
+        shutil.copytree("test_files", "/tmp/test_music_processor/test_dir")
 
     def tearDown(self):
         db.drop_all()
+        #os.system("rm /tmp/test_music_processor/database.sqlite")
 
     def apply_to_process_updated(self, filename):
         self.music_processor.process_updated(filename, is_dir=True)
@@ -103,12 +116,37 @@ class MusicProcessorTest(unittest.TestCase):
         self.music_processor.process_moved(from_, to_, is_dir=True)
         self.music_processor.process_moved(from_, to_, is_dir=False)
 
-    def assert_db_empty(self, message):
+    def assert_db_empty(self, message="db is not empty"):
         self.assertIs(Album.query.first(), None, message)
         self.assertIs(SongCollection.query.first(), None, message)
         self.assertIs(Artist.query.first(), None, message)
         self.assertIs(Song.query.first(), None, message)
         self.assertIs(SongPlaylist.query.first(), None, message)
+
+    def assert_cache_empty(self, filename=None):
+        if filename is None:
+            if os.path.exists("/tmp/test_music_processor/cache/browser"):
+                self.assertEquals(
+                    os.listdir("/tmp/test_music_processor/cache/browser"), [],
+                    "Cache must be empty but found %s" %
+                    (os.listdir("/tmp/test_music_processor/cache/browser"),))
+        else:
+            cache = get_cache_folder(filename)
+            views = glob.glob(os.path.join(cache, 'view.*'))
+            self.assertEquals(len(views), 0, "Views found %s" % (views,))
+        if os.path.exists("/tmp/test_music_processor/cache/music"):
+            if os.path.exists("/tmp/test_music_processor/cache/music/albums"):
+                self.assertEquals(
+                    os.listdir(
+                        "/tmp/test_music_processor/cache/music/albums"), [],
+                    "Cache must be empty but found %s" %
+                    (os.listdir("/tmp/test_music_processor/cache/music/albums"),))
+            if os.path.exists("/tmp/test_music_processor/cache/music/artists"):
+                self.assertEquals(
+                    os.listdir(
+                        "/tmp/test_music_processor/cache/music/artists"), [],
+                    "Cache must be empty but found %s" %
+                    (os.listdir("/tmp/test_music_processor/cache/music/artists"),))
 
     # Test do not crash on non existing file
     def test_non_existing_file_updated(self):
@@ -118,74 +156,295 @@ class MusicProcessorTest(unittest.TestCase):
         self.apply_to_process_updated(filename)
         self.assert_db_empty(
             "Database must be empty adding a not existing file")
+        self.assert_cache_empty()
         self.apply_to_process_updated(filename_unicode)
         self.assert_db_empty(
             "Database must be empty adding a not existing unicode path file")
+        self.assert_cache_empty()
         #  Delete
         self.apply_to_process_deleted(filename)
         self.assert_db_empty(
             "Database must be empty adding a not existing file")
+        self.assert_cache_empty()
         self.apply_to_process_deleted(filename_unicode)
         self.assert_db_empty(
             "Database must be empty adding a not existing unicode path file")
+        self.assert_cache_empty()
         #  Attribs_change
         self.apply_to_process_attribs_change(filename)
         self.assert_db_empty(
             "Database must be empty adding a not existing file")
+        self.assert_cache_empty()
         self.apply_to_process_attribs_change(filename_unicode)
         self.assert_db_empty(
             "Database must be empty adding a not existing unicode path file")
+        self.assert_cache_empty()
         #  Moved
         self.apply_to_process_moved(filename_unicode, filename)
         self.assert_db_empty(
             "Database must be empty adding a not existing file")
+        self.assert_cache_empty()
         self.apply_to_process_moved(filename, filename_unicode)
         self.assert_db_empty(
             "Database must be empty adding a not existing unicode path file")
+        self.assert_cache_empty()
 
     # Test do not open an not valid file
     def test_non_valid_file(self):
         filename = "/tmp/test_music_processor/not_valid.mp3"
-        filename_unicode = u"/tmp/test_music_processor/con_eñe.mp3".encode('utf8')
+        filename_unicode = u"/tmp/test_music_processor/con_eñe.mp3".encode(
+            'utf8')
         with open(filename, "w") as f:
             f.write("NOT AN AUDIO FILE!!")
-            self.apply_to_process_updated(filename)
+            self.music_processor.process_updated(filename, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing file")
+            self.assert_cache_empty()
             #  Delete
-            self.apply_to_process_deleted(filename)
+            self.music_processor.process_deleted(filename, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing file")
+            self.assert_cache_empty()
             #  Attribs_change
-            self.apply_to_process_attribs_change(filename)
+            self.music_processor.process_attribs_change(filename, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing file")
+            self.assert_cache_empty()
             #  Moved
-            self.apply_to_process_moved(filename_unicode, filename)
+            self.music_processor.process_moved(
+                filename_unicode, filename, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing file")
+            self.assert_cache_empty()
         with open(filename_unicode, "w") as f:
             f.write(u"NOT AN AUDIO ññññ FILE!!".encode('utf8'))
             #  Updated
-            self.apply_to_process_updated(filename_unicode)
+            self.music_processor.process_updated(filename_unicode, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing unicode path file")
+            self.assert_cache_empty()
             #  Delete
-            self.apply_to_process_deleted(filename_unicode)
+            self.music_processor.process_deleted(filename_unicode, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing unicode path file")
+            self.assert_cache_empty()
             #  Attribs_change
-            self.apply_to_process_attribs_change(filename_unicode)
+            self.music_processor.process_attribs_change(
+                filename_unicode, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing unicode path file")
+            self.assert_cache_empty()
             #  Moved
-            self.apply_to_process_moved(filename_unicode, filename)
+            self.music_processor.process_moved(
+                filename_unicode, filename, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing file")
-            self.apply_to_process_moved(filename, filename_unicode)
+            self.assert_cache_empty()
+            self.music_processor.process_moved(
+                filename, filename_unicode, False)
             self.assert_db_empty(
                 "Database must be empty adding a not existing unicode path file")
+            self.assert_cache_empty()
 
+    def get_dirs_in_browser_cache(self):
+        return [os.path.join("/tmp/test_music_processor/cache/browser/", name)
+                for name in os.listdir("/tmp/test_music_processor/cache/browser/")
+                if os.path.exists("/tmp/test_music_processor/cache/browser/")]
+
+    def assert_view_exists(self, filepath):
+        cache_folder = get_cache_folder(filepath)
+        self.assertTrue(os.path.exists(cache_folder), "Cache view must exist")
+        cache_view = os.path.join(cache_folder, "view.mp3")
+        self.assertTrue(os.path.exists(cache_view), "Cache view must exist")
+        self.assertTrue(os.path.islink(cache_view), "Cache view must be a link")
+
+    def assert_file_is_added(self, filepath, artist_name, album_name, song_title):
+        self.assertTrue(os.path.exists(filepath), "File does not exist")
+        self.music_processor.process_updated(filepath, False)
+        albums = Album.query.filter_by(name=album_name).all()
+        self.assertNotEqual(albums, [], "Album must have been created")
+        self.assertEqual(len(albums), 1, "Album must have been created")
+        album_id = albums[0].id
+        #self.assertEquals(albums.name, "Help!", "Album must be Help!")
+        self.assertIs(SongCollection.query.first(), None,
+                      "No song collection should have been created")
+        artists = Artist.query.filter_by(name=artist_name).all()
+        self.assertNotEqual(artists, [], "Artist must have been created")
+        #self.assertEquals(artists.name, "The Beatles",
+                          #"Artist must be the Beatles instead of %s" % artists.name)
+        songs = Song.query.filter_by(title=song_title).all()
+        self.assertNotEqual(songs, [], "Song must have been created")
+        #song_id = songs[0].id
+        #self.assertEquals(songs.title, "Help!",
+                          #"Song must be the Help! instead of %s" % songs[0].title)
+        self.assertIs(SongPlaylist.query.first(
+        ), None, "No playlist must have been created")
+        self.assert_view_exists(filepath)
+        album_dir = os.path.join(
+            "/tmp/test_music_processor/cache/music/albums", str(album_id))
+        self.assertTrue(os.path.exists(
+            os.path.join(album_dir, "orig")), "orig album cover must exist")
+        self.assertTrue(
+            os.path.exists(os.path.join(album_dir, "thumbnail.png")), "")
+
+    # Test work with audio song with id3
+    def test_audio_song(self):
+        filepath = "/tmp/test_music_processor/test_dir/01 Help!.mp3"
+        self.assertTrue(os.path.exists(filepath), "File does not exist")
+        self.music_processor.process_updated(filepath, False)
+        self.assert_file_is_added(filepath, "The Beatles", "Help!", "Help!")
+        songs = Song.query.all()
+        self.assertEquals(len(songs), 1, "Song must have been created")
+        self.assertEquals(songs[0].title, "Help!",
+                          "Song must be the Help! instead of %s" % songs[0].title)
+        albums = Album.query.all()
+        self.assertEquals(len(albums), 1, "Album must have been created")
+        self.assertEquals(albums[0].name, "Help!", "Album must be Help!")
+        self.assertIs(SongCollection.query.first(), None,
+                      "No song collection should have been created")
+        artists = Artist.query.all()
+        self.assertEquals(len(artists), 1, "Artist must have been created")
+        self.assertEquals(artists[0].name, "The Beatles",
+                          "Artist must be the Beatles instead of %s" % artists[0].name)
+        self.assertIs(SongPlaylist.query.first(
+        ), None, "No playlist must have been created")
+        dirs = self.get_dirs_in_browser_cache()
+        self.assertEquals(len(dirs), 1, "Must be only one cache file")
+        cache_view = os.path.join(dirs[0], "view.mp3")
+        self.assertTrue(os.path.exists(cache_view), "Cache view must exist")
+        self.assertTrue(
+            os.path.islink(cache_view), "Cache view must be a link")
+        album_dir = os.path.join(
+            "/tmp/test_music_processor/cache/music/albums", "1")
+        self.assertTrue(os.path.exists(
+            os.path.join(album_dir, "orig")), "orig album cover must exist")
+        self.assertTrue(
+            os.path.exists(os.path.join(album_dir, "thumbnail.png")), "")
+        # Now move the file
+        old_filepath = filepath
+        new_dir = u"/tmp/test_music_processor/test_dir/Música/".encode('utf8')
+        if not os.path.exists(new_dir):
+            os.mkdir(new_dir)
+        filepath = u"/tmp/test_music_processor/test_dir/Música/01 Help!.mp3".encode('utf8')
+        os.system("mv '%s' '%s'" % (old_filepath, new_dir))
+        self.music_processor.process_moved(old_filepath, filepath, False)
+        songs = Song.query.all()
+        self.assertEquals(len(songs), 1, "Move should not create an extra song")
+        song = songs[0]
+        self.assertEquals(song.file, unicode(filepath, 'utf8'), "Path should be the right one")
+        albums = Album.query.all()
+        self.assertEquals(len(albums), 1, "Only one album should be created")
+        artists = Artist.query.all()
+        self.assertEquals(len(artists), 1, "Only one artists should be created")
+        self.assert_view_exists(filepath)
+        # Now reenter the file
+        self.music_processor.process_updated(filepath, False)
+        songs = Song.query.all()
+        self.assertEquals(len(songs), 1, "Song must have been created")
+        self.assertEquals(songs[0].title, "Help!",
+                          "Song must be the Help! instead of %s" % songs[0].title)
+        albums = Album.query.all()
+        self.assertEquals(len(albums), 1, "Album must not have been created")
+        self.assertEquals(albums[0].name, "Help!", "Album must be Help!")
+        self.assertIs(SongCollection.query.first(), None,
+                      "No song collection should have been created")
+        artists = Artist.query.all()
+        self.assertEquals(len(artists), 1, "Artist must not have been created")
+        self.assertEquals(artists[0].name, "The Beatles",
+                          "Artist must be the Beatles instead of %s" % artists[0].name)
+        self.assertIs(SongPlaylist.query.first(),
+                      None, "No playlist must have been created")
+        # Now reenter the file slightly different
+        filepath2 = filepath.replace(".mp3", "2.mp3")
+        os.system("cp '%s' '%s'" % (filepath, filepath2))
+        self.music_processor.process_updated(filepath2, False)
+        songs = Song.query.all()
+        self.assertEquals(len(songs), 2, "Song must have been created")
+        self.assertEquals(songs[0].title, "Help!",
+                          "Song must be the Help! instead of %s" % songs[0].title)
+        albums = Album.query.all()
+        self.assertEquals(len(albums), 1, "Album must not have been created")
+        self.assertEquals(albums[0].name, "Help!", "Album must be Help!")
+        self.assertIs(SongCollection.query.first(), None,
+                      "No song collection should have been created")
+        artists = Artist.query.all()
+        self.assertEquals(len(artists), 1, "Artist must not have been created")
+        self.assertEquals(artists[0].name, "The Beatles",
+                          "Artist must be the Beatles instead of %s" % artists[0].name)
+        self.assertIs(SongPlaylist.query.first(),
+                      None, "No playlist must have been created")
+        # Now delete the file
+        os.remove(filepath)
+        os.remove(filepath2)
+        self.music_processor.process_deleted(filepath, False)
+        self.music_processor.process_deleted(filepath2, False)
+        self.assert_cache_empty(filepath)
+        self.assert_cache_empty(filepath2)
+        self.assert_db_empty()
+        # Delete a file two times
+        self.music_processor.process_deleted(filepath, False)
+        self.assert_cache_empty(filepath)
+        self.assert_db_empty()
+
+    # Test get metadata from internet
+    # Test work with audio song with id3
+    @unittest.skip("Echonest not working")
+    def test_audio_song_no_id3(self):
+        filepath = "/tmp/test_music_processor/test_dir/01 Help!_no_id3.mp3"
+        self.assertTrue(os.path.exists(filepath), "File does not exist")
+        self.music_processor.process_updated(filepath, False)
+        songs = Song.query.all()
+        self.assertEquals(len(songs), 1, "Song must have been created")
+        self.assertEquals(songs[0].title, "Help!",
+                          "Song must be the Help! instead of %s" % songs[0].title)
+        albums = Album.query.all()
+        self.assertEquals(len(albums), 1, "Album must have been created")
+        self.assertEquals(albums[0].name, "Help!", "Album must be Help!")
+        self.assertIs(SongCollection.query.first(), None,
+                      "No song collection should have been created")
+        artists = Artist.query.all()
+        self.assertEquals(len(artists), 1, "Artist must have been created")
+        self.assertEquals(artists[0].name, "The Beatles",
+                          "Artist must be the Beatles instead of %s" % artists[0].name)
+        self.assertIs(SongPlaylist.query.first(
+        ), None, "No playlist must have been created")
+        dirs = self.get_dirs_in_browser_cache()
+        self.assertEquals(len(dirs), 1, "Must be only one cache file")
+        cache_view = os.path.join(dirs[0], "view.mp3")
+        self.assertTrue(os.path.exists(cache_view), "Cache view must exist")
+        self.assertTrue(
+            os.path.islink(cache_view), "Cache view must be a link")
+        album_dir = os.path.join(
+            "/tmp/test_music_processor/cache/music/albums", "1")
+        self.assertTrue(os.path.exists(
+            os.path.join(album_dir, "orig")), "orig album cover must exist")
+        self.assertTrue(
+            os.path.exists(os.path.join(album_dir, "thumbnail.png")), "")
+        # Now reenter the file
+        self.music_processor.process_updated(filepath, False)
+        songs = Song.query.all()
+        self.assertEquals(len(songs), 1, "Song must have been created")
+        self.assertEquals(songs[0].title, "Help!",
+                          "Song must be the Help! instead of %s" % songs[0].title)
+        albums = Album.query.all()
+        self.assertEquals(len(albums), 1, "Album must not have been created")
+        self.assertEquals(albums[0].name, "Help!", "Album must be Help!")
+        self.assertIs(SongCollection.query.first(), None,
+                      "No song collection should have been created")
+        artists = Artist.query.all()
+        self.assertEquals(len(artists), 1, "Artist must not have been created")
+        self.assertEquals(artists[0].name, "The Beatles",
+                          "Artist must be the Beatles instead of %s" % artists[0].name)
+        self.assertIs(SongPlaylist.query.first(),
+                      None, "No playlist must have been created")
+        # Now delete the file
+        os.remove(filepath)
+        self.music_processor.process_deleted(filepath, False)
+        self.assert_cache_empty(filepath)
+        self.assert_db_empty()
+
+    def test_id(self):
+        self.assertEquals(self.music_processor.get_id(), "music", "Id must be music")
 
     #def process_updated(self, filename, is_dir, info=None):
     #def process_deleted(self, filename, is_dir, info=None):
@@ -193,15 +452,10 @@ class MusicProcessorTest(unittest.TestCase):
     #def process_moved(self, filename, is_dir, info=None):
     #def process_updated_file(self, filename):
 
-
-
-    # Test work with audio song
-
     # Test get metadata from file
 
-    # Test get metadata from internet
-
     # Test get metadata from directory structure
+
 
     # Methods to test
     #def process_updated(self, filename, is_dir, info=None):

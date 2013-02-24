@@ -32,7 +32,7 @@ class Element(object):
     '''
     def __init__(self, change):
         self.change = change
-        self.path = change.filename.encode('utf8')
+        self.path = change.filename
         self.info = FileInfo(self.path)
         self.time = datetime.datetime.now()
 
@@ -88,29 +88,29 @@ class PreviewProcessor(object):
             self.process_moved(
                 change.filename_from, change.filename_to, change.is_dir)
         log.info('Processor %s: Finish processing file: %i %s',
-                 change.kind, change.filename)
+                 self.get_id(), change.kind, change.filename)
 
-    def process_updated(filename, is_dir, info=None):
+    def process_updated(self, filename, is_dir, info=None):
         """ Process a file changed or created.
         It might be called several times without any changes
         filename is a byte string in utf8
         """
         raise NotImplementedError("Should be implemented in derived classes")
 
-    def process_deleted(filename, is_dir, info=None):
+    def process_deleted(self, filename, is_dir, info=None):
         """ Process a file deleted
         filename is a byte string in utf8
         """
         raise NotImplementedError("Should be implemented in derived classes")
 
-    def process_attribs_change(filename, is_dir, info=None):
+    def process_attribs_change(self, filename, is_dir, info=None):
         """ Process change of attributes.
         Attributes are things specified in the os.stat
         filename is a byte string in utf8
         """
         raise NotImplementedError("Should be implemented in derived classes")
 
-    def process_moved(filename_from, filename_to, is_dir, info=None):
+    def process_moved(self, filename_from, filename_to, is_dir, info=None):
         """ Process a file changed or created.
         filename_from, filename_to are byte strings in utf8
         """

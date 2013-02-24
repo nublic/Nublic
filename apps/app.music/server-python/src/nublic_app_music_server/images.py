@@ -81,6 +81,9 @@ def ensure_album_image(id_, file_, album_name, artist_name):
 
 
 def get_album_image(id_, file_, album_name, artist_name, place):
+    """
+    file_ must be a byte string in utf8 encoding
+    """
     # Try to get from filesystem
     parent_f, _ = os.path.split(file_)
     for f in os.listdir(parent_f):
@@ -99,11 +102,14 @@ def get_album_image(id_, file_, album_name, artist_name, place):
                           'type': 'releases', 'q': search}
         r = requests.get(
             'http://api.discogs.com/search', params=discogs_params)
-        json = simplejson.loads(r.content)
-        if json is not None and json['resp']['status']:
-            img_results = json['resp']['search']['searchresults']['results']
+        log.debug("Gets request %s", r)
+        response = json.loads(r.content)
+        if response is not None and response['resp']['status']:
+            img_results = response['resp']['search']['searchresults']['results']
+            log.debug("img_results %s", str(img_results))
             if img_results:
                 image_url = img_results[0]['thumb']
+                log.debug("img_url %s", str(image_url))
                 r = requests.get(image_url)
                 f = open(place, 'w')
                 f.write(r.content)

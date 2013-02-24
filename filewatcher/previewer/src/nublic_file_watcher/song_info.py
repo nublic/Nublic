@@ -2,7 +2,6 @@ import mad
 import mutagen
 import os.path
 import re
-import traceback
 
 from pyechonest import config
 from pyechonest.song import identify
@@ -42,6 +41,9 @@ class SongInfo:
 
 
 def get_song_info(file_):
+    """ Get the best song info possible.
+        file_ is in utf8
+    """
     log.info('Extracting from mutagen: %s', file_)
     tag_info = extract_using_mutagen(file_).clean()
     if tag_info.has_important_info_missing():
@@ -86,6 +88,8 @@ def empty_song_info():
 
 
 def extract_using_mutagen(file_):
+    """ file_ is an utf8 path
+    """
     # Use Mad for length
     try:
         madf = mad.MadFile(file_)
@@ -94,46 +98,69 @@ def extract_using_mutagen(file_):
         length = None
     # Use Mutagen for tags
     try:
-        mutf = mutagen.File(file_.encode('utf-8'), easy=True)
+        mutf = mutagen.File(file_, easy=True)
         try:
-            title = mutf['title'][0]
+            titles = mutf.get('title', None)
+            title = titles[0] if titles is not None else None
+            #title = mutf['title'][0]
         except:
+            log.exception("Mutagen could not obtain the title")
             title = None
         try:
-            artist = mutf['artist'][0]
+            artists = mutf.get('artist', None)
+            artist = artists[0] if artists is not None else None
+            #artist = mutf['artist'][0]
         except:
+            log.exception("Mutagen could not obtain the artist")
             artist = None
         try:
-            album = mutf['album'][0]
+            albums = mutf.get('album', None)
+            album = albums[0] if albums is not None else None
+            #album = mutf['album'][0]
         except:
+            log.exception("Mutagen could not obtain the album")
             album = None
         try:
-            year = int(mutf['date'][0].split('-')[0])
+            year_raws = mutf.get('year', None)
+            #year_raw = mutf['date'][0]
+            year = (int(year_raws[0].split('-')[0]) if year_raws is not None
+                    else None)
         except:
+            log.exception("Mutagen could not obtain the year")
             year = None
         try:
-            track_no = int(mutf['tracknumber'][0].split('/')[0])
+            track_no_raws = mutf.get('tracknumber', None)
+            #track_no_raw = mutf['tracknumber'][0]
+            track_no = (int(track_no_raws[0].split('/')[0])
+                        if track_no_raws is not None
+                        else None)
         except:
+            log.exception("Mutagen could not obtain the track_no")
             track_no = None
         try:
-            disc_no = int(mutf['discnumber'][0])
+            disc_no_s = mutf.get('discnumber', None)
+            disc_no = int(disc_no_s[0]) if disc_no_s is not None else None
         except:
+            log.exception("Mutagen could not obtain the disc_no")
             disc_no = None
         return SongInfo(title, artist, album, length, year, track_no, disc_no)
     except:
-        log.exception("%s", traceback.format_exc())
+        log.exception("Mutagen could not obtain the information")
         return empty_song_info()
 
 
 def extract_using_echonest(file_):
+    """ file_ is an utf8 pathname
+    """
     # Get length
     try:
         madf = mad.MadFile(file_)
         length = madf.total_time() // 1000
     except:
         length = None
+        log.exception("Exception detected executing MadFile")
     # Identify via Echo Nest
-    config.ECHO_NEST_API_KEY = 'UR4VKX7JXDXAULIWB'
+    config.ECHO_NEST_API_KEY = 'CSVF0WRJPUBLMKNRV'
     config.CODEGEN_BINARY_OVERRIDE = '/usr/bin/echoprint-codegen'
     try:
         possible_songs = identify(filename=file_)
@@ -142,12 +169,16 @@ def extract_using_echonest(file_):
             return SongInfo(song.title, song.artist_name, '', length,
                             None, None, None)
         else:
+            log.info("No possible song found")
             return empty_song_info()
     except:
+        log.exception("Exception processing Echonest")
         return empty_song_info()
 
 
 def extract_using_filename(file_):
+    """ file_ is an utf8 pathname
+    """
     # Get length
     try:
         madf = mad.MadFile(file_)
@@ -156,8 +187,8 @@ def extract_using_filename(file_):
         length = None
     # Get information from filename
     log.info('File: %s', file_)
-    # @TODO Assuming context == os.path.dirname
-    context = os.path.dirname(file_)
+    # Assuming context == "/var/nublic/data"
+    context = ""
     no_context = file_.replace('/var/nublic/data/' + context, '', 1)
     log.info('No context: %s', no_context)
     parent, filename = os.path.split(no_context)
