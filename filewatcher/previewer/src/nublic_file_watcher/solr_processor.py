@@ -111,6 +111,10 @@ class SolrProcessor(PreviewProcessor):
         self.get_solr_interface().delete_all()
         self.get_solr_interface().commit()
 
+    def process(self, element):
+        log.warning("Solr is skipped")
+        return ""
+
     def process_attribs_change(self, filename, is_dir, info=None):
         self.update_in_solr(filename, is_dir, False)
 
