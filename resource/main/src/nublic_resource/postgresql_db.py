@@ -6,6 +6,7 @@ Created on 11/08/2010
 '''
 import string
 from sqlalchemy.sql.expression import text
+from sqlalchemy import create_engine
 from random import Random
 
 from database_stored import DatabaseStored
@@ -40,6 +41,7 @@ class PostgresqlDB(DatabaseStored):
 
     def __init__(self):
         DatabaseStored.__init__(self, "postgresql-db")
+        self._uri = None
 
     def install(self, app, key):
         if self.__is_key(app, key):
@@ -49,6 +51,8 @@ class PostgresqlDB(DatabaseStored):
         self.save_value(app, key, 'user', user_name)
         self.save_value(app, key, 'pass', password)
         self.save_value(app, key, 'database', database_name)
+        self._uri = self.__generate_connection_uri(user_name, password,
+                                                   database_name)
         '''self.save_value(app, key, 'uri',
                         self.__generate_connection_uri(user_name, password,
                                                        database_name))'''
@@ -74,10 +78,13 @@ class PostgresqlDB(DatabaseStored):
         Some values are shared to every postgresql-db resource.
         '''
         if subkey == "uri":
-            user = self.value(app, key, "user")
-            password = self.value(app, key, "pass")
-            database = self.value(app, key, "database")
-            return self.__generate_connection_uri(user, password, database)
+            if self._uri:
+                return self._uri
+            else:
+                user = self.value(app, key, "user")
+                password = self.value(app, key, "pass")
+                database = self.value(app, key, "database")
+                return self.__generate_connection_uri(user, password, database)
         else:
             return DatabaseStored.value(self, app, key, subkey)
 
@@ -115,16 +122,19 @@ class PostgresqlDB(DatabaseStored):
                     + "@localhost:" + self.__connection_port + "/" + database)
 
     def __create_postgre_resource(self, app, key):
-        bind = metadata.bind
+        engine = create_engine(self.__generate_connection_uri(
+            self.__root_user, self.__root_password))
+        #bind = metadata.bind
         # Creates a connection with permission to create users and databases
-        metadata.bind = self.__generate_connection_uri(
-            self.__root_user, self.__root_password)
+        #metadata.bind = self.__generate_connection_uri(
+            #self.__root_user, self.__root_password)
         # Create database cannot be executed as a transaction block so we
         # should change the isolation level to create a database
-        metadata.bind.engine.connect().\
-            connection.connection.set_isolation_level(0)
+        #metadata.bind.engine.connect().\
+            #connection.connection.set_isolation_level(0)
         #connection = metadata.bind.engine.connect()
-        #conection.connection.connection.set_isolation_level(0)
+        connection = engine.connect()
+        connection.connection.connection.set_isolation_level(0)
         # Generate data and queries
         database_name, user_name, password = self.__create_random_data()
         # It is needed to concatenate this way to avoid the usual but
@@ -143,16 +153,19 @@ class PostgresqlDB(DatabaseStored):
         print("LOG: " + sql_create_user)
         print("LOG: " + sql_create_database)
         # Perform the queries
-        text(sql_create_user, metadata.bind).execute(
-            user=user_name, password=password)
-        text(sql_create_database, metadata.bind).execute(
-            database=database_name)
+        connection.execute(sql_create_user)
+        connection.execute(sql_create_database)
+        #text(sql_create_user, metadata.bind).execute(
+            #user=user_name, password=password)
+        #text(sql_create_database, metadata.bind).execute(
+            #database=database_name)
         #text(sql_revoke_permissions, metadata.bind).execute(user = user_name)
-        metadata.bind.engine.dispose()
-        #connection.close()
-        metadata.bind.engine.dispose()
+        #metadata.bind.engine.dispose()
+        connection.close()
+        #metadata.bind.engine.dispose()
+        engine.dispose()
         # Restores the old database
-        metadata.bind = bind
+        #metadata.bind = bind
         return database_name, user_name, password
 
     def __delete_mysql_resource(self, database_name, user_name):
