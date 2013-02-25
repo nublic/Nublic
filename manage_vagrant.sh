@@ -12,3 +12,10 @@ if [[ $1 = 'test' ]]; then
     /opt/code/filewatcher/internal/src/test_file_watcher_internal.sh
     echo "Finished testing filewatcher-internal"; echo " "
 fi
+
+if [[ $1 = 'fix_mount' ]]; then
+    echo "---------------------------------"
+    echo "Installing packages required"
+    sudo apt-get install linux-headers-`uname -r` build-essential
+    sudo /etc/init.d/vboxadd setup
+fi
