@@ -22,12 +22,28 @@ from time import sleep
 #import signal
 import sys
 
-from nublic.resource import App
+import nublic
+import os
+from ConfigParser import RawConfigParser
 import notification
+
+log = logging.getLogger(__name__)
 
 
 def __get_bind_uri():
-    return App("nublic_notification").get("db").value("uri")
+    if "NOTIFICATION_CONFIG" in os.environ:
+        file_config = os.environ['NOTIFICATION_CONFIG'].split(':')
+    else:
+        file_config = "/etc/nublic/nublic_notification_db.cfg"
+    try:
+        config = RawConfigParser()
+        config.read(file_config)
+        uri = config.get('nublic_notification_db',
+                         'nublic_notification_db_uri')
+    except:
+        log.exception("Cannot load configuration")
+        uri = nublic.resource.App("nublic_notification").get("db").value("uri")
+    return uri
 
 
 def __check_nublic_resource_is_on():
