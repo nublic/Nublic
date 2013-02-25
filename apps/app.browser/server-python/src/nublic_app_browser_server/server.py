@@ -303,8 +303,8 @@ def raw(file_raw):
         abort(401)
 
 
-@app.route('/view/<path:file_path>.<extension>')
-def view(file_path, extension):
+@app.route('/view/<path:file_path_complete>')
+def view(file_path_complete):
     '''
     /view/:file.:type
     * :type -> Kind of view to get (pdf, png, mp3, flv)
@@ -313,6 +313,8 @@ def view(file_path, extension):
       - 403 if a folder is requested
       - 404 if there is no such view for that file
     '''
+    file_path, extension = os.path.splitext(file_path_complete)
+    extension = extension.replace(".", "", 1)
     if not re.match('\w+', extension):
         abort(401)
     internal_path = os.path.join(DATA_ROOT, file_path.encode('utf8'))

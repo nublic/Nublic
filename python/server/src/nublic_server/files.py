@@ -78,9 +78,11 @@ def get_file_info(path, user):
         info['mime'] = get_mime_type(path)
     views = get_cache_views(path)
     if views:
-        info['view'] = views[0]  # @TODO Choose the best representative
+        info['view'] = (os.path.splitext(views[0])[1]
+                        .replace(".", ""))
+        # @TODO Choose the best representative
     else:
-        info['view'] = "null"  # @TODO Leave it empty (better?)
+        info['view'] = "null"
     return info
 
 

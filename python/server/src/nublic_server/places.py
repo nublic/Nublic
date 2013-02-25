@@ -1,7 +1,8 @@
 import os.path
 import hashlib
 import magic
-from fnmatch import fnmatch
+#from fnmatch import fnmatch
+import glob
 
 try:
     BROWSER_ROOT_FOLDER = os.environ["BROWSER_CACHE_FOLDER"]
@@ -22,13 +23,19 @@ def ensure_cache_folder(path):
 
 
 def get_cache_view(path, extension):
-    ''' Returns the absolute path to the extension given'''
+    ''' Returns the absolute path to the extension given.
+        extension must be a secure string for accessing to the filesystem'''
     cache_folder = get_cache_folder(path)
-    if os.path.isdir(cache_folder):
-        for f in os.listdir(cache_folder):
-            if fnmatch(f, 'view.' + extension):  # @TODO Possible security error
-                return os.path.join(cache_folder, f)
-    return None
+    cache_file = os.path.join(cache_folder, 'view.' + extension)
+    if os.path.exists(cache_file):
+        return cache_file
+    else:
+        return None
+    #if os.path.isdir(cache_folder):
+        #for f in os.listdir(cache_folder):
+            #if fnmatch(f, 'view.' + extension):  # @TODO Possible security error
+                #return os.path.join(cache_folder, f)
+    #return None
 
 
 def get_cache_views(path):
@@ -38,9 +45,10 @@ def get_cache_views(path):
     cache_folder = get_cache_folder(path)
     views = []
     if os.path.isdir(cache_folder):
-        for f in os.listdir(cache_folder):
-            if fnmatch(f, 'view.'):  # @TODO Possible security error
-                views.append(f)
+        views = glob.glob(os.path.join(cache_folder, '*'))
+        #for f in os.listdir(cache_folder):
+            #if fnmatch(f, 'view.'):  # @TODO Possible security error
+                #views.append(f)
     return views
 
 
