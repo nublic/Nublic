@@ -1,6 +1,6 @@
 # threaded_peer.py
 
-# Copyright (c) 2010 Rasjid Wilcox 
+# Copyright (c) 2010 Rasjid Wilcox
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,11 @@ class TCPConnection(Connection):
         self._time_to_close = True
         if threading.currentThread() != self._processing_thread:
             self._processing_thread.join()
-        
+    def close(self):
+        Connection.close(self)
+        #self._tcp_socket.shutdown()
+        self._tcp_socket.close()
+
 
 class TCP_Listener(object):
     def __init__(self, controlling_server, port, bind, connection_group, default_timeout):
@@ -86,7 +90,7 @@ class TCP_Listener(object):
         self.bind = bind
         self.connection_group = connection_group
         self.controlling_server = controlling_server
-        self.controlling_server.listeners.append(self)        
+        self.controlling_server.listeners.append(self)
         self.connections = Register()
         self.listening_thread = None
         self.listening_socket = None
@@ -122,7 +126,7 @@ class TCP_Listener(object):
         self.listening_thread.start()
         log.info('Server loop started in thread: %s' % self.listening_thread.getName())
         log.info('Server listening on %s:%s' % (self.bind or '0.0.0.0', self.port))
-        
+
 
 class ThreadedTCPJsonRpcPeer(ClientServerBase):
     def __init__(self, default_rpc_processor, default_handler = None, default_timeout = None, shutdown_on_parent_exit = True):
@@ -136,7 +140,7 @@ class ThreadedTCPJsonRpcPeer(ClientServerBase):
         if default_timeout == -1:
             default_timeout = self.default_timeout
         listener = TCP_Listener(self, port, bind, connection_group, default_timeout)
-        listener.start_listening()        
+        listener.start_listening()
     def connect_tcp(self, ip, port, connection_group = None, default_timeout = -1):
         if default_timeout == -1:
             default_timeout = self.default_timeout
