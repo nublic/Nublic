@@ -15,10 +15,10 @@
 	url = git://github.com/PabloTunnon/pykka-deb.git
 [submodule "3rd-party-libs/pyechonest"]
 	path = 3rd-party-libs/pyechonest
-	url = https://github.com/echonest/pyechonest
+	url = git://github.com/echonest/pyechonest
 [submodule "3rd-party-libs/flask-sqlalchemy"]
 	path = 3rd-party-libs/flask-sqlalchemy
-	url = git@github.com:davisein/flask-sqlalchemy.git
+	url = git://github.com:davisein/flask-sqlalchemy.git
 [submodule "3rd-party-libs/python-video-converter"]
 	path = 3rd-party-libs/python-video-converter
-	url = git@github.com:davisein/python-video-converter.git
+	url = git://github.com:davisein/python-video-converter.git
