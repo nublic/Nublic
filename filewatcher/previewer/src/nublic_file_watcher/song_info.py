@@ -3,8 +3,8 @@ import mutagen
 import os.path
 import re
 
-from pyechonest import config
-from pyechonest.song import identify
+#from pyechonest import config
+#from pyechonest.song import identify
 
 import logging
 log = logging.getLogger(__name__)
@@ -153,27 +153,29 @@ def extract_using_echonest(file_):
     """ file_ is an utf8 pathname
     """
     # Get length
-    try:
-        madf = mad.MadFile(file_)
-        length = madf.total_time() // 1000
-    except:
-        length = None
-        log.exception("Exception detected executing MadFile")
-    # Identify via Echo Nest
-    config.ECHO_NEST_API_KEY = 'CSVF0WRJPUBLMKNRV'
-    config.CODEGEN_BINARY_OVERRIDE = '/usr/bin/echoprint-codegen'
-    try:
-        possible_songs = identify(filename=file_)
-        if possible_songs:
-            song = possible_songs[0]
-            return SongInfo(song.title, song.artist_name, '', length,
-                            None, None, None)
-        else:
-            log.info("No possible song found")
-            return empty_song_info()
-    except:
-        log.exception("Exception processing Echonest")
-        return empty_song_info()
+    log.warning("Skipping using echonest")
+    return empty_song_info()
+    #try:
+        #madf = mad.MadFile(file_)
+        #length = madf.total_time() // 1000
+    #except:
+        #length = None
+        #log.exception("Exception detected executing MadFile")
+    ## Identify via Echo Nest
+    #config.ECHO_NEST_API_KEY = 'CSVF0WRJPUBLMKNRV'
+    #config.CODEGEN_BINARY_OVERRIDE = '/usr/bin/echoprint-codegen'
+    #try:
+        #possible_songs = identify(filename=file_)
+        #if possible_songs:
+            #song = possible_songs[0]
+            #return SongInfo(song.title, song.artist_name, '', length,
+                            #None, None, None)
+        #else:
+            #log.info("No possible song found")
+            #return empty_song_info()
+    #except:
+        #log.exception("Exception processing Echonest")
+        #return empty_song_info()
 
 
 def extract_using_filename(file_):
