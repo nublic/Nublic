@@ -14,7 +14,7 @@ class Artist(db.Model):
 
     def __init__(self, name):
         self.name = name
-        self.normalized = unidecode(unicode(name).lower())
+        self.normalized = unidecode(name.lower())
 
     songs = db.relationship('Song', backref='artist', lazy='dynamic')
 
