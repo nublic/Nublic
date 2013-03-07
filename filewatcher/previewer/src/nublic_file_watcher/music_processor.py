@@ -89,7 +89,7 @@ class MusicProcessor(PreviewProcessor):
                 self.process_deleted_file(filename)
 
     def process_attribs_change(self, filename, is_dir, info=None):
-        if not is_dir:
+        if not is_dir and os.path.exists(filename):
             with app.test_request_context():
                 filename_unicode = unicode(filename, 'utf8')
                 song = Song.query.filter_by(file=filename_unicode).first()
@@ -245,8 +245,9 @@ class MusicProcessor(PreviewProcessor):
         Returns an artist.
         If the artist does not exists it is created.
         This function tries to match close but not exact artists
+        artist_name is an Unicode object
         """
-        n_artist = unidecode(unicode(artist_name).lower())
+        n_artist = unidecode(artist_name.lower())
         # Try to find an artist
         artist = Artist.query.filter_by(normalized=n_artist).first()
         if artist is not None:
@@ -276,11 +277,11 @@ class MusicProcessor(PreviewProcessor):
             return self.find_album_by_directory(directory, album_name)
         else:
             if artist_name is None:
-                r_artist_name = ''
+                r_artist_name = u''
             else:
                 r_artist_name = artist_name
             if album_name is None:
-                r_album_name = ''
+                r_album_name = u''
             else:
                 r_album_name = artist_name
             ab = self.find_album_with_artist(r_artist_name, r_album_name)
@@ -293,8 +294,8 @@ class MusicProcessor(PreviewProcessor):
                 return new_album
 
     def find_album_with_artist(self, artist_name, album_name):
-        n_artist = unidecode(unicode(artist_name).lower())
-        n_album = unidecode(unicode(album_name).lower())
+        n_artist = unidecode(artist_name.lower())
+        n_album = unidecode(album_name.lower())
         # Try to get artist
         artist = Artist.query.filter_by(normalized=n_artist).first()
         if artist is None:
@@ -303,7 +304,7 @@ class MusicProcessor(PreviewProcessor):
             return Album.query.filter_by(normalized=n_album).filter(Song.albumId == Album.id).filter(Song.artistId == artist.id).first()
 
     def find_album_by_directory(self, directory, album_name):
-        n_album = unidecode(unicode(album_name).lower())
+        n_album = unidecode(album_name.lower())
         # Try to find a song with name album name
         ab = Album.query.filter_by(normalized=n_album).filter(Song.albumId == Album.id).filter(Song.file.like(directory + '/%')).first()
         if ab is not None:
@@ -335,15 +336,15 @@ class MusicProcessor(PreviewProcessor):
         filename_unicode = unicode(filename, 'utf8')
         # Just in case anything is None
         if song_info.title is None:
-            r_title = ''
+            r_title = u''
         else:
             r_title = song_info.title
         if song_info.artist is None:
-            r_artist_name = ''
+            r_artist_name = u''
         else:
             r_artist_name = song_info.artist
         if song_info.album is None:
-            r_album_name = ''
+            r_album_name = u''
         else:
             r_album_name = song_info.album
         if song_info.length is None:
@@ -372,15 +373,15 @@ class MusicProcessor(PreviewProcessor):
         """
         # Just in case anything is None
         if song_info.title is None:
-            r_title = ''
+            r_title = u''
         else:
             r_title = song_info.title
         if song_info.artist is None:
-            r_artist_name = ''
+            r_artist_name = u''
         else:
             r_artist_name = song_info.artist
         if song_info.album is None:
-            r_album_name = ''
+            r_album_name = u''
         else:
             r_album_name = song_info.album
         if song_info.length is None:

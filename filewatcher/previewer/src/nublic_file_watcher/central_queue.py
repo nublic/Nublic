@@ -45,28 +45,38 @@ class CentralQueue(ThreadingActor):
             self.qs[proc.get_id()] = PriorityQueue()
 
     def tell_reload(self, actor, element, key):
-        for i in range(5):
-            try:
-                actor.tell({'element': element})
-            except ActorDeadError:
-                log.exception("Processor %s was dead when trying "
-                              "to reach it, attempt %i", key, i)
-                self.start_processor(self.actors[key], start_queue=False)
-                #self.tell_reload(actor, element, key)
+        #for i in range(5):
+        try:
+            actor.tell({'element': element})
+        except ActorDeadError:
+            log.exception("Processor %s was dead when trying "
+                          "to reach it, attempt %i", key, 1)
+            self.restart_processor(key)
+                #self.start_processor(self.actors[key], start_queue=False)
 
     def tell_solr(self, element):
-        for i in range(5):
-            try:
-                self.solr.tell({'element': element})
-            except ActorDeadError:
-                log.exception("Solr was dead when trying "
-                              "to reach it, attempt %i", i)
-                self.start_solr(start_queue=False)
-                #self.tell_solr(element)
+        self.tell_reload(self.solr, element, 'solr')
+        #for i in range(5):
+            #try:
+                #self.solr.tell({'element': element})
+            #except ActorDeadError:
+                #log.exception("Solr was dead when trying "
+                              #"to reach it, attempt %i", i)
+                #self.restart_processor('solr')
+                #self.start_solr(start_queue=False)
+
+    def restart_processor(self, processor_id):
+        if processor_id == 'solr':
+            self.start_solr(start_queue=False)
+        else:
+            self.start_processor(self.actors[processor_id], start_queue=False)
 
     def on_receive(self, msg):
         sender_id = msg['id']
         element = msg['element']
+        #if 'error' in msg:
+            #log.warning("Error in processor %s, restarting", sender_id)
+            #self.restart_processor(sender_id)
         log.debug(
             "Received message %s from sender_id %s", repr(element), sender_id)
         if sender_id == '_watcher':
@@ -112,5 +122,17 @@ class CentralQueueWrapper(ThreadingActor):
 
     def on_receive(self, msg):
         element = msg['element']
-        self.processor.process(element)
-        self.central_queue.tell({'id': self.id, 'element': element})
+        error = True
+        try:
+            self.processor.process(element)
+            error = False
+            #self.central_queue.tell({'id': self.id, 'element': element, 'error': False})
+        except:
+            log.exception("Exception detected on processor %s processing message %s", self.id, element)
+        finally:
+            self.central_queue.tell({'id': self.id, 'element': element, 'error': error})
+
+    def on_failure(self, exception_type, exception_value, traceback):
+        log.exception("Exception detected on actor %s, %s, %s",
+                      exception_type, exception_value, traceback)
+        #self.central_queue.tell({'id': self.id, 'element': None, 'error': True})

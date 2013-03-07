@@ -52,7 +52,7 @@ def parse_file_change(kind, pathname, src_pathname, is_dir):
     if type(pathname) == unicode:
         pathname = pathname.encode('utf8')
     if type(src_pathname) == unicode:
-        src_pathname = pathname.encode('utf8')
+        src_pathname = src_pathname.encode('utf8')
     if kind == 'create':
         return FileChange(FileChange.CREATED, pathname, None, None, is_dir)
     elif kind == 'delete':

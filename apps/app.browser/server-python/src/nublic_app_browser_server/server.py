@@ -33,6 +33,8 @@ DATA_ROOT = '/var/nublic/data/'  # It MUST end with '/' for security reasons
 GENERIC_THUMB_PATH = '/var/lib/nublic/apache2/apps/browser/generic-thumbnails/'
 
 # Place to save events from filewatcher
+
+
 class BrowserProcessor(Processor):
     def __init__(self):
         Processor.__init__(self, "browser")
@@ -40,10 +42,11 @@ class BrowserProcessor(Processor):
     def process(self, change):
         global WATCHER_EVENTS
         WATCHER_EVENTS.append(change)
-        log.info("Event captured %s", unicode(change))
+        log.info("Event captured %s", change)
 
 WATCHER_EVENTS = []
 init_socket_watcher("browser", [BrowserProcessor.start()])
+
 
 @app.route('/devices')
 def devices():
@@ -109,7 +112,7 @@ def files_path(path):
             app.logger.info('Getting files from %s', path_absolute)
             user.try_read(path_absolute)
             dirs = os.listdir(path_absolute)
-            app.logger.info('Getting files: %s', unicode(dirs))
+            #app.logger.info('Getting files: %s', unicode(dirs))  # Potential problem with unicode
             infos = [get_file_info(os.path.join(path_absolute, p), user)
                      for p in dirs]
     except PermissionError:
@@ -333,7 +336,8 @@ def rename():
             * :to -> new name of the file
     '''
     user = require_user()
-    path_from = os.path.join(DATA_ROOT, request.form.get('from').encode('utf8'))
+    path_from = os.path.join(
+        DATA_ROOT, request.form.get('from').encode('utf8'))
     path_to = os.path.join(DATA_ROOT, request.form.get('to').encode('utf8'))
     if not os.path.exists(path_from):
         abort(404)
@@ -352,7 +356,8 @@ def move():
     '''
     user = require_user()
     from_array = request.form.get('files').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('target').encode('utf8'))
+    internal_to = os.path.join(
+        DATA_ROOT, request.form.get('target').encode('utf8'))
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path.encode('utf8'))
@@ -372,7 +377,8 @@ def copy():
     '''
     user = require_user()
     from_array = request.form.get('files').split(':')
-    internal_to = os.path.join(DATA_ROOT, request.form.get('target').encode('utf8'))
+    internal_to = os.path.join(
+        DATA_ROOT, request.form.get('target').encode('utf8'))
     try:
         for from_path in from_array:
             internal_from = os.path.join(DATA_ROOT, from_path.encode('utf8'))
@@ -400,8 +406,8 @@ def delete():
                 os.remove(internal_path)
     except PermissionError:
         abort(401)
-    except Exception as e:  # Catch a possible rmtree Exception
-        log.exception("Exception on delete file %s", unicode(e))
+    except:  # Catch a possible rmtree Exception
+        log.exception("Exception on delete file %s", unicode(raw_files))
         abort(500)
     return 'ok'
 

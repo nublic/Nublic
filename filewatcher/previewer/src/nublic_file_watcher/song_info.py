@@ -21,9 +21,9 @@ class SongInfo:
         self.disc_no = disc_no
 
     def has_important_info_missing(self):
-        return self.title is None or self.title == '' or \
-            self.artist is None or self.artist == '' or \
-            self.album is None or self.album == ''
+        return self.title is None or self.title == u'' or \
+            self.artist is None or self.artist == u'' or \
+            self.album is None or self.album == u''
 
     def clone(self):
         return SongInfo(self.title, self.artist, self.album, self.length,
@@ -46,11 +46,12 @@ def get_song_info(file_):
     """
     log.info('Extracting from mutagen: %s', file_)
     tag_info = extract_using_mutagen(file_).clean()
+    #if tag_info.has_important_info_missing():
+        #log.info('Extracting from Echonest: %s', file_)
+        #echonest_info = extract_using_echonest(file_).clean()
+        #tag_info = merge_song_infos(tag_info, echonest_info)
     if tag_info.has_important_info_missing():
-        log.info('Extracting from Echonest: %s', file_)
-        echonest_info = extract_using_echonest(file_).clean()
-        tag_info = merge_song_infos(tag_info, echonest_info)
-    if tag_info.has_important_info_missing():
+        log.warning("Skipping using echonest")
         log.info('Extracting from filename: %s', file_)
         file_info = extract_using_filename(file_).clean()
         tag_info = merge_song_infos(tag_info, file_info)
@@ -74,7 +75,7 @@ def merge_song_infos(s1, s2):
 
 
 def _merge_info(i1, i2):
-    if i1 is not None and i1 != '':
+    if i1 is not None and i1 != u'':
         return i1
     else:
         return i2
@@ -129,17 +130,20 @@ def extract_using_mutagen(file_):
             log.exception("Mutagen could not obtain the year")
             year = None
         try:
+            track_no = None
             track_no_raws = mutf.get('tracknumber', None)
             #track_no_raw = mutf['tracknumber'][0]
             track_no = (int(track_no_raws[0].split('/')[0])
                         if track_no_raws is not None
                         else None)
+        except ValueError:
+            log.warning("Track Number is not a number in file %s, but '%s'",
+                        file_, track_no_raws)
         except:
             log.exception("Mutagen could not obtain the track_no")
-            track_no = None
         try:
             disc_no_s = mutf.get('discnumber', None)
-            disc_no = int(disc_no_s[0]) if disc_no_s is not None else None
+            disc_no = int(disc_no_s[0].split('/')[0]) if disc_no_s is not None else None
         except:
             log.exception("Mutagen could not obtain the disc_no")
             disc_no = None
@@ -196,9 +200,9 @@ def extract_using_filename(file_):
     parent, filename = os.path.split(no_context)
     # Initialize to empty
     track = None
-    title = None
-    artist = None
-    album = None
+    title = ''
+    artist = ''
+    album = ''
     # Try to get track number
     tmatch = re.match(r"(\d+)\.? *(.*)$", filename)
     if tmatch is not None:
@@ -234,4 +238,5 @@ def extract_using_filename(file_):
                 pass
         parent = p_parent
     # Put everythung together
-    return SongInfo(title, artist, album, length, None, track, None)
+    return SongInfo(unicode(title, 'utf-8'), unicode(artist, 'utf8'),
+                    unicode(album, 'utf-8'), length, None, track, None)
