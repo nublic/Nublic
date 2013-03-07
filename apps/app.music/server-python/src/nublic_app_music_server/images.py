@@ -50,6 +50,17 @@ def _ensure(id_, folderer, getter):
         img.write(thumb)
 
 
+def request_several_times(url, times=3, timeout=5):
+    for i in range(0, times):
+        try:
+            r = requests.get(url, timeout=timeout)
+            return r
+        except requests.Timeout:
+            log.info("Timeout achieved calling %s", url)
+    log.info("Requesting %d times failed", times)
+    return None
+
+
 def ensure_artist_image(id_, name):
     _ensure(id_, get_artist_folder, lambda path: get_artist_image(id_,
             name, path))
@@ -65,13 +76,14 @@ def get_artist_image(id_, name, place):
             images = artist.get_images(results=1)
             if images:
                 image_url = images[0][u'url']
-                r = requests.get(image_url)
-                f = open(place, 'w')
-                f.write(r.content)
-                f.close()
-                return True
+                r = request_several_times(image_url)
+                if r is not None and r.status_code == 200:
+                    f = open(place, 'w')
+                    f.write(r.content)
+                    f.close()
+                    return True
     except:
-        pass
+        log.exception("Exception detected while getting an artist image")
     return False
 
 
@@ -97,7 +109,7 @@ def get_album_image(id_, file_, album_name, artist_name, place):
         if artist_name is None:
             search = album_name
         else:
-            search = album_name + ' ' + artist_name
+            search = album_name + u' ' + artist_name
         discogs_params = {'f': 'json',
                           'type': 'releases', 'q': search}
         r = requests.get(
@@ -110,11 +122,12 @@ def get_album_image(id_, file_, album_name, artist_name, place):
             if img_results:
                 image_url = img_results[0]['thumb']
                 log.debug("img_url %s", str(image_url))
-                r = requests.get(image_url)
-                f = open(place, 'w')
-                f.write(r.content)
-                f.close()
-                return True
+                r = request_several_times(image_url)
+                if r is not None:
+                    f = open(place, 'w')
+                    f.write(r.content)
+                    f.close()
+                    return True
     except BaseException:
         log.exception("Exception detected getting album from api.discogs.com")
     return False
