@@ -85,7 +85,7 @@ def _merge_info(i1, i2):
 
 
 def empty_song_info():
-    return SongInfo('', '', '', None, None, None, None)
+    return SongInfo(u'', u'', u'', None, None, None, None)
 
 
 def extract_using_mutagen(file_):
@@ -144,6 +144,9 @@ def extract_using_mutagen(file_):
         try:
             disc_no_s = mutf.get('discnumber', None)
             disc_no = int(disc_no_s[0].split('/')[0]) if disc_no_s is not None else None
+        except ValueError:
+            log.warning("Disk Number is not a number in file %s, but '%s'",
+                        file_, track_no_raws)
         except:
             log.exception("Mutagen could not obtain the disc_no")
             disc_no = None

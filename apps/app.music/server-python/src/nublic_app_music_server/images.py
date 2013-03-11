@@ -41,6 +41,10 @@ def _ensure(id_, folderer, getter):
     # Download image
     original = os.path.join(folder, ORIGINAL_FILENAME)
     if not os.path.exists(original):
+        # Check if there is a recent timestamp file
+        #timestamp_file = original + ".timestamp"
+        #if os.path.exists(timestamp_file) and time.time() + 60*60:
+            #pass
         getter(original)
     # Create thumbnail
     thumb = os.path.join(folder, THUMBNAIL_FILENAME)
@@ -75,13 +79,18 @@ def get_artist_image(id_, name, place):
             artist = results[0]
             images = artist.get_images(results=1)
             if images:
-                image_url = images[0][u'url']
-                r = request_several_times(image_url)
-                if r is not None and r.status_code == 200:
-                    f = open(place, 'w')
-                    f.write(r.content)
-                    f.close()
-                    return True
+                for image in images:
+                    image_url = image[u'url']
+                    log.debug("Trying to get artist image from %s", image_url)
+                    try:
+                        r = request_several_times(image_url, times=1)
+                    except ValueError:
+                        log.exception("Exception requesting artist image")
+                    if r is not None and r.status_code == 200:
+                        f = open(place, 'w')
+                        f.write(r.content)
+                        f.close()
+                        return True
     except:
         log.exception("Exception detected while getting an artist image")
     return False
@@ -120,14 +129,17 @@ def get_album_image(id_, file_, album_name, artist_name, place):
             img_results = response['resp']['search']['searchresults']['results']
             log.debug("img_results %s", str(img_results))
             if img_results:
-                image_url = img_results[0]['thumb']
-                log.debug("img_url %s", str(image_url))
-                r = request_several_times(image_url)
-                if r is not None:
-                    f = open(place, 'w')
-                    f.write(r.content)
-                    f.close()
-                    return True
+                for img in img_results:
+                    image_url = img['thumb']
+                    try:
+                        r = request_several_times(image_url)
+                    except ValueError:
+                        log.exception("Error getting album image from %s", image_url)
+                    if r is not None and r.status_code == 200:
+                        f = open(place, 'w')
+                        f.write(r.content)
+                        f.close()
+                        return True
     except BaseException:
         log.exception("Exception detected getting album from api.discogs.com")
     return False
