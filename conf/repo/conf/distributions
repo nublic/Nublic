@@ -3,6 +3,6 @@ Label: Nublic
 Codename: precise
 Suite: precise
 Version: 3.1
-Architectures: i386 amd64 source
+Architectures: i386 amd64 armel source
 Components: nublic
 Description: Apt repository for Nublic
