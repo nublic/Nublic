@@ -13,10 +13,10 @@ from nublic_app_music_server.model import (db, Album, Artist,
                                            Song, SongCollection, SongPlaylist)
 from song_info import (get_song_info,
                        extract_using_filename)
-from nublic_app_music_server.images import (get_artist_folder,
-                                            get_album_folder,
-                                            ensure_artist_image,
-                                            ensure_album_image)
+from images import (get_artist_folder,
+                    get_album_folder,
+                    ensure_artist_image,
+                    ensure_album_image)
 
 import logging
 log = logging.getLogger(__name__)
@@ -189,8 +189,9 @@ class MusicProcessor(PreviewProcessor):
                 "Cache removed for audio file %s as %s", filename, mp3_cache)
             os.remove(mp3_cache)
         else:
-            log.warning("Cache for audio file %s does not exist in %s. Not removed",
-                        filename, mp3_cache)
+            log.warning(
+                "Cache for audio file %s does not exist in %s. Not removed",
+                filename, mp3_cache)
 
     def process_deleted_file(self, filename):
         """
