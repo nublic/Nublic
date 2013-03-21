@@ -4,15 +4,17 @@ import magic
 #from fnmatch import fnmatch
 import glob
 
-try:
-    BROWSER_ROOT_FOLDER = os.environ["BROWSER_CACHE_FOLDER"]
-except KeyError:
-    BROWSER_ROOT_FOLDER = '/var/nublic/cache/browser'
+
+def browser_root_folder():
+    try:
+        return os.environ["BROWSER_CACHE_FOLDER"]
+    except KeyError:
+        return '/var/nublic/cache/browser'
 
 
 def get_cache_folder(path):
     cache_folder = hashlib.sha1(path).hexdigest()
-    return os.path.join(BROWSER_ROOT_FOLDER, cache_folder)
+    return os.path.join(browser_root_folder(), cache_folder)
 
 
 def ensure_cache_folder(path):
