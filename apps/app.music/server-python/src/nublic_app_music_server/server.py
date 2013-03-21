@@ -14,7 +14,7 @@ from model import db, Album, Artist, Collection, Playlist, Song,\
     collection_or_playlist_as_json, album_as_json, artist_as_json,\
     artists_and_row_count_as_json, albums_and_row_count_as_json,\
     song_as_json, songs_and_row_count_as_json
-from images import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
+from nublic_file_watcher.images import get_artist_folder, get_album_folder, THUMBNAIL_FILENAME
 
 
 # Init app
