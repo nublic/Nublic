@@ -3,7 +3,7 @@ import os.path
 from unidecode import unidecode
 import shutil
 
-#from nublic.filewatcher import FileChange
+# from nublic.filewatcher import FileChange
 from nublic.files_and_users import get_file_owner, is_file_shared
 from nublic_server.places import (get_mime_type, ensure_cache_folder,
                                   get_cache_folder)
@@ -13,10 +13,10 @@ from nublic_app_music_server.model import (db, Album, Artist,
                                            Song, SongCollection, SongPlaylist)
 from song_info import (get_song_info,
                        extract_using_filename)
-from images import (get_artist_folder,
-                    get_album_folder,
-                    ensure_artist_image,
-                    ensure_album_image)
+from music_images import (get_artist_folder,
+                          get_album_folder,
+                          ensure_artist_image,
+                          ensure_album_image)
 
 import logging
 log = logging.getLogger(__name__)
@@ -134,7 +134,7 @@ class MusicProcessor(PreviewProcessor):
             filename_unicode = unicode(filename, 'utf8')
             log.info('Updated file: %s', filename)
             mime = get_mime_type(filename)
-            #_, ext = os.path.splitext(filename)
+            # _, ext = os.path.splitext(filename)
             # Process song
             if mime in TAGGED_MIME_TYPES:  # or ext in TAGGED_EXTENSIONS:
                 song_info = get_song_info(filename)
@@ -171,11 +171,12 @@ class MusicProcessor(PreviewProcessor):
         " Delete from playlists "
         relation = SongPlaylist.query.filter_by(songId=song_id).first()
         while relation is not None:
-            rest = SongPlaylist.query.filter_by(playlistId=relation.playlistId).filter(SongPlaylist.position > relation.position).all()
+            rest = SongPlaylist.query.filter_by(playlistId=relation.playlistId).filter(
+                SongPlaylist.position > relation.position).all()
             for other_song in rest:
                 other_song.position -= 1
             db.session.delete(relation)
-            #relation.delete()
+            # relation.delete()
             db.session.commit()
             # Try again
             relation = SongPlaylist.query.filter_by(songId=song_id).first()
@@ -307,7 +308,8 @@ class MusicProcessor(PreviewProcessor):
     def find_album_by_directory(self, directory, album_name):
         n_album = unidecode(album_name.lower())
         # Try to find a song with name album name
-        ab = Album.query.filter_by(normalized=n_album).filter(Song.albumId == Album.id).filter(Song.file.like(directory + '/%')).first()
+        ab = Album.query.filter_by(normalized=n_album).filter(
+            Song.albumId == Album.id).filter(Song.file.like(directory + '/%')).first()
         if ab is not None:
             return ab
         else:
