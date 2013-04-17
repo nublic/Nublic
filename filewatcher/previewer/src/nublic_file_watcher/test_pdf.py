@@ -12,9 +12,12 @@ logging.basicConfig()
 
 class TmpFileTest(unittest.TestCase):
     def test_make_tmp_file(self):
-        self.assertEquals(pdf.make_tmp_file("/tmp/loco", "tonto"), "/tmp/tontoloco")
-        self.assertEquals(pdf.make_tmp_file("/tmp/ññ", "tonto"), "/tmp/tontoññ")
-        self.assertEquals(pdf.make_tmp_file("/tmp/ññ", "test_"), "/tmp/test_ññ")
+        self.assertEquals(pdf.make_tmp_file(
+            "/tmp/loco", "tonto"), "/tmp/tontoloco")
+        self.assertEquals(pdf.make_tmp_file(
+            "/tmp/ññ", "tonto"), "/tmp/tontoññ")
+        self.assertEquals(pdf.make_tmp_file(
+            "/tmp/ññ", "test_"), "/tmp/test_ññ")
         self.assertEquals(
             pdf.make_tmp_file("/tmp/out.pdf", "test_"), "/tmp/test_out.pdf")
         self.assertEquals(
@@ -103,25 +106,30 @@ class PdfConverterPathTest(unittest.TestCase):
         self.p = pdf.PdfConverter(self.test_file)
 
     def test_cache_path(self):
-        self.assertEquals(self.p.cache_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c")
+        self.assertEquals(
+            self.p.cache_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c")
 
     def test_view_path(self):
-        self.assertEquals(self.p.view_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c/view.pdf")
+        self.assertEquals(
+            self.p.view_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c/view.pdf")
 
     def test_thumb_path(self):
-        self.assertEquals(self.p.thumb_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c/thumbnail.png")
+        self.assertEquals(
+            self.p.thumb_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c/thumbnail.png")
 
 
 class PdfConverterPath2Test(unittest.TestCase):
     def setUp(self):
         self.test_file = "test_files/recetas.pdf"
-        self.p = pdf.PdfConverter(self.test_file, cache_path="test_files/cache")
+        self.p = pdf.PdfConverter(
+            self.test_file, cache_path="test_files/cache")
 
     def test_cache_path2(self):
         self.assertEquals(self.p.cache_path(), "test_files/cache")
 
     def test_thumb_path2(self):
-        self.assertEquals(self.p.thumb_path(), "test_files/cache/thumbnail.png")
+        self.assertEquals(
+            self.p.thumb_path(), "test_files/cache/thumbnail.png")
 
     def test_view_path2(self):
         self.assertEquals(self.p.view_path(), "test_files/cache/view.pdf")

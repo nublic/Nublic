@@ -5,12 +5,6 @@ from file_info import (FileInfo, djvu_mimes, pdf_mimes, ps_mimes, dvi_mimes,
                        office_mimes)
 import subprocess
 import shutil
-#import sys
-#from pgmagick.api import InterlaceType
-#import os
-#import os.path
-#import shlex
-#import pexpect
 
 import logging
 log = logging.getLogger(__name__)
@@ -120,8 +114,8 @@ class PdfConverter(object):
     def generate_thumb(self, path=None):
         if not path:
             path = self.thumb_path(THUMBNAIL_FILENAME)
-        pdf = self.generate_pdf()
-        pdf_to_thumb(pdf, path)
+        self.pdf = self.generate_pdf()
+        pdf_to_thumb(self.pdf, path)
         return path
 
     def generate_pdf(self, path=None):
