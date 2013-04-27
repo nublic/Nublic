@@ -4,12 +4,10 @@ import os
 import os.path
 
 from nublic.filewatcher import FileChange
-#from flask import Flask
-#from nublic.resource import App
 from nublic.files_and_users import get_file_owner, is_file_shared
-#from nublic_server.places import get_mime_type
-#from nublic_app_photos_server_common.model import db, Photo, Album, PhotoAlbum, get_or_create_album
-from nublic_app_photos_server.model import db, Photo, PhotoAlbum, get_or_create_album
+# from nublic_server.places import get_mime_type
+from nublic_app_photos_server.model import (db, Photo, PhotoAlbum,
+                                            get_or_create_album)
 from nublic_app_photos_server.server import app
 
 from preview_processor import PreviewProcessor
@@ -63,7 +61,8 @@ class PhotoProcessor(PreviewProcessor):
         '''
         filename_byte = filename.encode('utf8')
         log.info('Updated file: %s', filename_byte)
-        if not self.is_hidden(filename_byte) and info.mime_type().startswith('image/'):
+        if not self.is_hidden(filename_byte) \
+                and info.mime_type().startswith('image/'):
             # Get modification time
             f = open(filename_byte, 'rb')
             tags = EXIF.process_file(f, stop_tag='DateTimeOriginal')
@@ -92,15 +91,15 @@ class PhotoProcessor(PreviewProcessor):
                 db.session.add(photo)
                 db.session.commit()
                 # Add to album
-                #context_path = '/var/nublic/data/' + context[:-1]
+                # context_path = '/var/nublic/data/' + context[:-1]
                 (parent, _basename) = os.path.split(filename_byte)
                 (p_parent, p_basename) = os.path.split(parent)
                 (_p_p_parent, p_p_basename) = os.path.split(p_parent)
-                #if context_path == parent:
+                # if context_path == parent:
                 #    album = None
-                #elif context_path == p_parent:
+                # elif context_path == p_parent:
                 #    album = p_basename
-                #else:
+                # else:
                 #    album = p_p_basename + '/' + p_basename
                 # @TODO What to do with album name
                 log.warning("Album name gessed without care")
