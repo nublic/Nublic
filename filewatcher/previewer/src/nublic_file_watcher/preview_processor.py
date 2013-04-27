@@ -76,6 +76,8 @@ class PreviewProcessor(object):
         info = element.get_info()
         log.info('Processor %s: Change received: %i %s',
                  self.get_id(), change.kind, change.filename)
+        if not self.accept(change.filename, change.is_dir, info):
+            return
         if change.kind == FileChange.CREATED:
             self.process_updated(change.filename, change.is_dir, info)
         elif change.kind == FileChange.MODIFIED:
@@ -118,3 +120,10 @@ class PreviewProcessor(object):
 
     def get_id(self):
         raise NotImplementedError("Should be implemented in derived classes")
+
+    def accept(self, filename, is_dir, info=None):
+        """ By default everything is accepted. You can override this function
+        to skip entirely files. The files for which accept is False
+        will not be called by any process_* function
+        """
+        return True
