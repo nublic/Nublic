@@ -95,7 +95,7 @@ converter_list = [
 class PdfConverter(object):
     def __init__(self, original, info=None, cache_path=None):
         self.original = original
-        if not info:
+        if info is None:
             self.info = FileInfo(original)
         self.pdf = None
         self.cache_path_ = cache_path
