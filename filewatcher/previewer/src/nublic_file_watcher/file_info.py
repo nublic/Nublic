@@ -201,7 +201,7 @@ view_mimes = [
     {'view': 'txt', 'mimes': text_view_mimes},
     {'view': 'mp4', 'mimes': video_view_mimes},
     # @TODO Before was flv instead of mp4!
-    {'view': 'png', 'mimes': image_view_mimes}
+    {'view': 'jpg', 'mimes': image_view_mimes}
 ]
 
 

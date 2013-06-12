@@ -5,7 +5,7 @@ import com.nublic.app.browser.web.client.i18n.I18NMessages;
 
 public class Constants {
 	public static I18NMessages I18N = GWT.create(I18NMessages.class);
-	
+
 	public final static int POPUP_MARGIN = 50;
 	public final static int POPUP_BOTTOM = 72; // also defined in PopupContent.ui.xml
 	public final static int DEFAULT_DEPTH = 2; // Number of levels of the tree requested each time
@@ -16,7 +16,7 @@ public class Constants {
 	public final static String BROWSER_VIEW = "browser";
 	public final static String PATH_PARAMETER = "path";
 	public final static String IMAGE_VIEW = "image";
-	public final static String IMAGE_TYPE = "png";
+	public final static String IMAGE_TYPE = "jpg";
 	public final static String DOCUMENT_VIEW = "document";
 	public final static String DOCUMENT_TYPE = "pdf";
 	public final static String MUSIC_VIEW = "music";
