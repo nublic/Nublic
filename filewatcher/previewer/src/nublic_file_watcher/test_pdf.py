@@ -23,6 +23,9 @@ class TmpFileTest(unittest.TestCase):
         self.assertEquals(
             pdf.make_tmp_file("/tmp/dir/moredir/yet/another/dir", "test_"),
             "/tmp/dir/moredir/yet/another/test_dir")
+        self.assertEquals(
+            pdf.make_tmp_file("/tmp/dir/moredir/yet/another/dir"),
+            "/tmp/dir/moredir/yet/another/tmp_dir")
 
 
 class PdfTest(unittest.TestCase):
@@ -76,7 +79,8 @@ class PdfTest(unittest.TestCase):
         self.assertEquals(info.mime_type(), "application/pdf")
 
     def test_office_view_converter3(self):
-        test_file = "test_files/estadística_ine_uso_tecnologias_y_ordenadores.xls"
+        test_file = \
+            "test_files/estadística_ine_uso_tecnologias_y_ordenadores.xls"
         test_output = self.test_dir + "xls.pdf"
         pdf.office_view_converter(test_file, test_output)
         self.assertTrue(os.path.exists(test_output))
@@ -107,15 +111,21 @@ class PdfConverterPathTest(unittest.TestCase):
 
     def test_cache_path(self):
         self.assertEquals(
-            self.p.cache_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c")
+            self.p.cache_path(),
+            "/var/nublic/cache/browser/"
+            "5ce0763869d65ce770fd114773b98f5f827b4e4c")
 
     def test_view_path(self):
         self.assertEquals(
-            self.p.view_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c/view.pdf")
+            self.p.view_path(),
+            "/var/nublic/cache/browser/"
+            "5ce0763869d65ce770fd114773b98f5f827b4e4c/view.pdf")
 
     def test_thumb_path(self):
         self.assertEquals(
-            self.p.thumb_path(), "/var/nublic/cache/browser/5ce0763869d65ce770fd114773b98f5f827b4e4c/thumbnail.png")
+            self.p.thumb_path(),
+            "/var/nublic/cache/browser/"
+            "5ce0763869d65ce770fd114773b98f5f827b4e4c/thumbnail.png")
 
 
 class PdfConverterPath2Test(unittest.TestCase):
@@ -136,84 +146,3 @@ class PdfConverterPath2Test(unittest.TestCase):
 
     def test_needs_pdf(self):
         self.assertTrue(self.p.needs_pdf())
-
-
-class PdfConverterPathTest(unittest.TestCase):
-    def setUp(self):
-        self.test_dir = "/tmp/test_pdf/test_dir/"
-        os.system("rm -rf /tmp/test_pdf/test_dir/")
-        shutil.copytree("test_files", "/tmp/test_pdf/test_dir")
-
-    def test_generate_thumb(self):
-        test_file = "test_files/recetas.pdf"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        thumb = p.generate_thumb()
-        self.assertEquals(thumb, self.test_dir + "thumbnail.png")
-        thumb_image = Image(thumb)
-        self.assertLessEqual(thumb_image.width, pdf.THUMBNAIL_SIZE)
-        self.assertLessEqual(thumb_image.height, pdf.THUMBNAIL_SIZE)
-        self.assertLessEqual(os.stat(thumb).st_size, 500 * 1024)
-
-    def test_generate_pdf_pdf(self):
-        test_file = "test_files/recetas.pdf"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "inode/symlink")
-
-    def test_generate_pdf_djvu(self):
-        test_file = "test_files/2001_compression_overview.djvu"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "application/pdf")
-
-    def test_generate_pdf_ps(self):
-        test_file = "test_files/cw.ps"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "application/pdf")
-
-    def test_generate_pdf_dvi(self):
-        test_file = "test_files/cw.dvi"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "application/pdf")
-
-    def test_generate_pdf_odf(self):
-        test_file = "test_files/trucos-linux.odf"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "application/pdf")
-
-    def test_generate_pdf_xls(self):
-        test_file = "test_files/estadística_ine_uso_tecnologias_y_ordenadores.xls"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "application/pdf")
-
-    def test_generate_pdf_pptx(self):
-        test_file = "test_files/presentacion-pcm.pptx"
-        p = pdf.PdfConverter(test_file, cache_path=self.test_dir)
-        self.assertEquals(p.cache_path(), self.test_dir)
-        pdf_out = p.generate_pdf()
-        self.assertEquals(pdf_out, self.test_dir + "view.pdf")
-        i = FileInfo(pdf_out)
-        self.assertEqual(i.mime_type(), "application/pdf")

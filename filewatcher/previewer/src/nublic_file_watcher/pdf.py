@@ -15,7 +15,7 @@ ORIGINAL_FILENAME = "orig"
 THUMBNAIL_FILENAME = "thumbnail.png"
 
 
-def make_tmp_file(out, prefix="test_"):
+def make_tmp_file(out, prefix="tmp_"):
     return os.path.join(os.path.dirname(out), prefix + os.path.basename(out))
 
 
@@ -26,8 +26,8 @@ def pdf_to_thumb(pdf, thumb):
     tmp = make_tmp_file(thumb)
     img = Image(pdf + '[0]')
     img.scale("%sx%s>" % (THUMBNAIL_SIZE, THUMBNAIL_SIZE))
-    #img.img.interlaceType(pgmagick.InterlaceType.LineInterlace)
-    #img.img.quality(5)
+    # img.img.interlaceType(pgmagick.InterlaceType.LineInterlace)
+    # img.img.quality(5)
     img.write(tmp)
     os.rename(tmp, thumb)
 
@@ -47,7 +47,7 @@ def djvu_view_converter(path, out):
     tmp = make_tmp_file(out)
     exitcode = subprocess.call(["ddjvu", "-format=pdf", path, tmp])
     if exitcode != 0:
-        log.warning("Conversion failed with ddjvu for file $s", path)
+        log.warning("Conversion failed with ddjvu for file %s", path)
     else:
         os.rename(tmp, out)
 
@@ -69,7 +69,7 @@ def dvi_view_converter(path, out):
     tmp = make_tmp_file(out)
     exitcode = subprocess.call(['dvipdf', path, tmp])
     if exitcode != 0:
-        log.warning("Conversion failed with office dvipdf for file $s", path)
+        log.warning("Conversion failed with office dvipdf for file %s", path)
     else:
         os.rename(tmp, out)
 
@@ -78,7 +78,7 @@ def ps_view_converter(path, out):
     tmp = make_tmp_file(out)
     exitcode = subprocess.call(['ps2pdf', path, tmp])
     if exitcode != 0:
-        log.warning("Conversion failed with ps2pdf for file $s", path)
+        log.warning("Conversion failed with ps2pdf for file %s", path)
     else:
         os.rename(tmp, out)
 
@@ -97,12 +97,16 @@ class PdfConverter(object):
         self.original = original
         if info is None:
             self.info = FileInfo(original)
+        else:
+            self.info = info
         self.pdf = None
         self.cache_path_ = cache_path
 
     def cache_path(self):
         if not self.cache_path_:
             self.cache_path_ = get_cache_folder(self.original)
+        if not os.path.exists(self.cache_path_):
+            os.mkdir(self.cache_path_)
         return self.cache_path_
 
     def thumb_path(self, path=THUMBNAIL_FILENAME):
@@ -121,14 +125,22 @@ class PdfConverter(object):
     def generate_pdf(self, path=None):
         if not path:
             path = self.view_path()
+            if not os.path.exists(self.cache_path()):
+                try:
+                    os.makedirs(self.cache_path())
+                except:
+                    log.exception("Cannot make dir for cache on %s for %s",
+                                  path,
+                                  self.original)
         if not self.pdf:
             for converter in converter_list:
                 if self.info.mime_type() in converter['mimes']:
                     try:
                         converter['function'](self.original, path)
                     except:
-                        log.exception("Exception detected at converter for mime %s",
-                                      self.info.mime_type())
+                        log.exception(
+                            "Exception detected at converter for mime %s",
+                            self.info.mime_type())
                     if os.path.exists(path):
                         self.pdf = path
                         return self.pdf
@@ -137,7 +149,13 @@ class PdfConverter(object):
             return self.pdf
 
     def needs_pdf(self):
-        return self.info.view_type() == 'pdf'
+        if self.info.view_type() != 'pdf':
+            return False
+        if not os.path.exists(self.view_path()):
+            return True
+        original_time = self.info.last_modified_time()
+        view_time = os.path.getmtime(self.view_path())
+        return original_time > view_time
 
     def view(self):
         """ Create the view for nublic """
