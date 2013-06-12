@@ -33,11 +33,6 @@ def get_cache_view(path, extension):
         return cache_file
     else:
         return None
-    #if os.path.isdir(cache_folder):
-        #for f in os.listdir(cache_folder):
-            #if fnmatch(f, 'view.' + extension):  # @TODO Possible security error
-                #return os.path.join(cache_folder, f)
-    #return None
 
 
 def get_cache_views(path):

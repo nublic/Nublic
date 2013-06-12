@@ -109,7 +109,8 @@ presentation_mimes = [
     "application/vnd-mspowerpoint", "application/powerpoint",
     "application/x-powerpoint",
     # PowerPoint .pptx
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    ("application/vnd.openxmlformats-officedocument."
+    "presentationml.presentation"),
     # Impress .odp
     "application/vnd.oasis.opendocument.presentation",
     "application/x-vnd.oasis.opendocument.presentation",
@@ -218,11 +219,14 @@ def guess_mime_from_ext(mime, extension):
     '''
     if mime == "application/zip":  # for Office XML docs
         if extension == ".docx":
-            mime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            mime = ("application/vnd.openxmlformats-officedocument."
+                    "wordprocessingml.document")
         elif extension == ".xlsx":
-            mime = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            mime = ("application/vnd.openxmlformats-officedocument."
+                    "spreadsheetml.sheet")
         elif extension == ".pptx":
-            mime = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+            mime = ("application/vnd.openxmlformats-officedocument."
+                    "presentationml.presentation")
     elif mime == "application/vnd.ms-office":  # for Office non-XML docs
         if extension == ".doc":
             mime = "application/msword"
