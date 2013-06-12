@@ -1,7 +1,7 @@
 import datetime
 from file_info import FileInfo
 from nublic.filewatcher.change import FileChange
-#import sys
+# import sys
 
 import logging
 log = logging.getLogger(__name__)
@@ -68,7 +68,7 @@ class Element(object):
 
 class PreviewProcessor(object):
     def __init__(self):
-        #sys.settrace(trace_calls)
+        # sys.settrace(trace_calls)
         pass
 
     def process(self, element):
@@ -76,6 +76,9 @@ class PreviewProcessor(object):
         info = element.get_info()
         log.info('Processor %s: Change received: %i %s',
                  self.get_id(), change.kind, change.filename)
+        if change.kind == FileChange.MOVED:
+            if not self.accept(change.filename_to, change.is_dir, info):
+                return
         if not self.accept(change.filename, change.is_dir, info):
             return
         if change.kind == FileChange.CREATED:

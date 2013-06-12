@@ -41,14 +41,18 @@ converter_list = [
 class ViewConverter(object):
     def __init__(self, original, info=None, cache_path=None):
         self.original = original
-        if not info:
+        if info is None:
             self.info = FileInfo(original)
+        else:
+            self.info = info
         self.jpg = None
         self.cache_path_ = cache_path
 
     def cache_path(self):
         if not self.cache_path_:
             self.cache_path_ = get_cache_folder(self.original)
+        if not os.path.exists(self.cache_path_):
+            os.mkdir(self.cache_path_)
         return self.cache_path_
 
     def thumb_path(self, path=THUMBNAIL_FILENAME):

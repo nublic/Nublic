@@ -15,6 +15,7 @@ from nublic_file_watcher.central_queue import CentralQueue
 from nublic_file_watcher.preview_processor import Element
 from nublic.filewatcher import Processor, init_socket_watcher
 from nublic_file_watcher.music_processor import MusicProcessor
+from nublic_file_watcher.document_processor import DocumentProcessor
 from nublic_file_watcher.photo_processor import PhotoProcessor
 
 from time import sleep
@@ -37,7 +38,7 @@ class MainProcessor(Processor):
         self.central_queue = CentralQueue.start(
             #[MusicProcessor, PhotoProcessor])
             #    [PhotoProcessor])
-            [MusicProcessor])
+            [MusicProcessor, PhotoProcessor, DocumentProcessor])
         #self.central_queue = CentralQueue.start([])
 
     def process(self, change):

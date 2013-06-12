@@ -24,13 +24,17 @@ class DocumentProcessor(PreviewProcessor):
         return self.pdf.needs_pdf()
 
     def process_updated(self, filename, is_dir, info=None):
-        self.pdf.generate_pdf()
+        self.pdf.view()
 
     def process_deleted(self, filename, is_dir, info=None):
         cache_path = self.pdf.cache_path()
         thumb_path = self.pdf.thumb_path()
+        if os.path.islink(cache_path):
+            os.unlink(cache_path)
         if os.path.exists(cache_path):
             os.remove(cache_path)
+        if os.path.islink(thumb_path):
+            os.unlink(thumb_path)
         if os.path.exists(thumb_path):
             os.remove(thumb_path)
 

@@ -42,7 +42,7 @@ def get_cache_views(path):
     cache_folder = get_cache_folder(path)
     views = []
     if os.path.isdir(cache_folder):
-        views = glob.glob(os.path.join(cache_folder, '*'))
+        views = glob.glob(os.path.join(cache_folder, 'view.*'))
         #for f in os.listdir(cache_folder):
             #if fnmatch(f, 'view.'):  # @TODO Possible security error
                 #views.append(f)
