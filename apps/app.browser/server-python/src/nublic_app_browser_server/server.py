@@ -1,6 +1,7 @@
 
 import os.path
 import simplejson as json
+import time
 import shutil
 from flask import Flask, request, abort, send_file
 from flask.helpers import send_from_directory
@@ -13,6 +14,8 @@ from nublic_server.files import (PermissionError, get_file_info, get_folders,
 from nublic.files_and_users.mirror import get_all_mirrors
 from nublic.files_and_users.work_folder import get_all_work_folders
 from nublic.filewatcher import Processor, init_socket_watcher
+from nublic.filewatcher.change import FileChange
+from nublic_file_watcher import file_info
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile
 from werkzeug.utils import secure_filename
@@ -41,8 +44,19 @@ class BrowserProcessor(Processor):
 
     def process(self, change):
         global WATCHER_EVENTS
-        WATCHER_EVENTS.append(change)
-        log.info("Event captured %s", change)
+        t = time.time() * 1000
+        if (change.kind == FileChange.CREATED or
+            change.kind == FileChange.MODIFIED or
+            change.kind == FileChange.DELETED or
+                change.kind == FileChange.MOVED):
+            WATCHER_EVENTS.append({'change': change,
+                                   'time': t
+                                   })
+        #WATCHER_EVENTS = [w for w in WATCHER_EVENTS
+                          #if w['time'] > t - 5 * 60 * 1000  # 5 min after
+                          #]
+        log.info("Event captured %s at %s", change, str(t))
+
 
 WATCHER_EVENTS = []
 init_socket_watcher("browser", [BrowserProcessor.start()])
@@ -112,7 +126,6 @@ def files_path(path):
             app.logger.info('Getting files from %s', path_absolute)
             user.try_read(path_absolute)
             dirs = os.listdir(path_absolute)
-            #app.logger.info('Getting files: %s', unicode(dirs))  # Potential problem with unicode
             infos = [get_file_info(os.path.join(path_absolute, p), user)
                      for p in dirs]
     except PermissionError:
@@ -120,7 +133,7 @@ def files_path(path):
     return json.dumps(infos)
 
 
-@app.route('/thumbnail/<path:file>')
+@app.route('/thumbnail/<path:path>')
 def thumbnail(path):
     '''
     /thumbnail/:file
@@ -131,72 +144,51 @@ def thumbnail(path):
     user = require_user()
     path_absolute = os.path.join(DATA_ROOT, path.encode('utf8'))
     if user.can_read(path_absolute):  # @TODO: Rely a generic one if not exists
-        return os.path.join(get_cache_folder(path_absolute), "thumbnail.png")
+        return send_file(os.path.join(get_cache_folder(path_absolute),
+                                      "thumbnail.png"))
     else:
         abort(404)
 
-directory_mapping = {'image': 'folder.png',
-                     'preview': '',
-                     'mimes': ["application/x-directory"]}
-images_mapping = {'image': 'image.png',
-                  'preview': 'image.png',
-                  'mimes': ["image/bmp", "image/gif", "image/png",
-                            "image/jpg", "image/jpeg", "image/pjpeg",
-                            "image/svg", "image/x-icon", "image/x-pict",
-                            "image/x-pcx", "image/pict",
-                            "image/x-portable-bitmap", "image/tiff",
-                            "image/x-tiff", "image/x-xbitmap",
-                            "image/x-xbm", "image/xbm", "application/wmf",
-                            "application/x-wmf", "image/wmf",
-                            "image/x-wmf", "image/x-ms-bmp"
-                            ]
-                  }
-audio_mapping = {'image': "audio.png",
-                 'preview': 'view.mp3',
-                 'mimes': [
-                            '''
-                            Obtained looking at:
-                            List of files supported by ffmpeg:`ffmpeg -formats`
-                         Information about file extensions: http://filext.com/
-                            '''
-                            # AAC
-                            "audio/aac", "audio/x-aac",
-                            # AC3
-                            "audio/ac3",
-                            # AIFF
-                            "audio/aiff", "audio/x-aiff", "sound/aiff",
-                            "audio/x-pn-aiff",
-                            # ASF
-                            "audio/asf",
-                            # MIDI
-                            "audio/mid", "audio/x-midi",
-                            # AU
-                            "audio/basic", "audio/x-basic", "audio/au",
-                            "audio/x-au", "audio/x-pn-au", "audio/x-ulaw",
-                            # PCM
-                            "application/x-pcm",
-                            # MP4
-                            "audio/mp4",
-                            # MP3
-                            "audio/mpeg", "audio/x-mpeg", "audio/mp3",
-                            "audio/x-mp3", "audio/mpeg3", "audio/x-mpeg3",
-                            "audio/mpg", "audio/x-mpg",
-                            "audio/x-mpegaudio",
-                            # WAV
-                            "audio/wav", "audio/x-wav", "audio/wave",
-                            "audio/x-pn-wav",
-                            # OGG
-                            "audio/ogg", "application/ogg", "audio/x-ogg",
-                            "application/x-ogg",
-                            # FLAC
-                            "audio/flac",
-                            # WMA
-                            "audio/x-ms-wma",
-                            # Various
-                            "audio/rmf", "audio/x-rmf", "audio/vnd.qcelp",
-                            "audio/x-gsm", "audio/snd"
-                 ]
-                 }
+directory_mapping = {
+    'image': 'folder.png',
+    'preview': '',
+    'mimes': ["application/x-directory"]
+}
+images_mapping = {
+    'image': 'image.png',
+    'preview': 'jpg',
+    'mimes': file_info.image_view_mimes
+}
+audio_mapping = {
+    'image': "audio.png",
+    'preview': 'mp3',
+    'mimes': file_info.audio_view_mimes
+}
+word_mapping = {
+    'image': "document.png",
+    'preview': 'pdf',
+    'mimes': file_info.word_mimes
+}
+spreadsheet_mapping = {
+    'image': 'spreadsheet.png',
+    'preview': 'pdf',
+    'mimes': file_info.spreadsheet_mimes
+}
+presentation_mapping = {
+    'image': 'presentation.png',
+    'preview': 'pdf',
+    'mimes': file_info.presentation_mimes
+}
+drawing_mapping = {
+    'image': 'drawing.png',
+    'preview': 'pdf',
+    'mimes': file_info.drawing_mimes
+}
+video_mapping = {
+    'image': 'video.png',
+    'preview': 'mp4',
+    'mimes': file_info.video_mimes
+}
 
 
 @app.route('/generic-thumbnail/<path:mime>')
@@ -423,8 +415,18 @@ def changes(date, path):
                        , "deleted_files": [ filename, ... ]  // just strings
                        }
     '''
-    # @TODO: changes DEPENDS ON PROCESSOR
-    pass
+    new_files = []
+    deleted_files = []
+    for event in WATCHER_EVENTS:
+        if event['time'] >= date:
+            if event['change'].kind == FileChange.CREATED:
+                new_files.append(event['change'].filename)
+            elif event['change'].kind == FileChange.DELETED:
+                deleted_files.append(event['change'].filename)
+            elif event['change'].kind == FileChange.MOVED:
+                new_files.append(event['change'].filename_to)
+                deleted_files.append(event['change'].filename_from)
+    return json.dumps({'new_files': new_files, 'deleted_files': deleted_files})
 
 
 @app.route('/new-folder', methods=['POST'])
