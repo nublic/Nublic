@@ -1,8 +1,3 @@
 #!/bin/bash
-CONFIG_FILE=/etc/nublic/resource.conf
-if [ ! -e $CONFIG_FILE ]
-then
-    nublic-resource-postgres-db-install
-fi
-service nublic-resource start
+/opt/nublic/script/postinst/nublic_resource_configure
 #DEBHELPER#

@@ -1,0 +1,6 @@
+#!/bin/sh
+for i in `ls /opt/nublic/script/postinst` ; do
+    /opt/nublic/script/postinst/$i
+done
+#/opt/nublic/script/postinst/nublic_configure
+

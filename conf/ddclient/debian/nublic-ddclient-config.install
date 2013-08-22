@@ -1,2 +1,3 @@
 ddclient.conf /etc
 ddclient /etc/default
+ddclient_configure /opt/nublic/script/postinst/

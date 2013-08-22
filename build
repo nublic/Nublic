@@ -531,6 +531,7 @@ do_build() {
         build_deb_package conf/dyndnschecker nublic-dyndnschecker
         build_deb_package conf/unattended-upgrades nublic-unattended-upgrades-config
         build_deb_package conf/nublic nublic
+        build_deb_package conf/nublic-conf nublic-conf
     fi
 
     # Create final repository

@@ -1,0 +1,2 @@
+smb.conf /var/lib/nublic
+samba_configure /opt/nublic/script/postinst/

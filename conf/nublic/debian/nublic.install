@@ -1,1 +1,3 @@
-set-acls.py /usr/sbin
+set-acls.py /opt/nublic/script/postinst/
+nublic_configure /opt/nublic/script/postinst/
+

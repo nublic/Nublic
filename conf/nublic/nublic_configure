@@ -1,21 +1,24 @@
 #!/bin/sh
 
 # Change fstab file
-set-acls.py
+/opt/nublic/scripts/postinst/set-acls.py
 # Remount the root
 mount -o remount /
-# Set jetty to be able to write everywhere
+# Set apache and python to be able to write everywhere
 for dir in cache fs log work-folders "data/nublic-only" "data/mirrors" "data/work-folders"
 do
     CURRENT_DIR=/var/nublic/${dir}
-    setfacl -Rdm u:jetty:rwx ${CURRENT_DIR}
+    #setfacl -Rdm u:jetty:rwx ${CURRENT_DIR}
     setfacl -Rdm u:www-data:rwx ${CURRENT_DIR}
+    setfacl -Rdm u:nublic:rwx ${CURRENT_DIR}
 done
-# Set jetty to be able to read apps configurations
-setfacl -Rdm u:jetty:rx /var/lib/nublic/apps
+# Set nublic to be able to read apps configurations
+#setfacl -Rdm u:jetty:rx /var/lib/nublic/apps
+setfacl -Rdm u:nublic:rx /var/lib/nublic/apps
 # Allow jetty to write logs
 mkdir -p /var/log/nublic
-setfacl -Rdm u:jetty:rwx /var/log/nublic
+#setfacl -Rdm u:jetty:rwx /var/log/nublic
+setfacl -Rdm u:nublic:rwx /var/log/nublic
 chmod 777 /var/log/nublic
 # Set OpenJDK 7 as default virtual machine
 update-java-alternatives -s java-1.7.0-openjdk-\*

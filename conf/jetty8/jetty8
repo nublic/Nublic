@@ -8,7 +8,7 @@ VERBOSE=no
 
 # Run Jetty as this user ID (default: jetty)
 # Set this to an empty string to prevent Jetty from starting automatically
-#JETTY_USER=jetty
+JETTY_USER=nublic
 
 # Listen to connections from this network host
 # Use 0.0.0.0 as host to accept all connections.
