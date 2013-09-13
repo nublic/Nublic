@@ -8,6 +8,6 @@ Homepage: http://nublic.com
 
 Package: nublic
 Architecture: all
-Depends: ${misc:Depends}, nublic-samba-config, nublic-minidlna-config, nublic-apache-config, nublic-notification, nublic-app-browser, nublic-app-music, nublic-app-manager, nublic-app-photos, nublic-app-init, nublic-files-and-users, nublic-files-and-users-client, acl, python-fstab, openjdk-7-jre, openjdk-7-jdk, ufw, nublic-dyndnschecker, nublic-unattended-upgrades-config, nublic-file-watcher
+Depends: ${misc:Depends}, nublic-upstart, nublic-samba-config, nublic-resource, nublic-apache-config, nublic-minidlna-config, nublic-apache-config, nublic-notification, nublic-app-browser, nublic-app-browser-server, nublic-app-browser-web, nublic-app-music, nublic-app-music-server, nublic-app-music-web, nublic-app-music-fs, nublic-app-manager, nublic-app-photos, nublic-app-init, nublic-files-and-users, nublic-files-and-users-client, acl, python-fstab, python-nublic, python-nublic-server, ufw, nublic-dyndnschecker, nublic-unattended-upgrades-config, nublic-file-watcher, nublic-file-watcher-internal
 Description: Nublic metapackage
  Nublic metapackage

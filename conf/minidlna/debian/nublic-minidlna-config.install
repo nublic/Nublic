@@ -1,0 +1,2 @@
+minidlna.conf /etc/
+minidlna_configure /opt/nublic/script/postinst/

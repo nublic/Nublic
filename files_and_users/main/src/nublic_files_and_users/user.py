@@ -16,6 +16,7 @@ from utf8 import from_utf8
 APACHE_PASSWD_FILE = "/var/nublic/secure/.htpasswd"  # for debugging purposes
 USER_SEPARATOR = ':'
 DATA_ROOT = "/var/nublic/data"
+ACL_USER_NAMES = ['nublic'] # @TODO Import from environment
 
 
 class UserDBus():  # (dbus.service.Object):
@@ -227,7 +228,9 @@ class UserDBus():  # (dbus.service.Object):
         # Make chown
         real_path = DATA_ROOT + path
         os.chown(real_path, user.uid, self.get_nublic_gid())
-        pexpect.run('setfacl -m u:jetty:rwx "' + real_path + '"')
+        for acl_user_name in ACL_USER_NAMES:
+            pexpect.run('setfacl -m u:' + acl_user_name + ':rwx "'
+                        + real_path + '"')
         if (touch_after):
             pexpect.run('sudo -u ' + username + ' touch "' + real_path + '"')
 

@@ -9,6 +9,6 @@ Homepage: http://nublic.com
 
 Package: nublic-app-photos-server
 Architecture: all
-Depends: python (>= 2.6), python-central, python-support (>= 0.90),libapache2-mod-wsgi, python-nublic, python-nublic-server, nublic-app-photos-server-common
+Depends: python (>= 2.6), python-central, python-support (>= 0.90),libapache2-mod-wsgi, python-nublic, python-nublic-server
 Description: The Nublic Photos App Server
  The server serving the photos information to the users.
