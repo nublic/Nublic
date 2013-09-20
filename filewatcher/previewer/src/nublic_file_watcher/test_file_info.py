@@ -66,19 +66,28 @@ class FileInfoTest(unittest.TestCase):
         self.assertEquals(f.mime_type(), 'image/png')
         self.assertEquals(f.extension, '.png')
         self.assertEquals(f.is_directory(), False)
-        self.assertEquals(f.view_type(), 'png')
+        self.assertEquals(f.view_type(), 'jpg')
 
+    @unittest.skip("No tiff example in test_dir")
     def test_file_tiff(self):
         f = FileInfo(self.test_dir + "interior.tif")
         self.assertEquals(f.mime_type(), 'image/tiff')
         self.assertEquals(f.extension, '.tif')
         self.assertEquals(f.is_directory(), False)
-        self.assertEquals(f.view_type(), 'png')
+        self.assertEquals(f.view_type(), 'jpg')
 
+    @unittest.skip("No ppt example in test_dir")
     def test_file_ppt(self):
         f = FileInfo(self.test_dir + "EL_MERCADO.ppt")
         self.assertEquals(f.mime_type(), 'application/msword')
         self.assertEquals(f.extension, '.ppt')
+        self.assertEquals(f.is_directory(), False)
+        self.assertEquals(f.view_type(), 'pdf')
+
+    def test_file_pptx(self):
+        f = FileInfo(self.test_dir + "presentacion-pcm.ppt")
+        self.assertEquals(f.mime_type(), 'application/msword')
+        self.assertEquals(f.extension, '.pptx')
         self.assertEquals(f.is_directory(), False)
         self.assertEquals(f.view_type(), 'pdf')
 
@@ -94,7 +103,7 @@ class FileInfoTest(unittest.TestCase):
         self.assertEquals(f.mime_type(), 'image/x-icon')
         self.assertEquals(f.extension, '.ico')
         self.assertEquals(f.is_directory(), False)
-        self.assertEquals(f.view_type(), 'png')
+        self.assertEquals(f.view_type(), 'jpg')
 
     def test_file_py(self):
         f = FileInfo(self.test_dir + 'setup.py')

@@ -1,10 +1,9 @@
 import os
 from pgmagick.api import Image
-from nublic_server.places import get_cache_folder
+from nublic_server.places import ensure_cache_folder
 from file_info import (FileInfo, djvu_mimes, pdf_mimes, ps_mimes, dvi_mimes,
                        office_mimes)
 import subprocess
-import shutil
 
 import logging
 log = logging.getLogger(__name__)
@@ -13,6 +12,7 @@ SIZE = 1024
 THUMBNAIL_SIZE = 96
 ORIGINAL_FILENAME = "orig"
 THUMBNAIL_FILENAME = "thumbnail.png"
+VIEW_FILENAME = "view.pdf"
 
 
 def make_tmp_file(out, prefix="tmp_"):
@@ -54,10 +54,12 @@ def djvu_view_converter(path, out):
 
 def office_view_converter(path, out):
     tmp = make_tmp_file(out)
-    p = subprocess.Popen(['unoconv', '--format', 'pdf', '--stdout', path],
-                         stdout=subprocess.PIPE)
     with open(tmp, 'w') as output:
-        shutil.copyfileobj(p.stdout, output)
+        p = subprocess.Popen(['unoconv', '--format', 'pdf',
+                              #"--timeout=24",
+                              '--stdout', path],
+                             stdout=output)
+        #shutil.copyfileobj(p.stdout, output)
     exitcode = p.wait()
     if exitcode != 0:
         log.warning("Conversion failed with office unoconv for file %s", path)
@@ -99,66 +101,64 @@ class PdfConverter(object):
             self.info = FileInfo(original)
         else:
             self.info = info
-        self.pdf = None
-        self.cache_path_ = cache_path
+        self.cache_path = (cache_path if cache_path
+                            else ensure_cache_folder(self.original))
+        log.debug("Cache path: %s", self.cache_path)
+        print "Cache path: %s" % (self.cache_path,)
+        self.thumb_path = os.path.join(self.cache_path, THUMBNAIL_FILENAME)
+        self.view_path = os.path.join(self.cache_path, VIEW_FILENAME)
 
-    def cache_path(self):
-        if not self.cache_path_:
-            self.cache_path_ = get_cache_folder(self.original)
-        if not os.path.exists(self.cache_path_):
-            os.mkdir(self.cache_path_)
-        return self.cache_path_
+    def generate_thumb(self):
+        if self.thumb_needed():
+            pdf = self.generate_pdf()
+            if pdf:
+                pdf_to_thumb(pdf, self.thumb_path)
+            else:
+                return None
+        return self.thumb_path
 
-    def thumb_path(self, path=THUMBNAIL_FILENAME):
-        return os.path.join(self.cache_path(), path)
-
-    def view_path(self, path="view.pdf"):
-        return os.path.join(self.cache_path(), path)
-
-    def generate_thumb(self, path=None):
-        if not path:
-            path = self.thumb_path(THUMBNAIL_FILENAME)
-        self.pdf = self.generate_pdf()
-        pdf_to_thumb(self.pdf, path)
-        return path
-
-    def generate_pdf(self, path=None):
-        if not path:
-            path = self.view_path()
-            if not os.path.exists(self.cache_path()):
-                try:
-                    os.makedirs(self.cache_path())
-                except:
-                    log.exception("Cannot make dir for cache on %s for %s",
-                                  path,
-                                  self.original)
-        if not self.pdf:
+    def generate_pdf(self):
+        if self.view_needed():
+            if os.path.islink(self.view_path):
+                os.unlink(self.view_path)
             for converter in converter_list:
                 if self.info.mime_type() in converter['mimes']:
                     try:
-                        converter['function'](self.original, path)
+                        converter['function'](self.original, self.view_path)
                     except:
                         log.exception(
                             "Exception detected at converter for mime %s",
                             self.info.mime_type())
-                    if os.path.exists(path):
-                        self.pdf = path
-                        return self.pdf
+                    if os.path.exists(self.view_path):
+                        return self.view_path
+            log.warning("No converter could be found for %s", self.original)
             return None
         else:
-            return self.pdf
+            return self.view_path
+
+    def view_needed(self):
+        # Check for view cache
+        if not os.path.exists(self.view_path):
+            return True
+        original_time = self.info.last_modified_time()
+        view_time = os.path.getmtime(self.view_path)
+        return original_time > view_time
+
+    def thumb_needed(self):
+        # Check for thumbnail cache
+        if not os.path.exists(self.thumb_path):
+            return True
+        original_time = self.info.last_modified_time()
+        thumb_time = os.path.getmtime(self.thumb_path)
+        return original_time > thumb_time
 
     def needs_pdf(self):
         if self.info.view_type() != 'pdf':
             return False
-        if not os.path.exists(self.view_path()):
-            return True
-        original_time = self.info.last_modified_time()
-        view_time = os.path.getmtime(self.view_path())
-        return original_time > view_time
+        return self.view_needed() and self.thumb_needed()
 
-    def view(self):
+    def generate_view(self):
         """ Create the view for nublic """
         pdf = self.generate_pdf()
         thumb = self.generate_thumb()
-        return [pdf, thumb]
+        return (pdf, thumb)

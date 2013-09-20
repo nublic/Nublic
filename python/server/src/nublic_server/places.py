@@ -6,13 +6,12 @@ import glob
 
 
 def browser_root_folder():
-    try:
-        return os.environ["BROWSER_CACHE_FOLDER"]
-    except KeyError:
-        return '/var/nublic/cache/browser'
-
+    """ Get cache root folder from environment or default """
+    return os.environ.get('BROWSER_CACHE_FOLDER',
+                          '/var/nublic/cache/browser')
 
 def get_cache_folder(path):
+    """ Get cache folder for a given file """
     cache_folder = hashlib.sha1(path).hexdigest()
     return os.path.join(browser_root_folder(), cache_folder)
 

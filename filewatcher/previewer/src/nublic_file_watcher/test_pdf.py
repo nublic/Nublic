@@ -107,42 +107,112 @@ class PdfTest(unittest.TestCase):
 class PdfConverterPathTest(unittest.TestCase):
     def setUp(self):
         self.test_file = "test_files/recetas.pdf"
-        self.p = pdf.PdfConverter(self.test_file)
-
-    def test_cache_path(self):
-        self.assertEquals(
-            self.p.cache_path(),
-            "/var/nublic/cache/browser/"
-            "5ce0763869d65ce770fd114773b98f5f827b4e4c")
-
-    def test_view_path(self):
-        self.assertEquals(
-            self.p.view_path(),
-            "/var/nublic/cache/browser/"
-            "5ce0763869d65ce770fd114773b98f5f827b4e4c/view.pdf")
-
-    def test_thumb_path(self):
-        self.assertEquals(
-            self.p.thumb_path(),
-            "/var/nublic/cache/browser/"
-            "5ce0763869d65ce770fd114773b98f5f827b4e4c/thumbnail.png")
-
-
-class PdfConverterPath2Test(unittest.TestCase):
-    def setUp(self):
-        self.test_file = "test_files/recetas.pdf"
         self.p = pdf.PdfConverter(
             self.test_file, cache_path="test_files/cache")
 
     def test_cache_path2(self):
-        self.assertEquals(self.p.cache_path(), "test_files/cache")
+        self.assertEquals(self.p.cache_path, "test_files/cache")
 
     def test_thumb_path2(self):
         self.assertEquals(
-            self.p.thumb_path(), "test_files/cache/thumbnail.png")
+            self.p.thumb_path, "test_files/cache/thumbnail.png")
 
     def test_view_path2(self):
-        self.assertEquals(self.p.view_path(), "test_files/cache/view.pdf")
+        self.assertEquals(self.p.view_path, "test_files/cache/view.pdf")
 
     def test_needs_pdf(self):
         self.assertTrue(self.p.needs_pdf())
+
+
+class PdfConverterTest(unittest.TestCase):
+    def setUp(self):
+        #shutil.copytree("test_files", "/tmp/test_pdf/test_dir")
+        os.system("cp test_files/recetas.pdf /tmp/test_pdf/")
+        self.test_file = "/tmp/test_pdf/recetas.pdf"
+        self.test_cache_dir = "/tmp/test_pdf/cache"
+        os.system("rm -rf " + self.test_cache_dir)
+        os.environ.update({'BROWSER_CACHE_FOLDER': self.test_cache_dir})
+        if not os.path.exists(self.test_cache_dir):
+            os.makedirs(self.test_cache_dir)
+        self.pdf = pdf.PdfConverter(self.test_file)
+
+    def test_generate_view(self):
+        self.pdf.generate_view()
+        cache_dirs = os.listdir(self.test_cache_dir)
+        self.assertEquals(len(cache_dirs), 1,
+                          "Cache dir must be created")
+        cache_dir = os.path.join(self.test_cache_dir, cache_dirs[0])
+        cache_files = os.listdir(cache_dir)
+        self.assertEquals(len(cache_files), 2,
+                          "Cache dir must have thumb and view")
+        self.assertIn("view.pdf", cache_files,
+                          "Cache dir must have view")
+        self.assertIn("thumbnail.png", cache_files,
+                          "Cache dir must have thumb")
+        # Check cache_files
+        view_file = os.path.join(cache_dir, "view.pdf")
+        thumb_file = os.path.join(cache_dir, "thumbnail.png")
+        self.assertTrue(os.path.exists(view_file),
+                          "Cache dir must have view")
+        self.assertTrue(os.path.exists(thumb_file),
+                          "Cache dir must have thumb")
+        self.assertTrue(os.path.islink(view_file),
+                          "Cache dir must be a link")
+
+    def test_generate_updated_view(self):
+        self.pdf.generate_view()
+        os.system("touch /tmp/test_pdf/recetas.pdf")
+        self.pdf.generate_view()
+        cache_dirs = os.listdir(self.test_cache_dir)
+        self.assertEquals(len(cache_dirs), 1,
+                          "Cache dir must be created")
+        cache_dir = os.path.join(self.test_cache_dir, cache_dirs[0])
+        cache_files = os.listdir(cache_dir)
+        self.assertEquals(len(cache_files), 2,
+                          "Cache dir must have thumb and view")
+        self.assertIn("view.pdf", cache_files,
+                          "Cache dir must have view")
+        self.assertIn("thumbnail.png", cache_files,
+                          "Cache dir must have thumb")
+        # Check cache_files
+        view_file = os.path.join(cache_dir, "view.pdf")
+        thumb_file = os.path.join(cache_dir, "thumbnail.png")
+        self.assertTrue(os.path.exists(view_file),
+                          "Cache dir must have view")
+        self.assertTrue(os.path.exists(thumb_file),
+                          "Cache dir must have thumb")
+        self.assertTrue(os.path.islink(view_file),
+                          "Cache dir must be a link")
+
+    def test_generate_broken_link_view(self):
+        self.pdf.generate_view()
+        os.system("rm /tmp/test_pdf/cache/a8a258361d0cd185206ce0b61fa168649822217e/view.pdf")
+        os.system("ln -s /broken_link /tmp/test_pdf/cache/a8a258361d0cd185206ce0b61fa168649822217e/view.pdf")
+        self.pdf.generate_view()
+        os.system("touch /tmp/test_pdf/recetas.pdf")
+        self.pdf.generate_view()
+        cache_dirs = os.listdir(self.test_cache_dir)
+        self.assertEquals(len(cache_dirs), 1,
+                          "Cache dir must be created")
+        cache_dir = os.path.join(self.test_cache_dir, cache_dirs[0])
+        cache_files = os.listdir(cache_dir)
+        self.assertEquals(len(cache_files), 2,
+                          "Cache dir must have thumb and view")
+        self.assertIn("view.pdf", cache_files,
+                          "Cache dir must have view")
+        self.assertIn("thumbnail.png", cache_files,
+                          "Cache dir must have thumb")
+        # Check cache_files
+        view_file = os.path.join(cache_dir, "view.pdf")
+        thumb_file = os.path.join(cache_dir, "thumbnail.png")
+        self.assertTrue(os.path.exists(view_file),
+                          "Cache dir must have view")
+        self.assertTrue(os.path.exists(thumb_file),
+                          "Cache dir must have thumb")
+        self.assertTrue(os.path.islink(view_file),
+                          "Cache dir must be a link")
+
+
+
+
+

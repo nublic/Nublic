@@ -36,7 +36,8 @@ def init_nublic_server(app, log_file, resource_app, db,
         app, log_file, configuration_paths=configuration_paths)
     try:
         app.config['SQLALCHEMY_DATABASE_URI']
-        app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].decode('ascii')
+        app.config['SQLALCHEMY_DATABASE_URI'] = (
+            app.config['SQLALCHEMY_DATABASE_URI'].decode('ascii'))
     except KeyError:
         # Use resource daemon to configure
         res_app = App(resource_app)

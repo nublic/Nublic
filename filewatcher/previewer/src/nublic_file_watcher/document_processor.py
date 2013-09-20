@@ -24,11 +24,11 @@ class DocumentProcessor(PreviewProcessor):
         return self.pdf.needs_pdf()
 
     def process_updated(self, filename, is_dir, info=None):
-        self.pdf.view()
+        self.pdf.generate_view()
 
     def process_deleted(self, filename, is_dir, info=None):
-        cache_path = self.pdf.cache_path()
-        thumb_path = self.pdf.thumb_path()
+        cache_path = self.pdf.cache_path
+        thumb_path = self.pdf.thumb_path
         if os.path.islink(cache_path):
             os.unlink(cache_path)
         if os.path.exists(cache_path):
@@ -42,8 +42,8 @@ class DocumentProcessor(PreviewProcessor):
         pass
 
     def process_moved(self, filename_from, filename_to, is_dir, info=None):
-        cache_path = self.pdf.cache_path()
-        thumb_path = self.pdf.thumb_path()
+        cache_path = self.pdf.cache_path
+        thumb_path = self.pdf.thumb_path
         self.from_pdf = PdfConverter(filename_from, info)
         if not os.path.exists(cache_path):
             os.rename(self.from_pdf.cache_path(), cache_path)

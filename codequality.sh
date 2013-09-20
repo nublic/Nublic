@@ -89,7 +89,7 @@ if [[ $nosetests = 0 ]]; then
         echo "Checking $module module" >> $TARGET_DIR/nosetests.log
         #nosetests $module  &>> $TARGET_DIR/nosetests.log
         mkdir -p $TARGET_DIR/coverage
-        nosetests $module --with-coverage --cover-package=$module --cover-tests --cover-html-dir=${TARGET_DIR}/coverage &>> $TARGET_DIR/nosetests.log
+        nosetests $module &>> $TARGET_DIR/nosetests.log
         #PYTHONPATH=`find_python_modules_path .` nosetests $module --with-coverage --cover-tests  &>> $TARGET_DIR/nosetests.log
     done
 fi
